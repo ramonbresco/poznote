@@ -50,7 +50,8 @@ class ShareController {
                     'noteType' => $noteType,
                     'accessMode' => $this->sanitizeAccessMode('full', $noteType),
                     'workspace' => $noteWorkspace,
-                    'sharedViaFolder' => $this->findSharingFolder($noteRow['folder_id'] ?? null)
+                    'sharedViaFolder' => $this->findSharingFolder($noteRow['folder_id'] ?? null),
+                    'folderPasswordExempt' => poznoteNoteIsFolderPasswordExempt($this->con, (int)$noteId)
                 ]);
                 return;
             }
@@ -77,7 +78,8 @@ class ShareController {
                 'accessMode' => $accessMode,
                 'workspace' => $noteWorkspace,
                 'allowed_users' => $allowedUsers,
-                'disabled' => (int)($row['disabled'] ?? 0)
+                'disabled' => (int)($row['disabled'] ?? 0),
+                'folderPasswordExempt' => poznoteNoteIsFolderPasswordExempt($this->con, (int)$noteId)
             ]);
             
         } catch (Exception $e) {
@@ -273,32 +275,55 @@ class ShareController {
 
             $noteType = $noteRow['type'] ?? 'note';
 
+            // `password_exempt` (this note reachable without the password of
+            // the folder share it sits in) belongs to the NOTE, not to one
+            // share row: a note can carry both its own share row and the
+            // marker row that holds a per-note block, and the public pages
+            // treat it as exempt as soon as one row says so. So the flag is
+            // written to every row of the note, whichever way it is shared.
+            $exemptRequested = array_key_exists('password_exempt', $input);
+            $nextExempt = $exemptRequested ? (!empty($input['password_exempt']) ? 1 : 0) : null;
+            if ($exemptRequested) {
+                $stmtExempt = $this->con->prepare('UPDATE shared_notes SET password_exempt = ? WHERE note_id = ?');
+                $stmtExempt->execute([$nextExempt, $noteId]);
+            }
+
             // A note without its own share can still be reached through a
-            // shared folder. Toggling `disabled` there manages a per-note
-            // block row (access_mode NULL, disabled = 1) so the action only
-            // affects this note, never the folder share itself.
-            if (array_key_exists('disabled', $input)) {
+            // shared folder. `disabled` (a per-note block) and the exemption
+            // are then kept on a per-note marker row (access_mode NULL), so
+            // the action only affects this note, never the folder share.
+            if (array_key_exists('disabled', $input) || $exemptRequested) {
                 $stmtDirect = $this->con->prepare('SELECT id FROM shared_notes WHERE note_id = ? AND access_mode IS NOT NULL LIMIT 1');
                 $stmtDirect->execute([$noteId]);
                 if (!$stmtDirect->fetch()) {
-                    if (!empty($input['disabled'])) {
-                        $stmtBlock = $this->con->prepare('SELECT id FROM shared_notes WHERE note_id = ? AND access_mode IS NULL LIMIT 1');
-                        $stmtBlock->execute([$noteId]);
-                        $blockId = $stmtBlock->fetchColumn();
-                        if ($blockId !== false) {
-                            $updStmt = $this->con->prepare('UPDATE shared_notes SET disabled = 1 WHERE id = ?');
-                            $updStmt->execute([$blockId]);
+                    $stmtMarker = $this->con->prepare('SELECT id, COALESCE(disabled, 0) AS disabled, COALESCE(password_exempt, 0) AS password_exempt FROM shared_notes WHERE note_id = ? AND access_mode IS NULL LIMIT 1');
+                    $stmtMarker->execute([$noteId]);
+                    $marker = $stmtMarker->fetch(PDO::FETCH_ASSOC) ?: null;
+
+                    // Each flag keeps its stored value unless this request
+                    // names it: removing a block must not lift a password
+                    // exemption, and the other way round.
+                    $markerDisabled = array_key_exists('disabled', $input)
+                        ? (!empty($input['disabled']) ? 1 : 0)
+                        : (int)($marker['disabled'] ?? 0);
+                    $markerExempt = (int)($marker['password_exempt'] ?? ($nextExempt ?? 0));
+
+                    if ($marker) {
+                        if ($markerDisabled === 0 && $markerExempt === 0) {
+                            $delStmt = $this->con->prepare('DELETE FROM shared_notes WHERE id = ?');
+                            $delStmt->execute([(int)$marker['id']]);
                         } else {
-                            // The token is never published nor registered; it only
-                            // satisfies the UNIQUE NOT NULL constraint.
-                            $insStmt = $this->con->prepare('INSERT INTO shared_notes (note_id, token, access_mode, disabled) VALUES (?, ?, NULL, 1)');
-                            $insStmt->execute([$noteId, 'blocked_' . bin2hex(random_bytes(16))]);
+                            $updStmt = $this->con->prepare('UPDATE shared_notes SET disabled = ? WHERE id = ?');
+                            $updStmt->execute([$markerDisabled, (int)$marker['id']]);
                         }
-                    } else {
-                        $delStmt = $this->con->prepare('DELETE FROM shared_notes WHERE note_id = ? AND access_mode IS NULL');
-                        $delStmt->execute([$noteId]);
+                    } elseif ($markerDisabled === 1 || $markerExempt === 1) {
+                        // The token is never published nor registered; it only
+                        // satisfies the UNIQUE NOT NULL constraint.
+                        $insStmt = $this->con->prepare('INSERT INTO shared_notes (note_id, token, access_mode, disabled, password_exempt) VALUES (?, ?, NULL, ?, ?)');
+                        $insStmt->execute([$noteId, 'blocked_' . bin2hex(random_bytes(16)), $markerDisabled, $markerExempt]);
                     }
-                    echo json_encode(['success' => true, 'disabled' => !empty($input['disabled']) ? 1 : 0]);
+
+                    echo json_encode(['success' => true, 'disabled' => $markerDisabled, 'password_exempt' => $markerExempt]);
                     return;
                 }
             }
@@ -375,7 +400,11 @@ class ShareController {
             }
 
             if (empty($updates)) {
-                echo json_encode(['success' => true, 'message' => 'No changes']);
+                $response = ['success' => true, 'message' => 'No changes'];
+                if ($exemptRequested) {
+                    $response = ['success' => true, 'password_exempt' => $nextExempt];
+                }
+                echo json_encode($response);
                 return;
             }
 
@@ -424,6 +453,9 @@ class ShareController {
             }
             if (array_key_exists('disabled', $input)) {
                 $response['disabled'] = !empty($input['disabled']) ? 1 : 0;
+            }
+            if ($exemptRequested) {
+                $response['password_exempt'] = $nextExempt;
             }
 
             echo json_encode($response);

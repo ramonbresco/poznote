@@ -531,6 +531,9 @@ function poznoteCssManifest(): array
         'shared' => [
             'css/lucide.css',
             '@components',
+            // The lists of choices of the Shares and Offline filter rows
+            // (js/select-menu.js)
+            'css/components/row-actions-menu.css',
             '@modals',
             'css/shared/base.css',
             'css/shared/notes-list.css',

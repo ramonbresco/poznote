@@ -105,6 +105,9 @@ body.shared-page {
     padding: 0;
     border-color: var(--pz-border);
     border-radius: var(--pz-radius-2xl);
+    /* --pz-icon, the icon colour of the theme (magenta in Lavender, and so
+       on), never a text grey: the magnifier and the sort button take it too
+       and the three have to be one colour */
     color: var(--pz-icon, var(--pz-text-muted));
 }
 
@@ -112,14 +115,86 @@ body.shared-page {
     background: var(--pz-bg);
 }
 
-/* Greyed out in the flat views, which have no folder to fold
-   (js/offline-list.js, js/shared-page.js) */
+/* Greyed out when there is no folder to fold (js/offline-list.js,
+   js/shared-page.js). Same disc as the buttons it sits with, only the
+   chevron fades: the look the Shares list gives a disabled tree button
+   (a tinted fill) made the one button that cannot be used the brightest
+   of the row. */
 .filter-type-buttons .shared-filter-tree-actions .btn:disabled {
-    opacity: 0.45;
+    border-color: var(--pz-border);
+    background: var(--pz-bg);
+    color: var(--pz-text-subtle);
+    opacity: 1;
     cursor: default;
 }
 
+/* Full colour, like the icons it sits with: the Shares list paints the icon
+   of a tree button at 74% (.shared-filter-tree-actions .btn i above), which
+   on this row made the chevron paler than the magnifier and the sort button
+   whatever its size. A little bigger too: the chevron is two short diagonal
+   strokes, a fifth of the ink of the magnifier (its box is 9.5x5.5px
+   against 15x15). */
 .filter-type-buttons .shared-filter-tree-actions .btn .lucide {
+    width: 18px;
+    height: 18px;
+    opacity: 1;
+}
+
+/* Offline and Shares pages: the reason filter and the sort are an icon
+   button in that same format, opening their list of choices
+   (js/select-menu.js) */
+/* The .btn in the selector is not decoration: the dark theme paints every
+   .btn with its own colour and fill at (0,2,1), so the magnifier's look only
+   holds at the weight the chevron above already carries. */
+.filter-type-buttons .btn.pz-select-menu-toggle {
+    width: var(--pz-search-toggle-size);
+    height: var(--pz-search-toggle-size);
+    /* .btn draws no border and fills itself grey: the magnifier's look
+       instead, since they sit side by side */
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-2xl);
+    background: var(--pz-bg);
+    color: var(--pz-icon, var(--pz-text-muted));
+}
+
+/* The three buttons of the row answer the pointer the same way: ring and
+   icon take the accent, the disc keeps the page background, nothing fades.
+   Each came with its own hover before: .btn:hover drops the chevron and the
+   sort to 0.8 opacity where the magnifier, which is not a .btn, does not
+   fade; the Shares list gives a tree button a tinted fill and a translucent
+   ring; and in dark the icons landed on three different colours (the icon
+   hover grey for the magnifier, the accent for the sort, its hover shade
+   for the chevron). The icon rule is needed because the global
+   [class*="lucide-"]:hover paints the glyph itself. The dark theme's 1.18
+   zoom of that same rule applies to all three on its own. */
+.filter-type-buttons .pz-search-toggle:hover,
+.filter-type-buttons .pz-search-toggle:focus-visible,
+.filter-type-buttons .btn.pz-select-menu-toggle:hover,
+.filter-type-buttons .btn.pz-select-menu-toggle:focus-visible,
+.filter-type-buttons .shared-filter-tree-actions .btn:not(:disabled):hover,
+.filter-type-buttons .shared-filter-tree-actions .btn:not(:disabled):focus-visible {
+    border-color: var(--pz-accent-text);
+    background: var(--pz-bg);
+    color: var(--pz-accent-text);
+    opacity: 1;
+}
+
+.filter-type-buttons .pz-search-toggle:hover .lucide,
+.filter-type-buttons .btn.pz-select-menu-toggle:hover .lucide,
+.filter-type-buttons .shared-filter-tree-actions .btn:not(:disabled):hover .lucide {
+    color: var(--pz-accent-text);
+}
+
+/* On the accent when the list is not on its first option: a reason filtered
+   on the Offline page, a sort other than the name on the Shares page */
+.filter-type-buttons .btn.pz-select-menu-toggle.is-active {
+    /* --pz-accent-text, not --pz-accent: the same accent the magnifier takes
+       on hover, which the dark ground needs to read as a ring */
+    border-color: var(--pz-accent-text);
+    color: var(--pz-accent-text);
+}
+
+.filter-type-buttons .btn.pz-select-menu-toggle .lucide {
     width: 16px;
     height: 16px;
 }

@@ -50,8 +50,10 @@ $currentLang = getUserLanguage();
 	data-txt-folder-direct="<?php echo t_h('offline.page.folder_direct', [], 'Kept offline'); ?>"
 	data-txt-folder-parent="<?php echo t_h('offline.page.folder_parent', [], 'Via a parent folder'); ?>"
 	data-txt-folder-notes="<?php echo t_h('offline.page.folder_notes', [], 'All its notes kept offline'); ?>"
-	data-txt-keep="<?php echo t_h('notes_list.note_actions.keep_offline', [], 'Keep offline'); ?>"
-	data-txt-stop="<?php echo t_h('notes_list.note_actions.stop_offline', [], 'Stop keeping offline'); ?>"
+	data-txt-keep-note="<?php echo t_h('offline.page.keep_note', [], 'Keep this note offline even when the rules no longer keep it (a favorite, modified recently, in a folder kept offline)'); ?>"
+	data-txt-stop-note="<?php echo t_h('offline.page.stop_note', [], 'Stop keeping this note offline (it may still be kept because it is a favorite, was modified recently or sits in a folder kept offline)'); ?>"
+	data-txt-keep-folder="<?php echo t_h('offline.page.keep_folder', [], 'Keep this folder\'s notes offline even when the rules no longer keep them'); ?>"
+	data-txt-stop-folder="<?php echo t_h('offline.page.stop_folder', [], 'Stop keeping this folder\'s notes offline (some may still be kept because they are favorites, were modified recently or sit in a folder kept offline)'); ?>"
 	data-txt-keep-error="<?php echo t_h('offline.keep.error', [], 'The offline setting could not be saved.'); ?>"
 	data-txt-not-in-browser="<?php echo t_h('notes_list.note_actions.not_available_offline', [], 'Not available offline in this browser'); ?>"
 	data-txt-unsupported="<?php echo t_h('offline.unsupported', [], 'This browser cannot keep notes offline.'); ?>"
@@ -93,8 +95,8 @@ $currentLang = getUserLanguage();
 						<i class="lucide lucide-chevron-down"></i>
 					</button>
 				</div>
-				<?php // Right of the chevron. Reasons no note has are hidden by js/offline-list.js, which also puts the day count in the recent one ?>
-				<select id="reasonFilter" class="offline-reason-select initially-hidden" aria-label="<?php echo t_h('offline.page.filter_reason', [], 'Filter by reason'); ?>">
+				<?php // Right of the chevron: an icon button opening the reasons (js/select-menu.js), the select itself out of sight. Reasons no note has are hidden by js/offline-list.js, which also puts the day count in the recent one ?>
+				<select id="reasonFilter" class="initially-hidden" aria-label="<?php echo t_h('offline.page.filter_reason', [], 'Filter by reason'); ?>">
 					<option value=""><?php echo t_h('offline.page.reason_all', [], 'All reasons'); ?></option>
 					<option value="note"><?php echo t_h('offline.page.reason_note', [], 'Kept offline'); ?></option>
 					<option value="folder"><?php echo t_h('offline.page.reason_folder', [], 'In a folder kept offline'); ?></option>
@@ -125,6 +127,9 @@ $currentLang = getUserLanguage();
 	<?php // Brings this browser's copies up to date, after a change made here too (writes-only mode) ?>
 	<script src="<?php echo poznoteAsset('js/offline-store.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/offline-sync.js'); ?>" data-offline-mode="writes"></script>
+	<?php // The reason filter: an icon button and its list of choices ?>
+	<script src="<?php echo poznoteAsset('js/row-actions-menu.js'); ?>"></script>
+	<script src="<?php echo poznoteAsset('js/select-menu.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/offline-list.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/search-toggle.js'); ?>"></script>
 </body>

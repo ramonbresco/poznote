@@ -170,10 +170,52 @@
     text-decoration: underline;
 }
 
+.shared-password-icon {
+    margin-left: 6px;
+    font-size: 14px;
+    opacity: 1;
+}
+
 .shared-password-icon.is-password-protected,
 .shared-restricted-icon.is-restricted {
     filter: none;
     color: var(--pz-danger-text);
+}
+
+/* A note reached through a shared folder can be exempted from that folder
+   share's password: its padlock is then open and grey, and clicking it asks
+   for the password again. */
+.shared-password-icon.is-password-exempt {
+    filter: none;
+    color: var(--pz-text-muted);
+}
+
+/* The padlock of a note whose password comes from its folder share alone is a
+   button (the dialog that waives or restores that password). Two flat states,
+   no hover look: every click changes the padlock. */
+.shared-password-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* The padding widens the finger target around a 14px padlock; the
+       negative margins give the room back, so the row is laid out as if the
+       icon stood there alone. */
+    margin: -6px 0 -6px 0;
+    padding: 6px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.shared-password-toggle .shared-password-icon {
+    margin-left: 0;
+}
+
+.shared-password-toggle:hover .shared-password-icon,
+.shared-password-toggle:focus .shared-password-icon {
+    transform: none;
 }
 
 /* Disabled (inaccessible) share: the row stays listed, the badge and the
@@ -247,6 +289,15 @@
 
 .note-token:focus {
     outline: none;
+}
+
+/* A row with no link of its own (a note reached through a folder share) says
+   so in the link column, in the italic placeholder look of the folder rows. */
+.note-token-placeholder {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .note-token.read-only {
@@ -346,6 +397,62 @@ html[data-theme='dark'] .folder-name-path {
 .note-actions .btn-sm {
     padding: 4px 8px;
     font-size: 12px;
+}
+
+/* What a button of the row does, on hover: the bubble of the help icons of
+   the settings cards (.setting-help in home/cards.css, not loaded here), as
+   on tasks.php, rather than the browser's own title box. Right-aligned
+   under the button, which sits at the right end of the row. */
+.note-actions [data-tooltip] {
+    position: relative;
+}
+
+.note-actions [data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    width: max-content;
+    max-width: 260px;
+    padding: 8px 10px;
+    border: 1px solid rgba(var(--pz-highlight-rgb), 0.15);
+    border-radius: var(--pz-radius-lg);
+    background: var(--pz-tooltip-bg);
+    color: var(--pz-tooltip-text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.95rem;
+    font-weight: var(--pz-weight-normal);
+    line-height: 1.4;
+    text-align: left;
+    white-space: normal;
+    box-shadow: 0 4px 12px rgba(var(--pz-shadow-rgb), 0.25);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+    z-index: 50;
+}
+
+/* Shown after a short rest of the pointer, not as it passes by; it goes
+   away at once */
+.note-actions [data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0.5s;
+}
+
+/* .btn:hover fades the whole button to 0.8, its bubble with it, which made
+   the text of the rows below show through. These buttons already answer the
+   pointer with their fill, so they keep their full colour instead. */
+.note-actions [data-tooltip]:hover {
+    opacity: 1;
+}
+
+/* No hover on touch screens */
+@media (hover: none) {
+    .note-actions [data-tooltip]::after {
+        display: none;
+    }
 }
 
 .note-actions-placeholder {
@@ -520,54 +627,6 @@ html[data-theme='dark'] .folder-name-path {
    kept, in the text font rather than the token's monospace. */
 .offline-reason-cell .note-token {
     font-family: inherit;
-}
-
-/* Sort of the Shares page and reason filter of the Offline page: as wide
-   as their words and without the arrow, like the type dropdowns of
-   notes_manager.php and attachments_list.php */
-.offline-reason-select,
-.shared-sort-select {
-    flex: 0 0 auto;
-    max-width: 100%;
-    -webkit-appearance: none;
-    appearance: none;
-    /* The label centred in the box: text-align-last is what a select reads */
-    text-align: center;
-    text-align-last: center;
-    /* The search field's 38px: a select's own line box would make it 40 */
-    height: 38px;
-    /* Chromium's dropdown list (Chrome and Edge,
-       Windows too) copies the select's left padding to its options but not
-       its right one, so centred options came out 6px right of centre. The
-       12px of air are transparent side borders instead, the visible border
-       an outline drawn just inside them. */
-    padding: 0;
-    border: solid transparent;
-    border-width: 1px 12px;
-    outline: 1px solid var(--border-color, var(--pz-border));
-    outline-offset: -1px;
-    border-radius: var(--pz-radius-lg);
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--text-color, var(--pz-text));
-    background-color: var(--input-bg, var(--pz-bg));
-    box-sizing: border-box;
-    cursor: pointer;
-}
-
-/* On the row of the type buttons (the sort of Shares, the reasons of
-   Offline): at their height and with their round ends */
-.filter-type-buttons .offline-reason-select,
-.filter-type-buttons .shared-sort-select {
-    height: var(--pz-search-toggle-size);
-    border-radius: var(--pz-radius-2xl);
-    font-size: 13px;
-}
-
-.offline-reason-select:focus,
-.shared-sort-select:focus {
-    outline-color: var(--pz-accent);
-    box-shadow: 0 0 0 3px rgba(var(--pz-accent-rgb), 0.1);
 }
 
 /* A note the rules keep that this browser holds no copy of yet */

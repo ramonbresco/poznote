@@ -345,6 +345,13 @@ body .modal.shared-revoke-modal .shared-revoke-modal-content {
     box-shadow: 0 24px 60px rgba(var(--pz-shadow-rgb), 0.2);
 }
 
+/* The dialogs whose actions name what a password belongs to ("Remove the
+   folder's password for this note") need more room: at 440px the longest
+   translation wrapped onto a second line. 500px holds every language. */
+body .modal.shared-revoke-modal .shared-revoke-modal-content.is-wide {
+    width: min(500px, calc(100vw - 32px));
+}
+
 body .modal.shared-revoke-modal .shared-revoke-modal-text {
     margin: 10px 0 18px;
     color: var(--text-muted, var(--pz-text-muted));

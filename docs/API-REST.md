@@ -1902,6 +1902,8 @@ Update share settings on an existing share.
 | `custom_token` | string | Custom URL token |
 | `access_mode` | string | Access mode. Tasklists: `read_only`, `check_only`, `full` (default `full`). HTML/markdown notes: `read_only`, `edit` (default `read_only`; `edit` lets visitors modify the note text) |
 | `allowed_users` | array | User IDs with access |
+| `disabled` | boolean | Keep the share and its settings but stop the public link from resolving. On a note that has no share of its own and is only reachable through a shared folder, this blocks that one note; the folder share and its other notes are untouched |
+| `password_exempt` | boolean | Open this note without the password of the shared folder it sits in. Only the password is waived: a folder share restricted to specific users still asks the visitor to log in, and the folder's own page keeps asking for the password. The exemption is dropped when the note is moved to another folder |
 
 ```bash
 curl -X PATCH -u 'username:password' -H "X-User-ID: 1" \

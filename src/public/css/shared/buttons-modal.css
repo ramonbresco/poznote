@@ -6,12 +6,13 @@
 }
 
 /* Greyed-out action button (e.g. token edit on a note shared through a
-   folder): visible for row alignment, but inert. The translucent grey works
-   on both light and dark backgrounds. */
+   folder): visible for row alignment, but inert. The icon is faded well past
+   the muted text colour so the button cannot be mistaken for a live one; the
+   translucent grey works on both light and dark backgrounds. */
 .note-actions .btn:disabled,
 .note-actions .btn:disabled:hover {
-    background: color-mix(in srgb, var(--pz-neutral) 25%, transparent);
-    color: var(--pz-text-muted);
+    background: color-mix(in srgb, var(--pz-neutral) 12%, transparent);
+    color: color-mix(in srgb, var(--pz-text-muted) 38%, transparent);
     cursor: not-allowed;
     opacity: 1;
 }

@@ -410,6 +410,10 @@ class SystemController {
                 sn.allowed_users,
                 sn.password_encrypted,
                 sn.disabled,
+                CASE WHEN EXISTS (
+                    SELECT 1 FROM shared_notes ex
+                    WHERE ex.note_id = sn.note_id AND COALESCE(ex.password_exempt, 0) = 1
+                ) THEN 1 ELSE 0 END as password_exempt,
                 CASE WHEN sn.password IS NOT NULL AND sn.password != '' THEN 1 ELSE 0 END as hasPassword,
                 sn.created as shared_date,
                 e.heading,
@@ -448,6 +452,7 @@ class SystemController {
                     'read_only' as access_mode,
                     NULL as password_encrypted,
                     CASE WHEN blk.note_id IS NOT NULL THEN 1 ELSE 0 END as disabled,
+                    CASE WHEN exm.note_id IS NOT NULL THEN 1 ELSE 0 END as password_exempt,
                     0 as hasPassword,
                     e.created as shared_date,
                     e.heading,
@@ -461,6 +466,7 @@ class SystemController {
                 FROM entries e
                 LEFT JOIN shared_notes sn ON e.id = sn.note_id AND sn.access_mode IS NOT NULL
                 LEFT JOIN shared_notes blk ON e.id = blk.note_id AND blk.access_mode IS NULL AND COALESCE(blk.disabled, 0) = 1
+                LEFT JOIN shared_notes exm ON e.id = exm.note_id AND COALESCE(exm.password_exempt, 0) = 1
                 WHERE e.folder_id IN ($placeholders) AND e.trash = 0";
                 
                 $stmt = $this->con->prepare($folderNoteQuery);

@@ -21,10 +21,30 @@
             txtRevokeModalTextViaFolder: body.getAttribute('data-txt-revoke-modal-text-via-folder') || 'This note is shared through a folder. You can make just this note inaccessible; the folder share and its other notes are not affected.',
             txtRevokeModalTextViaFolderDisabled: body.getAttribute('data-txt-revoke-modal-text-via-folder-disabled') || 'This note is currently inaccessible. You can make it accessible again through its folder share.',
             txtRevokeModalTextViaFolderParentDisabled: body.getAttribute('data-txt-revoke-modal-text-via-folder-parent-disabled') || 'This note is inaccessible because its folder share has been made inaccessible. Make the folder share accessible again to restore access.',
+            txtPasswordModalTitle: body.getAttribute('data-txt-password-modal-title') || 'Password',
+            txtPasswordModalText: body.getAttribute('data-txt-password-modal-text') || 'This note is protected by the password of the shared folder it is in. You can make it open without a password: only this note is affected, the folder share and its other notes stay protected.',
+            txtPasswordModalTextExempt: body.getAttribute('data-txt-password-modal-text-exempt') || 'This note opens without a password, although the shared folder it is in is protected by one. You can protect it again with that password.',
+            txtPasswordRemove: body.getAttribute('data-txt-password-remove') || 'Remove the password for this note',
+            txtPasswordRestore: body.getAttribute('data-txt-password-restore') || 'Ask for the password again',
+            txtPasswordRestoreFolder: body.getAttribute('data-txt-password-restore-folder') || 'Ask for the folder’s password again',
+            txtPasswordInheritedHelp: body.getAttribute('data-txt-password-inherited-help') || 'Password of the shared folder. Click to make this note open without a password.',
+            txtPasswordExemptHelp: body.getAttribute('data-txt-password-exempt-help') || 'This note opens without a password, although its shared folder is protected by one. Click to protect it again.',
+            txtPasswordOwnHelp: body.getAttribute('data-txt-password-own-help') || 'Password of this share. Click to remove it.',
+            txtPasswordParentFolderHelp: body.getAttribute('data-txt-password-parent-folder-help') || 'Password of the parent folder share.',
+            txtPasswordRemoveOwn: body.getAttribute('data-txt-password-remove-own') || 'Remove the password',
+            txtPasswordOwnAndParentHelp: body.getAttribute('data-txt-password-own-and-parent-help') || 'Two passwords: this share link’s own, and a parent folder share’s. Click to remove either, or both.',
+            txtPasswordOwnFolderWaivedHelp: body.getAttribute('data-txt-password-own-folder-waived-help') || 'Password of this share. The shared folder’s password is waived for this note.',
+            txtPasswordModalTextOwnNoteWaived: body.getAttribute('data-txt-password-modal-text-own-note-waived') || 'The share link of this note is protected by a password of its own. The shared folder it is in has a password too, which this note is exempted from.',
+            txtPasswordRemoveOwnLink: body.getAttribute('data-txt-password-remove-own-link') || 'Remove this link’s password',
+            txtPasswordRemoveBoth: body.getAttribute('data-txt-password-remove-both') || 'Remove both passwords',
+            txtPasswordRemoveFolderForNote: body.getAttribute('data-txt-password-remove-folder-for-note') || 'Remove the folder’s password for this note',
+            txtPasswordModalTextOwnNote: body.getAttribute('data-txt-password-modal-text-own-note') || 'The share link of this note is protected by a password of its own. You can remove it: the link then opens without asking for anything.',
+            txtPasswordModalTextOwnNoteFolder: body.getAttribute('data-txt-password-modal-text-own-note-folder') || 'This note asks for two passwords: the one of its own share link, and the one of the shared folder it is in. You can remove either one, or both; the folder’s password stays in place for its other notes.',
+            txtPasswordModalTextOwnFolder: body.getAttribute('data-txt-password-modal-text-own-folder') || 'This folder share is protected by a password. You can remove it: the link, and the notes it holds, then open without asking for anything.',
             txtShareDisabledBadge: body.getAttribute('data-txt-share-disabled-badge') || 'Inaccessible',
             txtShareDisabledHelp: body.getAttribute('data-txt-share-disabled-help') || 'This share is inaccessible: the link no longer works until you make it accessible again.',
 
-            txtNoteSharedThroughFolder: body.getAttribute('data-txt-note-shared-through-folder') || 'Note shared through folder',
+            txtNoteSharedThroughFolder: body.getAttribute('data-txt-note-shared-through-folder') || 'Note shared through a parent folder',
             txtFolderSharedThroughParent: body.getAttribute('data-txt-folder-shared-through-parent') || 'Folder shared through parent folder',
             txtNoFilterResults: body.getAttribute('data-txt-no-filter-results') || 'No items match your search.',
             txtTableName: body.getAttribute('data-txt-table-name') || 'Name',
@@ -53,6 +73,7 @@
     var shareSettings = window.PoznoteShareSettings;
     var showShareToast = shareSettings.showErrorToast;
     var showRevokeShareModal = shareSettings.showRevokeModal;
+    var showShareChoiceModal = shareSettings.showChoiceModal;
     var showCopyToast = shareSettings.showCopyToast;
     var copyTextToClipboard = shareSettings.copyTextToClipboard;
     var normalizePublicUrl = shareSettings.normalizePublicUrl;
@@ -702,6 +723,26 @@
             .catch(function(error) { showShareToast(config.txtError + ': ' + error.message); });
     }
 
+    function setNoteFolderPasswordExempt(noteId, exempt) {
+        shareSettings.setNoteFolderPasswordExempt(noteId, exempt)
+            .then(function() { loadSharedNotes(); })
+            .catch(function(error) { showShareToast(config.txtError + ': ' + error.message); });
+    }
+
+    function removeNoteOwnPassword(noteId) {
+        updateNoteShareSettings(noteId, { password: '' })
+            .catch(function(error) { showShareToast(config.txtError + ': ' + error.message); });
+    }
+
+    // Both passwords in front of a note: its own, then the folder share's,
+    // waived for this note alone. One reload once both have landed.
+    function removeNoteBothPasswords(noteId) {
+        updateNoteShareSettings(noteId, { password: '' })
+            .then(function() { return shareSettings.setNoteFolderPasswordExempt(noteId, true); })
+            .then(function() { loadSharedNotes(); })
+            .catch(function(error) { showShareToast(config.txtError + ': ' + error.message); });
+    }
+
     function updateNoteShareSettings(noteId, updates) {
         return shareSettings.patchNoteShare(noteId, updates)
         .then(function(data) {
@@ -742,6 +783,11 @@
     function setFolderShareDisabled(folderId, disabled) {
         shareSettings.setShareDisabled('folder', folderId, disabled)
             .then(function() { loadSharedNotes(); })
+            .catch(function(error) { showShareToast(config.txtError + ': ' + error.message); });
+    }
+
+    function removeFolderOwnPassword(folderId) {
+        updateFolderShareSettings(folderId, { password: '' })
             .catch(function(error) { showShareToast(config.txtError + ': ' + error.message); });
     }
 
@@ -884,19 +930,22 @@
         var wrapper = document.createElement('div');
         wrapper.className = 'note-token-wrap read-only';
 
-        var content = document.createElement('span');
-        content.className = 'note-token' + (token ? '' : ' read-only');
-
         if (token) {
+            var content = document.createElement('span');
+            content.className = 'note-token';
             content.textContent = token;
             content.title = token;
-        } else {
-            content.textContent = fallbackText || '';
-            content.title = fallbackText || '';
-            content.style.fontStyle = 'italic';
+            wrapper.appendChild(content);
+            return wrapper;
         }
 
-        wrapper.appendChild(content);
+        // No link of its own: the cell says where the share comes from, in the
+        // look the folder rows already use for "shared through parent folder".
+        var placeholder = document.createElement('span');
+        placeholder.className = 'note-token-placeholder note-actions-placeholder';
+        placeholder.textContent = fallbackText || '';
+        placeholder.title = fallbackText || '';
+        wrapper.appendChild(placeholder);
         return wrapper;
     }
 
@@ -1061,8 +1110,220 @@
         list.style.width = (widths[0] + widths[1] + widths[2] + gap * 2 + 12) + 'px';
     }
 
-    function noteHasVisiblePasswordProtection(note) {
-        return !!Number(note && note.hasPassword) || !!note.shared_folder_has_password;
+    // The password in front of this note comes from the share of a folder it
+    // sits in, and from nothing else: that password, and only that one, can
+    // be waived for this note alone. A note that also has a share link of its
+    // own counts, since the folder password guards that link too; a note with
+    // a password of its own does not, that one is its share's business.
+    function noteInheritsOnlyFolderPassword(note) {
+        return !!note
+            && !!note.shared_via_folder
+            && !!note.shared_folder_has_password
+            && !Number(note.hasPassword);
+    }
+
+    // The folder share's password covers this note right now: it exists and
+    // the note is not exempted from it. Read on its own, so it also answers
+    // for a note that carries a password of its own.
+    function folderPasswordAppliesToNote(note) {
+        return !!note && !!note.shared_folder_has_password && !Number(note.password_exempt);
+    }
+
+    // The padlock itself: a plain icon when there is nothing to act on, a
+    // button when clicking it opens the password dialog.
+    //   spec: { open: bool, label: string, onClick: function|null }
+    function createPasswordIndicator(spec) {
+        var icon = document.createElement('i');
+        icon.className = 'lucide shared-password-icon '
+            + (spec.open ? 'lucide-lock-open is-password-exempt' : 'lucide-lock is-password-protected');
+
+        if (!spec.onClick) {
+            icon.title = spec.label;
+            icon.setAttribute('aria-label', spec.label);
+            return icon;
+        }
+
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'shared-password-toggle';
+        button.title = spec.label;
+        button.setAttribute('aria-label', spec.label);
+        button.appendChild(icon);
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            spec.onClick();
+        });
+        return button;
+    }
+
+    // The padlock of a note: closed while a password is asked for, open when
+    // the note is exempted from its folder share's password. It is a button
+    // in both of the cases the owner can act on from here, its own password
+    // and the one inherited from a folder share.
+    function appendNotePasswordIndicator(container, note) {
+        var inheritsFolderPassword = noteInheritsOnlyFolderPassword(note);
+        var isExempt = inheritsFolderPassword && !!Number(note.password_exempt);
+        var hasOwnPassword = !!Number(note.hasPassword);
+
+        if (!hasOwnPassword && !inheritsFolderPassword) {
+            return;
+        }
+
+        if (hasOwnPassword) {
+            // Two passwords stand in front of the note when a folder share
+            // covers it as well; when that one is waived for this note, only
+            // its own is left, and the padlock says which case it is.
+            var label = config.txtPasswordOwnHelp;
+            if (folderPasswordAppliesToNote(note)) {
+                label = config.txtPasswordOwnAndParentHelp;
+            } else if (note.shared_folder_has_password) {
+                label = config.txtPasswordOwnFolderWaivedHelp;
+            }
+            container.appendChild(createPasswordIndicator({
+                open: false,
+                label: label,
+                onClick: function() { showNoteOwnPasswordModal(note); }
+            }));
+            return;
+        }
+
+        container.appendChild(createPasswordIndicator({
+            open: isExempt,
+            label: isExempt ? config.txtPasswordExemptHelp : config.txtPasswordInheritedHelp,
+            onClick: function() { showNoteFolderPasswordModal(note, isExempt); }
+        }));
+    }
+
+    // The padlock of a folder row: the password of this share, which the
+    // dialog can remove, or the one of the parent share this folder hangs
+    // from, which is that folder's business, not this row's.
+    function appendFolderPasswordIndicator(container, folder) {
+        if (!folder.password) {
+            return;
+        }
+
+        if (!folder.is_direct) {
+            container.appendChild(createPasswordIndicator({
+                open: false,
+                label: config.txtPasswordParentFolderHelp,
+                onClick: null
+            }));
+            return;
+        }
+
+        container.appendChild(createPasswordIndicator({
+            open: false,
+            label: config.txtPasswordOwnHelp,
+            onClick: function() { showFolderOwnPasswordModal(folder); }
+        }));
+    }
+
+    // Clicking the padlock of a note that inherits its folder share's
+    // password: the password can be waived for this note alone, or asked for
+    // again. The folder share and its other notes are never touched.
+    function showNoteFolderPasswordModal(note, isExempt) {
+        showShareChoiceModal({
+            title: config.txtPasswordModalTitle,
+            text: isExempt ? config.txtPasswordModalTextExempt : config.txtPasswordModalText,
+            actions: [{
+                label: isExempt ? config.txtPasswordRestore : config.txtPasswordRemove,
+                icon: isExempt ? 'lucide-lock' : 'lucide-lock-open',
+                className: 'btn-primary',
+                onClick: function() { setNoteFolderPasswordExempt(note.note_id, !isExempt); }
+            }],
+            closeLabel: config.txtCancel
+        });
+    }
+
+    // Clicking the padlock of a note that carries a password of its own: it
+    // is removed outright, as the share settings dialog would. When a folder
+    // share's password covers the note as well, the dialog offers the three
+    // ways out: both passwords, the link's one, or the folder's one for this
+    // note (which leaves the folder share and its other notes untouched).
+    function showNoteOwnPasswordModal(note) {
+        if (!note.shared_folder_has_password) {
+            showShareChoiceModal({
+                title: config.txtPasswordModalTitle,
+                text: config.txtPasswordModalTextOwnNote,
+                actions: [{
+                    label: config.txtPasswordRemoveOwn,
+                    icon: 'lucide-lock-open',
+                    className: 'btn-primary',
+                    onClick: function() { removeNoteOwnPassword(note.note_id); }
+                }],
+                closeLabel: config.txtCancel
+            });
+            return;
+        }
+
+        // The folder's password exists but is waived for this note: only the
+        // note's own password is left, and the waiver can be lifted here too,
+        // since this padlock is the only one the row shows.
+        if (!folderPasswordAppliesToNote(note)) {
+            showShareChoiceModal({
+                title: config.txtPasswordModalTitle,
+                text: config.txtPasswordModalTextOwnNoteWaived,
+                wide: true,
+                actions: [
+                    {
+                        label: config.txtPasswordRemoveOwn,
+                        icon: 'lucide-lock-open',
+                        className: 'btn-primary',
+                        onClick: function() { removeNoteOwnPassword(note.note_id); }
+                    },
+                    {
+                        label: config.txtPasswordRestoreFolder,
+                        icon: 'lucide-folder',
+                        className: 'btn-primary',
+                        onClick: function() { setNoteFolderPasswordExempt(note.note_id, false); }
+                    }
+                ],
+                closeLabel: config.txtCancel
+            });
+            return;
+        }
+
+        showShareChoiceModal({
+            title: config.txtPasswordModalTitle,
+            text: config.txtPasswordModalTextOwnNoteFolder,
+            wide: true,
+            actions: [
+                {
+                    label: config.txtPasswordRemoveBoth,
+                    icon: 'lucide-lock-open',
+                    className: 'btn-primary',
+                    onClick: function() { removeNoteBothPasswords(note.note_id); }
+                },
+                {
+                    label: config.txtPasswordRemoveOwnLink,
+                    icon: 'lucide-link',
+                    className: 'btn-primary',
+                    onClick: function() { removeNoteOwnPassword(note.note_id); }
+                },
+                {
+                    label: config.txtPasswordRemoveFolderForNote,
+                    icon: 'lucide-folder',
+                    className: 'btn-primary',
+                    onClick: function() { setNoteFolderPasswordExempt(note.note_id, true); }
+                }
+            ],
+            closeLabel: config.txtCancel
+        });
+    }
+
+    function showFolderOwnPasswordModal(folder) {
+        showShareChoiceModal({
+            title: config.txtPasswordModalTitle,
+            text: config.txtPasswordModalTextOwnFolder,
+            actions: [{
+                label: config.txtPasswordRemoveOwn,
+                icon: 'lucide-lock-open',
+                className: 'btn-primary',
+                onClick: function() { removeFolderOwnPassword(folder.folder_id); }
+            }],
+            closeLabel: config.txtCancel
+        });
     }
 
     function hasRestrictedAllowedUsers(allowedUsers) {
@@ -1159,16 +1420,7 @@
         }
         nameContainer.appendChild(noteLink);
 
-        if (noteHasVisiblePasswordProtection(note)) {
-            var lockIcon = document.createElement('i');
-            lockIcon.className = 'lucide lucide-lock shared-password-icon';
-            lockIcon.style.marginLeft = '6px';
-            lockIcon.style.fontSize = '14px';
-            lockIcon.classList.add('is-password-protected'); // Add CSS class for styling
-            lockIcon.style.opacity = '1';
-            lockIcon.title = config.txtPasswordLabel;
-            nameContainer.appendChild(lockIcon);
-        }
+        appendNotePasswordIndicator(nameContainer, note);
 
         if (noteHasVisibleRestriction(note)) {
             appendRestrictedIndicator(nameContainer);
@@ -1186,7 +1438,9 @@
 
         item.appendChild(nameContainer);
 
-        item.appendChild(renderTokenCell(note.token, ''));
+        // A note reached through a folder share has no link of its own: the
+        // link column names where it comes from instead of staying empty.
+        item.appendChild(renderTokenCell(note.token, note.shared_via_folder ? config.txtNoteSharedThroughFolder : ''));
 
         var actionsDiv = document.createElement('div');
         actionsDiv.className = 'note-actions';
@@ -1366,16 +1620,7 @@
         folderCount.textContent = String(folder.note_count);
         nameContainer.appendChild(folderCount);
 
-        if (folder.password) {
-            var lockIcon = document.createElement('i');
-            lockIcon.className = 'lucide lucide-lock shared-password-icon';
-            lockIcon.style.marginLeft = '6px';
-            lockIcon.style.fontSize = '14px';
-            lockIcon.classList.add('is-password-protected'); // Add CSS class for styling
-            lockIcon.style.opacity = '1';
-            lockIcon.title = config.txtPasswordLabel;
-            nameContainer.appendChild(lockIcon);
-        }
+        appendFolderPasswordIndicator(nameContainer, folder);
 
         if (folderHasVisibleRestriction(folder)) {
             appendRestrictedIndicator(nameContainer);
@@ -1564,6 +1809,11 @@
         var sortSelect = document.getElementById('sharedSortSelect');
         if (sortSelect) {
             sortSelect.value = sortMode;
+            // Shown as an icon button opening the sort choices, texts
+            // centred; the select keeps the choice and the labels
+            if (window.poznoteSelectMenu) {
+                window.poznoteSelectMenu.attach(sortSelect, { icon: 'lucide-arrow-up-down' });
+            }
             sortSelect.addEventListener('change', function() {
                 sortMode = this.value;
                 saveSortMode();

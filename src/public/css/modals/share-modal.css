@@ -169,11 +169,19 @@ html[data-theme='dark'] #folderShareModal h3 {
    ============================================ */
 
 #sharedViaFolderModal .modal-content {
-    max-width: 520px;
+    max-width: 620px;
 }
 
+/* The three buttons stay on one line: the widest wording (ca/pt "Edit folder
+   share") needs about 565px, hence the wider dialog above. Below 800px the
+   responsive sheet stacks them, as in every other modal. */
 #sharedViaFolderModal .share-modal-buttons {
     margin-top: 20px;
+    flex-wrap: nowrap;
+}
+
+#sharedViaFolderModal .share-modal-buttons button {
+    white-space: nowrap;
 }
 
 #sharedViaFolderModal .btn-view-shares {

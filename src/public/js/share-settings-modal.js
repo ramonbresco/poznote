@@ -14,7 +14,7 @@ window.PoznoteShareSettings = (function() {
             txtRevokeModalText: el.getAttribute('data-txt-revoke-modal-text') || 'You can permanently delete this share, or keep it and make it inaccessible until you enable it again.',
             txtRevokeModalTextDisabled: el.getAttribute('data-txt-revoke-modal-text-disabled') || 'This share is currently inaccessible. You can make it accessible again, or permanently delete it.',
             txtOk: el.getAttribute('data-txt-ok') || 'OK',
-            txtRevokeDelete: el.getAttribute('data-txt-revoke-delete') || 'Delete permanently',
+            txtRevokeDelete: el.getAttribute('data-txt-revoke-delete') || 'Revoke',
             txtRevokeDisable: el.getAttribute('data-txt-revoke-disable') || 'Make inaccessible',
             txtRevokeEnable: el.getAttribute('data-txt-revoke-enable') || 'Make accessible again',
             txtRevoke: el.getAttribute('data-txt-revoke') || 'Revoke',
@@ -237,26 +237,31 @@ window.PoznoteShareSettings = (function() {
         });
     }
 
-    // Revoke flow: the user chooses between deleting the share for good and
-    // keeping it but toggling its public accessibility.
-    function showRevokeModal(options) {
-        var config = getConfig();
+    // Shared layout of the small decision dialogs of a share (revoke, the
+    // padlock of a note that inherits a folder password): a title, a line of
+    // explanation, one button per action and a closing button last.
+    // options: { title, text, actions: [{ label, icon, className, onClick }],
+    //            closeLabel, closeClassName, wide }
+    // `wide` widens the dialog so that long action labels (the ones naming
+    // what a password belongs to) stay on one line.
+    function showShareChoiceModal(options) {
         var modal = document.createElement('div');
         modal.className = 'modal shared-revoke-modal';
         modal.style.display = 'flex';
 
         var content = document.createElement('div');
-        content.className = 'modal-content shared-revoke-modal-content';
+        content.className = 'modal-content shared-revoke-modal-content' + (options.wide ? ' is-wide' : '');
 
         var title = document.createElement('h3');
-        title.textContent = config.txtRevokeModalTitle;
+        title.textContent = options.title || '';
         content.appendChild(title);
 
-        var text = document.createElement('p');
-        text.className = 'shared-revoke-modal-text';
-        text.textContent = options.text
-            || (options.isDisabled ? config.txtRevokeModalTextDisabled : config.txtRevokeModalText);
-        content.appendChild(text);
+        if (options.text) {
+            var text = document.createElement('p');
+            text.className = 'shared-revoke-modal-text';
+            text.textContent = options.text;
+            content.appendChild(text);
+        }
 
         var actions = document.createElement('div');
         actions.className = 'shared-revoke-modal-actions';
@@ -267,40 +272,32 @@ window.PoznoteShareSettings = (function() {
             }
         }
 
-        // With no action to offer the modal is purely informational: a single
-        // OK button replaces Cancel.
-        var isInformational = !options.onToggle && !options.onDelete;
-        var cancelBtn = document.createElement('button');
-        cancelBtn.className = isInformational ? 'btn btn-primary' : 'btn btn-secondary';
-        cancelBtn.textContent = isInformational ? (config.txtOk || 'OK') : config.txtCancel;
-        cancelBtn.addEventListener('click', closeModal);
-
-        var toggleBtn = document.createElement('button');
-        toggleBtn.className = 'btn btn-primary';
-        toggleBtn.innerHTML = '<i class="lucide ' + (options.isDisabled ? 'lucide-eye' : 'lucide-eye-off') + '" style="margin-right: 6px;"></i>';
-        toggleBtn.appendChild(document.createTextNode(options.isDisabled ? config.txtRevokeEnable : config.txtRevokeDisable));
-        toggleBtn.addEventListener('click', function() {
-            closeModal();
-            if (options.onToggle) options.onToggle(!options.isDisabled);
+        // One action per line, the closing button last.
+        (options.actions || []).forEach(function(action) {
+            if (!action) {
+                return;
+            }
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn ' + (action.className || 'btn-primary');
+            if (action.icon) {
+                btn.innerHTML = '<i class="lucide ' + action.icon + '" style="margin-right: 6px;"></i>';
+            }
+            btn.appendChild(document.createTextNode(action.label || ''));
+            btn.addEventListener('click', function() {
+                closeModal();
+                if (action.onClick) action.onClick();
+            });
+            actions.appendChild(btn);
         });
 
-        var deleteBtn = document.createElement('button');
-        deleteBtn.className = 'btn btn-danger';
-        deleteBtn.innerHTML = '<i class="lucide lucide-trash-2" style="margin-right: 6px;"></i>';
-        deleteBtn.appendChild(document.createTextNode(config.txtRevokeDelete));
-        deleteBtn.addEventListener('click', function() {
-            closeModal();
-            if (options.onDelete) options.onDelete();
-        });
+        var closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'btn ' + (options.closeClassName || 'btn-secondary');
+        closeBtn.textContent = options.closeLabel || '';
+        closeBtn.addEventListener('click', closeModal);
+        actions.appendChild(closeBtn);
 
-        // One action per line, Cancel last.
-        if (options.onToggle) {
-            actions.appendChild(toggleBtn);
-        }
-        if (options.onDelete) {
-            actions.appendChild(deleteBtn);
-        }
-        actions.appendChild(cancelBtn);
         content.appendChild(actions);
         modal.appendChild(content);
         document.body.appendChild(modal);
@@ -314,6 +311,38 @@ window.PoznoteShareSettings = (function() {
                 closeModal();
             }
             pressedOnBackdrop = false;
+        });
+    }
+
+    // Revoke flow: the user chooses between deleting the share for good and
+    // keeping it but toggling its public accessibility.
+    function showRevokeModal(options) {
+        var config = getConfig();
+
+        // With no action to offer the modal is purely informational: a single
+        // OK button replaces Cancel.
+        var isInformational = !options.onToggle && !options.onDelete;
+
+        showShareChoiceModal({
+            title: config.txtRevokeModalTitle,
+            text: options.text
+                || (options.isDisabled ? config.txtRevokeModalTextDisabled : config.txtRevokeModalText),
+            actions: [
+                options.onToggle ? {
+                    label: options.isDisabled ? config.txtRevokeEnable : config.txtRevokeDisable,
+                    icon: options.isDisabled ? 'lucide-eye' : 'lucide-eye-off',
+                    className: 'btn-primary',
+                    onClick: function() { options.onToggle(!options.isDisabled); }
+                } : null,
+                options.onDelete ? {
+                    label: config.txtRevokeDelete,
+                    icon: 'lucide-trash-2',
+                    className: 'btn-danger',
+                    onClick: function() { options.onDelete(); }
+                } : null
+            ],
+            closeLabel: isInformational ? (config.txtOk || 'OK') : config.txtCancel,
+            closeClassName: isInformational ? 'btn-primary' : 'btn-secondary'
         });
     }
 
@@ -341,6 +370,12 @@ window.PoznoteShareSettings = (function() {
 
     function setShareDisabled(itemType, itemId, disabled) {
         return shareRequest(itemType, itemId, 'PATCH', { disabled: disabled ? 1 : 0 });
+    }
+
+    // Waive, or restore, the password of the folder share a note sits in, for
+    // that note alone. The folder share itself is never touched.
+    function setNoteFolderPasswordExempt(noteId, exempt) {
+        return shareRequest('note', noteId, 'PATCH', { password_exempt: exempt ? 1 : 0 });
     }
 
     function patchNoteShare(noteId, updates) {
@@ -929,8 +964,10 @@ window.PoznoteShareSettings = (function() {
     return {
         show: show,
         showRevokeModal: showRevokeModal,
+        showChoiceModal: showShareChoiceModal,
         deleteShare: deleteShare,
         setShareDisabled: setShareDisabled,
+        setNoteFolderPasswordExempt: setNoteFolderPasswordExempt,
         patchNoteShare: patchNoteShare,
         patchFolderShare: patchFolderShare,
         showErrorToast: showErrorToast,

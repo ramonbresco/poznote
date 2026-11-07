@@ -1,8 +1,8 @@
 /*
- * Per-row actions menu of the backup archive tables (Local Backups admin
- * page, Local Backups section of the Backup / Export page): one "..." button
- * per row opening a small menu, same look as the webhooks page. Driven by
- * js/row-actions-menu.js. The menu is a single element on <body> with
+ * Small menu hung under a button: one "..." button per row in the backup
+ * archive tables (Local Backups admin page, Local Backups section of the
+ * Backup / Export page), same look as the webhooks page, and the lists of
+ * choices of js/select-menu.js. Driven by js/row-actions-menu.js. The menu is a single element on <body> with
  * position:fixed, placed under the clicked button: inside the table it would
  * be clipped by the scrolling wrapper.
  */
@@ -32,3 +32,20 @@ html[data-theme='dark'] .row-actions-item.is-disabled:hover, html[data-theme='da
 html[data-theme='dark'] .row-actions-item.is-danger { color: var(--pz-danger-text); }
 html[data-theme='dark'] .row-actions-item.is-danger .lucide { background-color: var(--pz-danger-text); }
 html[data-theme='dark'] .row-actions-item.is-danger.is-disabled:hover, html[data-theme='dark'] .row-actions-item.is-danger.is-disabled:focus-visible { color: var(--pz-danger-text); }
+
+/* A list of choices (js/select-menu.js): one line per option, text only and
+   centred, the one the list is on tinted */
+.row-actions-menu-choices .row-actions-item { justify-content: center; text-align: center; }
+.row-actions-menu-choices .row-actions-item.is-selected { background: rgba(var(--pz-accent-rgb), 0.08); color: var(--pz-accent-text); }
+
+/* The <select> the menu stands for keeps the choice and the labels, so it
+   stays in the page without being seen or reachable */
+.pz-select-menu-source { position: absolute; width: 1px; height: 1px; padding: 0; border: 0; margin: -1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; pointer-events: none; }
+
+/* Icon button standing for a <select>. Its look is the page's business (it
+   sits with the page's other icon buttons), only its emptiness is not. */
+.btn.pz-select-menu-toggle { padding: 0; }
+/* The page can take the button away (the Offline page while the notes have
+   only one reason): .initially-hidden is a plain display:none and would lose
+   to the display of the button's own base rule */
+.btn.pz-select-menu-toggle.initially-hidden { display: none; }

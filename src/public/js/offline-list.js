@@ -25,8 +25,10 @@
             txtFolderDirect: txt('folder-direct', 'Kept offline'),
             txtFolderParent: txt('folder-parent', 'Via a parent folder'),
             txtFolderNotes: txt('folder-notes', 'All its notes kept offline'),
-            txtKeep: txt('keep', 'Keep offline'),
-            txtStop: txt('stop', 'Stop keeping offline'),
+            txtKeepNote: txt('keep-note', 'Keep this note offline even when the rules no longer keep it (a favorite, modified recently, in a folder kept offline)'),
+            txtStopNote: txt('stop-note', 'Stop keeping this note offline (it may still be kept because it is a favorite, was modified recently or sits in a folder kept offline)'),
+            txtKeepFolder: txt('keep-folder', "Keep this folder's notes offline even when the rules no longer keep them (a favorite, modified recently, in a folder kept offline)"),
+            txtStopFolder: txt('stop-folder', "Stop keeping this folder's notes offline (some may still be kept because they are favorites, were modified recently or sit in a folder kept offline)"),
             txtKeepError: txt('keep-error', 'The offline setting could not be saved.'),
             txtNotInBrowser: txt('not-in-browser', 'Not available offline in this browser'),
             txtUnsupported: txt('unsupported', 'This browser cannot keep notes offline.'),
@@ -199,6 +201,9 @@
         }
         select.value = filterReason;
         select.classList.toggle('initially-hidden', present.length < 2 && !filterReason);
+        // The icon button standing for the select follows it: shown or not,
+        // and its tooltip is the chosen reason
+        if (window.poznoteSelectMenu) window.poznoteSelectMenu.sync(select);
     }
 
     // ========== Tree ==========
@@ -522,8 +527,17 @@
         btn.type = 'button';
         btn.className = 'btn btn-sm ' + (kept ? 'btn-danger' : 'btn-primary');
         btn.innerHTML = kept ? '<i class="lucide lucide-x"></i>' : '<i class="lucide lucide-wifi-off"></i>';
-        btn.title = kept ? config.txtStop : config.txtKeep;
-        btn.setAttribute('aria-label', btn.title);
+        // What it does, not just its name: the button pins the note or the
+        // folder, so that it stays offline once the rule that kept it (a
+        // favorite, a recent change, a parent folder) stops applying
+        var help = kind === 'folder'
+            ? (kept ? config.txtStopFolder : config.txtKeepFolder)
+            : (kept ? config.txtStopNote : config.txtKeepNote);
+        // The app's own bubble (the one of the help icons of the settings
+        // cards), not the browser's title box: it opens after half a second
+        // of hover, css/shared/notes-list.css
+        btn.setAttribute('data-tooltip', help);
+        btn.setAttribute('aria-label', help);
         btn.addEventListener('click', function() {
             btn.disabled = true;
             setKeptOffline(kind, id, !kept).then(function() {
@@ -806,6 +820,11 @@
             });
         }
         if (reasonSelect) {
+            // Shown as an icon button opening the list of reasons, texts
+            // centred; the select keeps the choice and the labels
+            if (window.poznoteSelectMenu) {
+                window.poznoteSelectMenu.attach(reasonSelect, { icon: 'lucide-arrow-up-down' });
+            }
             reasonSelect.addEventListener('change', function() {
                 filterReason = reasonSelect.value;
                 applyFilter();
