@@ -12,6 +12,7 @@
 
 require_once __DIR__ . '/../../../note_loader.php';
 require_once __DIR__ . '/../../../storage/AttachmentStorage.php';
+require_once __DIR__ . '/../../../share_passwords.php';
 
 class AttachmentsController {
     private $con;
@@ -615,7 +616,12 @@ class AttachmentsController {
             return false;
         }
 
-        if (!$passedUserRestriction && !$this->validatePublicPassword($sharedFolder['password'] ?? null, 'public_folder_auth_' . $token)) {
+        // A note exempted from the folder share's password (the padlock on the
+        // Shares page) serves its attachments without it, otherwise its images
+        // would stay blocked on an otherwise open page.
+        $folderPasswordExempt = poznoteNoteIsFolderPasswordExempt($this->con, $noteId);
+
+        if (!$passedUserRestriction && !$folderPasswordExempt && !$this->validatePublicPassword($sharedFolder['password'] ?? null, 'public_folder_auth_' . $token)) {
             return false;
         }
 
@@ -724,7 +730,8 @@ class AttachmentsController {
             $passedUserRestriction = true;
         }
 
-        if (!$passedUserRestriction && !empty($protectedFolderContext['password']) && !empty($protectedFolderContext['token'])) {
+        if (!$passedUserRestriction && !empty($protectedFolderContext['password']) && !empty($protectedFolderContext['token'])
+            && !poznoteNoteIsFolderPasswordExempt($this->con, $noteId)) {
             return $this->validatePublicPassword($protectedFolderContext['password'], 'public_folder_auth_' . $protectedFolderContext['token']);
         }
 

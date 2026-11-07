@@ -77,3 +77,28 @@ function poznoteDecryptSharePassword(?string $storedPassword): string {
 
     return $plain !== false ? $plain : '';
 }
+
+/**
+ * A note reached through a shared folder can be exempted from the password of
+ * that folder share, one note at a time (the padlock on the Shares page). The
+ * exemption lives on the note's row in `shared_notes`: its own share row when
+ * it has one, otherwise the marker row (access_mode NULL) that also carries a
+ * per-note block, so the folder share and its other notes stay untouched.
+ *
+ * Only the password is waived: a folder share restricted to specific users
+ * keeps asking those visitors to log in.
+ */
+function poznoteNoteIsFolderPasswordExempt(PDO $con, int $noteId): bool {
+    if ($noteId <= 0) {
+        return false;
+    }
+
+    try {
+        $stmt = $con->prepare('SELECT 1 FROM shared_notes WHERE note_id = ? AND COALESCE(password_exempt, 0) = 1 LIMIT 1');
+        $stmt->execute([$noteId]);
+        return $stmt->fetchColumn() !== false;
+    } catch (Throwable $e) {
+        // A database missing the column (never migrated) simply has no exemption.
+        return false;
+    }
+}

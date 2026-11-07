@@ -76,6 +76,14 @@ html[data-theme='dark'] .shared-filter-tree-actions .btn:hover {
     color: var(--pz-accent-text-hover);
 }
 
+/* Offline and Shares filter rows: greyed out without the tinted fill, which
+   on the dark ground made the disabled button lighter than its neighbours */
+html[data-theme='dark'] .filter-type-buttons .shared-filter-tree-actions .btn:disabled {
+    background: var(--pz-bg);
+    border-color: var(--pz-border);
+    color: var(--pz-text-subtle);
+}
+
 html[data-theme='dark'] .shared-filter-tree-actions .btn:disabled {
     background: color-mix(in srgb, var(--pz-accent-soft) 26%, transparent);
     border-color: color-mix(in srgb, var(--pz-text-muted) 14%, transparent);
@@ -120,6 +128,18 @@ html[data-theme='dark'] .note-actions .btn-danger {
 html[data-theme='dark'] .note-actions .btn-danger:hover {
     background: var(--pz-danger-text-hover);
     color: var(--pz-text-inverse);
+}
+
+/* Greyed-out action button (same case as buttons-modal.css): the themed
+   .btn-primary / .btn-success rules above outrank the shared :disabled rule,
+   so the faded look has to be restated here, otherwise a disabled button
+   looked exactly like a live one in dark mode. */
+html[data-theme='dark'] .note-actions .btn:disabled,
+html[data-theme='dark'] .note-actions .btn:disabled:hover {
+    background: color-mix(in srgb, var(--pz-neutral) 18%, transparent);
+    color: color-mix(in srgb, var(--pz-text-muted) 45%, transparent);
+    cursor: not-allowed;
+    opacity: 1;
 }
 
 /* The icon is the whole label of these chips: it takes the button's colour

@@ -10,6 +10,7 @@ require_once __DIR__ . '/../functions.php';
 require_once __DIR__ . '/../note_loader.php';
 require_once __DIR__ . '/../markdown_parser.php';
 require_once __DIR__ . '/../public_helpers.php';
+require_once __DIR__ . '/../share_passwords.php';
 require_once __DIR__ . '/../version_helper.php';
 
 $currentLang = getUserLanguage();
@@ -396,10 +397,15 @@ try {
         ];
     }
 
+    // The owner can waive the inherited folder password for this one note
+    // (the padlock on the Shares page). Only the password is waived: a folder
+    // share restricted to specific users still asks the visitor to log in.
+    $folderPasswordExempt = poznoteNoteIsFolderPasswordExempt($con, (int)$note_id);
+
     // Only enforce folder password when user has NOT been authenticated via allowed_users.
     // When allowed_users passes (user is owner or explicitly authorized), the folder's
     // password should not create an additional barrier on a directly-shared note.
-    if (!$passedUserRestriction && !empty($protectedFolderContext['password']) && !empty($protectedFolderContext['token'])) {
+    if (!$passedUserRestriction && !$folderPasswordExempt && !empty($protectedFolderContext['password']) && !empty($protectedFolderContext['token'])) {
         $folderAuth = [
             'hash' => $protectedFolderContext['password'],
             'sessionKey' => 'public_folder_auth_' . $protectedFolderContext['token']

@@ -13,7 +13,7 @@
 	data-txt-revoke-modal-text="<?php echo t_h('public.revoke_modal.text', [], 'You can permanently delete this share, or keep it and make it inaccessible until you enable it again.'); ?>"
 	data-txt-revoke-modal-text-disabled="<?php echo t_h('public.revoke_modal.text_disabled', [], 'This share is currently inaccessible. You can make it accessible again, or permanently delete it.'); ?>"
 	data-txt-ok="<?php echo t_h('common.ok', [], 'OK'); ?>"
-	data-txt-revoke-delete="<?php echo t_h('public.revoke_modal.delete', [], 'Delete permanently'); ?>"
+	data-txt-revoke-delete="<?php echo t_h('public.revoke_modal.delete', [], 'Revoke'); ?>"
 	data-txt-revoke-disable="<?php echo t_h('public.revoke_modal.disable', [], 'Make inaccessible'); ?>"
 	data-txt-revoke-enable="<?php echo t_h('public.revoke_modal.enable', [], 'Make accessible again'); ?>"
 	data-txt-revoke="<?php echo t_h('public.actions.revoke', [], 'Revoke'); ?>"

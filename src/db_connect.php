@@ -161,7 +161,7 @@ try {
     // migrations, indexes, default settings, welcome note, legacy repair)
     // is skipped when the database is already at the current version, leaving
     // a single SELECT on the settings table per request.
-    $CURRENT_SCHEMA_VERSION = 52; // 52: folders.title_color (#1729); 51: the speed dial's rail entry shown again; 50: entries.speed_dial_order
+    $CURRENT_SCHEMA_VERSION = 53; // 53: shared_notes.password_exempt (per-note exemption from an inherited folder share password); 52: folders.title_color (#1729); 51: the speed dial's rail entry shown again; 50: entries.speed_dial_order
     $currentVersion = 0;
 
     // Whether this database is being created right now, as opposed to an
@@ -317,6 +317,7 @@ try {
             access_mode TEXT DEFAULT "full",
             password_encrypted TEXT,
             disabled INTEGER DEFAULT 0,
+            password_exempt INTEGER DEFAULT 0,
             FOREIGN KEY(note_id) REFERENCES entries(id) ON DELETE CASCADE
         )');
 
@@ -468,6 +469,11 @@ try {
             }
             if (!in_array('disabled', $existingColumns)) {
                 $con->exec("ALTER TABLE shared_notes ADD COLUMN disabled INTEGER DEFAULT 0");
+            }
+            // A note reached through a shared folder can be exempted from the
+            // password of that folder share, one note at a time.
+            if (!in_array('password_exempt', $existingColumns)) {
+                $con->exec("ALTER TABLE shared_notes ADD COLUMN password_exempt INTEGER DEFAULT 0");
             }
 
             // Non-tasklist shares only support 'read_only' and 'edit'. Legacy rows

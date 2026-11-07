@@ -1,6 +1,7 @@
 /**
- * Per-row actions menu of the backup archive tables (Local Backups admin
- * page, Local Backups section of the Backup / Export page).
+ * Small menu hung under a button: the per-row actions menu of the backup
+ * archive tables (Local Backups admin page, Local Backups section of the
+ * Backup / Export page), and the dropdowns built by js/select-menu.js.
  *
  *   var toggle = window.poznoteRowActionsMenu.createToggle(label, function () {
  *       return [
@@ -8,7 +9,13 @@
  *           { icon: 'lucide-trash-2', label: 'Delete', danger: true,
  *             disabled: true, title: 'Why it is greyed out', onSelect: fn },
  *       ];
- *   });
+ *   }, { icon: 'lucide-arrow-up-down', align: 'left', menuClass: '...' });
+ *
+ * An item without an icon is text only, and `selected: true` marks the item
+ * a list of choices is currently on (role menuitemradio). The toggle options
+ * are all optional: `icon` (the "..." of the row menus by default),
+ * `className` added to the button, `menuClass` added to the menu, and
+ * `align` ('right' under the button by default, 'left' for a narrow button).
  *
  * The items are built when the menu opens, so a disabled state always
  * reflects the page's current state. One menu element on <body>, with
@@ -23,13 +30,16 @@
 
     var menuEl = null;
     var owner = null;
+    var ownerOptions = {};
 
     function close(restoreFocus) {
         if (!menuEl || menuEl.hidden) return;
         var previous = owner;
         menuEl.hidden = true;
         menuEl.innerHTML = '';
+        menuEl.className = 'row-actions-menu';
         owner = null;
+        ownerOptions = {};
         if (previous) {
             previous.setAttribute('aria-expanded', 'false');
             if (restoreFocus) previous.focus();
@@ -77,15 +87,21 @@
 
     function buildItem(spec) {
         var item = document.createElement(spec.href && !spec.disabled ? 'a' : 'button');
-        item.className = 'row-actions-item' + (spec.danger ? ' is-danger' : '') + (spec.disabled ? ' is-disabled' : '');
-        item.setAttribute('role', 'menuitem');
+        item.className = 'row-actions-item' + (spec.danger ? ' is-danger' : '') + (spec.disabled ? ' is-disabled' : '')
+            + (spec.selected ? ' is-selected' : '');
+        // A list of choices (js/select-menu.js) is a radio group, so the
+        // one it is on is announced as such
+        item.setAttribute('role', spec.selected === undefined ? 'menuitem' : 'menuitemradio');
+        if (spec.selected !== undefined) item.setAttribute('aria-checked', spec.selected ? 'true' : 'false');
         if (item.tagName === 'BUTTON') item.type = 'button';
         if (item.tagName === 'A') item.href = spec.href;
         if (spec.title) item.title = spec.title;
         if (spec.disabled) item.setAttribute('aria-disabled', 'true');
-        var icon = document.createElement('i');
-        icon.className = 'lucide ' + spec.icon;
-        item.appendChild(icon);
+        if (spec.icon) {
+            var icon = document.createElement('i');
+            icon.className = 'lucide ' + spec.icon;
+            item.appendChild(icon);
+        }
         item.appendChild(document.createTextNode(spec.label));
         item.addEventListener('click', function (e) {
             if (spec.disabled) {
@@ -98,8 +114,9 @@
         return item;
     }
 
-    // Right-aligned under the button, flipped above it when the viewport has
-    // no room below, kept inside the viewport
+    // Under the button, aligned on its right edge (its left one with
+    // align: 'left', for a button narrower than the menu), flipped above it
+    // when the viewport has no room below, kept inside the viewport
     function place() {
         if (!menuEl || menuEl.hidden || !owner) return;
         var rect = owner.getBoundingClientRect();
@@ -110,39 +127,45 @@
         var mw = menuEl.offsetWidth, mh = menuEl.offsetHeight;
         var top = rect.bottom + 6;
         if (top + mh > window.innerHeight - 8 && rect.top - 6 - mh >= 8) top = rect.top - 6 - mh;
-        var left = Math.min(Math.max(8, rect.right - mw), window.innerWidth - mw - 8);
+        var anchored = ownerOptions.align === 'left' ? rect.left : rect.right - mw;
+        var left = Math.min(Math.max(8, anchored), window.innerWidth - mw - 8);
         menuEl.style.top = Math.round(top) + 'px';
         menuEl.style.left = Math.round(left) + 'px';
     }
 
-    function open(toggle, specs) {
+    function open(toggle, specs, options) {
         close();
         var menu = ensureMenu();
+        ownerOptions = options || {};
+        if (ownerOptions.menuClass) menu.className = 'row-actions-menu ' + ownerOptions.menuClass;
         specs.forEach(function (spec) { menu.appendChild(buildItem(spec)); });
         owner = toggle;
         toggle.setAttribute('aria-expanded', 'true');
         menu.hidden = false;
         place();
 
-        var first = menu.querySelector('.row-actions-item');
+        var first = menu.querySelector('.row-actions-item.is-selected') || menu.querySelector('.row-actions-item');
         if (first) first.focus();
     }
 
-    function createToggle(label, buildItems) {
+    function createToggle(label, buildItems, options) {
+        options = options || {};
         var toggle = document.createElement('button');
         toggle.type = 'button';
-        toggle.className = 'btn btn-secondary row-actions-toggle';
+        toggle.className = 'btn btn-secondary row-actions-toggle' + (options.className ? ' ' + options.className : '');
         toggle.setAttribute('aria-haspopup', 'menu');
         toggle.setAttribute('aria-expanded', 'false');
         toggle.setAttribute('aria-label', label);
         toggle.title = label;
-        toggle.innerHTML = '<i class="lucide lucide-more-horizontal"></i>';
+        var icon = document.createElement('i');
+        icon.className = 'lucide ' + (options.icon || 'lucide-more-horizontal');
+        toggle.appendChild(icon);
         toggle.addEventListener('click', function (e) {
             e.stopPropagation();
             if (owner === toggle) {
                 close();
             } else {
-                open(toggle, buildItems());
+                open(toggle, buildItems(), options);
             }
         });
         return toggle;

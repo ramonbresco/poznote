@@ -6,6 +6,7 @@
  */
 
 require_once __DIR__ . '/../../../users/db_master.php';
+require_once __DIR__ . '/../../../share_passwords.php';
 
 class PublicController {
     private PDO $con;
@@ -518,7 +519,10 @@ class PublicController {
             if (!$this->passesUserRestriction($allowedUsersRaw)) {
                 return null;
             }
-        } elseif (!empty($sharedFolder['password'])) {
+        } elseif (!empty($sharedFolder['password']) && !poznoteNoteIsFolderPasswordExempt($this->con, $noteId)) {
+            // The owner can waive the folder share's password for this one
+            // note (the padlock on the Shares page); the note still has to
+            // live in the shared folder, which the check below enforces.
             $sessionKey = 'public_folder_auth_' . $folderToken;
             if (empty($_SESSION[$sessionKey])) {
                 $this->sendError(401, 'Authentication required');

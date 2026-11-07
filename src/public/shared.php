@@ -122,9 +122,29 @@ usort($shared_folders, function($a, $b) {
       data-txt-revoke-modal-text-via-folder="<?php echo t_h('public.revoke_modal.text_via_folder', [], 'This note is shared through a folder. You can make just this note inaccessible; the folder share and its other notes are not affected.'); ?>"
       data-txt-revoke-modal-text-via-folder-disabled="<?php echo t_h('public.revoke_modal.text_via_folder_disabled', [], 'This note is currently inaccessible. You can make it accessible again through its folder share.'); ?>"
       data-txt-revoke-modal-text-via-folder-parent-disabled="<?php echo t_h('public.revoke_modal.text_via_folder_parent_disabled', [], 'This note is inaccessible because its folder share has been made inaccessible. Make the folder share accessible again to restore access.'); ?>"
+      data-txt-password-modal-title="<?php echo t_h('public.password_modal.title', [], 'Password'); ?>"
+      data-txt-password-modal-text="<?php echo t_h('public.password_modal.text', [], 'This note is protected by the password of the shared folder it is in. You can make it open without a password: only this note is affected, the folder share and its other notes stay protected.'); ?>"
+      data-txt-password-modal-text-exempt="<?php echo t_h('public.password_modal.text_exempt', [], 'This note opens without a password, although the shared folder it is in is protected by one. You can protect it again with that password.'); ?>"
+      data-txt-password-remove="<?php echo t_h('public.password_modal.remove', [], 'Remove the password for this note'); ?>"
+      data-txt-password-restore="<?php echo t_h('public.password_modal.restore', [], 'Ask for the password again'); ?>"
+      data-txt-password-restore-folder="<?php echo t_h('public.password_modal.restore_folder', [], 'Ask for the folder’s password again'); ?>"
+      data-txt-password-inherited-help="<?php echo t_h('public.password_inherited_help', [], 'Password of the shared folder. Click to make this note open without a password.'); ?>"
+      data-txt-password-exempt-help="<?php echo t_h('public.password_exempt_help', [], 'This note opens without a password, although its shared folder is protected by one. Click to protect it again.'); ?>"
+      data-txt-password-own-help="<?php echo t_h('public.password_own_help', [], 'Password of this share. Click to remove it.'); ?>"
+      data-txt-password-own-and-parent-help="<?php echo t_h('public.password_own_and_parent_help', [], 'Two passwords: this share link’s own, and a parent folder share’s. Click to remove either, or both.'); ?>"
+      data-txt-password-own-folder-waived-help="<?php echo t_h('public.password_own_folder_waived_help', [], 'Password of this share. The shared folder’s password is waived for this note.'); ?>"
+      data-txt-password-modal-text-own-note-waived="<?php echo t_h('public.password_modal.text_own_note_waived', [], 'The share link of this note is protected by a password of its own. The shared folder it is in has a password too, which this note is exempted from.'); ?>"
+      data-txt-password-remove-own-link="<?php echo t_h('public.password_modal.remove_own_link', [], 'Remove this link’s password'); ?>"
+      data-txt-password-remove-both="<?php echo t_h('public.password_modal.remove_both', [], 'Remove both passwords'); ?>"
+      data-txt-password-remove-folder-for-note="<?php echo t_h('public.password_modal.remove_folder_for_note', [], 'Remove the folder’s password for this note'); ?>"
+      data-txt-password-parent-folder-help="<?php echo t_h('public.password_parent_folder_help', [], 'Password of the parent folder share.'); ?>"
+      data-txt-password-remove-own="<?php echo t_h('public.password_modal.remove_own', [], 'Remove the password'); ?>"
+      data-txt-password-modal-text-own-note="<?php echo t_h('public.password_modal.text_own_note', [], 'The share link of this note is protected by a password of its own. You can remove it: the link then opens without asking for anything.'); ?>"
+      data-txt-password-modal-text-own-note-folder="<?php echo t_h('public.password_modal.text_own_note_folder', [], 'This note asks for two passwords: the one of its own share link, and the one of the shared folder it is in. You can remove either one, or both; the folder’s password stays in place for its other notes.'); ?>"
+      data-txt-password-modal-text-own-folder="<?php echo t_h('public.password_modal.text_own_folder', [], 'This folder share is protected by a password. You can remove it: the link, and the notes it holds, then open without asking for anything.'); ?>"
       data-txt-share-disabled-badge="<?php echo t_h('public.disabled_badge', [], 'Inaccessible'); ?>"
       data-txt-share-disabled-help="<?php echo t_h('public.disabled_help', [], 'This share is inaccessible: the link no longer works until you make it accessible again.'); ?>"
-	data-txt-note-shared-through-folder="<?php echo t_h('public.note_shared_through_folder', [], 'Note shared through folder'); ?>"
+	data-txt-note-shared-through-folder="<?php echo t_h('public.note_shared_through_folder', [], 'Note shared through a parent folder'); ?>"
 	data-txt-folder-shared-through-parent="<?php echo t_h('public.folder_shared_through_parent', [], 'Folder shared through parent folder'); ?>"
       data-txt-no-filter-results="<?php echo t_h('public.no_filter_results', [], 'No notes match your search.'); ?>"
 	data-txt-table-name="<?php echo t_h('public.table.name', [], 'Name'); ?>"
@@ -173,8 +193,8 @@ usort($shared_folders, function($a, $b) {
 						<i class="lucide lucide-x"></i>
 					</button>
 				</div>
-				<?php // Right of the magnifier ?>
-				<select id="sharedSortSelect" class="shared-sort-select" aria-label="<?php echo t_h('public.sort_label', [], 'Sort shares'); ?>">
+				<?php // Right of the magnifier: an icon button opening the sort choices (js/select-menu.js), the select itself out of sight ?>
+				<select id="sharedSortSelect" aria-label="<?php echo t_h('public.sort_label', [], 'Sort shares'); ?>">
 					<option value="name"><?php echo t_h('public.sort_name', [], 'Sort by name'); ?></option>
 					<option value="updated"><?php echo t_h('public.sort_updated', [], 'Sort by last edit'); ?></option>
 					<option value="shared"><?php echo t_h('public.sort_shared', [], 'Sort by share date'); ?></option>
@@ -205,6 +225,9 @@ usort($shared_folders, function($a, $b) {
 	<script src="<?php echo poznoteAsset('js/icon-sidebar-toggle.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/pwa-helpers.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/share-settings-modal.js'); ?>"></script>
+	<?php // The sort: an icon button and its list of choices ?>
+	<script src="<?php echo poznoteAsset('js/row-actions-menu.js'); ?>"></script>
+	<script src="<?php echo poznoteAsset('js/select-menu.js'); ?>"></script>
 	<script src="js/shared-page.js?v=<?php echo @filemtime('js/shared-page.js') ?: time(); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/search-toggle.js'); ?>"></script>
 </body>
