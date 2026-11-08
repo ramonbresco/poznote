@@ -1087,7 +1087,8 @@
     "priority_high": "Priorité haute",
     "priority_medium": "Priorité moyenne",
     "priority_low": "Priorité basse",
-    "priority_none": "Aucune priorité"
+    "priority_none": "Aucune priorité",
+    "delete_task": "Supprimer la tâche"
   },
   "tags": {
     "add_single": "Ajouter un tag...",
@@ -1512,7 +1513,7 @@
       "note_scroll_arrows": "Flèches pour remonter et descendre dans la note",
       "tasklist_add_field": "Champ d'ajout de tâche",
       "tasklist_frame": "Cadre autour de chaque tâche",
-      "tasklist_delete": "Supprimer une tâche terminée",
+      "tasklist_delete": "Supprimer une tâche",
       "tasklist_menu": "Menu des options de tâche (mobile)",
       "tasklist_frame_color": "Couleur de priorité du cadre des tâches"
     },

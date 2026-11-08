@@ -1087,7 +1087,8 @@
     "priority_high": "Hohe Priorität",
     "priority_medium": "Mittlere Priorität",
     "priority_low": "Niedrige Priorität",
-    "priority_none": "Keine Priorität"
+    "priority_none": "Keine Priorität",
+    "delete_task": "Aufgabe löschen"
   },
   "tags": {
     "add_single": "Tag hinzufügen...",
@@ -1512,7 +1513,7 @@
       "note_scroll_arrows": "Pfeile zum Anfang und Ende der Notiz",
       "tasklist_add_field": "Feld zum Hinzufügen einer Aufgabe",
       "tasklist_frame": "Rahmen um jede Aufgabe",
-      "tasklist_delete": "Erledigte Aufgabe löschen",
+      "tasklist_delete": "Aufgabe löschen",
       "tasklist_menu": "Menü der Aufgabenoptionen (Mobil)",
       "tasklist_frame_color": "Prioritätsfarbe des Aufgabenrahmens"
     },

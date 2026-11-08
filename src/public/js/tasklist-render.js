@@ -100,6 +100,7 @@ function renderTasks(tasks, noteId) {
         const menuTitle = t('tasklist.task_options', null, 'Task options');
         const dragTitle = t('tasklist.drag_to_reorder', null, 'Drag to reorder');
         const subtaskTitle = t('tasklist.add_subtask', null, 'Add a subtask');
+        const deleteTitle = t('tasklist.delete_task', null, 'Delete task');
 
         const dueAt = normalizeTaskDueAt(task.dueAt);
         const dueBellHtml = task.dueReminder ? '<i class="lucide lucide-bell"></i>' : '';
@@ -119,7 +120,7 @@ function renderTasks(tasks, noteId) {
         if (task.completed) {
             // Completed tasks: show delete and drag buttons
             buttonsHtml = `
-            <button class="task-delete-btn" onclick="deleteTask(${task.id}, ${task.noteId || 'null'})">
+            <button class="task-delete-btn" title="${deleteTitle}" onclick="deleteTask(${task.id}, ${task.noteId || 'null'})">
                 <i class="lucide lucide-trash-2"></i>
             </button>
             <button class="task-move-btn" title="${moveTitle}" onclick="openMoveTaskModal(${task.id}, ${task.noteId || 'null'})">
@@ -141,6 +142,9 @@ function renderTasks(tasks, noteId) {
             </button>
             <button class="task-move-btn" title="${moveTitle}" onclick="openMoveTaskModal(${task.id}, ${task.noteId || 'null'})">
                 <i class="lucide-arrow-right"></i>
+            </button>
+            <button class="task-delete-btn" title="${deleteTitle}" onclick="deleteTask(${task.id}, ${task.noteId || 'null'})">
+                <i class="lucide lucide-trash-2"></i>
             </button>
             <button class="task-menu-btn" title="${menuTitle}" onclick="openTaskActionsMenu(${task.id}, ${task.noteId || 'null'}, event)">
                 <i class="lucide lucide-more-vertical"></i>

@@ -1085,7 +1085,8 @@
     "priority_high": "高优先级",
     "priority_medium": "中优先级",
     "priority_low": "低优先级",
-    "priority_none": "无优先级"
+    "priority_none": "无优先级",
+    "delete_task": "删除任务"
   },
   "tags": {
     "add_single": "添加标签...",
@@ -1510,7 +1511,7 @@
       "note_scroll_arrows": "跳到笔记顶部和底部的箭头",
       "tasklist_add_field": "添加任务的输入框",
       "tasklist_frame": "每个任务的边框",
-      "tasklist_delete": "删除已完成的任务",
+      "tasklist_delete": "删除任务",
       "tasklist_menu": "任务选项菜单（移动端）",
       "tasklist_frame_color": "任务边框的优先级颜色"
     },

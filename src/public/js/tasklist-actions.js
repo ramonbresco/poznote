@@ -234,6 +234,15 @@ function openTaskActionsMenu(taskId, noteId, event) {
             run: function () {
                 openMoveTaskModal(taskId, noteId);
             }
+        },
+        {
+            action: 'delete',
+            icon: 'lucide lucide-trash-2',
+            label: t('tasklist.delete_task', null, 'Delete task'),
+            danger: true,
+            run: function () {
+                deleteTask(taskId, noteId);
+            }
         }
     ];
 
@@ -243,7 +252,7 @@ function openTaskActionsMenu(taskId, noteId, event) {
     items.forEach(item => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'task-actions-menu-item';
+        btn.className = 'task-actions-menu-item' + (item.danger ? ' is-danger' : '');
         // Element visibility hides an entry by it (tasklist:* keys)
         if (item.action) btn.setAttribute('data-action', item.action);
         const icon = document.createElement('i');

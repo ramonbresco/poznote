@@ -414,7 +414,7 @@
         'due-date': ['.task-item .task-due-btn', '.task-actions-menu-item[data-action="due-date"]', '.tasklist-embed-action-due'],
         'priority': ['.task-item .task-priority-btn', '.task-actions-menu-item[data-action="priority"]', '.tasklist-embed-action-priority'],
         'move': ['.task-item .task-move-btn', '.task-actions-menu-item[data-action="move"]'],
-        'delete': ['.task-item .task-delete-btn', '.tasklist-embed-action-delete'],
+        'delete': ['.task-item .task-delete-btn', '.task-actions-menu-item[data-action="delete"]', '.tasklist-embed-action-delete'],
         'drag-handle': ['.task-item .task-drag-handle'],
         'menu': ['.task-item .task-menu-btn']
     };

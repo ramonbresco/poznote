@@ -625,7 +625,8 @@
     "priority_high": "높은 우선순위",
     "priority_medium": "보통 우선순위",
     "priority_low": "낮은 우선순위",
-    "priority_none": "우선순위 없음"
+    "priority_none": "우선순위 없음",
+    "delete_task": "할 일 삭제"
   },
   "tags": {
     "add_single": "태그 추가...",
@@ -996,7 +997,7 @@
       "note_scroll_arrows": "노트 맨 위·맨 아래로 이동 화살표",
       "tasklist_add_field": "할 일 추가 입력란",
       "tasklist_frame": "각 할 일의 테두리",
-      "tasklist_delete": "완료한 할 일 삭제",
+      "tasklist_delete": "할 일 삭제",
       "tasklist_menu": "할 일 옵션 메뉴(모바일)",
       "tasklist_frame_color": "할 일 테두리의 우선순위 색상"
     },

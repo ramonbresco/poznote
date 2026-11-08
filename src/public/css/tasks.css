@@ -664,11 +664,39 @@
     flex-shrink: 0;
 }
 
+/* Delete: the danger colours of the shared row-actions menu */
+.task-actions-menu-item.is-danger {
+    color: var(--pz-danger-hover);
+}
+
+.task-actions-menu-item.is-danger i,
+.task-actions-menu-item.is-danger i[class*="lucide-"] {
+    color: var(--pz-danger-hover);
+    background-color: var(--pz-danger-hover);
+}
+
+.task-actions-menu-item.is-danger:hover {
+    background: color-mix(in srgb, var(--pz-danger) 8%, transparent);
+    color: var(--pz-danger-text-hover);
+}
+
+html[data-theme='dark'] .task-actions-menu-item.is-danger,
+html[data-theme='dark'] .task-actions-menu-item.is-danger i,
+html[data-theme='dark'] .task-actions-menu-item.is-danger i[class*="lucide-"] {
+    color: var(--pz-danger-text);
+}
+
+html[data-theme='dark'] .task-actions-menu-item.is-danger i,
+html[data-theme='dark'] .task-actions-menu-item.is-danger i[class*="lucide-"] {
+    background-color: var(--pz-danger-text);
+}
+
 @media (max-width: 768px) {
     /* Incomplete tasks: collapse the individual action buttons into the menu */
     .task-item:not(.completed) .task-row-actions .task-due-btn,
     .task-item:not(.completed) .task-row-actions .task-priority-btn,
     .task-item:not(.completed) .task-row-actions .task-move-btn,
+    .task-item:not(.completed) .task-row-actions .task-delete-btn,
     .task-item:not(.completed) .task-row-actions .task-subtask-btn {
         display: none;
     }

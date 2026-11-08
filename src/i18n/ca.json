@@ -625,7 +625,8 @@
     "priority_high": "Prioritat alta",
     "priority_medium": "Prioritat mitjana",
     "priority_low": "Prioritat baixa",
-    "priority_none": "Sense prioritat"
+    "priority_none": "Sense prioritat",
+    "delete_task": "Elimina la tasca"
   },
   "tags": {
     "add_single": "Afegiu una etiqueta...",
@@ -996,7 +997,7 @@
       "note_scroll_arrows": "Fletxes per desplaçar-se a dalt i a baix",
       "tasklist_add_field": "Camp per afegir una tasca",
       "tasklist_frame": "Marc al voltant de cada tasca",
-      "tasklist_delete": "Suprimeix una tasca completada",
+      "tasklist_delete": "Suprimeix una tasca",
       "tasklist_menu": "Menú d'opcions de la tasca (mòbil)",
       "tasklist_frame_color": "Color de prioritat del marc de les tasques"
     },

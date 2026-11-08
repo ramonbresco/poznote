@@ -1087,7 +1087,8 @@
     "priority_high": "Prioridad alta",
     "priority_medium": "Prioridad media",
     "priority_low": "Prioridad baja",
-    "priority_none": "Sin prioridad"
+    "priority_none": "Sin prioridad",
+    "delete_task": "Eliminar la tarea"
   },
   "tags": {
     "add_single": "Agregar etiqueta...",
@@ -1512,7 +1513,7 @@
       "note_scroll_arrows": "Flechas para ir al principio y al final de la nota",
       "tasklist_add_field": "Campo para añadir una tarea",
       "tasklist_frame": "Marco alrededor de cada tarea",
-      "tasklist_delete": "Eliminar una tarea completada",
+      "tasklist_delete": "Eliminar una tarea",
       "tasklist_menu": "Menú de opciones de la tarea (móvil)",
       "tasklist_frame_color": "Color de prioridad del marco de las tareas"
     },

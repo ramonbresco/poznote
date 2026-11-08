@@ -625,7 +625,8 @@
     "priority_high": "High priority",
     "priority_medium": "Medium priority",
     "priority_low": "Low priority",
-    "priority_none": "No priority"
+    "priority_none": "No priority",
+    "delete_task": "Delete task"
   },
   "tags": {
     "add_single": "Add tag...",
@@ -996,7 +997,7 @@
       "note_scroll_arrows": "Scroll to top and bottom arrows",
       "tasklist_add_field": "Field to add a task",
       "tasklist_frame": "Frame around each task",
-      "tasklist_delete": "Delete a completed task",
+      "tasklist_delete": "Delete a task",
       "tasklist_menu": "Task options menu (mobile)",
       "tasklist_frame_color": "Priority colour of the task frame"
     },

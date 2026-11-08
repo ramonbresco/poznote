@@ -625,7 +625,8 @@
     "priority_high": "優先度: 高",
     "priority_medium": "優先度: 中",
     "priority_low": "優先度: 低",
-    "priority_none": "優先度なし"
+    "priority_none": "優先度なし",
+    "delete_task": "タスクを削除"
   },
   "tags": {
     "add_single": "タグを追加...",
@@ -996,7 +997,7 @@
       "note_scroll_arrows": "先頭・末尾へスクロールする矢印",
       "tasklist_add_field": "タスクを追加する入力欄",
       "tasklist_frame": "各タスクの枠",
-      "tasklist_delete": "完了したタスクの削除",
+      "tasklist_delete": "タスクの削除",
       "tasklist_menu": "タスクのオプションメニュー（モバイル）",
       "tasklist_frame_color": "タスクの枠の優先度の色"
     },
