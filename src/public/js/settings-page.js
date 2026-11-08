@@ -3028,7 +3028,7 @@
         setupToggleCard('attachment-previews-card', 'attachment-previews-status', 'attachment_previews_in_note', false, false);
         setupToggleCard('attachments-at-bottom-card', 'attachments-at-bottom-status', 'attachments_at_bottom', false, false);
         setupToggleCard('backlinks-at-bottom-card', 'backlinks-at-bottom-status', 'backlinks_at_bottom', false, false);
-        setupToggleCard('note-virtual-space-card', 'note-virtual-space-status', 'note_virtual_space', false, false);
+        setupToggleCard('note-virtual-space-card', 'note-virtual-space-status', 'note_virtual_space', false, true);
         setupToggleCard('default-image-border-card', 'default-image-border-status', 'default_image_border_no_padding', false, false);
         setupToggleCard('spellcheck-html-notes-card', 'spellcheck-html-notes-status', 'spellcheck_html_notes', false, false);
 

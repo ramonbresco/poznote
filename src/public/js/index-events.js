@@ -1201,10 +1201,39 @@
 
     /**
      * Helper to place cursor at the end of contentEditable
-     * @param {HTMLElement} el 
+     *
+     * The focus must not scroll (issue #1752): the caret lands at the end of
+     * the note, right above the click, but Chromium's own focus() brings the
+     * top of the element into view instead, which threw the reader back to
+     * the first line whenever the room the "Space below the note" setting
+     * leaves under a long note was clicked.
+     * @param {HTMLElement} el
      */
     function focusAtEnd(el) {
-        el.focus();
+        if (!el) return;
+
+        // A Markdown editor is CodeMirror: it owns its selection, and focusing
+        // its host div would place no caret at all (issue #1752)
+        var codeMirror = window.PoznoteMarkdownCodeMirror;
+        if (codeMirror && typeof codeMirror.isCodeMirrorEditor === 'function' && codeMirror.isCodeMirrorEditor(el)) {
+            var end = typeof codeMirror.getLength === 'function' ? codeMirror.getLength(el) : 0;
+            if (typeof codeMirror.setSelection === 'function') {
+                codeMirror.setSelection(el, end, end);
+            } else if (typeof codeMirror.focus === 'function') {
+                codeMirror.focus(el);
+            }
+            return;
+        }
+
+        // Nothing to focus in a note that takes no caret: a task list, a
+        // Markdown note showing its preview, a note held read-only
+        if (!el.isContentEditable) return;
+
+        try {
+            el.focus({ preventScroll: true });
+        } catch (e) {
+            el.focus();
+        }
         if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
             var range = document.createRange();
             var lastLine = getLastTextLine(el);

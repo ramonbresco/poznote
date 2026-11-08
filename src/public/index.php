@@ -287,7 +287,7 @@ $settings = [
     'attachment_previews_in_note' => '0',
     'attachments_at_bottom' => '0',
     'backlinks_at_bottom' => '0',
-    'note_virtual_space' => '0',
+    'note_virtual_space' => '1',
     'default_image_border_no_padding' => '0',
     'spellcheck_html_notes' => '0',
     'highlight_current_folder_tree' => '0',
@@ -536,7 +536,7 @@ if (!poznoteSettingEnabled($settings['markdown_editor_word_wrap'], true)) {
     $extra_body_classes .= ' markdown-editor-no-wrap';
 }
 // Empty room under the last line of a note (discussion 1564), css/notes/noteentry.css
-if (poznoteSettingEnabled($settings['note_virtual_space'], false)) {
+if (poznoteSettingEnabled($settings['note_virtual_space'], true)) {
     $extra_body_classes .= ' note-virtual-space';
 }
 // Mode markdown notes with content open in (js/markdown-view-modes.js reads
