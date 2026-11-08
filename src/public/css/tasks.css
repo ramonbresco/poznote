@@ -1,6 +1,12 @@
 .task-list-container {
     padding: 10px;
     font-family: inherit;
+    /* Lets a task row answer the width of the list itself (see the
+       @container rules at the end of this file). Safe here: every menu and
+       picker of a task row is appended to <body> and positioned fixed, so
+       the layout containment this brings cannot clip one. */
+    container-type: inline-size;
+    container-name: pz-tasklist;
 }
 
 .task-drag-handle {
@@ -739,6 +745,68 @@ html[data-theme='dark'] .task-actions-menu-item.is-danger i[class*="lucide-"] {
     /* Third row of the dated-task grid, under the checkbox and text */
     .task-item.has-due .task-subtasks {
         grid-column: 1 / -1;
+    }
+}
+
+/* A task row has to fit the width of the note column, not the width of the
+   window: with the notes list open, the note at 50% of a split view, or a
+   tasklist embedded in a narrow block, a dated task used to squeeze its text
+   into a sliver and push the due chip and the buttons off the row (reported
+   for tasks carrying a reminder, whose chip is the widest). The container
+   query below reads the list's own width, so the layout follows the column.
+   The @media (max-width: 768px) block above keeps the same rules for the
+   phone case, where it has always applied.
+
+   Two steps: under 600px the due chip takes a line of its own, which hands
+   the whole width back to the task text; under 460px the per-task buttons
+   also collapse into the three-dot menu, as on a phone. */
+@container pz-tasklist (max-width: 600px) {
+    .task-item.has-due {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas:
+            "chip chip actions"
+            "check text text";
+        row-gap: 6px;
+        align-items: center;
+    }
+
+    .task-item.has-due .task-due-chip {
+        grid-area: chip;
+        justify-self: start;
+        margin-left: 0;
+    }
+
+    .task-item.has-due .task-checkbox {
+        grid-area: check;
+        align-self: start;
+    }
+
+    .task-item.has-due .task-text {
+        grid-area: text;
+    }
+
+    .task-item.has-due .task-row-actions {
+        grid-area: actions;
+        justify-self: end;
+    }
+
+    .task-item.has-due .task-subtasks {
+        grid-column: 1 / -1;
+    }
+}
+
+@container pz-tasklist (max-width: 460px) {
+    .task-item:not(.completed) .task-row-actions .task-due-btn,
+    .task-item:not(.completed) .task-row-actions .task-priority-btn,
+    .task-item:not(.completed) .task-row-actions .task-move-btn,
+    .task-item:not(.completed) .task-row-actions .task-delete-btn,
+    .task-item:not(.completed) .task-row-actions .task-subtask-btn {
+        display: none;
+    }
+
+    .task-item:not(.completed) .task-menu-btn {
+        display: flex;
     }
 }
 
