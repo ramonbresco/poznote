@@ -87,6 +87,40 @@
     var visibleSince = document.visibilityState === 'visible' ? Date.now() : 0;
     var recheckOnWake = false;
 
+    // Transfers of our own that are under way and getting somewhere: an
+    // upload, a backup download. A big file on a thin uplink saturates the
+    // line for every other request of the same network, so a reachability
+    // check that fails while one is running says nothing about the server.
+    // Reported by a user whose phone and laptop both showed "offline" a few
+    // seconds into a video upload, and again while a backup downloaded.
+    var transfersInFlight = 0;
+    var lastTransferProgressAt = 0;
+    // How long a transfer may go quiet before it stops counting as alive
+    var TRANSFER_QUIET_MS = 20 * 1000;
+
+    function transferStarted() {
+        transfersInFlight += 1;
+        lastTransferProgressAt = Date.now();
+    }
+
+    function transferProgressed() {
+        lastTransferProgressAt = Date.now();
+    }
+
+    function transferEnded() {
+        transfersInFlight = Math.max(0, transfersInFlight - 1);
+        lastTransferProgressAt = Date.now();
+    }
+
+    // True while a transfer of ours is running, or has only just finished:
+    // the line it was using needs a moment to come back.
+    function transferHoldsTheLine() {
+        if (transfersInFlight > 0) {
+            return (Date.now() - lastTransferProgressAt) < TRANSFER_QUIET_MS;
+        }
+        return lastTransferProgressAt !== 0 && (Date.now() - lastTransferProgressAt) < 3000;
+    }
+
     function tr(key, vars, fallback) {
         return typeof window.t === 'function' ? window.t(key, vars || {}, fallback) : fallback;
     }
@@ -504,7 +538,12 @@
             })
             .then(function (manifest) {
                 if (manifest.networkError) {
-                    onConnectionLost();
+                    // One request that did not come back is not a verdict:
+                    // a transfer of ours filling the line, a proxy dropping a
+                    // connection, a phone changing radio all look like this.
+                    // confirmConnectionLost() checks the server itself, waits
+                    // out our own transfers and asks twice before the banner.
+                    confirmConnectionLost();
                     return null;
                 }
                 onConnectionBack();
@@ -678,9 +717,15 @@
 
     // ---- Connection banner ---------------------------------------------------
 
+    // 2.5 s used to be the whole budget, which a busy line beats easily; a
+    // transfer of ours running alongside gets the longer one.
+    var PROBE_TIMEOUT_MS = 6000;
+    var PROBE_TIMEOUT_BUSY_MS = 15000;
+
     function probeServer() {
         var controller = window.AbortController ? new AbortController() : null;
-        var timer = controller ? setTimeout(function () { controller.abort(); }, 2500) : null;
+        var deadline = transferHoldsTheLine() ? PROBE_TIMEOUT_BUSY_MS : PROBE_TIMEOUT_MS;
+        var timer = controller ? setTimeout(function () { controller.abort(); }, deadline) : null;
         return fetch('api_health.php', { cache: 'no-store', credentials: 'same-origin', signal: controller ? controller.signal : undefined })
             .then(function (response) {
                 return response.status > 0 && response.status < 500;
@@ -912,6 +957,11 @@
         if (WRITES_ONLY || probeScheduled || probeTimer) {
             return;
         }
+        // A read of ours that stalled or failed while we are uploading or
+        // downloading says the line is full, not that the server is gone
+        if (transferHoldsTheLine()) {
+            return;
+        }
         // A tab in the background has no say: its network may be cut
         if (document.visibilityState === 'hidden') {
             recheckOnWake = true;
@@ -927,10 +977,21 @@
     // The server out of reach, told only on a visible page, and not while the
     // connection may still be waking up: a failed check in the first seconds
     // after the tab came back is checked again once they are over.
-    function confirmConnectionLost() {
+    function confirmConnectionLost(attempt) {
+        attempt = attempt || 0;
         if (document.visibilityState === 'hidden') {
             recheckOnWake = true;
             return Promise.resolve();
+        }
+        // Our own transfer is holding the line: ask again once it is over
+        // rather than call the server unreachable (TRANSFER_QUIET_MS caps
+        // the wait, so a stuck upload cannot hide a real outage for ever).
+        if (transferHoldsTheLine()) {
+            return new Promise(function (resolve) {
+                setTimeout(resolve, 3000);
+            }).then(function () {
+                return confirmConnectionLost(attempt);
+            });
         }
         return probeServer().then(function (reachable) {
             if (reachable) {
@@ -940,7 +1001,19 @@
             if (wait > 0) {
                 return new Promise(function (resolve) {
                     setTimeout(resolve, wait);
-                }).then(confirmConnectionLost);
+                }).then(function () {
+                    return confirmConnectionLost(attempt);
+                });
+            }
+            // One failed check is not a verdict: a request dropped by a
+            // proxy, a phone switching radio, a second of lost Wi-Fi all
+            // look the same. The banner needs two in a row.
+            if (attempt < 1) {
+                return new Promise(function (resolve) {
+                    setTimeout(resolve, 2500);
+                }).then(function () {
+                    return confirmConnectionLost(attempt + 1);
+                });
             }
             onConnectionLost();
             return null;
@@ -1140,10 +1213,18 @@
             var stalled = (method === 'GET' || method === 'HEAD')
                 ? setTimeout(checkAfterFailure, STALLED_READ_MS)
                 : null;
+            // Anything but a read is a transfer: it may carry a file, and a
+            // long one must not be read as the server being gone.
+            var counted = (method !== 'GET' && method !== 'HEAD');
+            if (counted) {
+                transferStarted();
+            }
             result.then(function () {
                 clearTimeout(stalled);
+                if (counted) { transferEnded(); }
             }, function () {
                 clearTimeout(stalled);
+                if (counted) { transferEnded(); }
             });
             result.then(function (response) {
                 if (method !== 'GET' && method !== 'HEAD' && response && response.ok) {
@@ -1168,6 +1249,21 @@
         };
         XMLHttpRequest.prototype.send = function () {
             var xhr = this;
+            // The attachments page uploads with XHR for the progress bar: the
+            // bytes moving are the proof the connection is alive, however
+            // long the whole thing takes.
+            transferStarted();
+            var ended = false;
+            var endOnce = function () {
+                if (ended) { return; }
+                ended = true;
+                transferEnded();
+            };
+            if (xhr.upload) {
+                xhr.upload.addEventListener('progress', transferProgressed);
+            }
+            xhr.addEventListener('progress', transferProgressed);
+            xhr.addEventListener('loadend', endOnce);
             xhr.addEventListener('error', checkAfterFailure);
             xhr.addEventListener('load', function () {
                 var write = xhr.__poznoteWrite;

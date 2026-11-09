@@ -333,6 +333,14 @@ class AttachmentStorage {
      * migrated files without a network round-trip.
      */
     public function stream(string $filename): bool {
+        // The session lock goes before the bytes do: PHP holds it for the
+        // whole request, so a video of a few hundred megabytes used to keep
+        // every other tab of the same browser waiting its turn. Nothing after
+        // this point writes to $_SESSION (see poznoteReleaseSessionLock()).
+        if (PHP_SAPI !== 'cli' && session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+
         // Unbuffered, whichever side the bytes come from: config.php's
         // injection buffer (or a page-level ob_start()) would copy the whole
         // file into memory first, and readfile() is one single write that no
