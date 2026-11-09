@@ -301,6 +301,7 @@ $cache_v = rawurlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 	<script src="<?php echo poznoteAsset('js/workspace-background.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/ui-customization.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/ui-customization-panel.js'); ?>"></script>
+	<script src="<?php echo poznoteAsset('js/hide-element-menu.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/page-width.js'); ?>"></script>
 </body>
 </html>

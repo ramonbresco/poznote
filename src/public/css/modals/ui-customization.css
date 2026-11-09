@@ -511,3 +511,13 @@ html[data-theme='dark'] .ui-custom-columns,
 .dark-mode .ui-custom-columns {
     color: var(--pz-text-muted);
 }
+
+/* The row the right-click Hide menu sent the reader to (js/hide-element-menu.js,
+   "Element visibility" entry): marked for two seconds among a hundred others,
+   then back to looking like its neighbours. The ring is drawn inside the row,
+   so the rows beside it do not shift. */
+.ui-custom-item-flash {
+    outline: 2px solid var(--pz-accent);
+    outline-offset: -2px;
+    background: rgba(var(--pz-accent-rgb), 0.12);
+}

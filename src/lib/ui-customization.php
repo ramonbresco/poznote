@@ -463,6 +463,53 @@ function poznoteTasklistUiSelectors(): array {
     ];
 }
 
+/**
+ * What each panel:* key of Element visibility hides, when one rule is enough.
+ * Mirrored by PANEL_UI_SELECTORS in js/ui-customization.js, which also matches
+ * a right-clicked element against it (js/hide-element-menu.js). The ids left
+ * out of it need more than one rule and are handled one by one in
+ * poznoteBuildUiCustomizationRules().
+ */
+function poznotePanelUiSelectors(): array {
+    return [
+        'mini-calendar' => '.mini-calendar-container',
+        'other-accounts' => '.other-accounts',
+        // The ⋮ button on folder rows. The menu itself is shared and stays in
+        // the DOM: with no toggle it can no longer be opened.
+        'folder-actions-toggle' => '.folder-actions-toggle',
+        // The ⋮ button on note rows. body.note-actions-hidden gives the
+        // titles back the strip reserved for it (css/tabs.css).
+        'note-actions-toggle' => '.note-actions-toggle',
+        // The line under the note title (css/notes/subline.css): the dates,
+        // then the counts js/note-stats.js fills in, one key each
+        'note-created-date' => '.note-sub-created',
+        'note-updated-date' => '.note-sub-updated',
+        'note-stats-characters' => '.note-sub-stat-characters',
+        'note-stats-words' => '.note-sub-stat-words',
+        'note-stats-lines' => '.note-sub-stat-lines',
+        'note-id' => '.note-sub-id',
+        'note-info-icon' => '.note-sub-info',
+        // Icon before the note title, in the sidebar list and in the note
+        // header. Both are rendered by renderEditableNoteIcon(), which always
+        // emits .note-icon.
+        'note-icons' => '.note-icon',
+        // The Favorites section at the top of the notes tree
+        // (notes_list.php), header and rows together.
+        'favorites-folder' => '.favorites-section',
+        // The (n) after a folder name, always shown unless hidden here (the
+        // legacy hide_folder_counts hover-reveal is gone).
+        'folder-note-count' => '.folder-note-count',
+        'tasklist-progress' => '.tasklist-progress',
+        // The parts of the speed dial repeated on each tile, and the
+        // workspace chip its page shares with others (issue #1714)
+        'speed-dial-workspace' => '.speed-dial-container .poznote-page-title-workspace',
+        'speed-dial-edit' => '.speed-dial-edit',
+        'speed-dial-labels' => '.speed-dial-label',
+        'speed-dial-icons' => '.speed-dial-icon',
+        'speed-dial-group-titles' => '.speed-dial-group-title',
+    ];
+}
+
 function poznoteBuildUiCustomizationRules(array $hiddenKeys) {
     $createMenuOptionSelectors = [
         'card:create-note-card' => '.create-note-option[data-type="html"]',
@@ -521,52 +568,9 @@ function poznoteBuildUiCustomizationRules(array $hiddenKeys) {
         } elseif ($type === 'folder') {
             $rules[] = '.folder-actions-menu-item[data-action="' . $id . '"] { display: none !important; }';
         } elseif ($type === 'panel') {
-            if ($id === 'mini-calendar') {
-                $rules[] = '.mini-calendar-container { display: none !important; }';
-            } elseif ($id === 'other-accounts') {
-                $rules[] = '.other-accounts { display: none !important; }';
-            } elseif ($id === 'folder-actions-toggle') {
-                // The ⋮ button on folder rows. The menu itself is shared and
-                // stays in the DOM: with no toggle it can no longer be opened.
-                $rules[] = '.folder-actions-toggle { display: none !important; }';
-            } elseif ($id === 'note-actions-toggle') {
-                // The ⋮ button on note rows. body.note-actions-hidden gives the
-                // titles back the strip reserved for it (css/tabs.css).
-                $rules[] = '.note-actions-toggle { display: none !important; }';
-            } elseif ($id === 'note-created-date') {
-                // Creation date, on the line under the note title
-                // (css/notes/subline.css)
-                $rules[] = '.note-sub-created { display: none !important; }';
-            } elseif ($id === 'note-updated-date') {
-                // Modification date, next to it
-                $rules[] = '.note-sub-updated { display: none !important; }';
-            } elseif ($id === 'note-stats-characters') {
-                // Characters, words and lines of the note, on the same line
-                // (js/note-stats.js), one key each
-                $rules[] = '.note-sub-stat-characters { display: none !important; }';
-            } elseif ($id === 'note-stats-words') {
-                $rules[] = '.note-sub-stat-words { display: none !important; }';
-            } elseif ($id === 'note-stats-lines') {
-                $rules[] = '.note-sub-stat-lines { display: none !important; }';
-            } elseif ($id === 'note-id') {
-                // The note id, last entry of that line
-                $rules[] = '.note-sub-id { display: none !important; }';
-            } elseif ($id === 'note-info-icon') {
-                // Information icon that closes that line
-                $rules[] = '.note-sub-info { display: none !important; }';
-            } elseif ($id === 'note-icons') {
-                // Icon before the note title, in the sidebar list and in the
-                // note header. Both are rendered by renderEditableNoteIcon(),
-                // which always emits .note-icon.
-                $rules[] = '.note-icon { display: none !important; }';
-            } elseif ($id === 'favorites-folder') {
-                // The Favorites section at the top of the notes tree
-                // (notes_list.php), header and rows together.
-                $rules[] = '.favorites-section { display: none !important; }';
-            } elseif ($id === 'folder-note-count') {
-                // The (n) after a folder name, always shown unless hidden here
-                // (the legacy hide_folder_counts hover-reveal is gone).
-                $rules[] = '.folder-note-count { display: none !important; }';
+            $panelSelectors = poznotePanelUiSelectors();
+            if (isset($panelSelectors[$id])) {
+                $rules[] = $panelSelectors[$id] . ' { display: none !important; }';
             } elseif ($id === 'outline-panel') {
                 $rules[] = '#outline-panel { display: none !important; }';
                 $rules[] = '#outlineResizeHandle { display: none !important; }';
@@ -588,20 +592,6 @@ function poznoteBuildUiCustomizationRules(array $hiddenKeys) {
                 // (css/ui-customization-panel.css): it drops back to the edge.
                 $rules[] = '.note-scroll-edge-controls { display: none !important; }';
                 $rules[] = '.pz-edge-stack { bottom: 10px !important; }';
-            } elseif ($id === 'tasklist-progress') {
-                $rules[] = '.tasklist-progress { display: none !important; }';
-            } elseif ($id === 'speed-dial-workspace') {
-                // The parts of the speed dial repeated on each tile, and the
-                // workspace chip its page shares with others (issue #1714)
-                $rules[] = '.speed-dial-container .poznote-page-title-workspace { display: none !important; }';
-            } elseif ($id === 'speed-dial-edit') {
-                $rules[] = '.speed-dial-edit { display: none !important; }';
-            } elseif ($id === 'speed-dial-labels') {
-                $rules[] = '.speed-dial-label { display: none !important; }';
-            } elseif ($id === 'speed-dial-icons') {
-                $rules[] = '.speed-dial-icon { display: none !important; }';
-            } elseif ($id === 'speed-dial-group-titles') {
-                $rules[] = '.speed-dial-group-title { display: none !important; }';
             } elseif ($id === 'speed-dial-group-rules') {
                 $rules[] = '.speed-dial-group-rule { visibility: hidden !important; }';
             } elseif ($id === 'speed-dial-frame') {

@@ -5440,7 +5440,9 @@
     "new_note": "노트 만들기:"
   },
   "icon_context_menu": {
-    "hide": "숨기기 버튼"
+    "hide": "숨기기 버튼",
+    "hide_element": "'{{name}}' 숨기기",
+    "hidden_notice": "'{{name}}'을(를) 숨겼습니다. 화면 요소 표시에서 다시 표시할 수 있습니다."
   },
   "account_note": {
     "banner": "{{account}} 계정의 노트, 읽기 전용",

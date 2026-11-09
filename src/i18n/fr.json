@@ -5709,7 +5709,9 @@
     "new_note": "Créer une note :"
   },
   "icon_context_menu": {
-    "hide": "Masquer le bouton"
+    "hide": "Masquer le bouton",
+    "hide_element": "Masquer « {{name}} »",
+    "hidden_notice": "« {{name}} » est masqué. Visibilité des éléments le réaffiche."
   },
   "account_note": {
     "banner": "Note du compte {{account}}, en lecture seule",

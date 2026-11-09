@@ -5701,7 +5701,9 @@
     "new_note": "新建笔记："
   },
   "icon_context_menu": {
-    "hide": "隐藏按钮"
+    "hide": "隐藏按钮",
+    "hide_element": "隐藏「{{name}}」",
+    "hidden_notice": "已隐藏「{{name}}」。可在元素可见性中重新显示。"
   },
   "account_note": {
     "banner": "来自账户 {{account}} 的笔记，只读",

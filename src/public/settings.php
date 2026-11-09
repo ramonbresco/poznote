@@ -2383,6 +2383,7 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
          js/panel-back.js lets the device Back button close it on a phone. -->
     <script src="<?php echo poznoteAsset('js/panel-back.js'); ?>"></script>
     <script src="<?php echo poznoteAsset('js/ui-customization-panel.js'); ?>"></script>
+    <script src="<?php echo poznoteAsset('js/hide-element-menu.js'); ?>"></script>
     <script src="js/change-password.js?v=<?php echo $cache_v; ?>&m=<?php echo @filemtime('js/change-password.js') ?: time(); ?>"></script>
     <script src="js/two-factor.js?v=<?php echo $cache_v; ?>&m=<?php echo @filemtime('js/two-factor.js') ?: time(); ?>"></script>
     <script src="js/app-passwords.js?v=<?php echo $cache_v; ?>&m=<?php echo @filemtime('js/app-passwords.js') ?: time(); ?>"></script>

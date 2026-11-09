@@ -5440,7 +5440,9 @@
     "new_note": "Create a note:"
   },
   "icon_context_menu": {
-    "hide": "Hide button"
+    "hide": "Hide button",
+    "hide_element": "Hide \"{{name}}\"",
+    "hidden_notice": "\"{{name}}\" is hidden. Element visibility brings it back."
   },
   "account_note": {
     "banner": "Note from the account {{account}}, read-only",

@@ -333,6 +333,30 @@
         menu.appendChild(item);
     }
 
+    /**
+     * The name the "Element visibility" list gives a key, read from the list
+     * rendered in the page (modals/ui_customization_sections.php): the label
+     * of the element, already translated. '' when the page holds no list.
+     */
+    function uiKeyLabel(key) {
+        if (!key) return '';
+        var box = document.querySelector('[data-ui-key="' + key + '"]');
+        var item = box && box.closest ? box.closest('.ui-custom-item') : null;
+        var span = item ? item.querySelector('span') : null;
+        return span ? (span.textContent || '').trim() : '';
+    }
+
+    // Says what has just gone, and where it comes back from: an element hidden
+    // from its right-click menu leaves nothing behind to right-click again.
+    function notifyHidden(key) {
+        var label = uiKeyLabel(key);
+        if (!label || typeof window.poznoteShowToast !== 'function') return;
+        // From the config rather than window.t: the dashboard only loads the
+        // JS i18n runtime together with the AI panel.
+        var text = config.menuHiddenNotice || '"{{name}}" is hidden. Element visibility brings it back.';
+        window.poznoteShowToast(text.split('{{name}}').join(label), { duration: 5000 });
+    }
+
     // Adds key to the user's own hidden set, read fresh so a change made in
     // another tab or in the settings page is not overwritten.
     function hideUiKey(key, element) {
@@ -362,6 +386,7 @@
             .then(function (response) { return response.json(); })
             .then(function (result) {
                 if (!result || !result.success) throw new Error('save failed');
+                notifyHidden(key);
                 var runtime = window.PoznoteUiCustomization;
                 if (runtime && typeof runtime.apply === 'function') {
                     runtime.apply(hidden);
@@ -462,7 +487,10 @@
     // openContextMenu(event, button, { items: [{ icon, label, run }], onColor(), hideKey, onCustomize() })
     window.PoznoteIconContextMenu = {
         open: openContextMenu,
-        close: function () { closeContextMenu(false); }
+        close: function () { closeContextMenu(false); },
+        // What the "Hide" entry does, for callers that write their own
+        // entries: the right-click Hide menu (js/hide-element-menu.js).
+        hideKey: hideUiKey
     };
 
     window.PoznoteIconSidebarColors = {

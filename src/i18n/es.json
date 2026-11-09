@@ -5605,7 +5605,9 @@
     "new_note": "Crear una nota:"
   },
   "icon_context_menu": {
-    "hide": "Ocultar el botón"
+    "hide": "Ocultar el botón",
+    "hide_element": "Ocultar «{{name}}»",
+    "hidden_notice": "«{{name}}» está oculto. Visibilidad de los elementos vuelve a mostrarlo."
   },
   "account_note": {
     "banner": "Nota de la cuenta {{account}}, solo lectura",

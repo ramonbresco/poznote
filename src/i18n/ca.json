@@ -5440,7 +5440,9 @@
     "new_note": "Crea una nota:"
   },
   "icon_context_menu": {
-    "hide": "Amaga el botó"
+    "hide": "Amaga el botó",
+    "hide_element": "Amaga «{{name}}»",
+    "hidden_notice": "«{{name}}» està amagat. Visibilitat dels elements el torna a mostrar."
   },
   "account_note": {
     "banner": "Nota del compte {{account}}, només lectura",

@@ -5604,7 +5604,9 @@
     "new_note": "Notiz erstellen:"
   },
   "icon_context_menu": {
-    "hide": "Schaltfläche ausblenden"
+    "hide": "Schaltfläche ausblenden",
+    "hide_element": "„{{name}}“ ausblenden",
+    "hidden_notice": "„{{name}}“ ist ausgeblendet. Sichtbarkeit von Elementen zeigt es wieder an."
   },
   "account_note": {
     "banner": "Notiz aus dem Konto {{account}}, schreibgeschützt",

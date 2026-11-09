@@ -130,7 +130,9 @@
             apply: function (userHidden) {
                 applyHiddenKeys(mergeEnforcedGlobalKeys(userHidden));
             },
-            normalizeKeys: sanitizeHiddenKeys
+            normalizeKeys: sanitizeHiddenKeys,
+            // Right-click Hide menu (js/hide-element-menu.js)
+            hideTargets: hideTargets
         };
 
         try {
@@ -419,6 +421,78 @@
         'menu': ['.task-item .task-menu-btn']
     };
 
+    // panel:* keys whose rule is a plain "hide that selector": read by the
+    // rule builder below and, with the two maps that follow, by the
+    // right-click Hide menu (js/hide-element-menu.js) to tell which element a
+    // click landed on. Mirrors poznotePanelUiSelectors() in
+    // lib/ui-customization.php. The ids left out of it need more than one
+    // rule, and are handled one by one in applyHiddenKeys().
+    var PANEL_UI_SELECTORS = {
+        'mini-calendar': '.mini-calendar-container',
+        'other-accounts': '.other-accounts',
+        // The ⋮ button on folder rows. The menu itself is shared and stays in
+        // the DOM: with no toggle it can no longer be opened.
+        'folder-actions-toggle': '.folder-actions-toggle',
+        // The ⋮ button on note rows. body.note-actions-hidden gives the titles
+        // back the strip reserved for it (css/tabs.css).
+        'note-actions-toggle': '.note-actions-toggle',
+        // The line under the note title (css/notes/subline.css), one key each
+        'note-created-date': '.note-sub-created',
+        'note-updated-date': '.note-sub-updated',
+        'note-stats-characters': '.note-sub-stat-characters',
+        'note-stats-words': '.note-sub-stat-words',
+        'note-stats-lines': '.note-sub-stat-lines',
+        'note-id': '.note-sub-id',
+        'note-info-icon': '.note-sub-info',
+        // Icon before the note title, in the sidebar list and in the note
+        // header: renderEditableNoteIcon() always emits .note-icon.
+        'note-icons': '.note-icon',
+        'favorites-folder': '.favorites-section',
+        'folder-note-count': '.folder-note-count',
+        'tasklist-progress': '.tasklist-progress',
+        'speed-dial-workspace': '.speed-dial-container .poznote-page-title-workspace',
+        'speed-dial-edit': '.speed-dial-edit',
+        'speed-dial-labels': '.speed-dial-label',
+        'speed-dial-icons': '.speed-dial-icon',
+        'speed-dial-group-titles': '.speed-dial-group-title'
+    };
+
+    // Keys whose rules are more than a plain hide, or are built elsewhere,
+    // but which still have an element a right-click can land on: the selector
+    // the Hide menu matches, never used to build a rule. panel:note-scrollbar
+    // is not here on purpose, a scrollbar being nothing to right-click.
+    var EXTRA_HIDE_TARGETS = {
+        'panel:outline-panel': '#outline-panel',
+        'panel:note-scroll-arrows': '.note-scroll-edge-controls',
+        'panel:speed-dial-frame': '.speed-dial-tile',
+        'panel:speed-dial-group-rules': '.speed-dial-group-rule',
+        'panel:preview-code-block-delete': '.markdown-preview .code-block-delete-btn',
+        'tasklist:frame': '.task-list-container .task-item',
+        'tasklist:frame-color': '.task-list-container .task-item:is(.priority-high, .priority-medium, .priority-low)',
+        // Blocks of the share dialog, hidden by rules of
+        // lib/ui-customization.php (they are built in JS)
+        'share:restrict-users': '.share-restrict-users-wrap',
+        'share:protocol-toggle': '.share-protocol-wrap'
+    };
+
+    // What the Hide menu matches a clicked element against: one entry per
+    // selector that can be hidden on its own. card:* keys are left out, their
+    // selector being '#' + the element's own id, which that menu reads off
+    // the element instead.
+    function hideTargets() {
+        var targets = [];
+        Object.keys(PANEL_UI_SELECTORS).forEach(function (id) {
+            targets.push({ key: 'panel:' + id, selector: PANEL_UI_SELECTORS[id] });
+        });
+        Object.keys(TASKLIST_UI_SELECTORS).forEach(function (id) {
+            targets.push({ key: 'tasklist:' + id, selector: TASKLIST_UI_SELECTORS[id].join(', ') });
+        });
+        Object.keys(EXTRA_HIDE_TARGETS).forEach(function (key) {
+            targets.push({ key: key, selector: EXTRA_HIDE_TARGETS[key] });
+        });
+        return targets;
+    }
+
     function applyHiddenKeys(hidden) {
         hidden = sanitizeHiddenKeys(hidden);
         publishHiddenKeys(hidden);
@@ -476,34 +550,8 @@
                 // share/favorite state variants.
                 rules.push('.note-actions-menu-item[data-action="' + id + '"] { display: none !important; }');
             } else if (type === 'panel') {
-                if (id === 'mini-calendar') {
-                    rules.push('.mini-calendar-container { display: none !important; }');
-                } else if (id === 'other-accounts') {
-                    rules.push('.other-accounts { display: none !important; }');
-                } else if (id === 'folder-actions-toggle') {
-                    rules.push('.folder-actions-toggle { display: none !important; }');
-                } else if (id === 'note-actions-toggle') {
-                    rules.push('.note-actions-toggle { display: none !important; }');
-                } else if (id === 'note-created-date') {
-                    rules.push('.note-sub-created { display: none !important; }');
-                } else if (id === 'note-updated-date') {
-                    rules.push('.note-sub-updated { display: none !important; }');
-                } else if (id === 'note-stats-characters') {
-                    rules.push('.note-sub-stat-characters { display: none !important; }');
-                } else if (id === 'note-stats-words') {
-                    rules.push('.note-sub-stat-words { display: none !important; }');
-                } else if (id === 'note-stats-lines') {
-                    rules.push('.note-sub-stat-lines { display: none !important; }');
-                } else if (id === 'note-id') {
-                    rules.push('.note-sub-id { display: none !important; }');
-                } else if (id === 'note-info-icon') {
-                    rules.push('.note-sub-info { display: none !important; }');
-                } else if (id === 'note-icons') {
-                    rules.push('.note-icon { display: none !important; }');
-                } else if (id === 'favorites-folder') {
-                    rules.push('.favorites-section { display: none !important; }');
-                } else if (id === 'folder-note-count') {
-                    rules.push('.folder-note-count { display: none !important; }');
+                if (Object.prototype.hasOwnProperty.call(PANEL_UI_SELECTORS, id)) {
+                    rules.push(PANEL_UI_SELECTORS[id] + ' { display: none !important; }');
                 } else if (id === 'outline-panel') {
                     rules.push('#outline-panel { display: none !important; }');
                     rules.push('#outlineResizeHandle { display: none !important; }');
@@ -521,18 +569,6 @@
                     // Issue #1663; see lib/ui-customization.php.
                     rules.push('.note-scroll-edge-controls { display: none !important; }');
                     rules.push('.pz-edge-stack { bottom: 10px !important; }');
-                } else if (id === 'tasklist-progress') {
-                    rules.push('.tasklist-progress { display: none !important; }');
-                } else if (id === 'speed-dial-workspace') {
-                    rules.push('.speed-dial-container .poznote-page-title-workspace { display: none !important; }');
-                } else if (id === 'speed-dial-edit') {
-                    rules.push('.speed-dial-edit { display: none !important; }');
-                } else if (id === 'speed-dial-labels') {
-                    rules.push('.speed-dial-label { display: none !important; }');
-                } else if (id === 'speed-dial-icons') {
-                    rules.push('.speed-dial-icon { display: none !important; }');
-                } else if (id === 'speed-dial-group-titles') {
-                    rules.push('.speed-dial-group-title { display: none !important; }');
                 } else if (id === 'speed-dial-group-rules') {
                     rules.push('.speed-dial-group-rule { visibility: hidden !important; }');
                 } else if (id === 'speed-dial-frame') {
