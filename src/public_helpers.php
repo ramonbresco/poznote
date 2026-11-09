@@ -352,11 +352,19 @@ function renderPublicStatusPage($currentLang, array $options = []) {
 
     $statusStylesheetHref = getVersionedPublicAppAssetHref('css/public_folder.css');
     $statusVariablesStylesheetHref = getVersionedPublicAppAssetHref('css/tokens.css');
+    // The card asks for Inter and nothing loaded it, so the page fell back to
+    // whatever generic sans-serif the browser had, next to shared pages that
+    // do have the font.
+    $statusFontsStylesheetHref = getVersionedPublicAppAssetHref('css/fonts.css');
     $themeInitHref = getVersionedPublicAppAssetHref('js/theme-init.js');
     $title = $options['title'] ?? t_h('common.error', [], 'Error', $currentLang);
     $message = $options['message'] ?? '';
     $hint = $options['hint'] ?? '';
     $actions = $options['actions'] ?? [];
+    // Both were passed by every caller and rendered by none: the status code
+    // as a small pill, and a glyph standing in for what went wrong.
+    $icon = (string)($options['icon'] ?? '');
+    $badge = (string)($options['badge'] ?? '');
     $forcedTheme = normalizePublicForcedTheme($options['theme'] ?? null);
     ?>
     <!doctype html>
@@ -369,11 +377,22 @@ function renderPublicStatusPage($currentLang, array $options = []) {
         <?php renderPublicForcedThemeScript($forcedTheme); ?>
         <script src="<?php echo htmlspecialchars($themeInitHref, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"></script>
         <link rel="stylesheet" href="<?php echo htmlspecialchars($statusVariablesStylesheetHref, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+        <link rel="stylesheet" href="<?php echo htmlspecialchars($statusFontsStylesheetHref, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
         <link rel="stylesheet" href="<?php echo htmlspecialchars($statusStylesheetHref, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
     </head>
     <body class="status-page-body">
         <div class="status-page-shell">
             <main class="status-card" role="main">
+                <?php if ($icon !== '' || $badge !== ''): ?>
+                    <div class="status-card-head">
+                        <?php if ($icon !== ''): ?>
+                            <span class="status-card-icon" aria-hidden="true"><?php echo escapePublicStatusText($icon); ?></span>
+                        <?php endif; ?>
+                        <?php if ($badge !== ''): ?>
+                            <span class="status-card-badge"><?php echo escapePublicStatusText($badge); ?></span>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
                 <h1><?php echo escapePublicStatusText($title); ?></h1>
                 <p class="status-card-message"><?php echo escapePublicStatusText($message); ?></p>
 
@@ -405,7 +424,9 @@ function renderLoginRequiredPage($currentLang) {
     renderPublicStatusPage($currentLang, [
         'status' => 403,
         'icon' => '🔒',
-        'badge' => t_h('public.login_required_title', [], 'Login Required', $currentLang),
+        // The status code, now that the badge is rendered: it used to repeat
+        // the title word for word
+        'badge' => '403',
         'title' => t_h('public.login_required_title', [], 'Login Required', $currentLang),
         'message' => t_h('public.login_required_message', [], 'This content is restricted to specific users. Please log in to access it.', $currentLang),
         'hint' => t_h('public.restricted_help', [], 'When restricted, only the listed users can access this share after logging in.', $currentLang),
@@ -427,7 +448,7 @@ function renderAccessDeniedPage($currentLang) {
     renderPublicStatusPage($currentLang, [
         'status' => 403,
         'icon' => '⛔',
-        'badge' => t_h('public.access_denied_title', [], 'Access Denied', $currentLang),
+        'badge' => '403',
         'title' => t_h('public.access_denied_title', [], 'Access Denied', $currentLang),
         'message' => t_h('public.access_denied_message', [], 'You do not have permission to view this content.', $currentLang),
         'hint' => t_h('public.access_denied_hint', [], 'Only the accounts chosen by the owner can open this share. Contact the owner or the administrator if you need access.', $currentLang),
