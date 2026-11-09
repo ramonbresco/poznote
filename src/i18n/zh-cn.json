@@ -543,7 +543,8 @@
       "markdown_view_cycle": "选择 Markdown 笔记的视图菜单在经典视图（预览，用铅笔编辑）之外提供的视图。未选中的视图不会列出。如果一个都没有选中，按钮将被隐藏。在手机上，菜单不会提供分屏模式。",
       "connected_apps": "通过 MCP 服务器将 ChatGPT、Claude 等聊天应用连接到你的笔记，并可随时断开连接。",
       "custom_logo": "为所有用户用您自己的标志替换 Poznote 标志：浏览器标签页、登录页面、图标栏以及已安装应用的图标。",
-      "two_factor_required": "所有使用密码登录的账户都必须使用双重身份验证。尚未设置的账户会在下次登录时完成设置，未使用双重身份验证打开的会话将结束。账户密码将无法再通过 API 使用：应用需改用应用密码。SSO 登录不受影响，其第二重验证由身份提供商负责。"
+      "two_factor_required": "所有使用密码登录的账户都必须使用双重身份验证。尚未设置的账户会在下次登录时完成设置，未使用双重身份验证打开的会话将结束。账户密码将无法再通过 API 使用：应用需改用应用密码。SSO 登录不受影响，其第二重验证由身份提供商负责。",
+      "tab_follows_note": "让浏览器标签页使用其中打开的笔记的标题和图标，而不是本实例的名称和图标。这样可以区分打开了不同笔记的多个标签页。"
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "在移动设备上，键盘上方的工具栏有一个 + 按钮，无论此设置为何，它都会打开同一个菜单。"
@@ -927,7 +928,8 @@
       "format_toolbar_mode": "格式工具栏",
       "workspace_activity_emails": "共享工作区邮件",
       "diary_template": "日记条目模板",
-      "markdown_view_cycle": "视图菜单"
+      "markdown_view_cycle": "视图菜单",
+      "tab_follows_note": "标签页跟随打开的笔记"
     },
     "badges": {
       "font_size_default": "默认 ({{size}}px)",

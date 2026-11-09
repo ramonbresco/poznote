@@ -544,7 +544,8 @@
       "markdown_view_cycle": "Escolha as visualizações que o menu de visualizações de uma nota markdown oferece além da visualização clássica (pré-visualização, com o lápis para editar). As visualizações não escolhidas não aparecem. Se nenhuma for escolhida, o botão fica oculto. Num telemóvel o menu nunca oferece o modo dividido.",
       "connected_apps": "Conecte aplicativos de chat como ChatGPT ou Claude às suas notas pelo servidor MCP e desconecte-os quando quiser.",
       "custom_logo": "Substituir o logótipo do Poznote pelo seu, para todos os utilizadores: no separador do navegador, na página de início de sessão, na barra de ícones e como ícone da aplicação instalada.",
-      "two_factor_required": "Toda conta que entra com senha precisa usar a autenticação em dois fatores. Uma conta sem ela a configura no próximo login, e as sessões abertas sem ela são encerradas. A senha da conta deixa de funcionar pela API: os aplicativos usam uma senha de aplicativo. Os logins por SSO não são afetados, o provedor de identidade cuida do segundo fator deles."
+      "two_factor_required": "Toda conta que entra com senha precisa usar a autenticação em dois fatores. Uma conta sem ela a configura no próximo login, e as sessões abertas sem ela são encerradas. A senha da conta deixa de funcionar pela API: os aplicativos usam uma senha de aplicativo. Os logins por SSO não são afetados, o provedor de identidade cuida do segundo fator deles.",
+      "tab_follows_note": "Dá ao separador do navegador o nome da nota nele aberta, com o ícone dessa nota, em vez do nome e do ícone desta instância. Assim distinguem-se vários separadores abertos em várias notas."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "No telemóvel, a barra de ferramentas acima do teclado tem um botão + que abre o mesmo menu, seja qual for esta definição."
@@ -928,7 +929,8 @@
       "format_toolbar_mode": "Barra de formatação",
       "workspace_activity_emails": "E-mails de espaços compartilhados",
       "diary_template": "Modelo de entrada do diário",
-      "markdown_view_cycle": "Menu de visualizações"
+      "markdown_view_cycle": "Menu de visualizações",
+      "tab_follows_note": "O separador segue a nota aberta"
     },
     "badges": {
       "font_size_default": "padrão ({{size}}px)",

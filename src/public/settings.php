@@ -108,6 +108,7 @@ $settingsPageConfig = [
 $settingsPageUserKeys = [
     'emoji_icons_enabled',
     'language',
+    'tab_follows_note',
     'show_note_created',
     'show_note_icons',
     'note_color_palette',
@@ -1039,6 +1040,17 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                  panel:note-icons, panel:folder-note-count). Task lists and
                  markdown notes always get their own default icon
                  (lib/icons.php defaultNoteIconForType). -->
+
+            <!-- The browser tab takes the title and the icon of the open note
+                 (js/tab-follows-note.js) -->
+            <div class="home-card" id="tab-follows-note-card">
+                <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.tab_follows_note', [], 'Name the browser tab after the note open in it, with that note\'s icon, instead of the name and icon of this instance. Several tabs open on several notes can then be told apart.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                <div class="home-card-icon"><i class="lucide lucide-app-window"></i></div>
+                <div class="home-card-content">
+                    <span class="home-card-title"><?php echo t_h('display.cards.tab_follows_note', [], 'Tab follows the open note'); ?></span>
+                    <span id="tab-follows-note-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                </div>
+            </div>
 
             <?php if ($isAdmin): ?>
             <!-- Login Display: a text field in the row, saved when it loses

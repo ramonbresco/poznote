@@ -544,7 +544,8 @@
       "markdown_view_cycle": "Elija las vistas que ofrece el menú de vistas de una nota markdown además de la vista clásica (vista previa, con el lápiz para editar). Las vistas no elegidas no aparecen. Si no se elige ninguna, el botón se oculta. En un teléfono el menú nunca ofrece el modo dividido.",
       "connected_apps": "Conecta aplicaciones de chat como ChatGPT o Claude a tus notas a través del servidor MCP y desconéctalas cuando quieras.",
       "custom_logo": "Sustituir el logo de Poznote por el suyo, para todos los usuarios: en la pestaña del navegador, en la página de inicio de sesión, en la barra de iconos y como icono de la aplicación instalada.",
-      "two_factor_required": "Toda cuenta que inicie sesión con contraseña debe usar la autenticación en dos pasos. Una cuenta que no la tenga la configura en su próximo inicio de sesión, y las sesiones abiertas sin ella se cierran. Su contraseña deja de funcionar a través de la API: las aplicaciones usan una contraseña de aplicación. Los inicios de sesión SSO no se ven afectados, el proveedor de identidad gestiona su segundo factor."
+      "two_factor_required": "Toda cuenta que inicie sesión con contraseña debe usar la autenticación en dos pasos. Una cuenta que no la tenga la configura en su próximo inicio de sesión, y las sesiones abiertas sin ella se cierran. Su contraseña deja de funcionar a través de la API: las aplicaciones usan una contraseña de aplicación. Los inicios de sesión SSO no se ven afectados, el proveedor de identidad gestiona su segundo factor.",
+      "tab_follows_note": "Nombra la pestaña del navegador según la nota abierta en ella, con el icono de esa nota, en lugar del nombre y el icono de esta instancia. Así se distinguen varias pestañas abiertas en varias notas."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "En el móvil, la barra de herramientas sobre el teclado tiene un botón + que abre el mismo menú, sea cual sea este ajuste."
@@ -928,7 +929,8 @@
       "format_toolbar_mode": "Barra de formato",
       "workspace_activity_emails": "Correos de espacios compartidos",
       "diary_template": "Plantilla de entrada del diario",
-      "markdown_view_cycle": "Menú de vistas"
+      "markdown_view_cycle": "Menú de vistas",
+      "tab_follows_note": "La pestaña sigue la nota abierta"
     },
     "badges": {
       "font_size_default": "predeterminado ({{size}}px)",

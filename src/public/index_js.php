@@ -190,6 +190,7 @@ function poznoteGetIndexJsGroups(): array {
         'js/speech-to-text.js',
         'js/offline-store.js',
         'js/offline-sync.js',
+        'js/tab-follows-note.js',
     ],
     ];
 }

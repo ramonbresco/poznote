@@ -544,7 +544,8 @@
       "markdown_view_cycle": "Wählen Sie die Ansichten, die das Ansichtsmenü einer Markdown-Notiz neben der klassischen Ansicht (Vorschau, mit dem Stift zum Bearbeiten) anbietet. Nicht gewählte Ansichten werden nicht aufgeführt. Ist keine gewählt, wird die Schaltfläche ausgeblendet. Auf einem Telefon bietet das Menü nie die geteilte Ansicht an.",
       "connected_apps": "Verbinden Sie Chat-Apps wie ChatGPT oder Claude über den MCP-Server mit Ihren Notizen und trennen Sie sie jederzeit.",
       "custom_logo": "Das Poznote-Logo für alle Benutzer durch ein eigenes ersetzen: im Browser-Tab, auf der Anmeldeseite, in der Symbolleiste und als Symbol der installierten App.",
-      "two_factor_required": "Jedes Konto, das sich mit einem Passwort anmeldet, muss die Zwei-Faktor-Authentifizierung nutzen. Ein Konto ohne sie richtet sie bei der nächsten Anmeldung ein, und ohne sie geöffnete Sitzungen werden beendet. Das Kontopasswort funktioniert nicht mehr über die API: Apps verwenden stattdessen ein App-Passwort. SSO-Anmeldungen sind nicht betroffen, der Identitätsanbieter verwaltet ihren zweiten Faktor."
+      "two_factor_required": "Jedes Konto, das sich mit einem Passwort anmeldet, muss die Zwei-Faktor-Authentifizierung nutzen. Ein Konto ohne sie richtet sie bei der nächsten Anmeldung ein, und ohne sie geöffnete Sitzungen werden beendet. Das Kontopasswort funktioniert nicht mehr über die API: Apps verwenden stattdessen ein App-Passwort. SSO-Anmeldungen sind nicht betroffen, der Identitätsanbieter verwaltet ihren zweiten Faktor.",
+      "tab_follows_note": "Benennt den Browser-Tab nach der darin geöffneten Notiz, mit deren Symbol, statt nach Name und Symbol dieser Instanz. So lassen sich mehrere Tabs mit mehreren Notizen unterscheiden."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "Auf Mobilgeräten hat die Leiste über der Tastatur eine +-Schaltfläche, die unabhängig von dieser Einstellung dasselbe Menü öffnet."
@@ -928,7 +929,8 @@
       "format_toolbar_mode": "Formatierungsleiste",
       "workspace_activity_emails": "E-Mails zu geteilten Arbeitsbereichen",
       "diary_template": "Vorlage für Tagebucheinträge",
-      "markdown_view_cycle": "Ansichtsmenü"
+      "markdown_view_cycle": "Ansichtsmenü",
+      "tab_follows_note": "Tab folgt der geöffneten Notiz"
     },
     "badges": {
       "font_size_default": "Standard ({{size}}px)",

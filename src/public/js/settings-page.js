@@ -101,6 +101,7 @@
     function getSettingsPreloadKeys() {
         var keys = [
             'language',
+            'tab_follows_note',
             'show_note_created',
             'show_note_icons',
             'note_color_palette',
@@ -3012,6 +3013,7 @@
         // show-created-card, note-icons-card and folder-counts-card were
         // replaced by checkboxes in the "Element visibility" modal
         // (panel:note-created-date, panel:note-icons, panel:folder-note-count).
+        setupToggleCard('tab-follows-note-card', 'tab-follows-note-status', 'tab_follows_note', false, false);
         setupToggleCard('folder-actions-card', 'folder-actions-status', 'hide_folder_actions', true);
         setupToggleCard('notes-without-folders-card', 'notes-without-folders-status', 'notes_without_folders_after_folders', false);
         setupToggleCard('folder-icon-kanban-card', 'folder-icon-kanban-status', 'folder_icon_opens_kanban', false, false);

@@ -302,11 +302,12 @@ $settings = [
     'markdown_view_cycle' => 'live,rich,split',
     'sidebar_offline_marks' => '1',
     'favorites_sort' => POZNOTE_FAVORITES_SORT_DEFAULT,
-    'favorites_icon_color' => ''
+    'favorites_icon_color' => '',
+    'tab_follows_note' => '0'
 ];
 
 try {
-    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_at_bottom', 'backlinks_at_bottom', 'note_virtual_space', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color')");
+    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_at_bottom', 'backlinks_at_bottom', 'note_virtual_space', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color', 'tab_follows_note')");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $settings[$row['key']] = $row['value'];
         if ($row['key'] === 'markdown_new_note_view_mode') {
@@ -712,6 +713,9 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
             // for one recording; empty means the server detects the language
             'speechToTextLanguage' => $sttEnabled ? (string)$sttConfig['language'] : '',
             'speechToTextMaxSeconds' => poznoteSttMaxRecordingSeconds(),
+            // The tab takes the title and the icon of the open note
+            // (js/tab-follows-note.js), off by default
+            'tabFollowsNote' => poznoteSettingEnabled($settings['tab_follows_note'] ?? '0', false),
             // The note the address named and that could not be opened
             'missingNote' => $missing_note === null ? null : [
                 'id' => $missing_note['id'],
