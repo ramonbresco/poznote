@@ -1973,7 +1973,8 @@
       "indexable": "검색 엔진의 색인 생성 허용",
       "indexable_mobile": "인덱싱 허용",
       "password": "비밀번호(선택사항)",
-      "password_placeholder": "비밀번호를 입력하세요"
+      "password_placeholder": "비밀번호를 입력하세요",
+      "token_from_name": "이름으로 토큰 만들기"
     },
     "folder_share_modal": {
       "title": "공유 폴더 URL",

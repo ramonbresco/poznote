@@ -1973,7 +1973,8 @@
       "indexable": "検索エンジンによるインデックス登録を許可",
       "indexable_mobile": "インデックス登録を許可",
       "password": "パスワード（任意）",
-      "password_placeholder": "パスワードを入力"
+      "password_placeholder": "パスワードを入力",
+      "token_from_name": "名前からトークンを作成"
     },
     "folder_share_modal": {
       "title": "共有フォルダーのURL",

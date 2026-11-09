@@ -2492,7 +2492,8 @@
       "access_check_only": "Nur abhaken oder Häkchen entfernen",
       "access_full": "Vollständige Bearbeitung",
       "password": "Passwort (optional)",
-      "password_placeholder": "Geben Sie ein Passwort ein"
+      "password_placeholder": "Geben Sie ein Passwort ein",
+      "token_from_name": "Token aus dem Namen bilden"
     },
     "folder_share_modal": {
       "title": "Geteilter Ordner URL",

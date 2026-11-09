@@ -2494,7 +2494,8 @@
       "indexable": "Autoriser l'indexation par les moteurs de recherche",
       "indexable_mobile": "Autoriser l'indexation",
       "password": "Mot de passe (optionnel)",
-      "password_placeholder": "Saisir un mot de passe"
+      "password_placeholder": "Saisir un mot de passe",
+      "token_from_name": "Construire le jeton à partir du nom"
     },
     "folder_share_modal": {
       "title": "URL du dossier partagé",

@@ -208,6 +208,7 @@
 
             return {
                 itemId: item.note_id,
+                itemName: item.heading || '',
                 token: item.token,
                 itemType: 'note',
                 noteType: item.type,
@@ -233,6 +234,7 @@
 
             return {
                 itemId: item.folder_id,
+                itemName: item.folder_name || '',
                 token: item.token,
                 itemType: 'folder',
                 protocol: getPreferredPublicUrlProtocol(),

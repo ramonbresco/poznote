@@ -1973,7 +1973,8 @@
       "indexable": "Allow indexing by search engines",
       "indexable_mobile": "Allow indexing",
       "password": "Password (optional)",
-      "password_placeholder": "Enter a password"
+      "password_placeholder": "Enter a password",
+      "token_from_name": "Build the token from the name"
     },
     "folder_share_modal": {
       "title": "Shared folder URL",

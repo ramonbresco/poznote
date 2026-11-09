@@ -2492,7 +2492,8 @@
       "access_check_only": "Apenas marcar ou desmarcar",
       "access_full": "Edição completa",
       "password": "Senha (opcional)",
-      "password_placeholder": "Digite uma senha"
+      "password_placeholder": "Digite uma senha",
+      "token_from_name": "Criar o token a partir do nome"
     },
     "folder_share_modal": {
       "title": "URL da pasta compartilhada",

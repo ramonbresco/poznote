@@ -32,6 +32,7 @@
 	data-txt-password-label="<?php echo t_h('index.public_modal.password', [], 'Password (optional)'); ?>"
 	data-txt-password-placeholder="<?php echo t_h('index.public_modal.password_placeholder', [], 'Enter a password'); ?>"
 	data-txt-renew="<?php echo t_h('index.public_modal.renew_token', [], 'Renew token'); ?>"
+	data-txt-use-name="<?php echo t_h('index.public_modal.token_from_name', [], 'Build the token from the name'); ?>"
 	data-txt-restrict-users="<?php echo t_h('public.restrict_users', [], 'Restrict to specific users'); ?>"
 	data-txt-restrict-users-mobile="<?php echo t_h('public.restrict_users_mobile', [], 'Restrict'); ?>"
 	data-txt-save="<?php echo t_h('common.save', [], 'Save'); ?>"

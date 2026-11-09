@@ -2492,7 +2492,8 @@
       "access_check_only": "Solo marcar o desmarcar",
       "access_full": "Edición completa",
       "password": "Contraseña (opcional)",
-      "password_placeholder": "Ingrese una contraseña"
+      "password_placeholder": "Ingrese una contraseña",
+      "token_from_name": "Crear el token a partir del nombre"
     },
     "folder_share_modal": {
       "title": "URL de carpeta compartida",

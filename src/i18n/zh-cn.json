@@ -2490,7 +2490,8 @@
       "access_check_only": "仅勾选或取消勾选",
       "access_full": "完全编辑",
       "password": "密码 (可选)",
-      "password_placeholder": "输入密码"
+      "password_placeholder": "输入密码",
+      "token_from_name": "用名称生成令牌"
     },
     "folder_share_modal": {
       "title": "共享文件夹 URL",

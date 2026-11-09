@@ -1968,7 +1968,8 @@
       "indexable": "Разрешить индексацию поисковыми системами",
       "indexable_mobile": "Разрешить индексацию",
       "password": "Пароль (необязательно)",
-      "password_placeholder": "Введите пароль"
+      "password_placeholder": "Введите пароль",
+      "token_from_name": "Составить токен из названия"
     },
     "folder_share_modal": {
       "title": "Общая ссылка на папку",

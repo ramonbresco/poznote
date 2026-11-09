@@ -106,6 +106,18 @@ body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-titl
 
 body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-title h3 {
     flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* The name of the shared note or folder, over the address it is reached by:
+   what the link leads to, which the address alone stops saying as soon as a
+   custom token replaces the random one. */
+body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-title-name {
+    display: block;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* The note page colours icons on its own: here they follow their button */

@@ -1973,7 +1973,8 @@
       "indexable": "Permet la indexació als motors de cerca",
       "indexable_mobile": "Permet la indexació",
       "password": "Contrasenya (opcional)",
-      "password_placeholder": "Introduïu una contrasenya"
+      "password_placeholder": "Introduïu una contrasenya",
+      "token_from_name": "Crea el testimoni a partir del nom"
     },
     "folder_share_modal": {
       "title": "URL de la carpeta compartida",
