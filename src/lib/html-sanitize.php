@@ -7,24 +7,15 @@
  * to change.
  */
 
-// Owned here rather than by functions.php: these functions are the only ones
-// that decide whether an embed is trusted, and leaving the constant behind made
-// this module fatal on any iframe when loaded on its own.
-/**
- * Trusted domains allowed for iframe embeds.
- * Used by both unescapeIframesInHtml() and the Markdown parser.
- */
-if (!defined('ALLOWED_IFRAME_DOMAINS')) {
-    define('ALLOWED_IFRAME_DOMAINS', [
-        'youtube.com',
-        'www.youtube.com',
-        'youtube-nocookie.com',
-        'www.youtube-nocookie.com',
-        'player.bilibili.com',
-        'www.bilibili.com',
-        'bilibili.com',
-    ]);
-}
+// The hosts a note may frame are the embed providers this version ships, minus
+// the ones an administrator switched off: lib/embed-providers.php, which is the
+// single source of truth for this check, for the frame-src of the pages that
+// render note content and for the copy handed to the browser. It used to be an
+// ALLOWED_IFRAME_DOMAINS constant here, which no instance could narrow.
+// Required rather than left to functions.php: this module is the only one that
+// decides whether an embed is trusted, and a missing list made it fatal on any
+// iframe when loaded on its own.
+require_once __DIR__ . '/embed-providers.php';
 
 /**
  * Decide whether an iframe `src` points at a trusted origin.
@@ -61,7 +52,7 @@ function poznoteIframeSrcIsTrusted($src): bool {
     }
 
     $host = strtolower($host);
-    foreach (ALLOWED_IFRAME_DOMAINS as $domain) {
+    foreach (poznoteAllowedIframeDomains() as $domain) {
         $domain = strtolower(trim((string) $domain));
         if ($domain === '') {
             continue;
@@ -275,7 +266,7 @@ function sanitizeHtml($html) {
         'time' => ['datetime'],
         'blockquote' => ['cite'],
         'q' => ['cite'],
-        'pre' => ['data-language', 'data-line-numbers', 'data-auto-language'],
+        'pre' => ['data-language', 'data-line-numbers', 'data-collapsed', 'data-auto-language'],
         'code' => ['data-language', 'data-auto-language'],
         'iframe' => ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen', 'allowtransparency', 'title', 'sandbox', 'loading', 'referrerpolicy', 'style', 'class', 'scrolling', 'contenteditable', 'data-is-audio', 'data-audio-src', 'data-converted-from-audio'],
         'video' => ['src', 'width', 'height', 'preload', 'poster', 'class', 'style', 'controls', 'muted', 'playsinline', 'loop', 'autoplay'],
@@ -355,6 +346,14 @@ function sanitizeHtml($html) {
         }
     }
     
+    // The body of a toggle block is not an editing host of its own: the note
+    // around it is. A second one cut the caret and the undo history in two,
+    // and on a public page it let a visitor type into the block.
+    $toggleBodies = $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " toggle-content ")]');
+    foreach ($toggleBodies as $body) {
+        $body->removeAttribute('contenteditable');
+    }
+
     // Remove all disallowed tags
     $allElements = $xpath->query('//body//*');
     $elementsToRemove = [];
@@ -431,7 +430,7 @@ function sanitizeHtml($html) {
             if ($attrName === 'href' || $attrName === 'src') {
                 // For iframes, validate that src is from trusted domains or local paths
                 if ($tagName === 'iframe' && $attrName === 'src') {
-                    // Strict host match against ALLOWED_IFRAME_DOMAINS, or a
+                    // Strict host match against the allowed embed hosts, or a
                     // local/relative path (e.g., /audio_player.php)
                     if (!poznoteIframeSrcIsTrusted($attrValue)) {
                         // Not a trusted iframe source - mark entire element for removal

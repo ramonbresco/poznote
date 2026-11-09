@@ -1,0 +1,263 @@
+/* ============================================
+   Toggle blocks (js/toggle-block.js)
+
+       <details class="toggle-block">
+         <summary class="toggle-header">Title</summary>
+         <div class="toggle-content">…</div>
+       </details>
+
+   A block of the note like any other: no frame of its own, no space added
+   around it. What is folded away sits under the header behind a guide line,
+   indented to line up with the header's text rather than with its triangle.
+   Both parts show a placeholder while they are empty; the attribute that
+   carries it is written at runtime (the note does not store it), so a block
+   without it simply shows nothing.
+   ============================================ */
+
+.toggle-block {
+    display: block;
+    margin: 4px 0;
+    /* What the header's text is written past, so the triangle has room in
+       front of it. js/toggle-block.js reads the same number as the width of
+       the strip a click or a hover counts as the triangle's (MARKER_WIDTH). */
+    --pz-toggle-indent: 16px;
+    --pz-toggle-pad-y: 2px;
+    /* Lets the height below animate between 0 and auto. Set here rather than
+       on :root so no other `auto` in the app starts interpolating. */
+    interpolate-size: allow-keywords;
+}
+
+/* Opening and closing slide instead of jumping. ::details-content is the
+   box a <details> puts its content in; a browser that does not know the
+   pseudo-element drops these two rules and keeps the instant open it had. */
+.toggle-block::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size 220ms ease, content-visibility 220ms;
+    transition-behavior: allow-discrete;
+}
+
+.toggle-block[open]::details-content {
+    block-size: auto;
+}
+
+/* js/toggle-block.js, for the frame in which it puts a block back the way the
+   reader left it: that is not an opening and must not slide. */
+.toggle-block.pz-no-anim::details-content {
+    transition: none;
+}
+
+/* ---- Header ---- */
+
+/* A plain block, not a flex row: the triangle is taken out of the flow and
+   the text is indented past it. In a flex row the triangle was the first
+   item, so the caret of an empty header, which has no text box to sit in,
+   was drawn at the very start of the row, on top of the triangle instead of
+   in front of the placeholder. */
+.toggle-block>summary {
+    display: block;
+    position: relative;
+    padding: var(--pz-toggle-pad-y) 0 var(--pz-toggle-pad-y) var(--pz-toggle-indent);
+    font-weight: var(--pz-weight-semibold);
+    cursor: pointer;
+    /* Hide the browser's own marker (Firefox) */
+    list-style: none;
+    outline: none;
+    min-width: 0;
+}
+
+/* Open, the title gets a little air under it so the first line of the
+   content does not sit right against it. Only open: closed, the content box
+   is flat and the margin would show as a gap under the block. */
+.toggle-block[open]>summary {
+    margin-bottom: 4px;
+}
+
+/* Hide the browser's own marker (WebKit) */
+.toggle-block>summary::-webkit-details-marker {
+    display: none;
+}
+
+/* The triangle, on the first line whatever the title does. Its right edge
+   plus a little air is the strip js/toggle-block.js treats as a click on the
+   marker rather than on the title. The offset puts its middle on the middle
+   of the lowercase letters, not on the middle of the line box, which sits
+   lower and read as a triangle hanging under the title. */
+.toggle-block>summary::before {
+    content: '';
+    position: absolute;
+    left: 1px;
+    top: 0.54em;
+    width: 0;
+    height: 0;
+    border-left: 5px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: transform 0.2s ease;
+    opacity: 0.5;
+}
+
+.toggle-block[open]>summary::before {
+    transform: rotate(90deg);
+}
+
+/* A title shown at a heading's size. It is a class and not an <hN> written
+   inside the <summary>, because a Markdown note keeps its toggles as raw
+   HTML and its parser escapes every tag but a handful (js/toggle-block.js).
+   The sizes are the browser's own for h1 to h6, which is what the headings
+   of a note use. Everything else follows on its own: the triangle's offsets
+   are written in em, so they scale with the title. */
+.toggle-block>summary.toggle-h1 {
+    font-size: 2em;
+}
+
+.toggle-block>summary.toggle-h2 {
+    font-size: 1.5em;
+}
+
+.toggle-block>summary.toggle-h3 {
+    font-size: 1.17em;
+}
+
+.toggle-block>summary.toggle-h4 {
+    font-size: 1em;
+}
+
+.toggle-block>summary.toggle-h5 {
+    font-size: 0.83em;
+}
+
+.toggle-block>summary.toggle-h6 {
+    font-size: 0.67em;
+}
+
+.toggle-block>summary.toggle-h1,
+.toggle-block>summary.toggle-h2,
+.toggle-block>summary.toggle-h3,
+.toggle-block>summary.toggle-h4,
+.toggle-block>summary.toggle-h5,
+.toggle-block>summary.toggle-h6 {
+    font-weight: var(--pz-weight-bold);
+}
+
+/* In the editor the triangle is the control and the rest of the header is
+   text, so the pointer says which is which: a hand over the triangle, a
+   caret over the title. js/toggle-block.js marks <body> while the pointer is
+   in the strip it treats as the triangle, and :hover below names the one
+   header that can be under it, so what is shown is what a click will do. The
+   mark is on <body> and not on the header because a header is note content,
+   where a runtime class would be saved with the note. A header nobody can
+   edit (a public share, a locked note) keeps the plain <details> behaviour,
+   where the whole header toggles. */
+.noteentry[contenteditable="true"] .toggle-block>summary {
+    cursor: text;
+}
+
+body.pz-toggle-marker-hover .noteentry[contenteditable="true"] .toggle-block>summary:hover {
+    cursor: pointer;
+}
+
+/* The patch behind the triangle, so it reads as a button under the pointer.
+   It is the spread of a shadow rather than a background of its own: the
+   triangle is drawn with borders on a box of no size, which leaves nowhere
+   to paint behind it, and a shadow follows the triangle wherever the offsets
+   above put it. */
+body.pz-toggle-marker-hover .toggle-block>summary:hover::before {
+    border-radius: var(--pz-radius-sm);
+    box-shadow: 0 0 0 7px var(--pz-surface-hover);
+    opacity: 1;
+}
+
+/* A second summary is a browser accident (a split header, a drop):
+   js/toggle-block.js folds it back into the first, this keeps it out of
+   sight until it does. */
+.toggle-block>summary~summary {
+    display: none !important;
+}
+
+/* ---- Content ---- */
+
+.toggle-block>.toggle-content {
+    /* The box the placeholder below is laid over */
+    position: relative;
+    padding: var(--pz-toggle-pad-y) 0 var(--pz-toggle-pad-y) var(--pz-toggle-indent);
+    margin-left: 6px;
+    border-left: 1px solid var(--pz-border);
+}
+
+.toggle-block>.toggle-content,
+.toggle-block>p,
+.toggle-block>ul,
+.toggle-block>ol,
+.toggle-block>div:not(.toggle-content),
+.toggle-block>pre,
+.toggle-block>blockquote {
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+/* A toggle rendered from Markdown by the server has no wrapper: the parser
+   writes its blocks as the direct children of the <details>. */
+.toggle-block>p,
+.toggle-block>ul,
+.toggle-block>ol,
+.toggle-block>div:not(.toggle-content),
+.toggle-block>pre,
+.toggle-block>blockquote {
+    margin-right: 10px;
+    margin-bottom: 0.5em;
+}
+
+/* Without a wrapper there is no box to run the guide line along, so the box
+   the <details> puts its content in stands in. In the app js/toggle-block.js
+   wraps the blocks and this never matches; it is for a page that only reads
+   the note (a public share, an export, the journal). Like the animation
+   above it asks for ::details-content, so a browser that does not know the
+   pseudo-element simply leaves the line out. */
+.toggle-block:not(:has(> .toggle-content))::details-content {
+    padding-left: var(--pz-toggle-indent);
+    margin-left: 6px;
+    border-left: 1px solid var(--pz-border);
+}
+
+/* ---- Placeholders ----
+   An empty header used to be a bare triangle with the content hidden behind
+   it, which reads as an empty toggle and is how one loses what is inside.
+   `:empty` alone is not enough: an empty line in a contenteditable holds a
+   <br>. */
+
+.toggle-block>summary[data-ph]:empty::after,
+.toggle-block>summary[data-ph]:has(> br:only-child)::after,
+.toggle-block>.toggle-content[data-ph]:empty::before,
+.toggle-block>.toggle-content[data-ph]:has(> br:only-child)::before {
+    content: attr(data-ph);
+    color: var(--pz-text-subtle);
+    font-weight: var(--pz-weight-normal);
+    pointer-events: none;
+}
+
+/* Both placeholders are laid over the line rather than written in it, for
+   the same reason in two shapes. A title emptied in the editor is not
+   `:empty`, it holds the <br> that keeps the line open, and in the flow the
+   text went after that break, on a second line under the triangle. The body
+   writes its placeholder before its own content, so the caret of an emptied
+   body landed after the whole sentence instead of at the start of the line.
+   Out of the flow neither takes a place the caret could sit in; what holds
+   the line open stays where it is, and an empty body is given the height of
+   the line it would have had. */
+.toggle-block>summary[data-ph]:has(> br:only-child)::after {
+    position: absolute;
+    left: var(--pz-toggle-indent);
+    top: var(--pz-toggle-pad-y);
+}
+
+.toggle-block>.toggle-content[data-ph]:empty::before,
+.toggle-block>.toggle-content[data-ph]:has(> br:only-child)::before {
+    position: absolute;
+    left: var(--pz-toggle-indent);
+    top: var(--pz-toggle-pad-y);
+}
+
+.toggle-block>.toggle-content[data-ph]:empty {
+    min-height: 1.6em;
+}

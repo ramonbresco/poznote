@@ -159,6 +159,7 @@
       "markdown_colored": "Markdownノートに色を付けます。見出しのレベルごと、インラインコード、コードブロックの背景、引用、表のヘッダー、区切り線の色を選択できます。",
       "code_wrap": "コードブロックの長い行を、横スクロールさせずに折り返します。",
       "code_line_numbers": "Markdownプレビューのコードブロックに行番号を表示します。",
+      "code_block_collapsed_lines": "コードブロックを折りたたんだときに画面に残す行数です（0 〜 100）。0 にすると折りたたんだブロックは中身をまったく表示しません。これ以下の行数のブロックには折りたたみボタンを出しません。折りたたんでも何も隠れないからです。",
       "attachment_previews": "ノート内に添付ファイルのプレビューを表示します。",
       "attachments_at_bottom": "添付ファイルのセクションを、ノートの上部ではなく下部に表示します。",
       "allow_executable_attachments": "スクリプトや実行ファイル（.sh、.ps1、.bat、.exe、.pyなど）をノートに添付できるようにします。このインスタンスのすべてのアカウントが対象です。Poznoteはこれらを実行せず、保存して配信するだけです。.phpなど、Webサーバーが実行できる種類のファイルは引き続きブロックされます。",
@@ -208,11 +209,17 @@
       "release_notes": "Poznote のすべてのリリースノートを GitHub で開きます。",
       "login_disabled": "ログイン画面を省略します。このインスタンスにアクセスできるブラウザーであれば、ユーザー名、パスワード、2要素認証のコードなしで、直接あなたのアカウントが開きます。このインスタンスにアクセスできるのが自分だけの場合や、前段のリバースプロキシで認証を行っている場合にだけ有効にしてください。APIは引き続き認証情報を求めます。",
       "outbound_hosts": "管理者以外のユーザーのWebhook、個人用のAI・文字起こし・MCPサーバー、Git同期は、インターネット上の公開ホストにしか接続できません。ネットワーク内のOllamaやn8nのサーバーなど、使用を許可するローカルのホストとネットワークをここに記載してください。管理者は制限されません。",
+      "embeds": "ノートにはこれらのサイトのコンテンツを埋め込めます（YouTube の動画や GeoGebra のアプレットなど）。このインスタンスで読み込ませたくないサイトはオフにしてください。ほかのサイトは埋め込めず、ここにサイトを追加することもできません。",
       "diary_template": "ワークスペース「{{workspace}}」で、新しい日記のエントリの初期内容として使うノートを選択します。一覧には、そのワークスペースの「テンプレート」（または「Templates」）という名前のフォルダーにあるノートが表示されます。テンプレートはワークスペースごとに設定します。",
       "markdown_view_cycle": "Markdownノートの表示メニューに、クラシック表示（プレビュー。鉛筆アイコンで編集に切り替え）以外に表示する表示を選択します。選ばなかった表示はメニューに出ません。1つも選ばない場合、ボタンは非表示になります。スマートフォンでは、メニューに分割モードは表示されません。",
       "connected_apps": "ChatGPTやClaudeなどのチャットアプリを、MCPサーバー経由でノートに接続します。接続はいつでも解除できます。",
       "custom_logo": "Poznoteのロゴを、すべてのユーザーに対して独自のものに置き換えます。ブラウザーのタブ、ログインページ、アイコンサイドバー、インストールしたアプリのアイコンに使われます。",
-      "two_factor_required": "パスワードでサインインするすべてのアカウントに2要素認証が必要になります。未設定のアカウントは次回のサインイン時に設定し、2要素認証なしで開かれたセッションは終了します。アカウントのパスワードは API では使えなくなるため、アプリにはアプリパスワードを使用します。SSO によるサインインは対象外で、2 つ目の要素は ID プロバイダーが管理します。"
+      "two_factor_required": "パスワードでサインインするすべてのアカウントに2要素認証が必要になります。未設定のアカウントは次回のサインイン時に設定し、2要素認証なしで開かれたセッションは終了します。アカウントのパスワードは API では使えなくなるため、アプリにはアプリパスワードを使用します。SSO によるサインインは対象外で、2 つ目の要素は ID プロバイダーが管理します。",
+      "tab_follows_note": "ブラウザーのタブに、このインスタンスの名前とアイコンではなく、そこで開いているノートのタイトルとアイコンを表示します。複数のノートを開いた複数のタブを見分けられます。",
+      "update_badge_level": "どのリリースで設定の項目に赤いドットを付けるかを選びます。どれを選んでも新しいバージョンはこのページで告知されるので、何も隠れません。",
+      "update_check_interval": "新しいバージョンがあるかを Poznote がバックグラウンドで確認する間隔です。ドットは確認のあとにしか出ないので、間隔が長いほど表示は遅くなります。上の「バージョン」カードはクリックすればいつでもすぐ確認します。",
+      "sessions": "いまアカウントにログインしているブラウザーとデバイスを確認し、使わなくなったものをログアウトできます。",
+      "session_lifetime": "操作がないままログイン状態が続く期間です。.env ファイルの POZNOTE_SESSION_LIFETIME_DAYS で設定するため、ここでは表示のみで、このページからは変更できません。「ログインしたままにする」でのログインはより長く続き、SSO でのログインは続きません。"
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "モバイルでは、この設定に関係なく、キーボードの上のツールバーにある「+」ボタンから同じメニューを開けます。"
@@ -263,6 +270,7 @@
     },
     "cards": {
       "tenant_isolation": "テナント分離",
+      "embeds": "埋め込み",
       "user_management": "ユーザー管理",
       "backup_export": "バックアップ/エクスポート",
       "restore_import": "復元/インポート",
@@ -281,7 +289,7 @@
       "support": "Poznoteを支援",
       "buy_me_a_coffee": "Buy me a coffee",
       "install_extension": "拡張機能をインストール",
-      "install_app": "アプリをインストール",
+      "install_app": "アプリをインストール（PWA）",
       "custom_css": "カスタムCSS",
       "theme_list": "テーマ一覧",
       "release_notes": "リリースノート",
@@ -317,7 +325,9 @@
       "outbound_hosts": "ローカルネットワークへのアクセス",
       "connected_apps": "接続中のアプリ",
       "custom_logo": "ロゴ",
-      "two_factor_required": "2要素認証を必須にする"
+      "two_factor_required": "2要素認証を必須にする",
+      "sessions": "接続中のデバイス",
+      "session_lifetime": "セッションの有効期間"
     },
     "default_credentials": {
       "both": "このアカウントのユーザー名とパスワードはインストール時のままです。このインスタンスにアクセスできる人なら誰でもログインできます。",
@@ -380,6 +390,11 @@
     "outbound_hosts": {
       "status_allowed": "{{count}}件を許可",
       "status_public_only": "公開ホストのみ"
+    },
+    "embeds": {
+      "status_all": "すべてのサイト",
+      "status_some": "{{count}} / {{total}}",
+      "status_none": "なし"
     },
     "diary_template": {
       "none": "なし",
@@ -546,6 +561,7 @@
       "markdown_colored": "Markdownの色付け",
       "code_block_word_wrap": "コードブロックの折り返し",
       "code_block_line_numbers": "コードブロックの行番号",
+      "code_block_collapsed_lines": "折りたたんだコードブロック",
       "attachment_previews_in_note": "添付ファイルのプレビュー",
       "attachments_at_bottom": "添付ファイルを下部に表示",
       "backlinks_at_bottom": "バックリンクを下部に表示",
@@ -561,7 +577,10 @@
       "format_toolbar_mode": "書式ツールバー",
       "workspace_activity_emails": "共有ワークスペースのメール通知",
       "diary_template": "日記のエントリのテンプレート",
-      "markdown_view_cycle": "表示メニュー"
+      "markdown_view_cycle": "表示メニュー",
+      "tab_follows_note": "タブが開いているノートに追従",
+      "update_badge_level": "更新ドット",
+      "update_check_interval": "更新の確認"
     },
     "badges": {
       "font_size_default": "既定（{{size}}px）",
@@ -625,7 +644,8 @@
     "priority_high": "優先度: 高",
     "priority_medium": "優先度: 中",
     "priority_low": "優先度: 低",
-    "priority_none": "優先度なし"
+    "priority_none": "優先度なし",
+    "delete_task": "タスクを削除"
   },
   "tags": {
     "add_single": "タグを追加...",
@@ -698,7 +718,9 @@
       "words": "単語数：",
       "lines": "行数：",
       "note_id": "ノートID：",
-      "full_path": "フルパス："
+      "full_path": "フルパス：",
+      "last_modified_from": "最終更新元:",
+      "locked": "ロック:"
     },
     "attachments": {
       "count_singular": "1件",
@@ -713,6 +735,15 @@
     },
     "errors": {
       "load_failed": "ノートの情報を読み込めませんでした。"
+    },
+    "source": {
+      "app": "Poznote（パソコン）",
+      "app_mobile": "Poznote（モバイル）",
+      "api": "REST API",
+      "mcp": "MCP で接続されたアプリ",
+      "extension": "ブラウザー拡張機能",
+      "ai": "AI アシスタント",
+      "public": "公開共有の閲覧者"
     }
   },
   "attachments": {
@@ -996,9 +1027,10 @@
       "note_scroll_arrows": "先頭・末尾へスクロールする矢印",
       "tasklist_add_field": "タスクを追加する入力欄",
       "tasklist_frame": "各タスクの枠",
-      "tasklist_delete": "完了したタスクの削除",
+      "tasklist_delete": "タスクの削除",
       "tasklist_menu": "タスクのオプションメニュー（モバイル）",
-      "tasklist_frame_color": "タスクの枠の優先度の色"
+      "tasklist_frame_color": "タスクの枠の優先度の色",
+      "note_id": "ノート ID を表示"
     },
     "icon_sidebar_order": {
       "title": "アイコンサイドバーのレイアウト",
@@ -1078,9 +1110,14 @@
       "workspace_destination": "移動先のワークスペースを選択：",
       "target_folder": "移動先のフォルダーを選択：",
       "recent_folders": "最近使ったフォルダー",
-      "new_folder": "新しいフォルダー",
+      "filter_placeholder": "フォルダーを絞り込み、または新しい名前を入力",
+      "clear_filter": "フィルターをクリア",
+      "no_match": "一致するフォルダーはありません。",
+      "no_folder_root": "フォルダーなし（ルートに移動）",
+      "create_folder": "フォルダーを作成",
+      "current_location": "現在は {{folder}} にあります",
+      "current_location_none": "現在はどのフォルダーにもありません",
       "new_workspace": "新しいワークスペース",
-      "folder_name_placeholder": "フォルダー名（サブフォルダーは「/」で区切る）",
       "workspace_name_placeholder": "ワークスペース名",
       "enter_workspace_name": "ワークスペース名を入力してください",
       "enter_folder_name": "フォルダー名を入力してください"
@@ -1213,6 +1250,10 @@
       "json": {
         "title": "JSONとしてダウンロード",
         "description": "タスクリストの生データをJSONファイルとしてダウンロードします"
+      },
+      "html_public": {
+        "title": "公開ページとしてエクスポート",
+        "description": "このノートの公開ページとまったく同じ見た目の HTML ファイルを 1 つ、画像ごとダウンロードします"
       }
     },
     "task_move": {
@@ -1391,6 +1432,11 @@
         "user_s3_restore_help": "管理者以外のユーザーには、復元/インポートページの「S3から復元」セクションが表示されなくなり、バケットのアーカイブから復元することもできなくなります。"
       }
     },
+    "embeds": {
+      "title": "埋め込み",
+      "description": "ノートには下記のサイトのコンテンツを埋め込めます（動画や対話的なアプレットなど）。このインスタンスで読み込ませたくないサイトはチェックを外してください。ほかのサイトはノートに埋め込めず、ここにサイトを追加することもできません。",
+      "existing_hint": "サイトのチェックを外すと、すでにノートにある埋め込みは表示されなくなります。読み込まれなくなり、そのノートをあとで編集すると埋め込みはノートから失われます。"
+    },
     "note": {
       "rename_title": "ノートの名前を変更",
       "rename_placeholder": "新しいノートのタイトル"
@@ -1488,6 +1534,25 @@
       "reset_confirm": "すべてのユーザーについて、Poznoteのロゴに戻しますか？",
       "invalid": "この画像は使用できません。20MB以下のPNG、JPEG、WebP、GIF、SVGのファイルを選択してください。",
       "failed": "ロゴを保存できませんでした。"
+    },
+    "update_badge_level": {
+      "options": {
+        "all": "メジャー、マイナー、パッチのすべて",
+        "minor": "メジャーとマイナーのみ"
+      }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "毎日",
+        "2": "2日ごと",
+        "3": "3日ごと",
+        "7": "7日ごと",
+        "14": "14日ごと",
+        "30": "30日ごと"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "行"
     }
   },
   "notes_list": {
@@ -1754,7 +1819,6 @@
     "toggle": "折りたたみ",
     "toggle_placeholder": "折りたたみ",
     "toggle_content_placeholder": "ここに折りたたみの中身を書きます…",
-    "toggle_after_placeholder": "ここに折りたたみの外の内容を書きます…",
     "code_block_placeholder_before": "ここにテキストを書きます…",
     "code_block_placeholder_after": "ここにテキストを書きます…",
     "youtube_video": "YouTube動画",
@@ -1971,7 +2035,8 @@
       "indexable": "検索エンジンによるインデックス登録を許可",
       "indexable_mobile": "インデックス登録を許可",
       "password": "パスワード（任意）",
-      "password_placeholder": "パスワードを入力"
+      "password_placeholder": "パスワードを入力",
+      "token_from_name": "名前からトークンを作成"
     },
     "folder_share_modal": {
       "title": "共有フォルダーのURL",
@@ -2010,7 +2075,11 @@
           "one": "{{count}}行",
           "other": "{{count}}行"
         }
-      }
+      },
+      "missing": "ノート #{{id}} は存在しません。削除された可能性があります。",
+      "missing_trashed": "ノート #{{id}} はごみ箱にあります。開くには復元してください。",
+      "copy_id": "ノート ID をコピー",
+      "id_copied": "ノート ID {{id}} をコピーしました"
     },
     "editor": {
       "placeholder_desktop": "テキストを入力してください。「/」か右クリックでコマンドメニューを開けます。画像は貼り付けるか、カーソル位置にドロップして追加できます。",
@@ -2130,6 +2199,12 @@
       "live_hint": "整形された状態のまま編集します。カーソル付近にだけ Markdown 記法が表示されます。",
       "rich_hint": "ワープロのように編集します。Markdown 記法は表示されません。",
       "split_hint": "片側に Markdown ソース、もう片側に整形プレビューを表示し、入力に合わせて更新します。"
+    },
+    "code_block_collapse": {
+      "collapse": "コードブロックを折りたたむ",
+      "expand": "コードブロックを展開",
+      "one_line": "1 行",
+      "lines": "{{count}} 行"
     }
   },
   "image_menu": {
@@ -3631,7 +3706,8 @@
       "two_factor_recovery_used": "リカバリーコードでのログイン",
       "two_factor_recovery_regenerated": "リカバリーコードの再生成",
       "oauth_app_authorized": "アプリの接続（MCP）",
-      "oauth_app_revoked": "アプリの接続の解除（MCP）"
+      "oauth_app_revoked": "アプリの接続の解除（MCP）",
+      "session_revoked": "デバイスをログアウト"
     },
     "filters": {
       "all_actions": "すべての操作",
@@ -4326,7 +4402,18 @@
     "take_over_failed": "このノートの編集を引き継げませんでした。",
     "taken_over_notice": "このノートの編集を引き継ぎました。",
     "lost_unsaved_kept": "未保存の変更はこの端末に保持されます。ノートが再び編集可能になると、復元するかどうかを選択できます。",
-    "read_only_share": "このワークスペースは閲覧のみのモードで共有されています。"
+    "read_only_share": "このワークスペースは閲覧のみのモードで共有されています。",
+    "lock_note": "このノートを編集できないようにロック",
+    "unlock_note": "このノートのロックを解除",
+    "locked_error": "このノートはロックされています。編集する前にツールバーでロックを解除してください。",
+    "locked_toast": "ノートをロックしました",
+    "unlocked_toast": "ノートのロックを解除しました",
+    "lock_failed": "このノートのロックを変更できませんでした。",
+    "lock_all": "すべてのノートを編集できないようにロック",
+    "unlock_all": "すべてのノートのロックを解除",
+    "locked_all_toast": "すべてのノートをロックしました",
+    "unlocked_all_toast": "すべてのノートのロックを解除しました",
+    "lock_all_failed": "ノートのロックを変更できませんでした。"
   },
   "live_refresh": {
     "note_changed": "このノートは、このタブ以外で変更されました。",
@@ -5343,6 +5430,7 @@
     "italic": "斜体",
     "underline": "下線",
     "strikethrough": "取り消し線",
+    "clear_formatting": "選択したテキストの書式をクリア",
     "link": "選択したテキストにリンクを挿入",
     "code_block": "コードブロック",
     "slash_menu": "コマンドメニューを開く",
@@ -5379,7 +5467,9 @@
     "new_note": "ノートを作成："
   },
   "icon_context_menu": {
-    "hide": "ボタンを非表示"
+    "hide": "ボタンを非表示",
+    "hide_element": "「{{name}}」を非表示",
+    "hidden_notice": "「{{name}}」を非表示にしました。要素の表示から戻せます。"
   },
   "account_note": {
     "banner": "アカウント{{account}}のノート（閲覧のみ）",
@@ -5775,6 +5865,48 @@
       "group_rules": "グループの区切り線",
       "size": "タイルサイズのボタン",
       "boards": "スピードダイヤルの一覧"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "埋め込みコンテンツがブロックされました",
+      "detail_admin": "このインスタンスでは {{host}} の埋め込みコンテンツは許可されていません。管理者は設定 > 管理ツール > 埋め込みで再び許可できます。",
+      "detail_public": "このサイトでは {{host}} の埋め込みコンテンツは許可されていません。"
+    },
+    "resize": {
+      "hint": "ドラッグでサイズ変更、ダブルクリックで既定に戻す"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 セッション",
+      "count_other": "{{count}} セッション"
+    },
+    "lifetime": {
+      "day_one": "1日",
+      "day_other": "{{count}}日"
+    },
+    "modal": {
+      "title": "接続中のデバイス",
+      "description": "各行はアカウントにログインしているブラウザーです。セッションは操作がないまま {{duration}} 経つと自動的に終了し、パスワードを変更したときにも終了します。",
+      "loading": "読み込み中...",
+      "empty": "開いているセッションはありません。",
+      "unknown_client": "不明なブラウザー",
+      "this_device": "このデバイス",
+      "last_active": "最終操作 {{date}}",
+      "revoke": "ログアウト",
+      "revoke_others": "他のデバイスをログアウト",
+      "confirm": "確認",
+      "close": "閉じる"
+    },
+    "method": {
+      "password": "パスワード",
+      "sso": "SSO",
+      "auto": "ログインなし"
+    },
+    "errors": {
+      "load_failed": "セッションを読み込めませんでした。",
+      "generic": "問題が発生しました。もう一度お試しください。"
     }
   }
 }

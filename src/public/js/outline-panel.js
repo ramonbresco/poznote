@@ -12,7 +12,22 @@ let currentOutlineHeadings = null;
 // Last extraction from a markdown note, see extractHeadings()
 let markdownOutlineCache = null;
 let hasInitializedOutlinePanel = false;
-const HEADING_SELECTOR = 'h1, h2, h3, h4, h5, h6';
+// A toggle whose title was given a heading's size counts as a heading here:
+// it is shown as one and it is what a reader of the note looks for. Its level
+// is a class, not a tag name (css/components/toggle-block.css), so it is read
+// with outlineHeadingLevel() rather than from the tag.
+const TOGGLE_HEADING_SELECTOR = [1, 2, 3, 4, 5, 6]
+    .map(function (level) { return '.toggle-block > summary.toggle-h' + level; })
+    .join(', ');
+const HEADING_SELECTOR = 'h1, h2, h3, h4, h5, h6, ' + TOGGLE_HEADING_SELECTOR;
+// What a toggle title looks like in the source of a Markdown note
+const TOGGLE_HEADING_LINE = /^\s*<summary\b[^>]*\bclass\s*=\s*"[^"]*\btoggle-h([1-6])\b[^"]*"[^>]*>([\s\S]*?)<\/summary>\s*$/i;
+
+function outlineHeadingLevel(element) {
+    if (/^H[1-6]$/.test(element.tagName)) return parseInt(element.tagName.substring(1), 10);
+    var match = /\btoggle-h([1-6])\b/.exec(element.className || '');
+    return match ? Number(match[1]) : 0;
+}
 const OUTLINE_PAGE_SCROLL_TOP_OFFSET = 100;
 const OUTLINE_SPLIT_PANE_SCROLL_TOP_OFFSET = 20;
 
@@ -621,10 +636,15 @@ function extractHeadings(noteElement) {
 
                 // Match markdown headings: # Title, ## Title, etc., with the
                 // up-to-three-spaces indentation CommonMark allows.
-                const match = line.match(/^ {0,3}(#{1,6})\s+(.+)$/);
+                // A toggle title written as raw HTML, with the class that
+                // shows it at a heading's size
+                const toggleMatch = line.match(TOGGLE_HEADING_LINE);
+                const match = toggleMatch || line.match(/^ {0,3}(#{1,6})\s+(.+)$/);
                 if (match) {
-                    const level = match[1].length;
-                    const rawText = match[2].trim();
+                    const level = toggleMatch ? Number(match[1]) : match[1].length;
+                    const rawText = toggleMatch
+                        ? match[2].replace(/<[^>]*>/g, '').trim()
+                        : match[2].trim();
                     // Strip inline markdown formatting for display in the outline panel
                     const text = rawText
                         .replace(/\*\*(.+?)\*\*/g, '$1')          // bold **text**
@@ -674,10 +694,10 @@ function extractHeadings(noteElement) {
     // Default: extract from HTML headings (regular HTML notes)
     const headingElements = noteElement.querySelectorAll(HEADING_SELECTOR);
     headingElements.forEach((heading, index) => {
-        const level = parseInt(heading.tagName.substring(1)); // h1 -> 1, h2 -> 2, etc.
+        const level = outlineHeadingLevel(heading);
         const text = getHeadingTextContent(heading);
 
-        if (text) {
+        if (text && level) {
             // Add an ID to the heading if it doesn't have one (for navigation)
             ensureHeadingId(heading, `heading-${index}`);
 

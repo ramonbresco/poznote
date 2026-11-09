@@ -199,8 +199,11 @@ function setupNoteDragDropEvents() {
         link.removeEventListener('dragstart', handleNoteDragStart);
         link.removeEventListener('dragend', handleNoteDragEnd);
 
-        // Add fresh event listeners (desktop only)
-        if (!isMobile && !isReadOnly) {
+        // Attached on a touch screen as well, although the row stays
+        // undraggable there: js/tree-touch-drag.js raises these same events
+        // itself once a press is held on the row, so a finger moves a note
+        // through the handlers the mouse uses.
+        if (!isReadOnly) {
             link.addEventListener('dragstart', handleNoteDragStart, false);
             link.addEventListener('dragend', handleNoteDragEnd, false);
         }
@@ -271,6 +274,17 @@ function setupNoteDragDropEvents() {
                     if (!tapState.active) return;
                     if (e.pointerType !== 'touch') return;
                     if (tapState.pointerId !== null && e.pointerId !== tapState.pointerId) return;
+
+                    // The finger was moving the row, not asking for the note
+                    // (js/tree-touch-drag.js). This runs before the click that
+                    // file swallows, and a drag held still would pass the
+                    // movement and duration tests below.
+                    if (typeof window.poznoteTreeTouchDragActive === 'function' &&
+                        window.poznoteTreeTouchDragActive()) {
+                        tapState.active = false;
+                        tapState.pointerId = null;
+                        return;
+                    }
 
                     var dt = Date.now() - tapState.startT;
                     var shouldTrigger = !tapState.moved && dt < 700; // ignore long-press / scroll
@@ -1088,14 +1102,17 @@ function setupFolderDragDropEvents() {
             // Ensure draggable is set
             toggle.setAttribute('draggable', 'true');
             toggle.draggable = true;
-
-            // Add drag event listeners
-            toggle.addEventListener('dragstart', handleFolderDragStart, false);
-            toggle.addEventListener('dragend', handleFolderDragEnd, false);
         } else {
             // Disable dragging on mobile
             toggle.removeAttribute('draggable');
             toggle.draggable = false;
+        }
+
+        // Listeners on a touch screen too, undraggable row or not: a press
+        // held on the row raises them from js/tree-touch-drag.js.
+        if (!isReadOnly) {
+            toggle.addEventListener('dragstart', handleFolderDragStart, false);
+            toggle.addEventListener('dragend', handleFolderDragEnd, false);
         }
     });
 }

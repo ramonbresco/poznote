@@ -9,6 +9,7 @@
 
 require_once __DIR__ . '/users/db_master.php';
 require_once __DIR__ . '/lib/outbound-url.php';
+require_once __DIR__ . '/lib/note-lock.php';
 
 class GitSync {
     // Supported file extensions
@@ -1511,6 +1512,15 @@ class GitSync {
                         $meta     = $metadata[(string) $noteId] ?? [];
 
                         if (isset($existingIds[$noteId])) {
+                            // A note its owner locked keeps its text, here as
+                            // everywhere else (lib/note-lock.php). The pull
+                            // carries on with the others and says which it
+                            // left alone.
+                            if (poznoteNoteIsLocked($this->con, (int) $noteId)) {
+                                $results['skipped_locked'] = ($results['skipped_locked'] ?? 0) + 1;
+                                $results['debug'][] = "  {$filename} → skipped, the note is locked";
+                                continue;
+                            }
                             $setClauses = ['entry = ?', 'trash = 0', 'trashed_at = NULL'];
                             $params     = [$content];
                             $appendMetadataFields($setClauses, $params, $meta, true);

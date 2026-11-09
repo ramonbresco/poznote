@@ -27,6 +27,7 @@ require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../db_connect.php';
 require_once __DIR__ . '/../functions.php';
 require_once __DIR__ . '/../users/db_master.php';
+require_once __DIR__ . '/../lib/write-source.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -88,7 +89,7 @@ if ($noteId <= 0) {
     poznoteNoteInfoFail(400, 'Missing or invalid note_id');
 }
 
-$columns = 'heading, folder, folder_id, created, updated, created_by_user_id, updated_by_user_id, favorite, tags, attachments, type, workspace';
+$columns = 'heading, folder, folder_id, created, updated, created_by_user_id, updated_by_user_id, favorite, tags, attachments, type, workspace, updated_source, locked';
 
 try {
     if ($workspace !== '') {
@@ -169,6 +170,14 @@ echo json_encode([
         'created_by' => poznoteNoteInfoUser($createdByUserId),
         'updated' => poznoteNoteInfoDate($note['updated']),
         'updated_by' => poznoteNoteInfoUser($updatedByUserId),
+        // Where that change came from: the editor, the API, an MCP app, the
+        // assistant, a visitor of the public share (lib/write-source.php).
+        // Blank for a note last written before the column existed.
+        'updated_source' => poznoteWriteSourceLabel((string)($note['updated_source'] ?? '')),
+        'locked' => (int)($note['locked'] ?? 0) === 1,
+        'locked_text' => (int)($note['locked'] ?? 0) === 1
+            ? t('common.yes', [], 'Yes')
+            : t('common.no', [], 'No'),
         'tags' => empty($tags) ? t('info.empty.no_tags', [], 'No tags') : implode(', ', $tags),
         'favorite' => $isFavorite,
         'favorite_text' => $isFavorite ? t('common.yes', [], 'Yes') : t('common.no', [], 'No'),

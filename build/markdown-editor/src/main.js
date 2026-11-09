@@ -1,4 +1,8 @@
-import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap, snippetCompletion, startCompletion } from '@codemirror/autocomplete'
+import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap, snippetCompletion } from '@codemirror/autocomplete'
+// Ctrl+Space clears the formatting of the selection (discussion #1753), so it
+// is no longer the manual trigger of the completion list; the list still opens
+// on its own while typing (activateOnTyping below).
+const filteredCompletionKeymap = completionKeymap.filter(binding => binding.key !== 'Ctrl-Space')
 import { defaultKeymap, history, historyKeymap, indentLess, indentMore, redo, undo } from '@codemirror/commands'
 import { markdown, markdownLanguage, insertNewlineContinueMarkup } from '@codemirror/lang-markdown'
 import { bracketMatching, HighlightStyle, LanguageDescription, LanguageSupport, StreamLanguage, syntaxHighlighting, syntaxTree } from '@codemirror/language'
@@ -23,7 +27,7 @@ import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'
 // searchKeymap includes Mod-f (Ctrl+F) which would intercept the browser's native find.
 // We filter it out so Ctrl+F opens the browser find dialog instead of CodeMirror's panel.
 const filteredSearchKeymap = searchKeymap.filter(binding => binding.key !== 'Mod-f')
-import { Annotation, CharCategory, Compartment, EditorSelection, EditorState, MapMode, RangeSet, RangeSetBuilder, RangeValue, StateEffect, StateField } from '@codemirror/state'
+import { Annotation, CharCategory, Compartment, EditorSelection, EditorState, MapMode, Prec, RangeSet, RangeSetBuilder, RangeValue, StateEffect, StateField } from '@codemirror/state'
 import { Decoration, EditorView, ViewPlugin, WidgetType, drawSelection, highlightActiveLine, keymap, placeholder } from '@codemirror/view'
 import { tags as syntaxTags } from '@lezer/highlight'
 import { armPendingFormat, dropPendingFormat, insertTabSpacesInText, swallowShiftTabInText, clearSpanChanges, leavePendingSpace, isFormatActiveAt, findInlineFormatEnd, findInlineFormatExit, findUntypedPair, wrapSelectionChanges, leaveInlineFormat, livePreview, refreshLivePreviewEffect, sourceLinkClicks, getEditingTableRange, getTableCellAt, getTableCellAtSelection, getTableCellTarget, getTableBlockElement, finishTableCellEdit, focusTableCell, moveTableCell, insertTableLineBreak, openNoteReferenceAtCaret } from './live-preview.js'
@@ -1422,7 +1426,13 @@ function wrapSelectionAt(host, prefix, suffix) {
 function clearSpanFormatAt(host, property) {
   const instance = getInstance(host)
   if (!instance) return false
-  const { view } = instance
+  const cleared = clearSpanFormatInView(instance.view, property)
+  instance.view.focus()
+  notifyFormatStateChanged()
+  return cleared
+}
+
+function clearSpanFormatInView(view, property) {
   const main = view.state.selection.main
   const cleared = main.empty ? null : clearSpanChanges(view.state, main.from, main.to, property)
   if (cleared) {
@@ -1433,9 +1443,25 @@ function clearSpanFormatAt(host, property) {
       userEvent: 'input'
     })
   }
-  view.focus()
-  notifyFormatStateChanged()
   return !!cleared
+}
+
+// Ctrl + Space (discussion #1753): the formatting of the selected text goes
+// (bold, italic, colours, inline code...), the text and its links stay, like
+// the eraser button and "Clear formatting" of the command menu. A bare caret
+// steps out of the format it sits in instead, so what is typed next is plain.
+// The key is answered even with nothing to clear, otherwise the completion
+// list would still take it (autocompletion binds it at the highest
+// precedence, hence the Prec.highest and the position of the keymap below).
+function clearFormattingCommand(view) {
+  if (view.state.readOnly) return false
+  if (view.state.selection.main.empty) {
+    leaveInlineFormat(view)
+  } else {
+    clearSpanFormatInView(view, '')
+  }
+  notifyFormatStateChanged()
+  return true
 }
 
 // The buttons that show a format as on (the bar above a phone's keyboard,
@@ -2079,6 +2105,11 @@ function createEditor(host, options = {}) {
         autocomplete: markdownCompletionSource
       }),
       syntaxHighlighting(poznoteHighlightStyle),
+      // Before autocompletion(), which binds Ctrl+Space at Prec.highest too:
+      // among extensions of the same precedence, the earlier one wins
+      Prec.highest(keymap.of([
+        { key: 'Ctrl-Space', run: clearFormattingCommand }
+      ])),
       autocompletion({
         activateOnTyping: true,
         icons: true
@@ -2108,13 +2139,11 @@ function createEditor(host, options = {}) {
         { key: 'Enter', run: runMarkdownTableEnter(host) },
         { key: 'Enter', run: insertNewlineContinueMarkup },
         { key: 'Enter', run: insertNewlineAtColumnZero },
-        { key: 'Mod-Space', run: startCompletion },
-        { key: 'Ctrl-Space', run: startCompletion },
         { key: 'Mod-Shift-b', run: toggleFencedCodeBlock },
         { key: 'Mod-b', run: wrapSelection('**', '**') },
         { key: 'Backspace', run: deleteMarkerPair },
         ...closeBracketsKeymap,
-        ...completionKeymap,
+        ...filteredCompletionKeymap,
         { key: 'Mod-i', run: wrapSelection('*', '*') },
         { key: 'Mod-u', run: wrapSelection('<u>', '</u>') },
         { key: 'Mod-Shift-s', run: wrapSelection('~~', '~~') },

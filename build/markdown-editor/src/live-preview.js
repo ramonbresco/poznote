@@ -56,6 +56,46 @@ const codeLineNumbersField = StateField.define({
   }
 })
 
+// Folding a code block: a folded block keeps its first lines and the rest of
+// them are flattened, the way a folded toggle's body is. How many stay on
+// screen is the account's setting (code_block_collapsed_lines), which
+// index.php writes on <body> for the preview's chevron as well
+// (js/copy-code-on-focus.js); 0 means a folded block shows none of its code.
+// Like the line numbers above, the choice is kept at the block's first
+// character and in the browser per note, in the store the preview reads too,
+// so the views of a note agree on which blocks are folded.
+const setCodeCollapsedEffect = StateEffect.define()
+
+class CodeCollapsedChoice extends RangeValue {
+  constructor(on) {
+    super()
+    this.on = on
+  }
+
+  eq(other) {
+    return other.on === this.on
+  }
+}
+
+const codeCollapsedField = StateField.define({
+  create() {
+    return RangeSet.empty
+  },
+  update(value, transaction) {
+    value = value.map(transaction.changes)
+    for (const effect of transaction.effects) {
+      if (effect.is(setCodeCollapsedEffect)) {
+        const { pos, on } = effect.value
+        value = value.update({
+          filter: from => from !== pos,
+          add: [new CodeCollapsedChoice(on).range(pos)]
+        })
+      }
+    }
+    return value
+  }
+})
+
 // Toggles (<details> blocks, as the slash menu writes them): open or closed
 // is read from the tag's "open" attribute, and a click on the title folds or
 // unfolds the block for as long as the note stays open, without touching the
@@ -137,7 +177,10 @@ function getToggles(doc) {
 // A line that holds one media tag (the audio player and the video the slash
 // menu insert, an embedded video): the preview's parser turns it into the
 // element it shows, sanitised, and that element is what the editor shows in
-// place of the tag. Anything the parser refuses stays as text.
+// place of the tag. An embed from a host this instance refuses comes back as
+// the "embedded content blocked" notice (lib/embed-providers.php), which is
+// taken here too, so the three views of a Markdown note say the same thing;
+// anything else the parser refuses stays as text.
 const MEDIA_LINE_REGEX = /^\s*<(iframe|audio|video)\b[^>]*>\s*<\/\1>\s*$/i
 // A task list embedded from the List menu (js/tasklist-embed.js writes the
 // line, and fills the block the preview's parser makes of it)
@@ -148,7 +191,7 @@ function renderMediaLine(text) {
   try {
     const template = document.createElement('template')
     template.innerHTML = window.parseMarkdown(text)
-    return template.content.querySelector('iframe, audio, video, .tasklist-embed')
+    return template.content.querySelector('iframe, audio, video, .tasklist-embed, .embed-blocked')
   } catch (error) {
     return null
   }
@@ -186,6 +229,34 @@ class MediaWidget extends WidgetType {
       wrapper.textContent = this.text
     }
     return wrapper
+  }
+
+  // The same media, resized: a drag on its handle writes the new size into the
+  // line (js/embed-resize.js), so the widget is rebuilt for what is only an
+  // attribute change. Without this the frame is thrown away and put back, and
+  // the embed reloads from scratch in front of the reader, which reads as the
+  // page jumping. Only the attributes are carried over, never the src: a
+  // different address is a different embed and goes through toDOM().
+  updateDOM(dom) {
+    const current = dom.querySelector('iframe')
+    if (!current) return false
+
+    const next = renderMediaLine(this.text)
+    if (!next || next.tagName !== 'IFRAME') return false
+    if (next.getAttribute('src') !== current.getAttribute('src')) return false
+
+    const kept = new Set()
+    for (const attribute of Array.from(next.attributes)) {
+      kept.add(attribute.name)
+      if (attribute.name === 'src') continue
+      if (current.getAttribute(attribute.name) !== attribute.value) {
+        current.setAttribute(attribute.name, attribute.value)
+      }
+    }
+    for (const attribute of Array.from(current.attributes)) {
+      if (!kept.has(attribute.name)) current.removeAttribute(attribute.name)
+    }
+    return true
   }
 
   destroy() {
@@ -262,11 +333,38 @@ const toggleEdgeLineDecoration = Decoration.line({ class: 'cm-live-toggle-edge' 
 const toggleFoldedLineDecoration = Decoration.line({ class: 'cm-live-toggle-folded' })
 const toggleHeaderOpenDecoration = Decoration.line({ class: 'cm-live-toggle-header cm-live-toggle-open' })
 const toggleHeaderClosedDecoration = Decoration.line({ class: 'cm-live-toggle-header' })
+// The body of an open toggle: the lines carry the guide line the preview
+// draws along the body of a toggle (css/markdown.css)
+const toggleBodyLineDecoration = Decoration.line({ class: 'cm-live-toggle-body' })
+// Where the guide line of a toggle body sits, the same numbers as
+// .cm-live-toggle-body in css/markdown.css
+const TOGGLE_BODY_MARGIN = 6
+const TOGGLE_BODY_PADDING = 16
 
-// The choice made on a block is also kept in the browser, per note: closing
-// the note's tab, or reloading, no longer loses it. A block is known by its
-// rank among the note's code blocks (nothing is written in the source).
+// The size a toggle's title is shown at, from the class the <summary> carries
+// (css/components/toggle-block.css). 0 when it has none.
+function toggleHeadingLevel(doc, toggle) {
+  const match = /<summary\b[^>]*\bclass\s*=\s*"[^"]*\btoggle-h([1-6])\b/i.exec(doc.line(toggle.summaryLine).text)
+  return match ? Number(match[1]) : 0
+}
+
+// Is this line in the body of an open toggle? A line that sets its own left
+// offset, a list item, has to add the toggle's to it rather than replace it,
+// or the guide line would step right where the list starts.
+function isOpenToggleBodyLine(state, doc, lineFrom) {
+  const number = doc.lineAt(lineFrom).number
+  return getToggles(doc).some(toggle => number > toggle.summaryLine
+    && number < toggle.lastLine
+    && isToggleOpen(state, toggle))
+}
+
+// The choices made on a block are also kept in the browser, per note: closing
+// the note's tab, or reloading, no longer loses them. A block is known by its
+// rank among the note's code blocks (nothing is written in the source). Both
+// stores are the ones the rendered preview reads and writes
+// (js/copy-code-on-focus.js), so the views of a note agree.
 const CODE_LINE_NUMBERS_KEY = 'markdown_code_line_numbers'
+const CODE_COLLAPSED_KEY = 'markdown_code_collapsed'
 
 function codeFenceStarts(doc) {
   const starts = []
@@ -287,10 +385,10 @@ function codeFenceStarts(doc) {
   return starts
 }
 
-function readStoredCodeLineNumbers() {
+function readStoredCodeChoices(key) {
   try {
     const storage = window.__poznoteUserStorage || window.localStorage
-    const parsed = JSON.parse(storage.getItem(CODE_LINE_NUMBERS_KEY) || '{}')
+    const parsed = JSON.parse(storage.getItem(key) || '{}')
     return parsed && typeof parsed === 'object' ? parsed : {}
   } catch (error) {
     return {}
@@ -303,12 +401,12 @@ function noteIdOfView(view) {
   return /^\d+$/.test(id) ? id : ''
 }
 
-function storeCodeLineNumbers(view, blockFrom, on) {
+function storeCodeChoice(key, view, blockFrom, on) {
   const noteId = noteIdOfView(view)
   const rank = codeFenceStarts(view.state.doc).indexOf(blockFrom)
   if (!noteId || rank === -1) return
   try {
-    const all = readStoredCodeLineNumbers()
+    const all = readStoredCodeChoices(key)
     const note = all[noteId] && typeof all[noteId] === 'object' ? all[noteId] : {}
     note[rank] = on ? 1 : 0
     // (most recently touched note last; the oldest go past 300 notes)
@@ -317,22 +415,27 @@ function storeCodeLineNumbers(view, blockFrom, on) {
     const ids = Object.keys(all)
     ids.slice(0, Math.max(0, ids.length - 300)).forEach(id => { delete all[id] })
     const storage = window.__poznoteUserStorage || window.localStorage
-    storage.setItem(CODE_LINE_NUMBERS_KEY, JSON.stringify(all))
+    storage.setItem(key, JSON.stringify(all))
   } catch (error) {
     // (private mode, full storage: the choice then lasts as long as the note is open)
   }
 }
 
-function restoreCodeLineNumbers(view) {
+function restoreCodeChoices(view) {
   const noteId = noteIdOfView(view)
-  const note = noteId ? readStoredCodeLineNumbers()[noteId] : null
-  if (!note || typeof note !== 'object') return
+  if (!noteId) return
   const starts = codeFenceStarts(view.state.doc)
   const effects = []
-  Object.keys(note).forEach(rank => {
-    const pos = starts[Number(rank)]
-    if (pos !== undefined) effects.push(setCodeLineNumbersEffect.of({ pos, on: !!note[rank] }))
-  })
+  const collect = (key, effect) => {
+    const note = readStoredCodeChoices(key)[noteId]
+    if (!note || typeof note !== 'object') return
+    Object.keys(note).forEach(rank => {
+      const pos = starts[Number(rank)]
+      if (pos !== undefined) effects.push(effect.of({ pos, on: !!note[rank] }))
+    })
+  }
+  collect(CODE_LINE_NUMBERS_KEY, setCodeLineNumbersEffect)
+  collect(CODE_COLLAPSED_KEY, setCodeCollapsedEffect)
   if (effects.length) view.dispatch({ effects })
 }
 
@@ -343,6 +446,32 @@ function areCodeLineNumbersOn(state, blockFrom, language) {
   })
   if (choice !== null) return choice
   return !!language && !!document.body && document.body.classList.contains('code-block-line-numbers')
+}
+
+// How many lines a folded code block keeps on screen: the account's choice,
+// written on <body> by index.php (the fallback is the 5 of the stylesheet,
+// css/components/code-block-fold.css). 0 means a folded block shows none of
+// its code.
+function collapsedCodeLines() {
+  const raw = document.body ? document.body.getAttribute('data-code-collapsed-lines') : null
+  const lines = parseInt(raw, 10)
+  return Number.isFinite(lines) && lines >= 0 ? lines : 5
+}
+
+function isCodeCollapsed(state, blockFrom) {
+  let choice = false
+  state.field(codeCollapsedField).between(blockFrom, blockFrom, (from, to, value) => {
+    if (from === blockFrom) choice = value.on
+  })
+  return choice
+}
+
+// Folding a block with no more lines than that would hide nothing, so no
+// chevron is drawn on it, as in the preview. With the setting at 0 every
+// block that holds a line can be folded.
+function canCollapseCodeBlock(codeLines) {
+  const shown = collapsedCodeLines()
+  return shown === 0 ? codeLines > 0 : codeLines > shown
 }
 
 // Time left for a second click before the markers under the caret are revealed
@@ -369,6 +498,9 @@ const taskCheckedDecoration = Decoration.mark({ class: 'cm-live-task cm-live-tas
 const taskDoneTextDecoration = Decoration.mark({ class: 'cm-live-task-done' })
 const highlightDecoration = Decoration.mark({ class: 'cm-live-mark' })
 const codeLineDecoration = Decoration.line({ class: 'cm-live-code' })
+// A line of a folded code block: flattened to nothing, as a folded toggle's
+// body is (css/markdown.css)
+const codeFoldedLineDecoration = Decoration.line({ class: 'cm-live-code-folded' })
 const codeOpenLineDecoration = Decoration.line({ class: 'cm-live-code-open' })
 const codeCloseLineDecoration = Decoration.line({ class: 'cm-live-code-close' })
 
@@ -664,15 +796,23 @@ class CodeLanguageWidget extends WidgetType {
   }
 }
 
-// The buttons in the corner of a block: line numbers, copy, delete
+// The buttons in the corner of a block: fold, line numbers, copy, delete,
+// in the order the rendered preview puts them in, with the number of lines of
+// a folded block ahead of them all
 class CodeActionsWidget extends WidgetType {
-  constructor(numbered) {
+  constructor(numbered, collapsible, collapsed, codeLines) {
     super()
     this.numbered = numbered
+    this.collapsible = collapsible
+    this.collapsed = collapsed
+    this.codeLines = codeLines
   }
 
   eq(other) {
     return other.numbered === this.numbered
+      && other.collapsible === this.collapsible
+      && other.collapsed === this.collapsed
+      && other.codeLines === this.codeLines
   }
 
   toDOM() {
@@ -680,6 +820,38 @@ class CodeActionsWidget extends WidgetType {
     actions.className = 'cm-live-code-actions'
 
     const translate = (key, fallback) => typeof window.t === 'function' ? window.t(key, null, fallback) : fallback
+
+    if (this.collapsible && this.collapsed) {
+      const summary = document.createElement('span')
+      summary.className = 'cm-live-code-lines-count'
+      summary.textContent = this.codeLines === 1
+        ? translate('editor.code_block_collapse.one_line', '1 line')
+        : translate('editor.code_block_collapse.lines', '{{count}} lines').split('{{count}}').join(String(this.codeLines))
+      actions.appendChild(summary)
+    }
+
+    if (this.collapsible) {
+      const collapse = document.createElement('button')
+      const collapseLabel = this.collapsed
+        ? translate('editor.code_block_collapse.expand', 'Expand the code block')
+        : translate('editor.code_block_collapse.collapse', 'Collapse the code block')
+      collapse.type = 'button'
+      collapse.className = 'cm-live-code-collapse'
+      collapse.tabIndex = -1
+      collapse.title = collapseLabel
+      collapse.setAttribute('aria-label', collapseLabel)
+      collapse.setAttribute('aria-expanded', this.collapsed ? 'false' : 'true')
+      const collapseIcons = window.poznoteCodeBlockCollapseIcons
+      if (collapseIcons) {
+        collapse.innerHTML = this.collapsed ? collapseIcons.closed : collapseIcons.open
+      } else {
+        const fallbackIcon = document.createElement('i')
+        fallbackIcon.className = this.collapsed ? 'lucide lucide-chevron-down' : 'lucide lucide-chevron-up'
+        collapse.appendChild(fallbackIcon)
+      }
+      actions.appendChild(collapse)
+    }
+
     const icons = window.poznoteCodeBlockLineNumberIcons
     const lines = document.createElement('button')
     const linesLabel = this.numbered
@@ -1051,10 +1223,27 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
 
     const numbered = areCodeLineNumbersOn(state, node.from, language)
     const lastCodeLine = closed ? lastLine.number - 1 : lastLine.number
-    const digits = String(Math.max(1, lastCodeLine - firstLine.number)).length
+    const codeLines = Math.max(0, lastCodeLine - firstLine.number)
+    const digits = String(Math.max(1, codeLines)).length
+
+    // Folded: the lines past the first few are flattened. A selection inside
+    // the block brings them back, as a folded toggle gives its body back,
+    // which is also how a folded block is edited. touchesContent, not
+    // touchesLines: in rich text no syntax ever comes back under the caret,
+    // and the caret must never land on a line of no height.
+    const shownLines = collapsedCodeLines()
+    const collapsible = canCollapseCodeBlock(codeLines)
+    const collapsed = collapsible && isCodeCollapsed(state, node.from)
+    // The chevron keeps saying "folded" while a selection reveals the block,
+    // as a folded toggle keeps its closed triangle: that is the state the
+    // block goes back to, and the one the chevron would undo.
+    const revealed = collapsed && touchesContent(firstLine.from, lastLine.to)
 
     for (let line = firstLine; ; line = doc.line(line.number + 1)) {
       decorations.push(codeLineDecoration.range(line.from))
+      if (collapsed && !revealed && line.number > firstLine.number + shownLines && line.number <= lastCodeLine) {
+        decorations.push(codeFoldedLineDecoration.range(line.from))
+      }
       if (numbered && line.number > firstLine.number && line.number <= lastCodeLine) {
         decorations.push(Decoration.line({
           class: 'cm-live-code-numbered',
@@ -1071,7 +1260,10 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
     // (a wrapper takes the lines that start in its range, both ends included:
     // up to the end of the last line, or the line after it is taken too)
     codeBlocks.push(codeBlockWrapper.range(firstLine.from, lastLine.to))
-    decorations.push(Decoration.widget({ widget: new CodeActionsWidget(numbered), side: 1 }).range(firstLine.to))
+    decorations.push(Decoration.widget({
+      widget: new CodeActionsWidget(numbered, collapsible, collapsed, codeLines),
+      side: 1
+    }).range(firstLine.to))
 
     if (touchesLines(node.from, node.to)) return
     if (firstLine.to > node.from) {
@@ -1153,12 +1345,23 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
         }
 
         if (number === toggle.summaryLine) {
-          decorations.push((isOpen ? toggleHeaderOpenDecoration : toggleHeaderClosedDecoration).range(line.from))
+          const level = toggleHeadingLevel(doc, toggle)
+          const header = level
+            ? Decoration.line({ class: 'cm-live-toggle-header cm-live-toggle-h' + level + (isOpen ? ' cm-live-toggle-open' : '') })
+            : (isOpen ? toggleHeaderOpenDecoration : toggleHeaderClosedDecoration)
+          decorations.push(header.range(line.from))
         } else if (!rest.trim() && (number === toggle.firstLine || number === toggle.lastLine)) {
           // Nothing left on the line of <details> or </details>
           decorations.push(toggleEdgeLineDecoration.range(line.from))
+        } else if (!rest.trim() && (number === toggle.summaryLine + 1 || number === toggle.lastLine - 1)) {
+          // The blank line a Markdown parser wants between the title and the
+          // body, and the one before the closing tag: they separate nothing
+          // on the page, and the rendered preview leaves no gap for them
+          decorations.push(toggleEdgeLineDecoration.range(line.from))
         } else if (!isOpen && number > toggle.summaryLine) {
           decorations.push(toggleFoldedLineDecoration.range(line.from))
+        } else if (number > toggle.summaryLine) {
+          decorations.push(toggleBodyLineDecoration.range(line.from))
         }
       }
     })
@@ -1415,8 +1618,15 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
                 // (the base depends on how wide the marker itself is; items
                 // are spaced as the <li> of the preview are)
                 const base = list.name === 'OrderedList' ? 13 : (item.getChild('Task') ? 22 : 19)
+                const indent = base + depth * 16
+                // Inside a toggle the margin belongs to its guide line, so
+                // the list's own offset becomes padding behind it
+                const inToggle = isOpenToggleBodyLine(state, doc, lineFrom)
+                const offset = inToggle
+                  ? 'margin-left:' + TOGGLE_BODY_MARGIN + 'px;padding-left:' + (TOGGLE_BODY_PADDING + indent) + 'px'
+                  : 'margin-left:' + indent + 'px'
                 decorations.push(Decoration.line({
-                  attributes: { style: 'margin-left:' + (base + depth * 16) + 'px;padding-top:3px;padding-bottom:3px' }
+                  attributes: { style: offset + ';padding-top:3px;padding-bottom:3px' }
                 }).range(lineFrom))
               }
               if (list.name === 'OrderedList') decorations.push(listNumberDecoration.range(node.from, node.to))
@@ -4524,7 +4734,7 @@ const livePreviewPlugin = ViewPlugin.fromClass(class {
     // (once the editor sits in its note: the choices are kept per note)
     setTimeout(() => {
       try {
-        restoreCodeLineNumbers(this.view)
+        restoreCodeChoices(this.view)
       } catch (error) {
         // (the editor was closed in the meantime)
       }
@@ -4621,7 +4831,8 @@ const livePreviewPlugin = ViewPlugin.fromClass(class {
 
     const treeChanged = syntaxTree(update.startState) !== syntaxTree(update.state)
     const refreshed = update.transactions.some(transaction =>
-      transaction.effects.some(effect => effect.is(refreshLivePreviewEffect) || effect.is(setCodeLineNumbersEffect) || effect.is(setToggleOpenEffect))
+      transaction.effects.some(effect => effect.is(refreshLivePreviewEffect) || effect.is(setCodeLineNumbersEffect)
+        || effect.is(setCodeCollapsedEffect) || effect.is(setToggleOpenEffect))
     )
 
     if (update.docChanged || update.viewportChanged || treeChanged || refreshed) {
@@ -4716,6 +4927,19 @@ const livePreviewPlugin = ViewPlugin.fromClass(class {
         return true
       }
 
+      // The chevron of a code block: folded or whole
+      const collapse = target.closest('.cm-live-code-collapse')
+      if (collapse) {
+        const block = findFencedCodeAt(view.state, view.posAtDOM(collapse))
+        if (block) {
+          const folded = !isCodeCollapsed(view.state, block.from)
+          view.dispatch({ effects: setCodeCollapsedEffect.of({ pos: block.from, on: folded }) })
+          storeCodeChoice(CODE_COLLAPSED_KEY, view, block.from, folded)
+        }
+        event.preventDefault()
+        return true
+      }
+
       // Line numbers of a code block, on or off
       const lines = target.closest('.cm-live-code-lines')
       if (lines) {
@@ -4725,7 +4949,7 @@ const livePreviewPlugin = ViewPlugin.fromClass(class {
           const language = info ? view.state.doc.sliceString(info.from, info.to).trim().split(/\s+/)[0] : ''
           const numbered = !areCodeLineNumbersOn(view.state, block.from, language)
           view.dispatch({ effects: setCodeLineNumbersEffect.of({ pos: block.from, on: numbered }) })
-          storeCodeLineNumbers(view, block.from, numbered)
+          storeCodeChoice(CODE_LINE_NUMBERS_KEY, view, block.from, numbered)
         }
         event.preventDefault()
         return true
@@ -4843,6 +5067,7 @@ const livePreviewPlugin = ViewPlugin.fromClass(class {
 
 export const livePreview = [
   codeLineNumbersField,
+  codeCollapsedField,
   toggleOpenField,
   renderedBlocksField,
   literalTypingInput,

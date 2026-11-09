@@ -387,6 +387,12 @@ class HeadersForUserTests(unittest.TestCase):
         client = PoznoteClient.__new__(PoznoteClient)
         client._list_profiles = lambda: USERS
         client._base_headers = {"Authorization": "Bearer service-token"}
+        # Built without __init__, so the service token attributes the real
+        # client sets have to be stubbed too: _headers_for_user() reads the
+        # token to carry it on every request.
+        client._explicit_service_token = "service-token"
+        client._service_token = "service-token"
+        client.password = ""
         return client
 
     def test_explicit_user_id_for_another_profile_is_refused(self):

@@ -56,6 +56,7 @@ const ACTIVITY_STATISTICS_PUBLIC_DISABLED = 'statistics_public.disabled';
 const ACTIVITY_TWO_FACTOR_ENABLED  = 'two_factor.enabled';
 const ACTIVITY_TWO_FACTOR_DISABLED = 'two_factor.disabled';
 const ACTIVITY_TWO_FACTOR_RESET    = 'two_factor.reset';
+const ACTIVITY_SESSION_REVOKED     = 'session.revoked';
 const ACTIVITY_TWO_FACTOR_RECOVERY_USED = 'two_factor.recovery_used';
 const ACTIVITY_TWO_FACTOR_RECOVERY_REGENERATED = 'two_factor.recovery_regenerated';
 

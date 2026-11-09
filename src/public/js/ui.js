@@ -29,15 +29,22 @@ window.poznoteToastStack = function () {
     return stack;
 };
 
-// The toast of a save (js/keyboard-shortcuts.js), for what needs no acknowledging
-window.poznoteShowToast = function (text) {
+// The toast of a save (js/keyboard-shortcuts.js), for what needs no acknowledging.
+// options.variant 'warning' reports something that did not work (an exclamation
+// mark on the danger ground instead of the accent tick) and stays up longer,
+// since it carries information rather than an acknowledgement.
+window.poznoteShowToast = function (text, options) {
+    options = options || {};
+    var warning = options.variant === 'warning';
     var notification = document.createElement('div');
-    notification.className = 'save-notification';
-    notification.setAttribute('role', 'status');
-    notification.innerHTML = '<div class="save-notification-inner"><div class="save-notification-check">✓</div><span></span></div>';
+    notification.className = 'save-notification' + (warning ? ' is-warning' : '');
+    notification.setAttribute('role', warning ? 'alert' : 'status');
+    notification.innerHTML = '<div class="save-notification-inner"><div class="save-notification-check"></div><span></span></div>';
+    notification.querySelector('.save-notification-check').textContent = warning ? '!' : '✓';
     notification.querySelector('span').textContent = text;
     window.poznoteToastStack().appendChild(notification);
-    setTimeout(function () { notification.remove(); }, 2000);
+    setTimeout(function () { notification.remove(); },
+        typeof options.duration === 'number' ? options.duration : (warning ? 6000 : 2000));
 };
 
 function showNotificationPopup(message, type) {

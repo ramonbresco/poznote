@@ -1418,7 +1418,15 @@ function parseMarkdown(text) {
     function protectIframeTag(attrs, original) {
         attrs = _mdDecodeHtmlEntities(attrs);
         var src = _mdGetTagAttribute(attrs, 'src');
-        if (!_mdIsAllowedIframeSrc(src)) return original;
+        if (!_mdIsAllowedIframeSrc(src)) {
+            // Not an allowed host: say so where the frame would have been
+            // (js/embeds.js), instead of leaving the reader the escaped tag.
+            if (!src || typeof window.poznoteBlockedEmbedNoticeHtml !== 'function') return original;
+            var blockedPlaceholder = '\x00PIFRAME' + protectedIndex + '\x00';
+            protectedElements[protectedIndex] = window.poznoteBlockedEmbedNoticeHtml(src, _mdDecodeHtmlEntities(original));
+            protectedIndex++;
+            return rememberPlaceholderSource(blockedPlaceholder, original);
+        }
 
         var placeholder = '\x00PIFRAME' + protectedIndex + '\x00';
         var safeAttrs = [];

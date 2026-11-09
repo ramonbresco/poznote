@@ -268,6 +268,38 @@ a.links_arbo_left.tree-drag-ghost-note {
     box-shadow: 0 2px 8px rgba(var(--pz-accent-text-rgb), 0.15);
 }
 
+/* A press held on a row lifts it (js/tree-touch-drag.js), which is also the
+   gesture a touch screen uses to select the text under the finger: the
+   selection and its handles would fight the drag. css/index-mobile.css says
+   this for a phone already, where the rows are kept from highlighting on tap
+   as well; this is what reaches the wider touch screens, which keep the
+   desktop layout. */
+@media (hover: none) {
+
+    .links_arbo_left,
+    .folder-header,
+    .folder-toggle {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+}
+
+/* The drag image of a finger drag (js/tree-touch-drag.js). The browser draws
+   none for a drag raised from script, so the same clone it would have been
+   handed follows the finger instead, lifted clear of the hand. The two ghost
+   rules above park their clone at top: -1000px, which this undoes. */
+.tree-touch-drag-ghost {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 2147483000;
+    /* Never what elementFromPoint() finds under the finger */
+    pointer-events: none;
+    opacity: 0.9;
+    will-change: transform;
+}
+
 html[data-theme='dark'] .tree-drag-ghost {
     border-color: rgba(var(--pz-accent-text-rgb), 0.4);
     background: rgba(var(--pz-accent-text-rgb), 0.15);

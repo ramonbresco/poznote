@@ -172,7 +172,7 @@ Le serveur MCP utilise les valeurs par défaut de `docker-compose.yml` :
 # Les logs de débogage sont désactivés (false) par défaut
 ```
 
-Poznote génère automatiquement le jeton de service MCP dans `data/.mcp_token`. Le conteneur `mcp-server` lit ce fichier via le volume partagé `./data:/var/www/html/data:ro` : il n'y a donc aucun mot de passe à conserver dans `.env`.
+Poznote génère automatiquement le jeton de service MCP dans `data/.mcp_token`. Le conteneur `mcp-server` lit ce fichier via le volume partagé `./data:/var/www/html/data:ro` : il n'y a donc aucun mot de passe à conserver dans `.env`. Le fichier est relu à chaque appel tant qu'il est absent : un serveur MCP démarré avant que Poznote ne le crée récupère donc le jeton tout seul, sans redémarrage. Un serveur exécuté en dehors de cette pile Compose ne voit pas ce chemin : indiquez dans `POZNOTE_SERVICE_TOKEN_FILE` l'emplacement réel de `data/.mcp_token` sur cette machine.
 
 Pour modifier le port et le mode débogage le temps d'un démarrage, recréez le conteneur MCP en passant les variables d'environnement sur la ligne de commande :
 

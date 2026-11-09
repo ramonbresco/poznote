@@ -8,12 +8,19 @@ ini_set('display_startup_errors', $poznoteDebug ? '1' : '0');
 ini_set('log_errors', '1');
 error_reporting(E_ALL);
 
-// Load functions to get ALLOWED_IFRAME_DOMAINS
+// Load functions to get the allowed embed hosts (lib/embed-providers.php).
+// config.php comes with them, although auth.php below pulls it in anyway: the
+// embed providers an administrator switched off are stored in master.db, which
+// cannot be opened before config has run, and the frame-src built below would
+// then always be the full shipped list.
 require_once __DIR__ . '/../functions.php';
+require_once __DIR__ . '/../config.php';
 
-// Build CSP frame-src directive from allowed domains
+// Build CSP frame-src directive from the embed providers enabled on this
+// instance: a provider an administrator switched off is refused by the browser
+// here, as well as by the sanitiser that renders the note.
 $frameSrcDomains = "'self'";
-foreach (ALLOWED_IFRAME_DOMAINS as $domain) {
+foreach (poznoteAllowedIframeDomains() as $domain) {
     $frameSrcDomains .= " https://{$domain}";
 }
 
@@ -222,6 +229,10 @@ if (($kanban_restore_id > 0 || $blank_note_pane) && empty($note)) {
 $default_note_folder = $note_load_result['default_note_folder'] ?? null;
 $current_note_folder = $note_load_result['current_note_folder'] ?? null;
 $res_right = $note_load_result['res_right'] ?? null;
+// A ?note=<id> nobody can open: the page falls back to the last opened note,
+// which alone looks like a plain reload, so it says so instead (js/ui.js
+// toast, fired by js/note-loader.js).
+$missing_note = $note_load_result['missing_note'] ?? null;
 
 // Two counts over the same rows the notifications modal lists (everything
 // triggered and not dismissed, see RemindersController::index): the total says
@@ -277,6 +288,7 @@ $settings = [
     'folder_count_parentheses' => '0',
     'code_block_word_wrap' => '1',
     'code_block_line_numbers' => '0',
+    'code_block_collapsed_lines' => '5',
     'markdown_split_card_view' => '1',
     'markdown_split_preview_left' => '0',
     'markdown_heading_underline' => '1',
@@ -287,7 +299,7 @@ $settings = [
     'attachment_previews_in_note' => '0',
     'attachments_at_bottom' => '0',
     'backlinks_at_bottom' => '0',
-    'note_virtual_space' => '0',
+    'note_virtual_space' => '1',
     'default_image_border_no_padding' => '0',
     'spellcheck_html_notes' => '0',
     'highlight_current_folder_tree' => '0',
@@ -298,11 +310,12 @@ $settings = [
     'markdown_view_cycle' => 'live,rich,split',
     'sidebar_offline_marks' => '1',
     'favorites_sort' => POZNOTE_FAVORITES_SORT_DEFAULT,
-    'favorites_icon_color' => ''
+    'favorites_icon_color' => '',
+    'tab_follows_note' => '0'
 ];
 
 try {
-    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_at_bottom', 'backlinks_at_bottom', 'note_virtual_space', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color')");
+    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'code_block_collapsed_lines', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_at_bottom', 'backlinks_at_bottom', 'note_virtual_space', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color', 'tab_follows_note')");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $settings[$row['key']] = $row['value'];
         if ($row['key'] === 'markdown_new_note_view_mode') {
@@ -448,7 +461,13 @@ if ($center_note_content_enabled && $width_value !== '1' && $width_value !== 'tr
     </script>
     <?php endif; ?>
     <script src="pwa/pwa.js?v=<?php echo $v; ?>" defer></script>
-    <script>window.ALLOWED_IFRAME_DOMAINS = <?php echo json_encode(ALLOWED_IFRAME_DOMAINS); ?>;</script>
+    <script>window.ALLOWED_IFRAME_DOMAINS = <?php echo json_encode(poznoteAllowedIframeDomains()); ?>;</script>
+    <?php // What a reader sees in place of an embed this instance refuses (js/embeds.js). ?>
+    <script>window.POZNOTE_EMBED_BLOCKED = <?php echo json_encode([
+        'title' => t('embeds.blocked.title', [], 'Embedded content blocked'),
+        'detail' => t('embeds.blocked.detail_admin', [], 'This instance does not allow embedded content from {{host}}. An administrator can allow it again in Settings, Admin Tools, Embeds.'),
+        'open' => t('attachments.page.open_in_new_tab', [], 'Open in new tab'),
+    ]); ?>;</script>
     <meta name="color-scheme" content="dark light">
     <!-- Modular CSS served as two concatenated bundles (see index_css.php).
          css/index-mobile.css stays a separate media-scoped link between the two
@@ -507,6 +526,12 @@ if (!poznoteSettingEnabled($settings['code_block_word_wrap'], true)) {
 if (poznoteSettingEnabled($settings['code_block_line_numbers'], false)) {
     $extra_body_classes .= ' code-block-line-numbers';
 }
+// How much of its listing a folded code block keeps on screen
+// (css/components/code-block-fold.css reads the custom property, and
+// js/copy-code-on-focus.js the data attribute to know which blocks are worth
+// a chevron). 0 means a folded block shows none of its code.
+$code_block_collapsed_lines = poznoteCodeBlockCollapsedLines($settings['code_block_collapsed_lines']);
+$code_block_collapsed_style = '--pz-code-collapsed-lines: ' . $code_block_collapsed_lines . '; ';
 // Dims the notes list outside the folder hierarchy being worked in
 // (css/folders/tree-highlight.css)
 $folder_tree_dim_style = '';
@@ -536,7 +561,7 @@ if (!poznoteSettingEnabled($settings['markdown_editor_word_wrap'], true)) {
     $extra_body_classes .= ' markdown-editor-no-wrap';
 }
 // Empty room under the last line of a note (discussion 1564), css/notes/noteentry.css
-if (poznoteSettingEnabled($settings['note_virtual_space'], false)) {
+if (poznoteSettingEnabled($settings['note_virtual_space'], true)) {
     $extra_body_classes .= ' note-virtual-space';
 }
 // Mode markdown notes with content open in (js/markdown-view-modes.js reads
@@ -619,7 +644,7 @@ $note_list_order_by = $allowed_sorts[$note_list_sort_type];
 // Set body classes
 $body_classes = trim($extra_body_classes);
 // Per-user CSS variables that cannot live in a stylesheet
-$body_inline_style = trim($folder_tree_dim_style . $markdown_colored_style);
+$body_inline_style = trim($folder_tree_dim_style . $code_block_collapsed_style . $markdown_colored_style);
 // "What's new" popup (js/whats-new.js): asked for only when this user's last
 // seen version is not the installed one, the API then decides what to show
 $whats_new_pending = getSetting('whats_new_seen_version', '') !== getAppVersion();
@@ -632,7 +657,7 @@ $whats_new_preview = is_file($whats_new_preview_file);
 $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents($whats_new_preview_file)) : '';
 ?>
 
-<body<?php echo $body_classes ? ' class="' . htmlspecialchars($body_classes, ENT_QUOTES) . '"' : ''; ?><?php echo $body_inline_style ? ' style="' . htmlspecialchars($body_inline_style, ENT_QUOTES) . '"' : ''; ?> data-workspace="<?php echo htmlspecialchars($workspace_filter, ENT_QUOTES); ?>" data-markdown-default-mode="<?php echo htmlspecialchars($markdown_default_view_mode, ENT_QUOTES); ?>" data-markdown-new-note-mode="<?php echo htmlspecialchars($markdown_new_note_view_mode, ENT_QUOTES); ?>" data-markdown-live-editing="<?php echo $markdown_live_editing ? '1' : '0'; ?>" data-markdown-live-syntax="<?php echo $markdown_live_show_syntax ? '1' : '0'; ?>" data-markdown-view-cycle="<?php echo htmlspecialchars($markdown_view_cycle, ENT_QUOTES); ?>" data-spellcheck="<?php echo $spellcheck_notes ? '1' : '0'; ?>" data-spellcheck-lang="<?php echo htmlspecialchars(getUserLanguage(), ENT_QUOTES); ?>"<?php echo $whats_new_preview ? ' data-whats-new="preview" data-whats-new-since="' . htmlspecialchars($whats_new_preview_since, ENT_QUOTES) . '"' : ($whats_new_pending ? ' data-whats-new="1"' : ''); ?>>
+<body<?php echo $body_classes ? ' class="' . htmlspecialchars($body_classes, ENT_QUOTES) . '"' : ''; ?><?php echo $body_inline_style ? ' style="' . htmlspecialchars($body_inline_style, ENT_QUOTES) . '"' : ''; ?> data-workspace="<?php echo htmlspecialchars($workspace_filter, ENT_QUOTES); ?>" data-code-collapsed-lines="<?php echo (int)$code_block_collapsed_lines; ?>" data-markdown-default-mode="<?php echo htmlspecialchars($markdown_default_view_mode, ENT_QUOTES); ?>" data-markdown-new-note-mode="<?php echo htmlspecialchars($markdown_new_note_view_mode, ENT_QUOTES); ?>" data-markdown-live-editing="<?php echo $markdown_live_editing ? '1' : '0'; ?>" data-markdown-live-syntax="<?php echo $markdown_live_show_syntax ? '1' : '0'; ?>" data-markdown-view-cycle="<?php echo htmlspecialchars($markdown_view_cycle, ENT_QUOTES); ?>" data-spellcheck="<?php echo $spellcheck_notes ? '1' : '0'; ?>" data-spellcheck-lang="<?php echo htmlspecialchars(getUserLanguage(), ENT_QUOTES); ?>"<?php echo $whats_new_preview ? ' data-whats-new="preview" data-whats-new-since="' . htmlspecialchars($whats_new_preview_since, ENT_QUOTES) . '"' : ($whats_new_pending ? ' data-whats-new="1"' : ''); ?>>
     <script>
     (function () {
         try {
@@ -707,7 +732,17 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
             // Preselected in the dialog's language menu, which can override it
             // for one recording; empty means the server detects the language
             'speechToTextLanguage' => $sttEnabled ? (string)$sttConfig['language'] : '',
-            'speechToTextMaxSeconds' => poznoteSttMaxRecordingSeconds()
+            'speechToTextMaxSeconds' => poznoteSttMaxRecordingSeconds(),
+            // The tab takes the title and the icon of the open note
+            // (js/tab-follows-note.js), off by default
+            'tabFollowsNote' => poznoteSettingEnabled($settings['tab_follows_note'] ?? '0', false),
+            // The note the address named and that could not be opened
+            'missingNote' => $missing_note === null ? null : [
+                'id' => $missing_note['id'],
+                'message' => $missing_note['trashed']
+                    ? t('index.note.missing_trashed', ['id' => $missing_note['id']], 'Note #{{id}} is in the trash. Restore it from the trash to open it again.')
+                    : t('index.note.missing', ['id' => $missing_note['id']], 'Note #{{id}} does not exist, or it was deleted.'),
+            ]
         ], JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?: '{}';
     ?></script>
     <!-- js/error-handler.js is bundled as the first file of index_js.php?group=app -->
@@ -823,6 +858,27 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
         . '<i class="lucide lucide-chevron-down"></i>'
         . '</button>';
 
+    // The padlock of the whole account, left of the view options toggle on the
+    // same rule (notes_list.php). It locks or unlocks every note at once
+    // (PUT /api/v1/notes/locked), the per-note padlock living in the ⋮ menu of
+    // the note itself. Closed and in the accent colour while every note is
+    // locked. A guest of a read-only workspace is not offered it, and neither
+    // is someone looking at another account.
+    $lockAllButton = '';
+    if ($canWriteAccountSettings && (!function_exists('isSharedWorkspaceReadOnly') || !isSharedWorkspaceReadOnly())) {
+        require_once __DIR__ . '/../lib/note-lock.php';
+        $lockAllCounts = poznoteNoteLockCounts($con);
+        $lockAllOn = $lockAllCounts['total'] > 0 && $lockAllCounts['locked'] === $lockAllCounts['total'];
+        $lockAllLabel = $lockAllOn
+            ? t_h('note_lock.unlock_all', [], 'Unlock all notes')
+            : t_h('note_lock.lock_all', [], 'Lock all notes against editing');
+        $lockAllButton = '<button type="button" class="sidebar-folder-toggle sidebar-lock-all' . ($lockAllOn ? ' active' : '') . '" id="sidebarLockAllBtn" data-action="toggle-lock-all-notes"'
+            . ' data-locked="' . ($lockAllOn ? '1' : '0') . '"'
+            . ' aria-pressed="' . ($lockAllOn ? 'true' : 'false') . '" title="' . $lockAllLabel . '" aria-label="' . $lockAllLabel . '">'
+            . '<i class="lucide ' . ($lockAllOn ? 'lucide-lock' : 'lucide-lock-open') . '"></i>'
+            . '</button>';
+    }
+
     // View options menu of the tree: one vertical three-dot toggle at the right end of
     // the rule after Favorites (notes_list.php) opens #tree-options-menu, which
     // gathers the sort mode and the offline dots (js/tree-options-menu.js).
@@ -856,10 +912,11 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
     // card of Settings): "Hide offline dots" in the accent colour while they
     // show, as "Stop keeping offline" in the note menu. js/offline-marks.js
     // saves the setting, redraws the dots and swaps the label. Offline copies are kept for the login's
-    // own account only.
+    // own account only. The item carries the card:sidebarOfflineDotsBtn id of
+    // Element visibility (the dots themselves follow the setting, not the key).
     if ($canWriteAccountSettings && poznoteOfflineModeEnabled()) {
         $offlineDotsShown = poznoteSettingEnabled($settings['sidebar_offline_marks'], true);
-        $treeOptionsGroups[] = '<div class="folder-actions-menu-item' . ($offlineDotsShown ? ' active-state' : '') . '" role="menuitemcheckbox" aria-checked="' . ($offlineDotsShown ? 'true' : 'false') . '" data-action="toggle-offline-dots" title="' . t_h('settings.card_help.sidebar_offline_marks', [], 'Show a small dot next to the notes available offline in this browser.') . '">'
+        $treeOptionsGroups[] = '<div id="sidebarOfflineDotsBtn" class="folder-actions-menu-item' . ($offlineDotsShown ? ' active-state' : '') . '" role="menuitemcheckbox" aria-checked="' . ($offlineDotsShown ? 'true' : 'false') . '" data-action="toggle-offline-dots" title="' . t_h('settings.card_help.sidebar_offline_marks', [], 'Show a small dot next to the notes available offline in this browser.') . '">'
             . '<i class="lucide lucide-circle-dot"></i>'
             . '<span data-label-show="' . t_h('sidebar.show_offline_dots', [], 'Show offline dots') . '" data-label-hide="' . t_h('sidebar.hide_offline_dots', [], 'Hide offline dots') . '">'
             . ($offlineDotsShown ? t_h('sidebar.hide_offline_dots', [], 'Hide offline dots') : t_h('sidebar.show_offline_dots', [], 'Show offline dots'))
@@ -953,7 +1010,7 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
                 'emoji_icons_enabled' => getSetting('emoji_icons_enabled', '1'),
                 'slash_menu_trigger' => getSetting('slash_menu_trigger', 'slash'),
                 'slash_menu_trigger_mobile' => getSetting('slash_menu_trigger_mobile', 'slash'),
-                'format_toolbar_mode' => getSetting('format_toolbar_mode', 'toolbar'),
+                'format_toolbar_mode' => getSetting('format_toolbar_mode', 'floating'),
                 $currentWorkspaceOpacityKey => getSetting($currentWorkspaceOpacityKey, '25')
             ]
         ];

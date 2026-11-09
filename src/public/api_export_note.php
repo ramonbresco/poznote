@@ -50,10 +50,10 @@ if (!$noteId) {
     exit;
 }
 
-if (!in_array($format, ['html', 'markdown', 'json', 'html_embedded'], true)) {
+if (!in_array($format, ['html', 'markdown', 'json', 'html_embedded', 'html_public'], true)) {
     header('Content-Type: application/json');
     http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Invalid format. Use "html", "markdown", "json" or "html_embedded"']);
+    echo json_encode(['success' => false, 'error' => 'Invalid format. Use "html", "markdown", "json", "html_embedded" or "html_public"']);
     exit;
 }
 
@@ -184,6 +184,20 @@ try {
             // because generateStyledHtml might add classes or wrappers that complicate matching
             $content = convertImagesToBase64InHtml($content);
             $disposition = 'attachment';
+        }
+
+        // One file that looks exactly like the note's public page: the
+        // pictures travel inside it and the stylesheets the shared page links
+        // are inlined, so it reads the same with nothing else around it.
+        if ($format === 'html_public') {
+            $content = convertImagesToBase64InHtml($content);
+            $publicHtml = generatePublicLookHtml(
+                $content,
+                $note['heading'],
+                $noteType,
+                buildExportNoteReferenceResolver($con, $noteId)
+            );
+            exportAsHtml($publicHtml, $note['heading'], $disposition === 'inline' ? 'inline' : 'attachment');
         }
 
         // Export as HTML - create ZIP with attachments if downloading
@@ -432,10 +446,18 @@ function cleanExportContent($content, $referenceResolver = null) {
     libxml_clear_errors();
 
     $xpath = new DOMXPath($dom);
-    // Code block UI affordances (copy / delete / language badge / line numbers)
-    $actionButtons = $xpath->query("//*[contains(@class, 'code-block-copy-btn') or contains(@class, 'code-block-delete-btn') or contains(@class, 'code-block-lang-btn') or contains(@class, 'code-block-line-numbers-btn')]");
+    // Code block UI affordances (copy / delete / language badge / line numbers
+    // / fold chevron and its line count)
+    $actionButtons = $xpath->query("//*[contains(@class, 'code-block-copy-btn') or contains(@class, 'code-block-delete-btn') or contains(@class, 'code-block-lang-btn') or contains(@class, 'code-block-line-numbers-btn') or contains(@class, 'code-block-collapse-btn') or contains(@class, 'code-block-collapsed-summary')]");
     foreach ($actionButtons as $button) {
         $button->parentNode->removeChild($button);
+    }
+
+    // A block the reader had folded comes back whole: the exported page has no
+    // chevron left to unfold it with (css/components/code-block-fold.css)
+    $foldedBlocks = $xpath->query("//pre[@data-collapsed]");
+    foreach ($foldedBlocks as $pre) {
+        $pre->removeAttribute('data-collapsed');
     }
 
     if ($referenceResolver !== null && strpos($content, '[[') !== false) {
@@ -918,6 +940,79 @@ function buildExportAttachmentLinks($attachments, $content) {
     }
 
     return '<div class="note-attachments">' . implode(' ', $links) . '</div>';
+}
+
+/**
+ * The note as its public page shows it, in a single file.
+ *
+ * The shared page is a handful of linked stylesheets over a small piece of
+ * markup; here the same stylesheets are read off disk and inlined, and the
+ * markup is the same, so the downloaded file and the shared link look alike
+ * without the file depending on the server that made it.
+ *
+ * Only what paints the note is taken. The page chrome of a share (its theme
+ * switch, its outline, its attachment chips) belongs to a live page and is
+ * left out.
+ */
+function generatePublicLookHtml($content, $title, $noteType, $referenceResolver = null) {
+    $cssRoot = __DIR__ . '/css';
+    $sheets = [
+        $cssRoot . '/tokens.css',
+        $cssRoot . '/fonts.css',
+        // css/lucide.css is left out on purpose: it is 870 KB of icon data
+        // for icons a note's text never holds, and it would be most of the
+        // weight of the file.
+        $cssRoot . '/components/buttons.css',
+        $cssRoot . '/components/selection.css',
+        $cssRoot . '/components/task-priority.css',
+        $cssRoot . '/components/code-block-fold.css',
+        $cssRoot . '/components/embed-blocked.css',
+        $cssRoot . '/components/toggle-block.css',
+        $cssRoot . '/public_note.css',
+        $cssRoot . '/tasks.css',
+        $cssRoot . '/markdown.css',
+        $cssRoot . '/syntax-highlight.css',
+    ];
+
+    $styles = '';
+    foreach ($sheets as $sheet) {
+        $css = is_readable($sheet) ? file_get_contents($sheet) : false;
+        if ($css === false) {
+            continue;
+        }
+        // A stylesheet of the app may pull in another by path, which means
+        // nothing once the file stands alone.
+        $css = preg_replace('/^\s*@import[^;]*;\s*$/m', '', $css);
+        $styles .= "\n/* " . basename($sheet) . " */\n" . $css;
+    }
+
+    $cleanContent = cleanExportContent($content, $referenceResolver);
+    $markdownClass = $noteType === 'markdown' ? ' markdown-preview' : '';
+
+    return '<!DOCTYPE html>
+<html lang="' . htmlspecialchars(getUserLanguage(), ENT_QUOTES) . '" data-theme="light" class="theme-light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <meta name="robots" content="noindex, nofollow">
+    <title>' . htmlspecialchars($title, ENT_QUOTES) . '</title>
+    <style>' . $styles . '
+    /* The shared page is a document on its own ground, not a pane of the app */
+    body { margin: 0; background: var(--pz-bg); }
+    </style>
+</head>
+<body class="public-note-body">
+    <div class="public-note">
+        <div class="public-note-top">
+            <div class="public-note-top-main">
+                <div class="public-note-header"><h1>' . htmlspecialchars($title, ENT_QUOTES) . '</h1></div>
+            </div>
+        </div>
+        <div class="content' . $markdownClass . '">' . $cleanContent . '</div>
+    </div>
+</body>
+</html>';
 }
 
 function generateStyledHtml($content, $title, $noteType, $tags, $attachments = [], $referenceResolver = null) {

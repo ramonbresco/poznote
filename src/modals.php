@@ -363,6 +363,31 @@ $modalsPasswordDisabledHelp = $modalsPasswordDisabledReason === 'sso_only'
     </div>
 </div>
 
+<!-- Embeds Modal: which shipped providers a note may frame (lib/embed-providers.php, #1742).
+     The list of sites lives in the code; this only switches one off. -->
+<div id="embedsModal" class="modal">
+    <div class="modal-content">
+        <h3><?php echo t_h('modals.embeds.title', [], 'Embeds'); ?></h3>
+        <p><?php echo t_h('modals.embeds.description', [], 'Notes can embed content from the sites below, such as a video or an interactive applet. Uncheck the ones this instance should never load. No other site can be framed in a note, and sites cannot be added here.'); ?></p>
+        <div class="embed-providers">
+            <?php foreach (poznoteEmbedProviderCatalogue() as $embedProviderId => $embedProvider): ?>
+            <label class="embed-provider">
+                <input type="checkbox" data-embed-provider="<?php echo htmlspecialchars($embedProviderId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+                <span class="embed-provider-text">
+                    <span class="embed-provider-title"><?php echo htmlspecialchars($embedProvider['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></span>
+                    <span class="embed-provider-help"><?php echo htmlspecialchars(implode(', ', $embedProvider['domains']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></span>
+                </span>
+            </label>
+            <?php endforeach; ?>
+        </div>
+        <p class="embed-providers-hint"><?php echo t_h('modals.embeds.existing_hint', [], 'Unchecking a site hides the embeds that notes already hold: they stop loading, and editing such a note afterwards drops the embed from it.'); ?></p>
+        <div class="modal-buttons">
+            <button type="button" class="btn-cancel" data-action="close-modal" data-modal="embedsModal"><?php echo t_h('common.cancel'); ?></button>
+            <button type="button" class="btn-primary" id="saveEmbedProvidersBtn"><?php echo t_h('common.save'); ?></button>
+        </div>
+    </div>
+</div>
+
 <!-- Local Network Access Modal (lib/outbound-url.php) -->
 <div id="outboundHostsModal" class="modal">
     <div class="modal-content">
@@ -459,9 +484,17 @@ $modalsPasswordDisabledHelp = $modalsPasswordDisabledReason === 'sso_only'
 <div id="moveNoteFolderModal" class="modal">
     <div class="modal-content">
         <h3><?php echo t_h('modals.move_note_folder.title'); ?></h3>
-        
-        <!-- Workspace selection -->
-        <div class="form-group">
+
+        <!-- Which note is moving, and where it sits now: the folder it is in is
+             left out of the list below, so the dialog has to name it -->
+        <p class="move-note-subject">
+            <i class="lucide lucide-file-text" aria-hidden="true"></i>
+            <span id="moveNoteFolderNoteTitle" class="move-note-subject-title"></span>
+        </p>
+        <p id="moveNoteFolderCurrent" class="move-note-subject-current"></p>
+
+        <!-- Workspace selection (hidden while the account has a single workspace) -->
+        <div class="form-group" id="moveNoteWorkspaceGroup">
             <div class="move-note-label-row">
                 <label for="workspaceSelect"><?php echo t_h('modals.move_note_folder.workspace_destination'); ?></label>
                 <?php if ((!function_exists('isActiveAccountOwnedByAuthenticatedUser') || isActiveAccountOwnedByAuthenticatedUser())): ?>
@@ -482,10 +515,7 @@ $modalsPasswordDisabledHelp = $modalsPasswordDisabledReason === 'sso_only'
 
         <div class="form-group">
             <div class="move-note-label-row">
-                <label for="moveNoteTargetSelect"><?php echo t_h('modals.move_note_folder.target_folder'); ?></label>
-                <button type="button" class="move-note-inline-create-toggle" data-action="toggle-move-create-folder">
-                    <i class="lucide lucide-plus"></i><?php echo t_h('modals.move_note_folder.new_folder', [], 'New folder'); ?>
-                </button>
+                <label for="moveNoteFolderFilter"><?php echo t_h('modals.move_note_folder.target_folder'); ?></label>
             </div>
             <div id="moveNoteRecentFolders" class="move-note-recent-folders initially-hidden">
                 <div class="move-note-recent-label">
@@ -494,14 +524,23 @@ $modalsPasswordDisabledHelp = $modalsPasswordDisabledReason === 'sso_only'
                 </div>
                 <div id="moveNoteRecentFoldersList" class="move-note-recent-list"></div>
             </div>
-            <select id="moveNoteTargetSelect" class="workspace-select">
+            <!-- Filter bar: narrows the list below, and names the folder to create
+                 when nothing matches -->
+            <div class="move-note-filter-bar">
+                <div class="filter-input-wrapper">
+                    <i class="lucide lucide-search move-note-filter-icon" aria-hidden="true"></i>
+                    <input type="text" id="moveNoteFolderFilter" class="filter-input" autocomplete="off" role="combobox" aria-controls="moveNoteFolderList" aria-expanded="true" placeholder="<?php echo t_h('modals.move_note_folder.filter_placeholder', [], 'Filter folders, or type a new name'); ?>" aria-label="<?php echo t_h('modals.move_note_folder.filter_placeholder', [], 'Filter folders, or type a new name'); ?>">
+                    <button type="button" id="moveNoteFolderFilterClear" class="clear-filter-btn" hidden title="<?php echo t_h('modals.move_note_folder.clear_filter', [], 'Clear the filter'); ?>" aria-label="<?php echo t_h('modals.move_note_folder.clear_filter', [], 'Clear the filter'); ?>">
+                        <i class="lucide lucide-x" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="moveNoteFolderList" class="move-task-list move-note-folder-list" role="listbox" aria-label="<?php echo t_h('modals.move_note_folder.target_folder'); ?>"></div>
+            <!-- Out of sight: holds the chosen folder and the option labels, which
+                 the move itself and the recent-folder shortcuts read -->
+            <select id="moveNoteTargetSelect" class="move-note-target-source" tabindex="-1" aria-hidden="true">
                 <!-- Options will be populated dynamically -->
             </select>
-            <div id="moveCreateFolderRow" class="move-note-inline-create initially-hidden">
-                <input type="text" id="moveCreateFolderName" maxlength="255" placeholder="<?php echo t_h('modals.move_note_folder.folder_name_placeholder', [], 'Folder name (use / for subfolders)'); ?>" data-enter-action="create-move-modal-folder">
-                <button type="button" class="btn-primary" data-action="create-move-modal-folder"><?php echo t_h('common.create'); ?></button>
-                <button type="button" class="btn-cancel" data-action="toggle-move-create-folder"><?php echo t_h('common.cancel'); ?></button>
-            </div>
         </div>
         
         <!-- Action buttons -->
@@ -826,6 +865,15 @@ $modalsPasswordDisabledHelp = $modalsPasswordDisabledReason === 'sso_only'
                     </div>
                 </div>
 
+                <!-- The note as its public page shows it, in one file -->
+                <div class="export-option export-option-html-public" data-action="select-export-type" data-type="html_public">
+                    <i class="lucide lucide-globe"></i>
+                    <div>
+                        <span><?php echo t_h('modals.export.html_public.title', [], 'Export as a published page'); ?></span>
+                        <p><?php echo t_h('modals.export.html_public.description', [], 'Download one HTML file that looks exactly like the public page of this note, pictures included'); ?></p>
+                    </div>
+                </div>
+
                 <!-- HTML Embedded export option -->
                 <div class="export-option export-option-html-embedded" data-action="select-export-type" data-type="html_embedded">
                     <i class="lucide lucide-file-image"></i>
@@ -882,8 +930,13 @@ $pzNoteInfoRows = [
     'created_by' => t_h('info.labels.created_by', [], 'Created by:'),
     'updated' => t_h('info.labels.last_modified', [], 'Last Modified:'),
     'updated_by' => t_h('info.labels.last_modified_by', [], 'Last modified by:'),
+    // Where that change came from: Poznote on a computer or a phone, the
+    // REST API, an app connected through MCP, the assistant, a visitor of
+    // the public share (lib/write-source.php)
+    'updated_source' => t_h('info.labels.last_modified_from', [], 'Last modified from:'),
     'tags' => t_h('info.labels.tags', [], 'Tags:'),
     'favorite' => t_h('info.labels.favorite', [], 'Favorite:'),
+    'locked_text' => t_h('info.labels.locked', [], 'Locked:'),
     'attachments' => t_h('info.labels.attachments', [], 'Attachments:'),
     // Counted in the browser from the note on screen (js/note-stats.js), so
     // they match the line under the note title and include unsaved edits

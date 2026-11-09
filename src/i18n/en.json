@@ -159,6 +159,7 @@
       "markdown_colored": "Color markdown notes: pick a color for each heading level, inline code, code block background, quotes, table headers and separators.",
       "code_wrap": "Wrap long lines in code blocks instead of scrolling horizontally.",
       "code_line_numbers": "Show line numbers in code blocks in the markdown preview.",
+      "code_block_collapsed_lines": "How many lines of a code block stay on screen once it is folded, from 0 to 100. At 0 a folded block shows none of its listing. A block with no more lines than this is not offered the fold chevron, folding it would hide nothing.",
       "attachment_previews": "Show previews of attachments inside notes.",
       "attachments_at_bottom": "Show the attachments section at the bottom of notes instead of the top.",
       "allow_executable_attachments": "Allow scripts and executables (.sh, .ps1, .bat, .exe, .py, ...) to be attached to notes, for every account on this instance. Poznote never runs them, it only stores and serves them. File types a web server could execute, such as .php, stay blocked.",
@@ -208,11 +209,17 @@
       "release_notes": "Open the notes of every Poznote release on GitHub.",
       "login_disabled": "Skip the login screen: any browser that reaches this instance opens your account directly, without username, password or two-factor code. Only turn it on if you are the only one who can reach this instance, or if a reverse proxy in front of it handles authentication. The API keeps asking for credentials.",
       "outbound_hosts": "Non-admin users can only connect webhooks, Git Sync and their own AI, transcription or MCP servers to public internet hosts. List here the local hosts or networks they may use, such as an Ollama or n8n server. Administrators are not limited.",
+      "embeds": "Notes can embed content from these sites, such as a YouTube video or a GeoGebra applet. Switch off the ones your instance should never load. No other site can be framed, and no site can be added here.",
       "diary_template": "Choose a note whose content every new diary entry of the {{workspace}} workspace starts with. The list shows the notes kept in a folder named Templates in that workspace. Each workspace has its own template.",
       "markdown_view_cycle": "Choose the views the view menu of a markdown note offers besides the classic view (preview, with the pencil to edit). The views left out are not listed. With none chosen, the button is hidden. On a phone the menu never offers split mode.",
       "connected_apps": "Connect chat apps such as ChatGPT or Claude to your notes through the MCP server, and disconnect them at any time.",
       "custom_logo": "Replace the Poznote logo with your own, for every user: in the browser tab, on the login page, in the icon rail and as the icon of the installed app.",
-      "two_factor_required": "Every account that signs in with a password must use two-factor authentication. An account without it sets it up at its next sign-in, and sessions opened without it end. Its account password stops working through the API: apps use an app password instead. SSO sign-ins are not concerned, the identity provider handles their second factor."
+      "two_factor_required": "Every account that signs in with a password must use two-factor authentication. An account without it sets it up at its next sign-in, and sessions opened without it end. Its account password stops working through the API: apps use an app password instead. SSO sign-ins are not concerned, the identity provider handles their second factor.",
+      "tab_follows_note": "Name the browser tab after the note open in it, with that note's icon, instead of the name and icon of this instance. Several tabs open on several notes can then be told apart.",
+      "update_badge_level": "Choose which releases put the red dot on the Settings entries. Whatever you pick, the new version is still announced on this page, so nothing is hidden.",
+      "update_check_interval": "How often Poznote checks in the background whether a newer version is available. The dot can only appear after a check, so a longer interval delays it. The Version card above still checks right away whenever you click it.",
+      "sessions": "See the browsers and devices currently signed in to your account, and sign out the ones you no longer use.",
+      "session_lifetime": "How long a sign-in lasts without activity. Set with POZNOTE_SESSION_LIFETIME_DAYS in the .env file, so it is shown here but cannot be changed from this page. Signing in with \"Remember me\" lasts longer; signing in through SSO does not."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "On mobile, the toolbar above the keyboard has a + button that opens the same menu, whatever this is set to."
@@ -263,6 +270,7 @@
     },
     "cards": {
       "tenant_isolation": "Tenant isolation",
+      "embeds": "Embeds",
       "user_management": "User Management",
       "backup_export": "Backup / Export",
       "restore_import": "Restore / Import",
@@ -281,7 +289,7 @@
       "support": "Support Poznote",
       "buy_me_a_coffee": "Buy me a coffee",
       "install_extension": "Install extension",
-      "install_app": "Install application",
+      "install_app": "Install application (PWA)",
       "custom_css": "Custom CSS path",
       "theme_list": "Theme list",
       "release_notes": "Release Notes",
@@ -317,7 +325,9 @@
       "outbound_hosts": "Local network access",
       "connected_apps": "Connected apps",
       "custom_logo": "Logo",
-      "two_factor_required": "Require two-factor"
+      "two_factor_required": "Require two-factor",
+      "sessions": "Connected devices",
+      "session_lifetime": "Session lifetime"
     },
     "default_credentials": {
       "both": "This account still uses the username and the password it shipped with. Anyone who can reach this instance can sign in to it.",
@@ -380,6 +390,11 @@
     "outbound_hosts": {
       "status_allowed": "{{count}} allowed",
       "status_public_only": "Public only"
+    },
+    "embeds": {
+      "status_all": "All sites",
+      "status_some": "{{count}} of {{total}}",
+      "status_none": "None"
     },
     "diary_template": {
       "none": "None",
@@ -546,6 +561,7 @@
       "markdown_colored": "Colored markdown",
       "code_block_word_wrap": "Code block word wrap",
       "code_block_line_numbers": "Code block line numbers",
+      "code_block_collapsed_lines": "Folded code blocks",
       "attachment_previews_in_note": "Attachment previews",
       "attachments_at_bottom": "Attachments at bottom",
       "backlinks_at_bottom": "Backlinks at bottom",
@@ -561,7 +577,10 @@
       "format_toolbar_mode": "Formatting toolbar",
       "workspace_activity_emails": "Shared workspace emails",
       "diary_template": "Diary entry template",
-      "markdown_view_cycle": "View menu"
+      "markdown_view_cycle": "View menu",
+      "tab_follows_note": "Tab follows the open note",
+      "update_badge_level": "Update dot",
+      "update_check_interval": "Update check"
     },
     "badges": {
       "font_size_default": "default ({{size}}px)",
@@ -625,7 +644,8 @@
     "priority_high": "High priority",
     "priority_medium": "Medium priority",
     "priority_low": "Low priority",
-    "priority_none": "No priority"
+    "priority_none": "No priority",
+    "delete_task": "Delete task"
   },
   "tags": {
     "add_single": "Add tag...",
@@ -698,7 +718,9 @@
       "words": "Words:",
       "lines": "Lines:",
       "note_id": "Note ID:",
-      "full_path": "Full Path:"
+      "full_path": "Full Path:",
+      "last_modified_from": "Last modified from:",
+      "locked": "Locked:"
     },
     "attachments": {
       "count_singular": "1 file",
@@ -713,6 +735,15 @@
     },
     "errors": {
       "load_failed": "Could not load the note information."
+    },
+    "source": {
+      "app": "Poznote, on a computer",
+      "app_mobile": "Poznote, on mobile",
+      "api": "The REST API",
+      "mcp": "An app connected through MCP",
+      "extension": "The browser extension",
+      "ai": "The AI assistant",
+      "public": "A visitor of the public share"
     }
   },
   "attachments": {
@@ -996,9 +1027,10 @@
       "note_scroll_arrows": "Scroll to top and bottom arrows",
       "tasklist_add_field": "Field to add a task",
       "tasklist_frame": "Frame around each task",
-      "tasklist_delete": "Delete a completed task",
+      "tasklist_delete": "Delete a task",
       "tasklist_menu": "Task options menu (mobile)",
-      "tasklist_frame_color": "Priority colour of the task frame"
+      "tasklist_frame_color": "Priority colour of the task frame",
+      "note_id": "Show the note id"
     },
     "icon_sidebar_order": {
       "title": "Icon sidebar layout",
@@ -1078,9 +1110,14 @@
       "workspace_destination": "Select Workspace destination:",
       "target_folder": "Select target folder:",
       "recent_folders": "Recent folders",
-      "new_folder": "New folder",
+      "filter_placeholder": "Filter folders, or type a new name",
+      "clear_filter": "Clear the filter",
+      "no_match": "No matching folder.",
+      "no_folder_root": "No folder (move to root)",
+      "create_folder": "Create folder",
+      "current_location": "Currently in {{folder}}",
+      "current_location_none": "Currently outside any folder",
       "new_workspace": "New workspace",
-      "folder_name_placeholder": "Folder name (use / for subfolders)",
       "workspace_name_placeholder": "Workspace name",
       "enter_workspace_name": "Please enter a workspace name",
       "enter_folder_name": "Please enter a folder name"
@@ -1213,6 +1250,10 @@
       "json": {
         "title": "Download as JSON",
         "description": "Download the raw tasklist data as a JSON file"
+      },
+      "html_public": {
+        "title": "Export as a published page",
+        "description": "Download one HTML file that looks exactly like the public page of this note, pictures included"
       }
     },
     "task_move": {
@@ -1391,6 +1432,11 @@
         "user_s3_restore_help": "Non-admin users no longer see the Restore from S3 section of the Restore / Import page and cannot restore bucket archives."
       }
     },
+    "embeds": {
+      "title": "Embeds",
+      "description": "Notes can embed content from the sites below, such as a video or an interactive applet. Uncheck the ones this instance should never load. No other site can be framed in a note, and sites cannot be added here.",
+      "existing_hint": "Unchecking a site hides the embeds that notes already hold: they stop loading, and editing such a note afterwards drops the embed from it."
+    },
     "note": {
       "rename_title": "Rename Note",
       "rename_placeholder": "New note title"
@@ -1488,6 +1534,25 @@
       "reset_confirm": "Go back to the Poznote logo for every user?",
       "invalid": "This image cannot be used. Choose a PNG, JPEG, WebP, GIF or SVG file of 20 MB at most.",
       "failed": "The logo could not be saved."
+    },
+    "update_badge_level": {
+      "options": {
+        "all": "Major, minor and patch releases",
+        "minor": "Major and minor releases only"
+      }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "Every day",
+        "2": "Every 2 days",
+        "3": "Every 3 days",
+        "7": "Every 7 days",
+        "14": "Every 14 days",
+        "30": "Every 30 days"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "lines"
     }
   },
   "notes_list": {
@@ -1754,7 +1819,6 @@
     "toggle": "Toggle",
     "toggle_placeholder": "Toggle",
     "toggle_content_placeholder": "Write inside the toggle here…",
-    "toggle_after_placeholder": "Write outside the toggle here…",
     "code_block_placeholder_before": "Write text here…",
     "code_block_placeholder_after": "Write text here…",
     "youtube_video": "YouTube video",
@@ -1971,7 +2035,8 @@
       "indexable": "Allow indexing by search engines",
       "indexable_mobile": "Allow indexing",
       "password": "Password (optional)",
-      "password_placeholder": "Enter a password"
+      "password_placeholder": "Enter a password",
+      "token_from_name": "Build the token from the name"
     },
     "folder_share_modal": {
       "title": "Shared folder URL",
@@ -2010,7 +2075,11 @@
           "one": "{{count}} line",
           "other": "{{count}} lines"
         }
-      }
+      },
+      "missing": "Note #{{id}} does not exist, or it was deleted.",
+      "missing_trashed": "Note #{{id}} is in the trash. Restore it to open it again.",
+      "copy_id": "Copy the note id",
+      "id_copied": "Note id {{id}} copied"
     },
     "editor": {
       "placeholder_desktop": "Enter text, use / or right-click for command menu, paste images or drop an image at cursor.",
@@ -2130,6 +2199,12 @@
       "live_hint": "Edit the note already formatted: the Markdown syntax shows up around the cursor.",
       "rich_hint": "Edit the note like a word processor: the Markdown syntax is never shown.",
       "split_hint": "Markdown source on one side, formatted preview on the other, updated as you type."
+    },
+    "code_block_collapse": {
+      "collapse": "Collapse the code block",
+      "expand": "Expand the code block",
+      "one_line": "1 line",
+      "lines": "{{count}} lines"
     }
   },
   "image_menu": {
@@ -3631,7 +3706,8 @@
       "two_factor_recovery_used": "Signed in with a recovery code",
       "two_factor_recovery_regenerated": "Recovery codes regenerated",
       "oauth_app_authorized": "App connected (MCP)",
-      "oauth_app_revoked": "App disconnected (MCP)"
+      "oauth_app_revoked": "App disconnected (MCP)",
+      "session_revoked": "Device signed out"
     },
     "filters": {
       "all_actions": "All actions",
@@ -4326,7 +4402,18 @@
     "take_over_failed": "Unable to take over this note.",
     "taken_over_notice": "You took over editing this note.",
     "lost_unsaved_kept": "Your unsaved changes here are kept on this device and offered again once the note is free.",
-    "read_only_share": "This workspace is shared with you in read-only mode."
+    "read_only_share": "This workspace is shared with you in read-only mode.",
+    "lock_note": "Lock this note against editing",
+    "unlock_note": "Unlock this note",
+    "locked_error": "This note is locked. Unlock it from the note toolbar before editing it.",
+    "locked_toast": "Note locked",
+    "unlocked_toast": "Note unlocked",
+    "lock_failed": "Unable to change the lock of this note.",
+    "lock_all": "Lock all notes against editing",
+    "unlock_all": "Unlock all notes",
+    "locked_all_toast": "All notes locked",
+    "unlocked_all_toast": "All notes unlocked",
+    "lock_all_failed": "Unable to change the lock of the notes."
   },
   "live_refresh": {
     "note_changed": "This note was modified outside this tab.",
@@ -5343,6 +5430,7 @@
     "italic": "Italic",
     "underline": "Underline",
     "strikethrough": "Strikethrough",
+    "clear_formatting": "Clear the formatting of the selected text",
     "link": "Insert a link on the selected text",
     "code_block": "Code block",
     "slash_menu": "Open the command menu",
@@ -5379,7 +5467,9 @@
     "new_note": "Create a note:"
   },
   "icon_context_menu": {
-    "hide": "Hide button"
+    "hide": "Hide button",
+    "hide_element": "Hide \"{{name}}\"",
+    "hidden_notice": "\"{{name}}\" is hidden. Element visibility brings it back."
   },
   "account_note": {
     "banner": "Note from the account {{account}}, read-only",
@@ -5775,6 +5865,48 @@
       "group_rules": "Group separators",
       "size": "Tile size button",
       "boards": "List of speed dials"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "Embedded content blocked",
+      "detail_admin": "This instance does not allow embedded content from {{host}}. An administrator can allow it again in Settings > Admin Tools > Embeds.",
+      "detail_public": "This site does not allow embedded content from {{host}}."
+    },
+    "resize": {
+      "hint": "Drag to resize, double-click to reset"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 session",
+      "count_other": "{{count}} sessions"
+    },
+    "lifetime": {
+      "day_one": "1 day",
+      "day_other": "{{count}} days"
+    },
+    "modal": {
+      "title": "Connected devices",
+      "description": "Each row is a browser signed in to your account. A session ends on its own after {{duration}} without activity, and whenever your password changes.",
+      "loading": "Loading...",
+      "empty": "No open session found.",
+      "unknown_client": "Unknown browser",
+      "this_device": "This device",
+      "last_active": "Last active {{date}}",
+      "revoke": "Sign out",
+      "revoke_others": "Sign out other devices",
+      "confirm": "Confirm",
+      "close": "Close"
+    },
+    "method": {
+      "password": "Password",
+      "sso": "SSO",
+      "auto": "No login"
+    },
+    "errors": {
+      "load_failed": "Could not load your sessions.",
+      "generic": "Something went wrong. Try again."
     }
   }
 }

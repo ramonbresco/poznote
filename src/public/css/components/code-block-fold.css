@@ -1,0 +1,112 @@
+/**
+ * Code block folding.
+ *
+ * The chevron of a code block (js/copy-code-on-focus.js) and what a folded
+ * block looks like. Its own file because the two pages that show code blocks
+ * load different stylesheets for them: the note page has css/code-blocks.css,
+ * a public share has css/syntax-highlight.css, and folding belongs to both.
+ */
+
+/* A folded code block (js/copy-code-on-focus.js) keeps its first lines and
+   clips the rest, so a long listing stops making a note long for nothing
+   while the beginning still says what the block holds. The chevron is only
+   offered to a block that has more lines than this (addCopyButtonToCodeBlocks),
+   since folding a shorter one would change nothing.
+
+   How many lines stay on screen is --pz-code-collapsed-lines (css/tokens.css),
+   which the app writes on <body> from the account's choice
+   (code_block_collapsed_lines); a public share, an exported page and anything
+   else that shows a code block keeps the token's own 5.
+
+   `1lh` is the listing's own line height, so the clip lands on a line
+   boundary whatever the font size; the declaration above it is the fallback a
+   browser without the unit keeps. The clip is on the CODE, the PRE being the
+   element that paints the block and scrolls it sideways.
+
+   data-collapsed sits on the PRE, so an HTML note reopens its blocks folded;
+   a Markdown preview, redrawn from the source, keeps the choice in the
+   browser. */
+pre[data-collapsed="1"] > code {
+    max-height: calc(var(--pz-code-collapsed-lines) * 1.5em);
+    max-height: calc(var(--pz-code-collapsed-lines) * 1lh);
+    /* !important because the pages that show code blocks each set their own
+       `overflow` on `pre code` from a heavier selector, and folding is a
+       state the reader just asked for, not a default this file proposes.
+       Sideways scrolling goes with it while the block is folded: a folded
+       block is a glance at the beginning, unfolding is how it gets read. */
+    overflow: hidden !important;
+}
+
+/* The setting at "Hide the code": a folded block shows none of its listing,
+   which is what folding did before the first lines were kept. */
+body[data-code-collapsed-lines="0"] pre[data-collapsed="1"] > code {
+    display: none !important;
+}
+
+pre[data-collapsed="1"] {
+    min-height: 0;
+}
+
+body[data-code-collapsed-lines="0"] pre[data-collapsed="1"] {
+    padding-bottom: 6px;
+}
+
+/* The chevron joins the row of controls each page puts in the top-right
+   corner of a code block. The two pages place that row differently (the note
+   page from css/code-blocks.css, a public share from css/public_note.css),
+   so the offset is given once per context rather than guessed. */
+.code-block-collapse-btn {
+    position: absolute;
+    top: 2px;
+    right: 104px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: var(--pz-radius-sm);
+    background: transparent;
+    color: var(--pz-text-secondary);
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+}
+
+.code-block-collapse-btn:hover,
+.code-block-collapse-btn:focus-visible {
+    opacity: 1;
+}
+
+/* The number of folded lines, to the left of the chevron */
+.code-block-collapsed-summary {
+    position: absolute;
+    top: 2px;
+    right: 136px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    color: var(--pz-text-subtle);
+    font-family: inherit;
+    font-size: 11px;
+    opacity: 0.8;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    z-index: 10;
+}
+
+/* A public share shows a copy button alone, in the very corner */
+.public-note .content .code-block-collapse-btn,
+.public-folder .code-block-collapse-btn {
+    top: 8px;
+    right: 44px;
+}
+
+.public-note .content .code-block-collapsed-summary,
+.public-folder .code-block-collapsed-summary {
+    top: 8px;
+    right: 76px;
+}

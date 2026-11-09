@@ -1114,6 +1114,14 @@ class SnapshotsController {
             $this->sendError(400, t('snapshot.api.invalid_note_id', [], 'Invalid note ID'));
             return;
         }
+
+        // Restoring a revision replaces the text, so a locked note refuses it
+        // like any other write (lib/note-lock.php).
+        require_once dirname(__DIR__, 3) . '/lib/note-lock.php';
+        if (poznoteNoteIsLocked($this->con, $noteId)) {
+            $this->sendError(403, poznoteNoteLockedMessage());
+            return;
+        }
         
         try {
             // Get note data

@@ -1657,4 +1657,106 @@ class UsersController {
 
         return ['success' => true];
     }
+
+    /** Timestamps of one session row, in the account's timezone and format. */
+    private function formatSessionRow(array $row) {
+        foreach (['created_at', 'last_active', 'expires_at'] as $field) {
+            $value = (int)($row[$field] ?? 0);
+            $row[$field] = $value > 0
+                ? $this->formatPasswordChangedAt(gmdate('Y-m-d H:i:s', $value))
+                : null;
+        }
+        return $row;
+    }
+
+    /**
+     * GET /api/v1/users/me/sessions - The profile's open sessions, the one
+     * making the request first. Session ids never leave the server; each row
+     * carries the one-way handle a revoke call takes.
+     */
+    public function listSessions() {
+        if ($err = $this->requireActiveAccountOwner()) return $err;
+        if ($err = $this->requireFullCredentials()) return $err;
+
+        require_once dirname(__DIR__, 3) . '/lib/session-store.php';
+
+        $userId = (int)getCurrentUserId();
+        if ($userId <= 0) {
+            http_response_code(401);
+            return ['error' => 'Not authenticated'];
+        }
+
+        $currentId = session_status() === PHP_SESSION_ACTIVE ? (string)session_id() : '';
+        $rows = poznoteListUserSessions($userId, $currentId);
+
+        return [
+            'sessions' => array_map([$this, 'formatSessionRow'], $rows),
+            'count' => count($rows),
+            'lifetime_days' => poznoteSessionLifetimeDays(),
+        ];
+    }
+
+    /**
+     * DELETE /api/v1/users/me/sessions/{id} - Ends one other session of this
+     * profile, named by the handle the listing gave.
+     *
+     * The session making the request is refused: PHP rewrites its own file at
+     * the end of the request, so deleting it here would not end anything.
+     * Signing this device out is what Logout is for.
+     */
+    public function revokeSession($id) {
+        if ($err = $this->requireActiveAccountOwner()) return $err;
+        if ($err = $this->requireFullCredentials()) return $err;
+
+        require_once dirname(__DIR__, 3) . '/lib/session-store.php';
+        require_once dirname(__DIR__, 3) . '/ActivityLog.php';
+
+        $userId = (int)getCurrentUserId();
+        if ($userId <= 0) {
+            http_response_code(401);
+            return ['error' => 'Not authenticated'];
+        }
+
+        $handle = trim((string)$id);
+        $currentId = session_status() === PHP_SESSION_ACTIVE ? (string)session_id() : '';
+        if ($currentId !== '' && hash_equals(poznoteSessionHandle($currentId), $handle)) {
+            http_response_code(400);
+            return ['error' => 'This is the current session, use logout to end it'];
+        }
+
+        if (!poznoteRevokeUserSession($userId, $handle)) {
+            http_response_code(404);
+            return ['error' => 'Session not found'];
+        }
+
+        logActivity(ACTIVITY_SESSION_REVOKED, ['count' => 1], 'api');
+
+        return ['success' => true];
+    }
+
+    /**
+     * DELETE /api/v1/users/me/sessions - Ends every session of this profile
+     * except the one making the request.
+     */
+    public function revokeOtherSessions() {
+        if ($err = $this->requireActiveAccountOwner()) return $err;
+        if ($err = $this->requireFullCredentials()) return $err;
+
+        require_once dirname(__DIR__, 3) . '/lib/session-store.php';
+        require_once dirname(__DIR__, 3) . '/ActivityLog.php';
+
+        $userId = (int)getCurrentUserId();
+        if ($userId <= 0) {
+            http_response_code(401);
+            return ['error' => 'Not authenticated'];
+        }
+
+        $currentId = session_status() === PHP_SESSION_ACTIVE ? (string)session_id() : '';
+        $ended = poznoteRevokeOtherUserSessions($userId, $currentId);
+        if ($ended > 0) {
+            logActivity(ACTIVITY_SESSION_REVOKED, ['count' => $ended], 'api');
+        }
+
+        return ['success' => true, 'ended' => $ended];
+    }
 }

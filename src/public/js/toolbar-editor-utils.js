@@ -7,6 +7,14 @@ function applyHtmlBlockStyle(style) {
   var sel = window.getSelection();
   if (!sel || sel.rangeCount === 0) return;
 
+  // The title of a toggle is not a block formatBlock can reach: it answers
+  // with the whole <details>, body and all (js/toggle-block.js)
+  if (window.PoznoteToggleBlock
+      && typeof window.PoznoteToggleBlock.applyHeaderBlockStyle === 'function'
+      && window.PoznoteToggleBlock.applyHeaderBlockStyle(style)) {
+    return;
+  }
+
   try {
     document.execCommand('styleWithCSS', false, false);
   } catch (e) {

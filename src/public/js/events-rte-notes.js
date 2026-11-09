@@ -901,6 +901,26 @@ function handleNoteEntryKeydown(e) {
     if (!target.closest || !target.closest('.noteentry')) return;
     if (target.closest('.markdown-codemirror-host')) return;
 
+    // Ctrl + Space clears the formatting of the selected text, like the eraser
+    // button and "Clear formatting" of the command menu (discussion #1753).
+    // Ahead of the checklist handler below, so it answers inside a checklist
+    // item too, where Ctrl+B and the other formatting keys are the browser's
+    // own. Ctrl and not Cmd on macOS as well: Cmd + Space belongs to the
+    // system and never reaches the page.
+    if (e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey &&
+        (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space')) {
+        if (target.closest('.noteentry[contenteditable="true"]')) {
+            e.preventDefault();
+            if (typeof window.clearHtmlFormatting === 'function') {
+                window.clearHtmlFormatting();
+            } else {
+                document.execCommand('removeFormat');
+            }
+            triggerNoteSave();
+        }
+        return;
+    }
+
     // Delegate to checklist handler if in checklist
     if (target.closest('li.checklist-item')) {
         handleChecklistKeydown(e);

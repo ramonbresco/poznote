@@ -337,16 +337,6 @@ html[data-theme='dark'] .font-size-popup .size-preview {
     background-color: var(--pz-bg);
 }
 
-/* Image resize handle */
-html[data-theme='dark'] .image-resize-handle {
-    background: var(--pz-accent);
-    border-color: var(--pz-surface);
-}
-
-html[data-theme='dark'] .image-resize-handle:hover {
-    background: var(--pz-accent-text);
-}
-
 /* Blockquotes */
 html[data-theme='dark'] .noteentry blockquote {
     border-left-color: var(--pz-border);

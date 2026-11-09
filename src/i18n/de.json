@@ -491,6 +491,7 @@
       "markdown_colored": "Färben Sie Markdown-Notizen: Wählen Sie eine Farbe für jede Überschriftenebene, Inline-Code, Codeblock-Hintergrund, Zitate, Tabellenköpfe und Trennlinien.",
       "code_wrap": "Lange Zeilen in Codeblöcken umbrechen statt horizontal zu scrollen.",
       "code_line_numbers": "Zeilennummern in Codeblöcken in der Markdown-Vorschau anzeigen.",
+      "code_block_collapsed_lines": "Wie viele Zeilen eines Codeblocks sichtbar bleiben, wenn er eingeklappt ist, von 0 bis 100. Bei 0 zeigt ein eingeklappter Block nichts von seinem Code. Ein Block mit nicht mehr Zeilen als dieser Wert erhält keinen Einklapppfeil, das Einklappen würde nichts verbergen.",
       "attachment_previews": "Zeigen Sie Vorschauen von Anhängen in Notizen an.",
       "attachments_at_bottom": "Zeigen Sie den Anhangsbereich unten statt oben in Notizen an.",
       "allow_executable_attachments": "Erlaubt Skripte und ausführbare Dateien (.sh, .ps1, .bat, .exe, .py, ...) als Anhang, für alle Konten dieser Instanz. Poznote führt sie nie aus, es speichert und liefert sie nur aus. Dateitypen, die ein Webserver ausführen könnte, etwa .php, bleiben blockiert.",
@@ -540,11 +541,17 @@
       "release_notes": "Die Versionshinweise aller Poznote-Versionen auf GitHub öffnen.",
       "login_disabled": "Überspringt die Anmeldeseite: Jeder Browser, der diese Instanz erreicht, öffnet direkt Ihr Konto, ohne Benutzername, Passwort oder Zwei-Faktor-Code. Nur aktivieren, wenn allein Sie diese Instanz erreichen können oder ein vorgeschalteter Reverse Proxy die Authentifizierung übernimmt. Die API verlangt weiterhin Zugangsdaten.",
       "outbound_hosts": "Benutzer ohne Administratorrechte können Webhooks, Git Sync und ihre eigenen KI-, Transkriptions- oder MCP-Server nur mit öffentlichen Internet-Hosts verbinden. Listen Sie hier die lokalen Hosts oder Netzwerke auf, die sie verwenden dürfen, etwa einen Ollama- oder n8n-Server. Administratoren sind nicht eingeschränkt.",
+      "embeds": "Notizen können Inhalte dieser Seiten einbetten, etwa ein YouTube-Video oder ein GeoGebra-Applet. Schalten Sie die Seiten ab, die diese Instanz niemals laden soll. Andere Seiten können nicht eingebettet werden, und hier lassen sich keine hinzufügen.",
       "diary_template": "Wählen Sie eine Notiz, mit deren Inhalt jeder neue Tagebucheintrag des Arbeitsbereichs {{workspace}} beginnt. Die Liste zeigt die Notizen in einem Ordner namens Vorlagen (oder Templates) dieses Arbeitsbereichs. Jeder Arbeitsbereich hat seine eigene Vorlage.",
       "markdown_view_cycle": "Wählen Sie die Ansichten, die das Ansichtsmenü einer Markdown-Notiz neben der klassischen Ansicht (Vorschau, mit dem Stift zum Bearbeiten) anbietet. Nicht gewählte Ansichten werden nicht aufgeführt. Ist keine gewählt, wird die Schaltfläche ausgeblendet. Auf einem Telefon bietet das Menü nie die geteilte Ansicht an.",
       "connected_apps": "Verbinden Sie Chat-Apps wie ChatGPT oder Claude über den MCP-Server mit Ihren Notizen und trennen Sie sie jederzeit.",
       "custom_logo": "Das Poznote-Logo für alle Benutzer durch ein eigenes ersetzen: im Browser-Tab, auf der Anmeldeseite, in der Symbolleiste und als Symbol der installierten App.",
-      "two_factor_required": "Jedes Konto, das sich mit einem Passwort anmeldet, muss die Zwei-Faktor-Authentifizierung nutzen. Ein Konto ohne sie richtet sie bei der nächsten Anmeldung ein, und ohne sie geöffnete Sitzungen werden beendet. Das Kontopasswort funktioniert nicht mehr über die API: Apps verwenden stattdessen ein App-Passwort. SSO-Anmeldungen sind nicht betroffen, der Identitätsanbieter verwaltet ihren zweiten Faktor."
+      "two_factor_required": "Jedes Konto, das sich mit einem Passwort anmeldet, muss die Zwei-Faktor-Authentifizierung nutzen. Ein Konto ohne sie richtet sie bei der nächsten Anmeldung ein, und ohne sie geöffnete Sitzungen werden beendet. Das Kontopasswort funktioniert nicht mehr über die API: Apps verwenden stattdessen ein App-Passwort. SSO-Anmeldungen sind nicht betroffen, der Identitätsanbieter verwaltet ihren zweiten Faktor.",
+      "tab_follows_note": "Benennt den Browser-Tab nach der darin geöffneten Notiz, mit deren Symbol, statt nach Name und Symbol dieser Instanz. So lassen sich mehrere Tabs mit mehreren Notizen unterscheiden.",
+      "update_badge_level": "Lege fest, welche Versionen den roten Punkt auf den Einstellungen anzeigen. Was du auch wählst, die neue Version wird auf dieser Seite weiterhin angekündigt, nichts wird verborgen.",
+      "update_check_interval": "Wie oft Poznote im Hintergrund prüft, ob eine neuere Version verfügbar ist. Der Punkt kann erst nach einer Prüfung erscheinen, ein längerer Abstand verzögert ihn also. Die Karte Version darüber prüft bei jedem Klick weiterhin sofort.",
+      "sessions": "Die Browser und Geräte ansehen, die gerade in Ihrem Konto angemeldet sind, und die abmelden, die Sie nicht mehr nutzen.",
+      "session_lifetime": "Wie lange eine Anmeldung ohne Aktivität gilt. Wird mit POZNOTE_SESSION_LIFETIME_DAYS in der .env-Datei gesetzt, hier also nur angezeigt und auf dieser Seite nicht änderbar. Eine Anmeldung mit „Angemeldet bleiben“ hält länger, eine Anmeldung über SSO nicht."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "Auf Mobilgeräten hat die Leiste über der Tastatur eine +-Schaltfläche, die unabhängig von dieser Einstellung dasselbe Menü öffnet."
@@ -617,6 +624,7 @@
     },
     "cards": {
       "tenant_isolation": "Mandantentrennung",
+      "embeds": "Einbettungen",
       "backup_export": "Sicherung / Export",
       "restore_import": "Wiederherstellen / Importieren",
       "git_sync": "Git-Synchronisierung",
@@ -636,7 +644,7 @@
       "custom_css": "Benutzerdefinierte CSS-Datei",
       "theme_list": "Theme-Liste",
       "install_extension": "Erweiterung installieren",
-      "install_app": "App installieren",
+      "install_app": "App installieren (PWA)",
       "release_notes": "Versionshinweise",
       "orphan_scanner": "Verwaiste Anhänge-Scanner",
       "storage_stats": "Admin-Speicherstatistik",
@@ -671,7 +679,9 @@
       "outbound_hosts": "Zugriff auf das lokale Netzwerk",
       "connected_apps": "Verbundene Apps",
       "custom_logo": "Logo",
-      "two_factor_required": "Zwei-Faktor erzwingen"
+      "two_factor_required": "Zwei-Faktor erzwingen",
+      "sessions": "Verbundene Geräte",
+      "session_lifetime": "Sitzungsdauer"
     },
     "default_credentials": {
       "both": "Dieses Konto verwendet noch den mitgelieferten Benutzernamen und das mitgelieferte Passwort. Jeder, der diese Instanz erreichen kann, kann sich anmelden.",
@@ -717,6 +727,11 @@
     "outbound_hosts": {
       "status_allowed": "{{count}} erlaubt",
       "status_public_only": "Nur öffentlich"
+    },
+    "embeds": {
+      "status_all": "Alle Seiten",
+      "status_some": "{{count}} von {{total}}",
+      "status_none": "Keine"
     },
     "diary_template": {
       "none": "Keine",
@@ -911,6 +926,7 @@
       "markdown_colored": "Farbiges Markdown",
       "code_block_word_wrap": "Codeblock-Zeilenumbruch",
       "code_block_line_numbers": "Codeblock-Zeilennummern",
+      "code_block_collapsed_lines": "Eingeklappte Codeblöcke",
       "attachment_previews_in_note": "Anhangsvorschauen",
       "attachments_at_bottom": "Anhänge unten",
       "backlinks_at_bottom": "Backlinks unten",
@@ -928,7 +944,10 @@
       "format_toolbar_mode": "Formatierungsleiste",
       "workspace_activity_emails": "E-Mails zu geteilten Arbeitsbereichen",
       "diary_template": "Vorlage für Tagebucheinträge",
-      "markdown_view_cycle": "Ansichtsmenü"
+      "markdown_view_cycle": "Ansichtsmenü",
+      "tab_follows_note": "Tab folgt der geöffneten Notiz",
+      "update_badge_level": "Update-Punkt",
+      "update_check_interval": "Update-Prüfung"
     },
     "badges": {
       "font_size_default": "Standard ({{size}}px)",
@@ -1087,7 +1106,8 @@
     "priority_high": "Hohe Priorität",
     "priority_medium": "Mittlere Priorität",
     "priority_low": "Niedrige Priorität",
-    "priority_none": "Keine Priorität"
+    "priority_none": "Keine Priorität",
+    "delete_task": "Aufgabe löschen"
   },
   "tags": {
     "add_single": "Tag hinzufügen...",
@@ -1309,6 +1329,12 @@
       "live_hint": "Die Notiz bereits formatiert bearbeiten: Die Markdown-Syntax erscheint um den Cursor herum.",
       "rich_hint": "Die Notiz wie in einer Textverarbeitung bearbeiten: Die Markdown-Syntax wird nie angezeigt.",
       "split_hint": "Markdown-Quelle auf der einen Seite, formatierte Vorschau auf der anderen, beim Tippen aktualisiert."
+    },
+    "code_block_collapse": {
+      "collapse": "Codeblock einklappen",
+      "expand": "Codeblock ausklappen",
+      "one_line": "1 Zeile",
+      "lines": "{{count}} Zeilen"
     }
   },
   "info": {
@@ -1331,7 +1357,9 @@
       "note_id": "Notiz-ID:",
       "full_path": "Vollständiger Pfad:",
       "created_by": "Erstellt von:",
-      "last_modified_by": "Zuletzt geändert von:"
+      "last_modified_by": "Zuletzt geändert von:",
+      "last_modified_from": "Zuletzt geändert von:",
+      "locked": "Gesperrt:"
     },
     "attachments": {
       "count_singular": "1 Datei",
@@ -1346,6 +1374,15 @@
     "users": {
       "user_id": "Benutzer #{{id}}",
       "deleted": "Benutzer #{{id}}"
+    },
+    "source": {
+      "app": "Poznote, auf einem Computer",
+      "app_mobile": "Poznote, auf dem Mobilgerät",
+      "api": "Die REST-API",
+      "mcp": "Eine über MCP verbundene App",
+      "extension": "Die Browser-Erweiterung",
+      "ai": "Der KI-Assistent",
+      "public": "Ein Besucher der öffentlichen Freigabe"
     }
   },
   "modals": {
@@ -1512,9 +1549,10 @@
       "note_scroll_arrows": "Pfeile zum Anfang und Ende der Notiz",
       "tasklist_add_field": "Feld zum Hinzufügen einer Aufgabe",
       "tasklist_frame": "Rahmen um jede Aufgabe",
-      "tasklist_delete": "Erledigte Aufgabe löschen",
+      "tasklist_delete": "Aufgabe löschen",
       "tasklist_menu": "Menü der Aufgabenoptionen (Mobil)",
-      "tasklist_frame_color": "Prioritätsfarbe des Aufgabenrahmens"
+      "tasklist_frame_color": "Prioritätsfarbe des Aufgabenrahmens",
+      "note_id": "Notiz-ID anzeigen"
     },
     "icon_sidebar_order": {
       "title": "Layout der Icon-Seitenleiste",
@@ -1594,9 +1632,14 @@
       "workspace_destination": "Arbeitsbereich-Ziel auswählen:",
       "target_folder": "Zielordner auswählen:",
       "recent_folders": "Zuletzt verwendete Ordner",
-      "new_folder": "Neuer Ordner",
+      "filter_placeholder": "Ordner filtern oder neuen Namen eingeben",
+      "clear_filter": "Filter löschen",
+      "no_match": "Kein passender Ordner.",
+      "no_folder_root": "Kein Ordner (in die Wurzel verschieben)",
+      "create_folder": "Ordner erstellen",
+      "current_location": "Derzeit in {{folder}}",
+      "current_location_none": "Derzeit in keinem Ordner",
       "new_workspace": "Neuer Arbeitsbereich",
-      "folder_name_placeholder": "Ordnername (verwenden Sie / für Unterordner)",
       "workspace_name_placeholder": "Name des Arbeitsbereichs",
       "enter_workspace_name": "Bitte geben Sie einen Namen für den Arbeitsbereich ein",
       "enter_folder_name": "Bitte geben Sie einen Ordnernamen ein"
@@ -1718,6 +1761,10 @@
       "json": {
         "title": "Als JSON herunterladen",
         "description": "Die Rohdaten der Aufgabenliste als JSON-Datei herunterladen"
+      },
+      "html_public": {
+        "title": "Als veröffentlichte Seite exportieren",
+        "description": "Eine einzige HTML-Datei herunterladen, die genau wie die öffentliche Seite dieser Notiz aussieht, Bilder inbegriffen"
       }
     },
     "task_move": {
@@ -1907,6 +1954,11 @@
         "user_s3_restore_help": "Nicht-Admin-Benutzer sehen den Abschnitt Aus S3 wiederherstellen der Seite Wiederherstellen / Importieren nicht mehr und können keine Bucket-Archive mehr wiederherstellen."
       }
     },
+    "embeds": {
+      "title": "Einbettungen",
+      "description": "Notizen können Inhalte der folgenden Seiten einbetten, etwa ein Video oder ein interaktives Applet. Entfernen Sie das Häkchen bei den Seiten, die diese Instanz niemals laden soll. Andere Seiten können nicht in eine Notiz eingebettet werden, und hier lassen sich keine hinzufügen.",
+      "existing_hint": "Wird eine Seite abgewählt, verschwinden die Einbettungen, die Notizen bereits enthalten: sie werden nicht mehr geladen, und wer eine solche Notiz danach bearbeitet, entfernt die Einbettung daraus."
+    },
     "note": {
       "rename_title": "Notiz umbenennen",
       "rename_placeholder": "Neuer Notiztitel"
@@ -2004,6 +2056,25 @@
       "reset_confirm": "Für alle Benutzer zum Poznote-Logo zurückkehren?",
       "invalid": "Dieses Bild kann nicht verwendet werden. Wählen Sie eine PNG-, JPEG-, WebP-, GIF- oder SVG-Datei mit höchstens 20 MB.",
       "failed": "Das Logo konnte nicht gespeichert werden."
+    },
+    "update_badge_level": {
+      "options": {
+        "all": "Haupt-, Neben- und Patch-Versionen",
+        "minor": "Nur Haupt- und Nebenversionen"
+      }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "Täglich",
+        "2": "Alle 2 Tage",
+        "3": "Alle 3 Tage",
+        "7": "Alle 7 Tage",
+        "14": "Alle 14 Tage",
+        "30": "Alle 30 Tage"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "Zeilen"
     }
   },
   "notes_list": {
@@ -2269,7 +2340,6 @@
     "toggle": "Toggle",
     "toggle_placeholder": "Toggle",
     "toggle_content_placeholder": "Hier im Toggle schreiben…",
-    "toggle_after_placeholder": "Hier außerhalb des Toggles schreiben…",
     "code_block_placeholder_before": "Hier Text schreiben…",
     "code_block_placeholder_after": "Hier Text schreiben…",
     "youtube_video": "YouTube-Video",
@@ -2490,7 +2560,8 @@
       "access_check_only": "Nur abhaken oder Häkchen entfernen",
       "access_full": "Vollständige Bearbeitung",
       "password": "Passwort (optional)",
-      "password_placeholder": "Geben Sie ein Passwort ein"
+      "password_placeholder": "Geben Sie ein Passwort ein",
+      "token_from_name": "Token aus dem Namen bilden"
     },
     "folder_share_modal": {
       "title": "Geteilter Ordner URL",
@@ -2529,7 +2600,11 @@
           "one": "{{count}} Zeile",
           "other": "{{count}} Zeilen"
         }
-      }
+      },
+      "missing": "Die Notiz #{{id}} existiert nicht oder wurde gelöscht.",
+      "missing_trashed": "Die Notiz #{{id}} liegt im Papierkorb. Stelle sie wieder her, um sie erneut zu öffnen.",
+      "copy_id": "Notiz-ID kopieren",
+      "id_copied": "Notiz-ID {{id}} kopiert"
     },
     "editor": {
       "placeholder_desktop": "Text eingeben, / oder Rechtsklick verwenden, um das Befehlsmenü zu öffnen, Bilder einfügen oder ein Bild am Cursor ablegen.",
@@ -4133,7 +4208,8 @@
       "two_factor_recovery_used": "Anmeldung mit Wiederherstellungscode",
       "two_factor_recovery_regenerated": "Wiederherstellungscodes neu erzeugt",
       "oauth_app_authorized": "App verbunden (MCP)",
-      "oauth_app_revoked": "App getrennt (MCP)"
+      "oauth_app_revoked": "App getrennt (MCP)",
+      "session_revoked": "Gerät abgemeldet"
     },
     "filters": {
       "all_actions": "Alle Aktionen",
@@ -4694,7 +4770,18 @@
     "take_over_failed": "Diese Notiz konnte nicht übernommen werden.",
     "taken_over_notice": "Sie haben die Bearbeitung dieser Notiz übernommen.",
     "lost_unsaved_kept": "Ihre hier nicht gespeicherten Änderungen bleiben auf diesem Gerät erhalten und werden erneut angeboten, sobald die Notiz frei ist.",
-    "read_only_share": "Dieser Arbeitsbereich wird schreibgeschützt mit Ihnen geteilt."
+    "read_only_share": "Dieser Arbeitsbereich wird schreibgeschützt mit Ihnen geteilt.",
+    "lock_note": "Diese Notiz gegen Bearbeitung sperren",
+    "unlock_note": "Diese Notiz entsperren",
+    "locked_error": "Diese Notiz ist gesperrt. Entsperre sie in der Werkzeugleiste, bevor du sie bearbeitest.",
+    "locked_toast": "Notiz gesperrt",
+    "unlocked_toast": "Notiz entsperrt",
+    "lock_failed": "Die Sperre dieser Notiz konnte nicht geändert werden.",
+    "lock_all": "Alle Notizen gegen Bearbeitung sperren",
+    "unlock_all": "Alle Notizen entsperren",
+    "locked_all_toast": "Alle Notizen gesperrt",
+    "unlocked_all_toast": "Alle Notizen entsperrt",
+    "lock_all_failed": "Die Sperre der Notizen konnte nicht geändert werden."
   },
   "live_refresh": {
     "note_changed": "Diese Notiz wurde außerhalb dieses Tabs geändert.",
@@ -5507,6 +5594,7 @@
     "italic": "Kursiv",
     "underline": "Unterstrichen",
     "strikethrough": "Durchgestrichen",
+    "clear_formatting": "Formatierung des markierten Textes löschen",
     "link": "Link auf den markierten Text setzen",
     "code_block": "Codeblock",
     "slash_menu": "Befehlsmenü öffnen",
@@ -5543,7 +5631,9 @@
     "new_note": "Notiz erstellen:"
   },
   "icon_context_menu": {
-    "hide": "Schaltfläche ausblenden"
+    "hide": "Schaltfläche ausblenden",
+    "hide_element": "„{{name}}“ ausblenden",
+    "hidden_notice": "„{{name}}“ ist ausgeblendet. Sichtbarkeit von Elementen zeigt es wieder an."
   },
   "account_note": {
     "banner": "Notiz aus dem Konto {{account}}, schreibgeschützt",
@@ -5930,6 +6020,48 @@
       "group_rules": "Gruppentrennlinien",
       "size": "Schaltfläche für die Kachelgröße",
       "boards": "Liste der Schnellwahlen"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "Eingebetteter Inhalt blockiert",
+      "detail_admin": "Diese Instanz erlaubt keine eingebetteten Inhalte von {{host}}. Ein Administrator kann sie unter Einstellungen > Admin-Werkzeuge > Einbettungen wieder erlauben.",
+      "detail_public": "Diese Website erlaubt keine eingebetteten Inhalte von {{host}}."
+    },
+    "resize": {
+      "hint": "Zum Ändern der Größe ziehen, Doppelklick setzt sie zurück"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 Sitzung",
+      "count_other": "{{count}} Sitzungen"
+    },
+    "lifetime": {
+      "day_one": "1 Tag",
+      "day_other": "{{count}} Tage"
+    },
+    "modal": {
+      "title": "Verbundene Geräte",
+      "description": "Jede Zeile ist ein in Ihrem Konto angemeldeter Browser. Eine Sitzung endet von selbst nach {{duration}} ohne Aktivität und bei jeder Passwortänderung.",
+      "loading": "Wird geladen...",
+      "empty": "Keine offene Sitzung gefunden.",
+      "unknown_client": "Unbekannter Browser",
+      "this_device": "Dieses Gerät",
+      "last_active": "Letzte Aktivität {{date}}",
+      "revoke": "Abmelden",
+      "revoke_others": "Andere Geräte abmelden",
+      "confirm": "Bestätigen",
+      "close": "Schließen"
+    },
+    "method": {
+      "password": "Passwort",
+      "sso": "SSO",
+      "auto": "Ohne Anmeldung"
+    },
+    "errors": {
+      "load_failed": "Ihre Sitzungen konnten nicht geladen werden.",
+      "generic": "Etwas ist schiefgelaufen. Versuchen Sie es erneut."
     }
   }
 }

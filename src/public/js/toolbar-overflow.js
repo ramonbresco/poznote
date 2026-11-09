@@ -197,6 +197,10 @@
       target.insertBefore(entry, last ? null : first);
     });
     if (!moved.length) anchor.hidden = true;
+    // Entries built just now know nothing of a locked note
+    if (typeof window.poznoteRefreshNoteLockToolbar === 'function') {
+      window.poznoteRefreshNoteLockToolbar(toolbar);
+    }
   }
 
   function schedule(toolbar) {

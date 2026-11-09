@@ -277,9 +277,43 @@ class SystemController {
         if (strpos($remoteVersion, '-test') === false && strpos($remoteVersion, '-beta') === false) {
             $result['remote_version'] = $remoteVersion;
             $result['has_updates'] = version_compare($result['current_version'], $remoteVersion, '<');
+            // How big the step is, so the settings dot can be kept for the
+            // releases that matter instead of lighting up on every one of
+            // them (js/utils-updates.js, setting update_badge_level).
+            $result['update_kind'] = $result['has_updates']
+                ? self::versionStepKind($result['current_version'], $remoteVersion)
+                : '';
         }
 
         return $result;
+    }
+
+    /**
+     * 'major', 'minor' or 'patch' for the step between two versions, from the
+     * first number that differs. Anything unreadable counts as 'major', so a
+     * version this cannot parse is never quietly hidden.
+     */
+    private static function versionStepKind(string $current, string $remote): string {
+        $parse = static function (string $version): array {
+            $parts = explode('.', preg_replace('/[^0-9.].*$/', '', trim($version)));
+            return [
+                (int)($parts[0] ?? 0),
+                (int)($parts[1] ?? 0),
+                (int)($parts[2] ?? 0),
+            ];
+        };
+        if ($current === '' || $remote === '') {
+            return 'major';
+        }
+        [$cMajor, $cMinor] = $parse($current);
+        [$rMajor, $rMinor] = $parse($remote);
+        if ($rMajor !== $cMajor) {
+            return 'major';
+        }
+        if ($rMinor !== $cMinor) {
+            return 'minor';
+        }
+        return 'patch';
     }
 
     /**

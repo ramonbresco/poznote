@@ -704,6 +704,22 @@ function poznoteEndOutputBuffers(): void {
 }
 
 /**
+ * Give the session file back before a request that is going to take a while.
+ *
+ * PHP's file session handler holds an exclusive lock on the session for the
+ * whole request, so while one request of a browser is streaming a backup,
+ * every other request of that same browser waits in line behind it: the app
+ * goes quiet, the live refresh stops, autosaves queue up. Nothing after this
+ * point may write to $_SESSION, which is why it is called only where the
+ * work left is reading bytes and sending them.
+ */
+function poznoteReleaseSessionLock(): void {
+    if (PHP_SAPI !== 'cli' && session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+}
+
+/**
  * Send a file from disk to the client, unbuffered.
  *
  * readfile() maps the whole file and hands it to the output layer in a single
@@ -711,9 +727,13 @@ function poznoteEndOutputBuffers(): void {
  * a 900 MB backup died on memory_limit before its first byte went out.
  * Closing the buffers first is the only thing that makes it stream.
  *
+ * The session lock goes too: a download of several minutes used to hold it
+ * for all that time, which froze every other tab of the same browser.
+ *
  * @return int|false what readfile() returns
  */
 function poznoteSendFile(string $path) {
+    poznoteReleaseSessionLock();
     poznoteEndOutputBuffers();
     return readfile($path);
 }

@@ -101,6 +101,7 @@
     function getSettingsPreloadKeys() {
         var keys = [
             'language',
+            'tab_follows_note',
             'show_note_created',
             'show_note_icons',
             'note_color_palette',
@@ -123,6 +124,7 @@
             'markdown_colored_custom',
             'code_block_word_wrap',
             'code_block_line_numbers',
+            'code_block_collapsed_lines',
             'attachment_previews_in_note',
             'attachments_at_bottom',
             'backlinks_at_bottom',
@@ -183,6 +185,9 @@
         }
         if (document.getElementById('outbound-hosts-card')) {
             keys.push('outbound_allowed_hosts');
+        }
+        if (document.getElementById('embeds-card')) {
+            keys.push('embed_providers_disabled');
         }
 
         var unique = Object.create(null);
@@ -480,8 +485,8 @@
                 reflectInlineValue(control);
             });
         });
-        // Enter in a text field saves it the way leaving it does
-        if (control.tagName === 'INPUT' && control.type === 'text') {
+        // Enter in a typed field saves it the way leaving it does
+        if (control.tagName === 'INPUT' && (control.type === 'text' || control.type === 'number')) {
             control.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -643,6 +648,13 @@
             : width + '%';
     }
 
+    // lib/code-block-fold.php holds the same bounds and the same default
+    function codeCollapsedLines(value) {
+        var lines = parseInt(String(value === null || value === undefined ? '' : value).trim(), 10);
+        if (!isFinite(lines)) return 5;
+        return String(Math.max(0, Math.min(100, lines)));
+    }
+
     function initInlineControls() {
         var store = window.__poznoteUserStorage || window.localStorage;
 
@@ -760,6 +772,52 @@
             save: saveSettingValue('workspace_activity_emails')
         });
 
+        initInlineControl('update-badge-level-select', {
+            load: loadSettingValue('update_badge_level', function (value) {
+                value = String(value === null || value === undefined ? '' : value).trim();
+                // 'major' was a third choice before the setting was narrowed
+                // to two, and the option closest to it is now 'minor'.
+                if (value === 'major') {
+                    value = 'minor';
+                }
+                return ['all', 'minor'].indexOf(value) !== -1 ? value : 'all';
+            }),
+            save: saveSettingValue('update_badge_level')
+        });
+
+        // Days between two background update checks. Any whole number from 1
+        // to 365 is kept (initInlineControl shows a stored value the list does
+        // not offer as an extra entry), anything else means the default day.
+        initInlineControl('update-check-interval-select', {
+            load: loadSettingValue('update_check_interval_days', function (value) {
+                var days = parseInt(String(value === null || value === undefined ? '' : value).trim(), 10);
+                if (!days || isNaN(days) || days < 1) {
+                    return '1';
+                }
+                return String(Math.min(days, 365));
+            }),
+            save: saveSettingValue('update_check_interval_days')
+        });
+
+        // How much of its listing a folded code block keeps on screen, read
+        // by css/components/code-block-fold.css and js/copy-code-on-focus.js
+        // from <body> (index.php). A number typed out of range is brought
+        // back inside it and the field shows what was saved; something that
+        // is not a number at all falls back to 5, not to "hide everything"
+        // (the same reading as poznoteCodeBlockCollapsedLines() in PHP).
+        initInlineControl('code-collapsed-lines-input', {
+            load: loadSettingValue('code_block_collapsed_lines', codeCollapsedLines),
+            save: function (value, done) {
+                var lines = codeCollapsedLines(value);
+                setSetting('code_block_collapsed_lines', lines, function (success) {
+                    if (success) {
+                        document.getElementById('code-collapsed-lines-input').value = lines;
+                    }
+                    done(success);
+                });
+            }
+        });
+
         initInlineControl('markdown-default-view-mode-select', {
             load: loadSettingValue('markdown_default_view_mode', normalizeMarkdownDefaultViewMode),
             save: saveSettingValue('markdown_default_view_mode')
@@ -787,7 +845,7 @@
         // Read by js/events-text-selection.js on a computer
         initInlineControl('format-toolbar-mode-select', {
             load: loadSettingValue('format_toolbar_mode', function (value) {
-                return value === 'floating' ? 'floating' : 'toolbar';
+                return value === 'toolbar' ? 'toolbar' : 'floating';
             }),
             save: saveSettingValue('format_toolbar_mode')
         });
@@ -1721,7 +1779,7 @@
             event.preventDefault();
         }
 
-        var title = tr('settings.cards.install_app', {}, 'Install application');
+        var title = tr('settings.cards.install_app', {}, 'Install application (PWA)');
 
         if (isStandaloneMode()) {
             var alreadyInstalledMsg = tr('settings.install_app.already_installed', {}, 'The application is already installed on this device.');
@@ -1799,6 +1857,62 @@
             if (error) error.hidden = true;
             modal.style.display = 'flex';
             input.focus();
+        });
+    }
+
+    // Embed providers (embed_providers_disabled): the sites a note may frame.
+    // The stored value lists the providers switched OFF, so an empty value is
+    // "everything this version ships", and the modal can only ever narrow it.
+    // The provider ids and names come from the modal the page already holds,
+    // which the server built from the catalogue.
+    function embedProviderCheckboxes() {
+        var modal = document.getElementById('embedsModal');
+        if (!modal) return [];
+        return Array.prototype.slice.call(modal.querySelectorAll('[data-embed-provider]'));
+    }
+
+    function disabledEmbedProviders(raw) {
+        if (!raw || String(raw).trim() === '') return [];
+        var disabled = [];
+        try { disabled = JSON.parse(raw); } catch (e) { disabled = []; }
+        return Array.isArray(disabled) ? disabled : [];
+    }
+
+    function refreshEmbedsBadge() {
+        var badge = document.getElementById('embeds-status');
+        if (!badge) return;
+
+        getSetting('embed_providers_disabled', function (raw) {
+            var disabled = disabledEmbedProviders(raw);
+            var total = embedProviderCheckboxes().length;
+            var enabled = total - embedProviderCheckboxes().filter(function (checkbox) {
+                return disabled.indexOf(checkbox.getAttribute('data-embed-provider')) !== -1;
+            }).length;
+
+            if (total > 0 && enabled === 0) {
+                badge.textContent = tr('settings.embeds.status_none', {}, 'None');
+            } else if (enabled === total) {
+                badge.textContent = tr('settings.embeds.status_all', {}, 'All sites');
+            } else {
+                badge.textContent = tr('settings.embeds.status_some', { count: enabled, total: total }, '{{count}} of {{total}}');
+            }
+            // No state is a problem here: fewer sites is the safer one.
+            badge.className = 'setting-status neutral';
+        });
+    }
+
+    function showEmbedsModal() {
+        var modal = document.getElementById('embedsModal');
+        if (!modal) return;
+
+        getSetting('embed_providers_disabled', function (raw) {
+            var disabled = disabledEmbedProviders(raw);
+            embedProviderCheckboxes().forEach(function (checkbox) {
+                // Checked means allowed, so the checkbox is the opposite of
+                // what is stored.
+                checkbox.checked = disabled.indexOf(checkbox.getAttribute('data-embed-provider')) === -1;
+            });
+            modal.style.display = 'flex';
         });
     }
 
@@ -3012,6 +3126,7 @@
         // show-created-card, note-icons-card and folder-counts-card were
         // replaced by checkboxes in the "Element visibility" modal
         // (panel:note-created-date, panel:note-icons, panel:folder-note-count).
+        setupToggleCard('tab-follows-note-card', 'tab-follows-note-status', 'tab_follows_note', false, false);
         setupToggleCard('folder-actions-card', 'folder-actions-status', 'hide_folder_actions', true);
         setupToggleCard('notes-without-folders-card', 'notes-without-folders-status', 'notes_without_folders_after_folders', false);
         setupToggleCard('folder-icon-kanban-card', 'folder-icon-kanban-status', 'folder_icon_opens_kanban', false, false);
@@ -3028,7 +3143,7 @@
         setupToggleCard('attachment-previews-card', 'attachment-previews-status', 'attachment_previews_in_note', false, false);
         setupToggleCard('attachments-at-bottom-card', 'attachments-at-bottom-status', 'attachments_at_bottom', false, false);
         setupToggleCard('backlinks-at-bottom-card', 'backlinks-at-bottom-status', 'backlinks_at_bottom', false, false);
-        setupToggleCard('note-virtual-space-card', 'note-virtual-space-status', 'note_virtual_space', false, false);
+        setupToggleCard('note-virtual-space-card', 'note-virtual-space-status', 'note_virtual_space', false, true);
         setupToggleCard('default-image-border-card', 'default-image-border-status', 'default_image_border_no_padding', false, false);
         setupToggleCard('spellcheck-html-notes-card', 'spellcheck-html-notes-status', 'spellcheck_html_notes', false, false);
 
@@ -3255,6 +3370,11 @@
         var outboundHostsCard = document.getElementById('outbound-hosts-card');
         if (outboundHostsCard) {
             outboundHostsCard.addEventListener('click', showOutboundHostsModal);
+        }
+
+        var embedsCard = document.getElementById('embeds-card');
+        if (embedsCard) {
+            embedsCard.addEventListener('click', showEmbedsModal);
         }
 
         var tenantIsolationCard = document.getElementById('tenant-isolation-card');
@@ -3850,6 +3970,32 @@
             });
         }
 
+        // Save the embed providers modal: posts the providers left unchecked.
+        var saveEmbedProvidersBtn = document.getElementById('saveEmbedProvidersBtn');
+        if (saveEmbedProvidersBtn) {
+            saveEmbedProvidersBtn.addEventListener('click', function () {
+                var disabled = embedProviderCheckboxes().filter(function (checkbox) {
+                    return !checkbox.checked;
+                }).map(function (checkbox) {
+                    return checkbox.getAttribute('data-embed-provider');
+                });
+
+                setSetting('embed_providers_disabled', JSON.stringify(disabled), function (ok) {
+                    if (!ok) {
+                        alert(tr('display.alerts.error_saving_preference', {}, 'Error saving preference'));
+                        return;
+                    }
+                    try { closeModal('embedsModal'); } catch (e) {
+                        console.debug('settings-page: closeModal(embedsModal) failed:', e);
+                    }
+                    refreshEmbedsBadge();
+                    // The pages that render notes build their frame-src from
+                    // this list when they load.
+                    reloadOpener();
+                });
+            });
+        }
+
         // Save tenant isolation modal button
         var saveTenantIsolationBtn = document.getElementById('saveTenantIsolationBtn');
         if (saveTenantIsolationBtn) {
@@ -3904,6 +4050,7 @@
             refreshGitSyncEnabledBadge();
             refreshTenantIsolationBadge();
             refreshOutboundHostsBadge();
+            refreshEmbedsBadge();
             refreshFolderTreeHighlightBadge();
             refreshUiCustomizationBadge();
         });

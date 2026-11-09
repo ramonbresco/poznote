@@ -27,6 +27,13 @@ class SettingsController {
         'tenant_isolation_features',
         'tenant_isolation_applied_ui_keys',
         'outbound_allowed_hosts',
+        // Which releases light the red dot on the Settings entries
+        // ('all' or 'minor'; js/utils-updates.js)
+        'update_badge_level',
+        // Days between two background update checks (1 to 365, default 1;
+        // js/utils-updates.js)
+        'update_check_interval_days',
+        'embed_providers_disabled',
         'import_max_individual_files',
         'import_max_zip_files',
         'user_max_notes',
@@ -257,6 +264,15 @@ class SettingsController {
                 throw new InvalidArgumentException('invalid entry: ' . mb_substr(implode(', ', $parsed['invalid']), 0, 200), 400);
             }
             return implode("\n", $parsed['entries']);
+        }
+
+        if ($key === 'embed_providers_disabled') {
+            // JSON array of the embed providers an administrator switched off,
+            // validated against the catalogue this version ships; see
+            // lib/embed-providers.php. Never a list of hosts: nothing can add
+            // a site a note may frame.
+            require_once dirname(__DIR__, 3) . '/lib/embed-providers.php';
+            return poznoteNormalizeEmbedProvidersDisabled($value);
         }
 
         if ($key === 'tenant_isolation_features') {
@@ -1003,6 +1019,11 @@ class SettingsController {
                     $this->requireOwnTwoFactorBeforeRequiringIt();
                 }
                 setGlobalSetting($key, $value);
+                if ($key === 'embed_providers_disabled' && function_exists('poznoteResetEmbedProvidersCache')) {
+                    // Anything resolving the allowed embed hosts later in this
+                    // request must see the value just written.
+                    poznoteResetEmbedProvidersCache();
+                }
             } else {
                 $previousLanguage = null;
                 $languageConfirmedInStartupGuide = false;

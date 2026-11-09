@@ -490,6 +490,7 @@
       "markdown_colored": "为 Markdown 笔记上色：为每级标题、行内代码、代码块背景、引用、表格表头和分隔线分别选择颜色。",
       "code_wrap": "代码块中的长行自动换行，而不是水平滚动。",
       "code_line_numbers": "在 markdown 预览的代码块中显示行号。",
+      "code_block_collapsed_lines": "代码块折叠后仍然显示的行数，范围 0 到 100。设为 0 时，折叠的代码块不显示任何代码。行数不超过这个值的代码块不会显示折叠按钮，因为折叠也不会隐藏任何内容。",
       "attachment_previews": "在笔记中显示附件预览。",
       "attachments_at_bottom": "将附件区域显示在笔记底部而不是顶部。",
       "allow_executable_attachments": "允许本实例的所有账户将脚本和可执行文件（.sh、.ps1、.bat、.exe、.py 等）添加为附件。Poznote 从不运行它们，只负责存储和下载。Web 服务器可能执行的类型（如 .php）仍然被阻止。",
@@ -539,11 +540,17 @@
       "release_notes": "在 GitHub 上打开 Poznote 所有版本的版本说明。",
       "login_disabled": "跳过登录页面：任何能访问此实例的浏览器都会直接打开您的账户，无需用户名、密码或双重验证码。仅当只有您本人能访问此实例，或其前面的反向代理负责认证时才开启。API 仍然要求凭据。",
       "outbound_hosts": "非管理员用户只能将 Webhook、Git Sync 和他们自己的 AI、转录或 MCP 服务器连接到公共互联网主机。在此列出允许他们使用的本地主机或网络，例如 Ollama 或 n8n 服务器。管理员不受限制。",
+      "embeds": "笔记可以嵌入这些网站的内容，例如 YouTube 视频或 GeoGebra 小程序。关闭本实例不应加载的网站。其他网站无法嵌入，也无法在此添加网站。",
       "diary_template": "选择一篇笔记，工作区 {{workspace}} 中的每个新日记条目都以其内容开头。列表显示该工作区中名为“模板”（或 Templates）的文件夹里的笔记。每个工作区都有自己的模板。",
       "markdown_view_cycle": "选择 Markdown 笔记的视图菜单在经典视图（预览，用铅笔编辑）之外提供的视图。未选中的视图不会列出。如果一个都没有选中，按钮将被隐藏。在手机上，菜单不会提供分屏模式。",
       "connected_apps": "通过 MCP 服务器将 ChatGPT、Claude 等聊天应用连接到你的笔记，并可随时断开连接。",
       "custom_logo": "为所有用户用您自己的标志替换 Poznote 标志：浏览器标签页、登录页面、图标栏以及已安装应用的图标。",
-      "two_factor_required": "所有使用密码登录的账户都必须使用双重身份验证。尚未设置的账户会在下次登录时完成设置，未使用双重身份验证打开的会话将结束。账户密码将无法再通过 API 使用：应用需改用应用密码。SSO 登录不受影响，其第二重验证由身份提供商负责。"
+      "two_factor_required": "所有使用密码登录的账户都必须使用双重身份验证。尚未设置的账户会在下次登录时完成设置，未使用双重身份验证打开的会话将结束。账户密码将无法再通过 API 使用：应用需改用应用密码。SSO 登录不受影响，其第二重验证由身份提供商负责。",
+      "tab_follows_note": "让浏览器标签页使用其中打开的笔记的标题和图标，而不是本实例的名称和图标。这样可以区分打开了不同笔记的多个标签页。",
+      "update_badge_level": "选择哪些版本会在设置项上显示红点。无论如何选择，新版本仍会在本页公布，不会隐藏任何内容。",
+      "update_check_interval": "Poznote 在后台检查是否有更新版本的频率。小红点只会在检查之后出现，间隔越长出现得越晚。上面的「版本」卡片仍然会在点击时立即检查。",
+      "sessions": "查看当前登录到您账户的浏览器和设备，并退出不再使用的设备。",
+      "session_lifetime": "没有任何操作时登录状态能保持多久。通过 .env 文件中的 POZNOTE_SESSION_LIFETIME_DAYS 设置，所以这里只显示，不能在本页面修改。使用“保持登录”登录会保持更久，通过 SSO 登录则不会。"
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "在移动设备上，键盘上方的工具栏有一个 + 按钮，无论此设置为何，它都会打开同一个菜单。"
@@ -616,6 +623,7 @@
     },
     "cards": {
       "tenant_isolation": "租户隔离",
+      "embeds": "嵌入内容",
       "user_management": "用户管理",
       "backup_export": "备份 / 导出",
       "restore_import": "还原 / 导入",
@@ -636,7 +644,7 @@
       "support": "支持 Poznote",
       "buy_me_a_coffee": "请我喝杯咖啡",
       "install_extension": "安装扩展",
-      "install_app": "安装应用",
+      "install_app": "安装应用（PWA）",
       "release_notes": "发布日志",
       "orphan_scanner": "孤立附件扫描器",
       "storage_stats": "管理员存储统计",
@@ -670,7 +678,9 @@
       "outbound_hosts": "本地网络访问",
       "connected_apps": "已连接的应用",
       "custom_logo": "标志",
-      "two_factor_required": "强制双重身份验证"
+      "two_factor_required": "强制双重身份验证",
+      "sessions": "已连接的设备",
+      "session_lifetime": "会话有效期"
     },
     "default_credentials": {
       "both": "此账户仍在使用默认的用户名和密码。任何能访问此实例的人都可以登录。",
@@ -716,6 +726,11 @@
     "outbound_hosts": {
       "status_allowed": "已允许 {{count}} 项",
       "status_public_only": "仅公共主机"
+    },
+    "embeds": {
+      "status_all": "全部网站",
+      "status_some": "{{count}} / {{total}}",
+      "status_none": "无"
     },
     "diary_template": {
       "none": "无",
@@ -910,6 +925,7 @@
       "markdown_colored": "彩色 Markdown",
       "code_block_word_wrap": "代码块自动换行",
       "code_block_line_numbers": "代码块行号",
+      "code_block_collapsed_lines": "折叠的代码块",
       "attachment_previews_in_note": "附件预览",
       "attachments_at_bottom": "附件显示在底部",
       "backlinks_at_bottom": "Backlinks 显示在底部",
@@ -927,7 +943,10 @@
       "format_toolbar_mode": "格式工具栏",
       "workspace_activity_emails": "共享工作区邮件",
       "diary_template": "日记条目模板",
-      "markdown_view_cycle": "视图菜单"
+      "markdown_view_cycle": "视图菜单",
+      "tab_follows_note": "标签页跟随打开的笔记",
+      "update_badge_level": "更新小红点",
+      "update_check_interval": "更新检查"
     },
     "badges": {
       "font_size_default": "默认 ({{size}}px)",
@@ -1085,7 +1104,8 @@
     "priority_high": "高优先级",
     "priority_medium": "中优先级",
     "priority_low": "低优先级",
-    "priority_none": "无优先级"
+    "priority_none": "无优先级",
+    "delete_task": "删除任务"
   },
   "tags": {
     "add_single": "添加标签...",
@@ -1307,6 +1327,12 @@
       "live_hint": "直接在排版后的笔记中编辑：光标附近才显示 Markdown 语法。",
       "rich_hint": "像文字处理器一样编辑：从不显示 Markdown 语法。",
       "split_hint": "一侧是 Markdown 源码，另一侧是排版预览，输入时实时更新。"
+    },
+    "code_block_collapse": {
+      "collapse": "折叠代码块",
+      "expand": "展开代码块",
+      "one_line": "1 行",
+      "lines": "{{count}} 行"
     }
   },
   "info": {
@@ -1329,7 +1355,9 @@
       "note_id": "笔记 ID:",
       "full_path": "完整路径:",
       "created_by": "创建者：",
-      "last_modified_by": "最后修改者："
+      "last_modified_by": "最后修改者：",
+      "last_modified_from": "最后修改来自：",
+      "locked": "已锁定："
     },
     "attachments": {
       "count_singular": "1 个文件",
@@ -1344,6 +1372,15 @@
     "users": {
       "user_id": "用户 #{{id}}",
       "deleted": "用户 #{{id}}"
+    },
+    "source": {
+      "app": "Poznote，在电脑上",
+      "app_mobile": "Poznote，在移动端",
+      "api": "REST API",
+      "mcp": "通过 MCP 连接的应用",
+      "extension": "浏览器扩展",
+      "ai": "AI 助手",
+      "public": "公开分享页的访客"
     }
   },
   "modals": {
@@ -1510,9 +1547,10 @@
       "note_scroll_arrows": "跳到笔记顶部和底部的箭头",
       "tasklist_add_field": "添加任务的输入框",
       "tasklist_frame": "每个任务的边框",
-      "tasklist_delete": "删除已完成的任务",
+      "tasklist_delete": "删除任务",
       "tasklist_menu": "任务选项菜单（移动端）",
-      "tasklist_frame_color": "任务边框的优先级颜色"
+      "tasklist_frame_color": "任务边框的优先级颜色",
+      "note_id": "显示笔记 ID"
     },
     "icon_sidebar_order": {
       "title": "图标侧边栏布局",
@@ -1592,9 +1630,14 @@
       "workspace_destination": "选择目标工作区:",
       "target_folder": "选择目标文件夹:",
       "recent_folders": "最近的文件夹",
-      "new_folder": "新建文件夹",
+      "filter_placeholder": "筛选文件夹，或输入新名称",
+      "clear_filter": "清除筛选",
+      "no_match": "没有匹配的文件夹。",
+      "no_folder_root": "无文件夹（移到根目录）",
+      "create_folder": "创建文件夹",
+      "current_location": "当前位于 {{folder}}",
+      "current_location_none": "当前不在任何文件夹中",
       "new_workspace": "新建工作区",
-      "folder_name_placeholder": "文件夹名称（使用 / 创建子文件夹）",
       "workspace_name_placeholder": "工作区名称",
       "enter_workspace_name": "请输入工作区名称",
       "enter_folder_name": "请输入文件夹名称"
@@ -1727,6 +1770,10 @@
       "json": {
         "title": "下载为 JSON",
         "description": "以 JSON 文件形式下载原始任务列表数据"
+      },
+      "html_public": {
+        "title": "导出为发布页面",
+        "description": "下载单个 HTML 文件，外观与这篇笔记的公开页面完全一致，包含图片"
       }
     },
     "folder_tree_highlight": {
@@ -1888,6 +1935,11 @@
         "user_s3_restore_help": "非管理员用户将不再看到恢复 / 导入页面中的从 S3 恢复部分,也无法恢复存储桶归档。"
       }
     },
+    "embeds": {
+      "title": "嵌入内容",
+      "description": "笔记可以嵌入下列网站的内容，例如视频或交互式小程序。取消勾选本实例不应加载的网站。其他网站无法嵌入笔记，也无法在此添加网站。",
+      "existing_hint": "取消勾选某个网站后，笔记中已有的嵌入内容会隐藏：它们不再加载，之后编辑这类笔记会把嵌入内容从笔记里删除。"
+    },
     "task_move": {
       "create_new": "创建任务列表",
       "create_error": "无法创建任务列表",
@@ -2002,6 +2054,25 @@
       "reset_confirm": "为所有用户恢复 Poznote 标志？",
       "invalid": "无法使用此图片。请选择不超过 20 MB 的 PNG、JPEG、WebP、GIF 或 SVG 文件。",
       "failed": "无法保存标志。"
+    },
+    "update_badge_level": {
+      "options": {
+        "all": "主版本、次版本和补丁版本",
+        "minor": "仅主版本和次版本"
+      }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "每天",
+        "2": "每 2 天",
+        "3": "每 3 天",
+        "7": "每 7 天",
+        "14": "每 14 天",
+        "30": "每 30 天"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "行"
     }
   },
   "notes_list": {
@@ -2266,7 +2337,6 @@
     "toggle": "Toggle",
     "toggle_placeholder": "Toggle",
     "toggle_content_placeholder": "在折叠块内在此输入…",
-    "toggle_after_placeholder": "在折叠块外在此输入…",
     "code_block_normal": "普通代码块",
     "code_block_placeholder_before": "在此处输入文本…",
     "code_block_placeholder_after": "在此处输入文本…",
@@ -2488,7 +2558,8 @@
       "access_check_only": "仅勾选或取消勾选",
       "access_full": "完全编辑",
       "password": "密码 (可选)",
-      "password_placeholder": "输入密码"
+      "password_placeholder": "输入密码",
+      "token_from_name": "用名称生成令牌"
     },
     "folder_share_modal": {
       "title": "共享文件夹 URL",
@@ -2524,7 +2595,11 @@
         "lines": {
           "other": "{{count}} 行"
         }
-      }
+      },
+      "missing": "笔记 #{{id}} 不存在，或者已被删除。",
+      "missing_trashed": "笔记 #{{id}} 在回收站中。请先恢复它才能打开。",
+      "copy_id": "复制笔记 ID",
+      "id_copied": "已复制笔记 ID {{id}}"
     },
     "editor": {
       "placeholder_desktop": "输入文本，使用 / 或右键打开命令菜单，粘贴图片或在光标处拖放图片。",
@@ -4230,7 +4305,8 @@
       "two_factor_recovery_used": "使用恢复代码登录",
       "two_factor_recovery_regenerated": "已重新生成恢复代码",
       "oauth_app_authorized": "已连接应用（MCP）",
-      "oauth_app_revoked": "已断开应用（MCP）"
+      "oauth_app_revoked": "已断开应用（MCP）",
+      "session_revoked": "设备已退出登录"
     },
     "filters": {
       "all_actions": "所有操作",
@@ -4791,7 +4867,18 @@
     "take_over_failed": "无法接管此笔记。",
     "taken_over_notice": "您已接管此笔记的编辑。",
     "lost_unsaved_kept": "您在此处未保存的更改已保留在此设备上，笔记空闲后会再次提供。",
-    "read_only_share": "此工作区以只读模式与您共享。"
+    "read_only_share": "此工作区以只读模式与您共享。",
+    "lock_note": "锁定此笔记，禁止编辑",
+    "unlock_note": "解锁此笔记",
+    "locked_error": "此笔记已锁定。请先在工具栏中解锁，然后再编辑。",
+    "locked_toast": "笔记已锁定",
+    "unlocked_toast": "笔记已解锁",
+    "lock_failed": "无法更改此笔记的锁定状态。",
+    "lock_all": "锁定所有笔记，禁止编辑",
+    "unlock_all": "解锁所有笔记",
+    "locked_all_toast": "所有笔记已锁定",
+    "unlocked_all_toast": "所有笔记已解锁",
+    "lock_all_failed": "无法更改笔记的锁定状态。"
   },
   "live_refresh": {
     "note_changed": "此笔记已在本标签页之外被修改。",
@@ -5604,6 +5691,7 @@
     "italic": "斜体",
     "underline": "下划线",
     "strikethrough": "删除线",
+    "clear_formatting": "清除所选文本的格式",
     "link": "为所选文本插入链接",
     "code_block": "代码块",
     "slash_menu": "打开命令菜单",
@@ -5640,7 +5728,9 @@
     "new_note": "新建笔记："
   },
   "icon_context_menu": {
-    "hide": "隐藏按钮"
+    "hide": "隐藏按钮",
+    "hide_element": "隐藏「{{name}}」",
+    "hidden_notice": "已隐藏「{{name}}」。可在元素可见性中重新显示。"
   },
   "account_note": {
     "banner": "来自账户 {{account}} 的笔记，只读",
@@ -6027,6 +6117,48 @@
       "group_rules": "分组分隔线",
       "size": "磁贴大小按钮",
       "boards": "快速访问列表"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "嵌入内容已被阻止",
+      "detail_admin": "本实例不允许来自 {{host}} 的嵌入内容。管理员可以在设置 > 管理工具 > 嵌入内容中重新允许。",
+      "detail_public": "本站点不允许来自 {{host}} 的嵌入内容。"
+    },
+    "resize": {
+      "hint": "拖动调整大小，双击恢复默认"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 个会话",
+      "count_other": "{{count}} 个会话"
+    },
+    "lifetime": {
+      "day_one": "1 天",
+      "day_other": "{{count}} 天"
+    },
+    "modal": {
+      "title": "已连接的设备",
+      "description": "每一行是一个登录到您账户的浏览器。会话在 {{duration}} 没有操作后会自动结束，更改密码时也会结束。",
+      "loading": "加载中...",
+      "empty": "没有打开的会话。",
+      "unknown_client": "未知浏览器",
+      "this_device": "当前设备",
+      "last_active": "最近活动 {{date}}",
+      "revoke": "退出登录",
+      "revoke_others": "退出其他设备",
+      "confirm": "确认",
+      "close": "关闭"
+    },
+    "method": {
+      "password": "密码",
+      "sso": "SSO",
+      "auto": "免登录"
+    },
+    "errors": {
+      "load_failed": "无法加载您的会话。",
+      "generic": "出错了，请重试。"
     }
   }
 }

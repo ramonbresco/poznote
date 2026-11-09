@@ -784,6 +784,7 @@ $pageWidthStyle = poznotePageWidthStyle('dashboard');
     <!-- Contextual UI Customization panel (see ui_customization_panel.php) -->
     <script src="<?php echo poznoteAsset('js/ui-customization.js'); ?>"></script>
     <script src="<?php echo poznoteAsset('js/ui-customization-panel.js'); ?>"></script>
+    <script src="<?php echo poznoteAsset('js/hide-element-menu.js'); ?>"></script>
     <script src="<?php echo poznoteAsset('js/page-width.js'); ?>"></script>
     <?php // Target of the rel="expect" link in <head>: keep it last ?>
     <span id="dashboardPageEnd" hidden></span>

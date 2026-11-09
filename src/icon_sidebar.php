@@ -299,6 +299,48 @@ if (function_exists('poznoteTidyIconSidebarDividers')) {
 // is deliberately not a .update-badge: js/utils-updates.js shows and hides
 // every element of that class on each release check, and would take this one
 // with it.
+// Which releases light the dot up (js/utils-updates.js). Read here because
+// the rail is on every page that can show one, settings.php included.
+$iconSidebarUpdateBadgeLevel = 'all';
+if (function_exists('getGlobalSetting')) {
+    try {
+        $iconSidebarUpdateBadgeLevel = (string)getGlobalSetting('update_badge_level', 'all');
+    } catch (Throwable $e) {
+        $iconSidebarUpdateBadgeLevel = 'all';
+    }
+}
+// 'major' was a third choice offered before the setting was narrowed to two;
+// a value saved then means the dot is wanted for the releases that change the
+// first two numbers, which is what 'minor' says now.
+if ($iconSidebarUpdateBadgeLevel === 'major') {
+    $iconSidebarUpdateBadgeLevel = 'minor';
+}
+if (!in_array($iconSidebarUpdateBadgeLevel, ['all', 'minor'], true)) {
+    $iconSidebarUpdateBadgeLevel = 'all';
+}
+echo '<script type="application/json" id="poznote-update-badge-level">'
+    . json_encode($iconSidebarUpdateBadgeLevel, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
+    . '</script>' . "\n";
+
+// How many days between two background update checks (js/utils-updates.js).
+// A day is what this always did and stays the shipped default; anything from
+// 1 to 365 is honoured, so a value set through the API and absent from the
+// list in Settings still works.
+$iconSidebarUpdateCheckInterval = 1;
+if (function_exists('getGlobalSetting')) {
+    try {
+        $iconSidebarUpdateCheckIntervalRaw = trim((string)getGlobalSetting('update_check_interval_days', '1'));
+        if ($iconSidebarUpdateCheckIntervalRaw !== '' && ctype_digit($iconSidebarUpdateCheckIntervalRaw)) {
+            $iconSidebarUpdateCheckInterval = max(1, min(365, (int)$iconSidebarUpdateCheckIntervalRaw));
+        }
+    } catch (Throwable $e) {
+        $iconSidebarUpdateCheckInterval = 1;
+    }
+}
+echo '<script type="application/json" id="poznote-update-check-interval">'
+    . json_encode($iconSidebarUpdateCheckInterval)
+    . '</script>' . "\n";
+
 require_once __DIR__ . '/lib/default-credentials.php';
 // The signed-in person's own credentials, not the active account's: the two
 // differ while someone is looking at an account shared with them, and a dot
@@ -485,6 +527,11 @@ window.PoznoteIconSidebarColorsConfig = <?php echo json_encode([
     'menuChangeColor' => t('modals.icon_sidebar_order.change_color', [], 'Change icon color'),
     'menuHide' => t('icon_context_menu.hide', [], 'Hide button'),
     'menuCustomize' => t('common.customize_menu', [], 'Customize this menu'),
+    // Right-click Hide menu (js/hide-element-menu.js): its entries name the
+    // element, and the message that follows says where it comes back from.
+    'menuHideElement' => t('icon_context_menu.hide_element', [], 'Hide "{{name}}"'),
+    'menuHiddenNotice' => t('icon_context_menu.hidden_notice', [], '"{{name}}" is hidden. Element visibility brings it back.'),
+    'menuElementVisibility' => t('modals.ui_customization.panel_title', [], 'Element visibility'),
 ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE); ?>;
 </script>
 <script src="<?php echo $iconSidebarAsset('js/color-palette.js'); ?>" defer></script>

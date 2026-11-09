@@ -149,7 +149,12 @@
                         $content_width = min(100, max(10, (int)$row['content_width']));
                         $content_width_attrs = ' data-content-width="' . $content_width . '" style="--note-content-width: ' . $content_width . '%"';
                     }
-                    echo '<div id="note'.$row['id'].'" class="notecard"'.$content_width_attrs.'>';
+                    // A note its owner locked (entries.locked, lib/note-lock.php):
+                    // the editor opens it read-only from the first paint
+                    // (js/note-edit-lock.js reads the attribute, no round trip).
+                    $note_is_locked = (int)($row['locked'] ?? 0) === 1;
+                    $locked_attr = $note_is_locked ? ' data-note-locked="1"' : '';
+                    echo '<div id="note'.$row['id'].'" class="notecard"'.$content_width_attrs.$locked_attr.'>';
                     echo '<div class="innernote"'.$markdown_attr.$tasklist_attr.'>';
                     echo '<div class="note-header">';
                     echo '<div class="note-edit-toolbar">';
@@ -369,6 +374,14 @@
 
                     echo '<button type="button" class="toolbar-btn btn-snapshot note-action-btn" data-action="show-snapshot" data-note-id="'.$row['id'].'" title="'.t_h('snapshot.menu_item', [], 'Revisions').'"><i class="lucide lucide-history"></i></button>';
 
+                    // Lock the note against editing. A deliberate state, not
+                    // the passing edit lock of two people in the same note:
+                    // nothing clears it but this button (lib/note-lock.php).
+                    $lock_title = $note_is_locked
+                        ? t_h('note_lock.unlock_note', [], 'Unlock this note')
+                        : t_h('note_lock.lock_note', [], 'Lock this note against editing');
+                    echo '<button type="button" class="toolbar-btn btn-lock-note note-action-btn'.($note_is_locked ? ' active' : '').'" data-action="toggle-note-lock" data-note-id="'.$row['id'].'" data-locked="'.($note_is_locked ? '1' : '0').'" title="'.$lock_title.'" aria-pressed="'.($note_is_locked ? 'true' : 'false').'"><i class="lucide '.($note_is_locked ? 'lucide-lock' : 'lucide-lock-open').'"></i></button>';
+
                     // The note width and the split view are set from the "..."
                     // menu of the floating stack (ui_customization_panel.php),
                     // with the other controls that change the layout rather
@@ -419,6 +432,12 @@
 
                     echo '<button type="button" class="dropdown-item mobile-toolbar-item" role="menuitem" data-action="trigger-mobile-action" data-selector=".btn-duplicate"><i class="lucide lucide-copy"></i> '.t_h('common.duplicate', [], 'Duplicate').'</button>';
                     echo '<button type="button" class="dropdown-item mobile-toolbar-item" role="menuitem" data-action="trigger-mobile-action" data-selector=".btn-move"><i class="lucide lucide-folder-output"></i> '.t_h('common.move', [], 'Move').'</button>';
+                    // The lock, which the row itself does not show on a phone
+                    // (css/index-mobile.css keeps a handful of icons): without
+                    // this entry a note locked from a computer could not be
+                    // unlocked from a phone. Labelled like the entries
+                    // js/toolbar-overflow.js builds, from the button's title.
+                    echo '<button type="button" class="dropdown-item mobile-toolbar-item mobile-lock-note-item" role="menuitem" data-action="trigger-mobile-action" data-selector=".btn-lock-note"><i class="lucide '.($note_is_locked ? 'lucide-lock' : 'lucide-lock-open').'"></i> <span class="mobile-lock-note-label">'.$lock_title.'</span></button>';
                     if ($note_type !== 'linked') {
                         // Two variants, shown as the menu opens (js/clickable-tags.js)
                         echo '<button type="button" class="dropdown-item mobile-toolbar-item speed-dial-state-on" role="menuitem" data-action="toggle-speed-dial" data-note-id="'.$row['id'].'" style="display: none;"><i class="lucide lucide-zap"></i> '.t_h('speed_dial.remove', [], 'Remove from speed dial').'</button>';
@@ -637,6 +656,13 @@
                         // for them, like the tags (js/note-stats.js wires it)
                         echo '<span class="note-subline">';
                         echo '<span class="note-subline-list">';
+                        // The note id opens the line: the number the address bar
+                        // and every API and MCP call name the note by, so it is
+                        // worth having in sight rather than only in the
+                        // Information dialog. Clicking it copies it
+                        // (js/index-events.js).
+                        $copy_id_label = t_h('index.note.copy_id', [], 'Copy the note id');
+                        echo '<span class="note-sub-id"><button type="button" class="note-sub-id-btn" data-action="copy-note-id" data-note-id="' . $row['id'] . '" title="' . $copy_id_label . '" aria-label="' . $copy_id_label . '">#' . (int)$row['id'] . '</button></span>';
                         echo '<span class="note-sub-dates">';
                         if ($created_display !== '') {
                             echo '<span class="note-sub-created">' . t_h('index.note.created_on', ['date' => $created_display], 'Created {{date}}') . '</span>';

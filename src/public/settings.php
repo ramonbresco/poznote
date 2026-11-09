@@ -108,6 +108,7 @@ $settingsPageConfig = [
 $settingsPageUserKeys = [
     'emoji_icons_enabled',
     'language',
+    'tab_follows_note',
     'show_note_created',
     'show_note_icons',
     'note_color_palette',
@@ -130,6 +131,7 @@ $settingsPageUserKeys = [
     'markdown_colored_custom',
     'code_block_word_wrap',
     'code_block_line_numbers',
+    'code_block_collapsed_lines',
     'attachment_previews_in_note',
     'attachments_at_bottom',
     'backlinks_at_bottom',
@@ -197,6 +199,21 @@ try {
     $settingsPageConfig['appPasswords'] = ['active_count' => 0];
 }
 $settingsAppPasswordsActive = (int)($settingsPageConfig['appPasswords']['active_count'] ?? 0);
+
+// Connected devices card: same idea, the badge says how many sessions are
+// open without the page having to fetch the list.
+try {
+    require_once __DIR__ . '/../lib/session-store.php';
+    $settingsPageSessionsUserId = (int)(getCurrentUserId() ?? 0);
+    $settingsPageConfig['sessions'] = [
+        'count' => $settingsPageSessionsUserId > 0 ? count(poznoteListUserSessions($settingsPageSessionsUserId)) : 0,
+        'lifetime_days' => poznoteSessionLifetimeDays(),
+    ];
+} catch (Throwable $e) {
+    $settingsPageConfig['sessions'] = ['count' => 0, 'lifetime_days' => 7];
+}
+$settingsSessionsCount = (int)($settingsPageConfig['sessions']['count'] ?? 0);
+$settingsSessionLifetimeDays = (int)($settingsPageConfig['sessions']['lifetime_days'] ?? 7);
 
 // Connected apps card: chat apps signed in to the MCP server through the
 // OAuth consent page (see src/lib/oauth-server.php). Shown whenever that
@@ -304,6 +321,9 @@ if ($isAdmin) {
             'tenant_isolation_features',
             'tenant_isolation_applied_ui_keys',
             'outbound_allowed_hosts',
+            'update_badge_level',
+            'update_check_interval_days',
+            'embed_providers_disabled',
         ];
         foreach ($settingsPageGlobalKeys as $settingsPageKey) {
             $settingsPageConfig['settings'][$settingsPageKey] = getGlobalSetting($settingsPageKey, '');
@@ -544,6 +564,24 @@ if ($canUseUserWebhooks) {
                                 echo t_h('app_passwords.status.count_other', ['count' => $settingsAppPasswordsActive], '{{count}} active');
                             } else {
                                 echo t_h('app_passwords.status.none', [], 'None');
+                            }
+                        ?></span>
+                    </div>
+                </div>
+
+                <!-- Connected devices: the profile's open sessions, endable one by one -->
+                <div class="home-card" id="sessions-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.sessions', [], 'See the browsers and devices currently signed in to your account, and sign out the ones you no longer use.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon">
+                        <i class="lucide lucide-monitor"></i>
+                    </div>
+                    <div class="home-card-content">
+                        <span class="home-card-title"><?php echo t_h('settings.cards.sessions', [], 'Connected devices'); ?></span>
+                        <span id="sessions-status-badge" class="setting-status <?php echo $settingsSessionsCount > 1 ? 'enabled' : 'disabled'; ?>"><?php
+                            if ($settingsSessionsCount === 1) {
+                                echo t_h('sessions.status.count_one', [], '1 session');
+                            } else {
+                                echo t_h('sessions.status.count_other', ['count' => $settingsSessionsCount], '{{count}} sessions');
                             }
                         ?></span>
                     </div>
@@ -1024,7 +1062,7 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     <i class="lucide lucide-smartphone"></i>
                 </div>
                 <div class="home-card-content">
-                    <span class="home-card-title"><?php echo t_h('settings.cards.install_app', [], 'Install application'); ?></span>
+                    <span class="home-card-title"><?php echo t_h('settings.cards.install_app', [], 'Install application (PWA)'); ?></span>
                     <span id="install-app-status" class="setting-status disabled"><?php echo t_h('settings.install_app.status.unavailable', [], 'Unavailable'); ?></span>
                 </div>
             </div>
@@ -1039,6 +1077,17 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                  panel:note-icons, panel:folder-note-count). Task lists and
                  markdown notes always get their own default icon
                  (lib/icons.php defaultNoteIconForType). -->
+
+            <!-- The browser tab takes the title and the icon of the open note
+                 (js/tab-follows-note.js) -->
+            <div class="home-card" id="tab-follows-note-card">
+                <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.tab_follows_note', [], 'Name the browser tab after the note open in it, with that note\'s icon, instead of the name and icon of this instance. Several tabs open on several notes can then be told apart.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                <div class="home-card-icon"><i class="lucide lucide-app-window"></i></div>
+                <div class="home-card-content">
+                    <span class="home-card-title"><?php echo t_h('display.cards.tab_follows_note', [], 'Tab follows the open note'); ?></span>
+                    <span id="tab-follows-note-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                </div>
+            </div>
 
             <?php if ($isAdmin): ?>
             <!-- Login Display: a text field in the row, saved when it loses
@@ -1254,12 +1303,12 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                 </div>
 
                 <!-- Space below the note (discussion 1564) -->
-                <div class="home-card desktop-only" id="note-virtual-space-card">
+                <div class="home-card" id="note-virtual-space-card">
                     <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.note_virtual_space', [], 'Leave empty room under the last line of a note, so the end of the text can be scrolled up to the middle of the screen instead of staying at the very bottom.'); ?>"><i class="lucide lucide-help-circle"></i></span>
                     <div class="home-card-icon"><i class="lucide lucide-move-vertical"></i></div>
                     <div class="home-card-content">
                         <span class="home-card-title"><?php echo t_h('display.cards.note_virtual_space', [], 'Space below the note'); ?></span>
-                        <span id="note-virtual-space-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                        <span id="note-virtual-space-status" class="setting-status enabled"><?php echo t_h('common.enabled'); ?></span>
                     </div>
                 </div>
 
@@ -1338,16 +1387,17 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                 <!-- Formatting toolbar (format_toolbar_mode): where the formatting
                      buttons show when text is selected in a note on a computer,
                      in the note toolbar in place of the note actions ('toolbar')
-                     or in a menu floating above the selection ('floating'), read
-                     by js/events-text-selection.js. Mobile keeps its own bar. -->
+                     or in a menu floating above the selection ('floating', the
+                     default), read by js/events-text-selection.js. Mobile keeps
+                     its own bar. -->
                 <div class="home-card settings-inline-card settings-card-stacks" id="format-toolbar-mode-card">
                     <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.format_toolbar_mode', [], 'On a computer, choose where the formatting buttons show when you select text in a note: in the note toolbar, in place of the note actions, or in a menu floating above the selection, which leaves the note toolbar as it is.'); ?>"><i class="lucide lucide-help-circle"></i></span>
                     <div class="home-card-icon"><i class="lucide lucide-bold"></i></div>
                     <div class="home-card-content">
                         <label class="home-card-title" for="format-toolbar-mode-select"><?php echo t_h('display.cards.format_toolbar_mode', [], 'Formatting toolbar'); ?></label>
                         <select id="format-toolbar-mode-select" class="settings-inline-control settings-inline-select" data-control="format-toolbar-mode-select">
-                            <option value="toolbar"><?php echo t_h('display.badges.format_toolbar_mode_toolbar', [], 'In the note toolbar'); ?></option>
                             <option value="floating"><?php echo t_h('display.badges.format_toolbar_mode_floating', [], 'Floating above the selection'); ?></option>
+                            <option value="toolbar"><?php echo t_h('display.badges.format_toolbar_mode_toolbar', [], 'In the note toolbar'); ?></option>
                         </select>
                     </div>
                 </div>
@@ -1410,6 +1460,20 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     <div class="home-card-content">
                         <span class="home-card-title"><?php echo t_h('display.cards.code_block_line_numbers', [], 'Code block line numbers'); ?></span>
                         <span id="code-line-numbers-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                    </div>
+                </div>
+
+                <!-- How much of its listing a folded code block keeps on screen
+                     (lib/code-block-fold.php, css/components/code-block-fold.css) -->
+                <div class="home-card settings-inline-card settings-card-stacks" id="code-collapsed-lines-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.code_block_collapsed_lines', [], 'How much of a code block stays on screen once it is folded. A block with no more lines than this is not offered the fold chevron, folding it would hide nothing.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon"><i class="lucide lucide-chevrons-down-up"></i></div>
+                    <div class="home-card-content">
+                        <label class="home-card-title" for="code-collapsed-lines-input"><?php echo t_h('display.cards.code_block_collapsed_lines', [], 'Folded code blocks'); ?></label>
+                        <input type="number" id="code-collapsed-lines-input" class="settings-inline-control settings-inline-number" data-control="code-collapsed-lines-input"
+                               min="<?php echo POZNOTE_CODE_COLLAPSED_LINES_MIN; ?>" max="<?php echo POZNOTE_CODE_COLLAPSED_LINES_MAX; ?>" step="1" inputmode="numeric"
+                               aria-describedby="code-collapsed-lines-unit">
+                        <span class="settings-inline-unit" id="code-collapsed-lines-unit"><?php echo t_h('modals.code_block_collapsed_lines.unit', [], 'lines'); ?></span>
                     </div>
                 </div>
             </div>
@@ -1820,6 +1884,20 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                         <span id="outbound-hosts-status" class="setting-status"><?php echo t_h('common.loading'); ?></span>
                     </div>
                 </div>
+
+                <!-- Which embed providers a note may frame (lib/embed-providers.php).
+                     The card can only switch off what the version ships: no host can
+                     be added here, see issue #1742 -->
+                <div class="home-card" id="embeds-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.embeds', [], 'Notes can embed content from these sites, such as a YouTube video or a GeoGebra applet. Switch off the ones your instance should never load. No other site can be framed, and no site can be added here.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon">
+                        <i class="lucide lucide-app-window"></i>
+                    </div>
+                    <div class="home-card-content">
+                        <span class="home-card-title"><?php echo t_h('settings.cards.embeds', [], 'Embeds'); ?></span>
+                        <span id="embeds-status" class="setting-status"><?php echo t_h('common.loading'); ?></span>
+                    </div>
+                </div>
             </div>
 
             <div class="settings-group-title" data-group="storage-limits"><?php echo t_h('settings.groups.storage_limits', [], 'Storage & limits'); ?></div>
@@ -2066,6 +2144,41 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                 </div>
             </div>
 
+            <?php if ($isAdmin): ?>
+            <!-- Which releases light the dot up on the Settings entries -->
+            <div class="home-card settings-inline-card settings-card-stacks" id="update-badge-level-card">
+                <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.update_badge_level', [], 'Choose which releases put the red dot on the Settings entries. Whatever you pick, the new version is still announced on this page, so nothing is hidden.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                <div class="home-card-icon"><i class="lucide lucide-circle-dot"></i></div>
+                <div class="home-card-content">
+                    <label class="home-card-title" for="update-badge-level-select"><?php echo t_h('display.cards.update_badge_level', [], 'Update dot'); ?></label>
+                    <select id="update-badge-level-select" class="settings-inline-control settings-inline-select" data-control="update-badge-level-select">
+                        <option value="all"><?php echo t_h('modals.update_badge_level.options.all', [], 'Major, minor and patch releases'); ?></option>
+                        <option value="minor"><?php echo t_h('modals.update_badge_level.options.minor', [], 'Major and minor releases only'); ?></option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- How often the background check runs. A day is what Poznote
+                 always did and stays the default; the list offers longer
+                 intervals, and a value set through the API that is not in the
+                 list is kept as an extra entry by js/settings-page.js. -->
+            <div class="home-card settings-inline-card settings-card-stacks" id="update-check-interval-card">
+                <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.update_check_interval', [], 'How often Poznote checks in the background whether a newer version is available. The dot can only appear after a check, so a longer interval delays it. The Version card above still checks right away whenever you click it.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                <div class="home-card-icon"><i class="lucide lucide-clock"></i></div>
+                <div class="home-card-content">
+                    <label class="home-card-title" for="update-check-interval-select"><?php echo t_h('display.cards.update_check_interval', [], 'Update check'); ?></label>
+                    <select id="update-check-interval-select" class="settings-inline-control settings-inline-select" data-control="update-check-interval-select">
+                        <option value="1"><?php echo t_h('modals.update_check_interval.options.1', [], 'Every day'); ?></option>
+                        <option value="2"><?php echo t_h('modals.update_check_interval.options.2', [], 'Every 2 days'); ?></option>
+                        <option value="3"><?php echo t_h('modals.update_check_interval.options.3', [], 'Every 3 days'); ?></option>
+                        <option value="7"><?php echo t_h('modals.update_check_interval.options.7', [], 'Every 7 days'); ?></option>
+                        <option value="14"><?php echo t_h('modals.update_check_interval.options.14', [], 'Every 14 days'); ?></option>
+                        <option value="30"><?php echo t_h('modals.update_check_interval.options.30', [], 'Every 30 days'); ?></option>
+                    </select>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <!-- "What's new" popup after an update (js/whats-new.js) -->
             <!-- settings-card-stacks: on a phone the Show button would leave
                  the title too little room, so the title keeps the first line
@@ -2136,6 +2249,22 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                 </div>
             </div>
             <?php endif; ?>
+
+            <!-- Session lifetime: read only, it is set with POZNOTE_SESSION_LIFETIME_DAYS in .env -->
+            <div class="home-card" id="session-lifetime-card">
+                <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.session_lifetime', [], 'How long a sign-in lasts without activity. Set with POZNOTE_SESSION_LIFETIME_DAYS in the .env file, so it is shown here but cannot be changed from this page. Signing in with "Remember me" lasts longer; signing in through SSO does not.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                <div class="home-card-icon">
+                    <i class="lucide lucide-clock"></i>
+                </div>
+                <div class="home-card-content">
+                    <span class="home-card-title"><?php echo t_h('settings.cards.session_lifetime', [], 'Session lifetime'); ?></span>
+                    <span class="setting-status enabled"><?php
+                        echo $settingsSessionLifetimeDays === 1
+                            ? t_h('sessions.lifetime.day_one', [], '1 day')
+                            : t_h('sessions.lifetime.day_other', ['count' => $settingsSessionLifetimeDays], '{{count}} days');
+                    ?></span>
+                </div>
+            </div>
 
             <!-- Poznote Website -->
             <a href="https://poznote.com" target="_blank" rel="noopener noreferrer" class="home-card" id="website-card">
@@ -2339,9 +2468,11 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
          js/panel-back.js lets the device Back button close it on a phone. -->
     <script src="<?php echo poznoteAsset('js/panel-back.js'); ?>"></script>
     <script src="<?php echo poznoteAsset('js/ui-customization-panel.js'); ?>"></script>
+    <script src="<?php echo poznoteAsset('js/hide-element-menu.js'); ?>"></script>
     <script src="js/change-password.js?v=<?php echo $cache_v; ?>&m=<?php echo @filemtime('js/change-password.js') ?: time(); ?>"></script>
     <script src="js/two-factor.js?v=<?php echo $cache_v; ?>&m=<?php echo @filemtime('js/two-factor.js') ?: time(); ?>"></script>
     <script src="js/app-passwords.js?v=<?php echo $cache_v; ?>&m=<?php echo @filemtime('js/app-passwords.js') ?: time(); ?>"></script>
+    <script src="js/user-sessions.js?v=<?php echo $cache_v; ?>&m=<?php echo @filemtime('js/user-sessions.js') ?: time(); ?>"></script>
     <script src="js/connected-apps.js?v=<?php echo $cache_v; ?>&m=<?php echo @filemtime('js/connected-apps.js') ?: time(); ?>"></script>
     <?php if ($isAdmin): ?>
     <script src="js/statistics-token.js?v=<?php echo $cache_v; ?>&m=<?php echo @filemtime('js/statistics-token.js') ?: time(); ?>"></script>

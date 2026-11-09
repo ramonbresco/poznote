@@ -1,0 +1,102 @@
+/* Embed refused by this instance: the frame is hidden and js/embeds.js puts
+   this notice in its place, in a note and on a public share alike. A blocked
+   frame is an empty rectangle the reader cannot explain, so the box says what
+   happened and keeps a link to the page the note meant to show.
+
+   The notice is never part of the note: the app strips it from the copy it
+   saves (stripSearchHighlights in js/notes.js). */
+
+.noteentry iframe[data-embed-blocked],
+.public-note iframe[data-embed-blocked] {
+    display: none !important;
+}
+
+.embed-blocked {
+    /* Named once, because a note takes them away again below. */
+    --embed-blocked-margin: 6px 0;
+    --embed-blocked-padding: 16px 18px;
+
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    max-width: 100%;
+    margin: var(--embed-blocked-margin);
+    padding: var(--embed-blocked-padding);
+    border: 1px dashed var(--pz-border-strong);
+    border-radius: var(--pz-radius-lg);
+    background: var(--pz-surface-hover);
+    /* Note content is editable around it: nothing here takes the caret. */
+    user-select: none;
+}
+
+/* In a note, the blanket `.noteentry div { margin: 0; padding: 0 }` reset
+   (css/notes/noteentry.css) flattens the box against its own text, and this
+   file is loaded before the page stylesheets, so it takes a heavier selector
+   to give the air back. Same trick as .markdown-preview in css/markdown.css. */
+.noteentry .embed-blocked {
+    margin: var(--embed-blocked-margin);
+    padding: var(--embed-blocked-padding);
+}
+
+.embed-blocked-icon {
+    flex: 0 0 auto;
+    margin-top: 1px;
+    width: 18px;
+    height: 18px;
+    background-color: var(--pz-text-muted);
+}
+
+.embed-blocked-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.embed-blocked-text strong {
+    font-size: 13px;
+    font-weight: var(--pz-weight-semibold);
+    color: var(--pz-text);
+}
+
+.embed-blocked-text span {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--pz-text-muted);
+    overflow-wrap: break-word;
+}
+
+/* What the author wrote, kept in sight: hiding the frame must not hide the
+   line they typed, which in a Markdown note is the only trace of it left. */
+.embed-blocked .embed-blocked-source {
+    /* A <code> is inline: over two lines its padding lands at the start and
+       at the end of the run, not around the block, so the last line ran into
+       the right edge of the box. */
+    display: block;
+    box-sizing: border-box;
+    max-width: 100%;
+    margin: 3px 0;
+    padding: 10px 12px;
+    border-radius: var(--pz-radius-sm);
+    background: var(--pz-bg);
+    /* The stack css/code-blocks.css gives code everywhere else. */
+    font-family: "Segoe UI Mono", "SF Mono", Monaco, Menlo, Consolas, "Ubuntu Mono", "Liberation Mono", "Courier New", monospace;
+    /* In a note, css/code-blocks.css forces the code size the account chose
+       on every inline <code>, and that is the right size for code there. */
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--pz-text-secondary);
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    /* The one part of the box worth copying. */
+    user-select: text;
+}
+
+.embed-blocked-text a {
+    align-self: flex-start;
+    font-size: 13px;
+    color: var(--pz-link);
+    overflow-wrap: anywhere;
+    /* The frame is gone: the caret must not land on the link either. */
+    user-select: none;
+}

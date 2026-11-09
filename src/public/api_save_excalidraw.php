@@ -193,6 +193,20 @@ if ($note_id === 0) {
         exit;
     }
 } else {
+    // A note its owner locked keeps its drawing, like it keeps its text
+    // (lib/note-lock.php)
+    require_once __DIR__ . '/../lib/note-lock.php';
+    if (poznoteNoteIsLocked($con, (int)$note_id)) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'error' => poznoteNoteLockedMessage(),
+            'code' => POZNOTE_NOTE_LOCKED_CODE,
+            'locked' => true,
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     // Update existing note. The heading is deliberately left untouched: the
     // editor has no title field, and the posted heading is only meaningful
     // when creating the note (it may also have been de-duplicated by

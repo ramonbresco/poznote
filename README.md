@@ -535,7 +535,9 @@ Passwords are managed through the Poznote web interface, not through `.env`:
 - Users can change their own password from **Settings > Change Password**.
 - Administrators can set a custom password for any user or reset it to the default from **Settings > Admin Tools > User Management**.
 - The **Remember me** option keeps the session for 30 days.
+- A sign-in lasts 7 days without activity and survives closing the browser. This is what holds an SSO sign-in, which never gets a remember-me cookie, so that an account disabled at the identity provider loses access when its session expires. Set `POZNOTE_SESSION_LIFETIME_DAYS` in `.env` for another whole number of days, from 1 to 400.
 - Changing a password invalidates existing remember-me cookies for that user.
+- **Settings > My Account > Connected devices** lists the browsers currently signed in to your account, with their last activity, and signs out the ones you no longer use.
 
 #### Two-factor authentication
 

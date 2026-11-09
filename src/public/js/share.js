@@ -554,6 +554,7 @@ async function openPublicShareModal(noteId, sourceEl) {
         window.PoznoteShareSettings.show({
             itemType: 'note',
             itemId: noteId,
+            itemName: noteTitleForShare(noteId),
             token: extractShareTokenFromUrl(shareInfo.url),
             noteType: shareInfo.noteType,
             protocol: getPreferredPublicUrlProtocol(),
@@ -957,6 +958,26 @@ async function getPublicFolderShare(folderId) {
 }
 
 /**
+ * The name of what is being shared, for the share settings dialog: it shows
+ * what the public link leads to, and offers to build the token from it.
+ * Empty when the page does not hold the name, and the dialog then shows the
+ * address alone, as it always did.
+ */
+function noteTitleForShare(noteId) {
+    var input = document.getElementById('inp' + noteId);
+    if (input && typeof input.value === 'string' && input.value.trim() !== '') {
+        return input.value.trim();
+    }
+    var link = document.querySelector('.links_arbo_left[data-note-id="' + noteId + '"]');
+    return link ? (link.textContent || '').trim() : '';
+}
+
+function folderNameForShare(folderId) {
+    var el = document.querySelector('[data-folder-id="' + folderId + '"][data-folder-name]');
+    return el ? (el.getAttribute('data-folder-name') || '').trim() : '';
+}
+
+/**
  * Open the share modal for a folder (checks existing share first)
  * @param {string} folderId - The folder ID
  */
@@ -970,6 +991,7 @@ async function openPublicFolderShareModal(folderId) {
         window.PoznoteShareSettings.show({
             itemType: 'folder',
             itemId: folderId,
+            itemName: folderNameForShare(folderId),
             token: extractShareTokenFromUrl(info.url),
             protocol: getPreferredPublicUrlProtocol(),
             accessMode: info.accessMode,

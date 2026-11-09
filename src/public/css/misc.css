@@ -59,39 +59,12 @@ img {
     max-width: 100%;
 }
 
-.image-resize-handle {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 28px;
-    height: 28px;
-    background: var(--pz-accent);
-    border: 2px solid var(--pz-bg);
-    border-radius: var(--pz-radius-sm) 0 var(--pz-radius-sm) 0;
-    cursor: nwse-resize;
-    touch-action: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 6px rgba(var(--pz-shadow-rgb), 0.3);
-    z-index: 100;
-    transition: all 0.2s ease;
-    color: var(--pz-text-inverse);
-    font-size: 20px;
-    font-weight: var(--pz-weight-bold);
-    line-height: 1;
-}
-
-.image-resize-handle:hover {
-    background: var(--pz-accent-hover);
-    width: 32px;
-    height: 32px;
-}
-
-.image-resize-handle i {
-    color: var(--pz-text-inverse);
-    font-size: 10px;
-    pointer-events: none;
+/* The badge itself lives in css/components/resize-handle.css, which an embed
+   wears too; the page-wide cursor of a drag in progress belongs here, next to
+   the wrapper it applies to. */
+body.pz-resizing,
+body.pz-resizing * {
+    cursor: var(--pz-cursor-resize-diagonal) !important;
 }
 
 .notification-overlay {
@@ -346,6 +319,14 @@ img.img-with-border-no-padding {
     max-width: 300px;
     animation: slideInRight 0.3s ease;
 }
+/* Something that did not work, rather than an acknowledgement (js/ui.js
+   poznoteShowToast with variant 'warning'): a note the address bar named and
+   that does not exist, for instance. */
+.save-notification.is-warning {
+    background: var(--pz-danger);
+    max-width: 360px;
+}
+
 /* Inside the shared top-right column (js/ui.js poznoteToastStack) the column
    places it, so a second toast lands below instead of on top (issue 1508). */
 #pz-toast-stack > .save-notification {

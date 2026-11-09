@@ -669,7 +669,8 @@ function initTextSelectionHandlers() {
         var value = typeof window.getPoznoteInitialSetting === 'function'
             ? window.getPoznoteInitialSetting('format_toolbar_mode')
             : null;
-        return value === 'floating';
+        // Floating is the default: only an explicit 'toolbar' opts out
+        return value !== 'toolbar';
     }
 
     function getFloatingFormatToolbar(editableElement) {

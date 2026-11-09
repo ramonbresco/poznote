@@ -491,6 +491,7 @@
       "markdown_colored": "Colorea las notas markdown: elige un color para cada nivel de título, el código en línea, el fondo de los bloques de código, las citas, los encabezados de tabla y los separadores.",
       "code_wrap": "Ajusta las líneas largas en los bloques de código en lugar de desplazarse horizontalmente.",
       "code_line_numbers": "Muestra los números de línea en los bloques de código de la vista previa de markdown.",
+      "code_block_collapsed_lines": "Cuántas líneas de un bloque de código siguen visibles cuando está plegado, de 0 a 100. Con 0, un bloque plegado no muestra nada de su código. Un bloque que no tenga más líneas que esto no recibe la flecha para plegar, plegarlo no ocultaría nada.",
       "attachment_previews": "Muestra vistas previas de los adjuntos dentro de las notas.",
       "attachments_at_bottom": "Muestra la sección de adjuntos en la parte inferior de las notas en lugar de arriba.",
       "allow_executable_attachments": "Permite adjuntar scripts y ejecutables (.sh, .ps1, .bat, .exe, .py, ...), para todas las cuentas de esta instancia. Poznote nunca los ejecuta, solo los almacena y los sirve. Los tipos que un servidor web podría ejecutar, como .php, siguen bloqueados.",
@@ -540,11 +541,17 @@
       "release_notes": "Abrir las notas de todas las versiones de Poznote en GitHub.",
       "login_disabled": "Omite la pantalla de inicio de sesión: cualquier navegador que llegue a esta instancia abre directamente su cuenta, sin usuario, contraseña ni código de dos factores. Actívelo solo si usted es el único que puede acceder a esta instancia, o si un proxy inverso situado delante se encarga de la autenticación. La API sigue pidiendo credenciales.",
       "outbound_hosts": "Los usuarios no administradores solo pueden conectar los webhooks, Git Sync y sus propios servidores de IA, transcripción o MCP a hosts públicos de Internet. Indica aquí los hosts o redes locales que pueden usar, como un servidor Ollama o n8n. Los administradores no tienen límites.",
+      "embeds": "Las notas pueden incrustar contenido de estos sitios, como un vídeo de YouTube o un applet de GeoGebra. Desactive los que su instancia no deba cargar nunca. Ningún otro sitio puede incrustarse, y aquí no se pueden añadir sitios.",
       "diary_template": "Elija una nota cuyo contenido sirva de punto de partida para cada nueva entrada del diario del espacio de trabajo {{workspace}}. La lista muestra las notas guardadas en una carpeta llamada Plantillas (o Templates) de ese espacio. Cada espacio de trabajo tiene su propia plantilla.",
       "markdown_view_cycle": "Elija las vistas que ofrece el menú de vistas de una nota markdown además de la vista clásica (vista previa, con el lápiz para editar). Las vistas no elegidas no aparecen. Si no se elige ninguna, el botón se oculta. En un teléfono el menú nunca ofrece el modo dividido.",
       "connected_apps": "Conecta aplicaciones de chat como ChatGPT o Claude a tus notas a través del servidor MCP y desconéctalas cuando quieras.",
       "custom_logo": "Sustituir el logo de Poznote por el suyo, para todos los usuarios: en la pestaña del navegador, en la página de inicio de sesión, en la barra de iconos y como icono de la aplicación instalada.",
-      "two_factor_required": "Toda cuenta que inicie sesión con contraseña debe usar la autenticación en dos pasos. Una cuenta que no la tenga la configura en su próximo inicio de sesión, y las sesiones abiertas sin ella se cierran. Su contraseña deja de funcionar a través de la API: las aplicaciones usan una contraseña de aplicación. Los inicios de sesión SSO no se ven afectados, el proveedor de identidad gestiona su segundo factor."
+      "two_factor_required": "Toda cuenta que inicie sesión con contraseña debe usar la autenticación en dos pasos. Una cuenta que no la tenga la configura en su próximo inicio de sesión, y las sesiones abiertas sin ella se cierran. Su contraseña deja de funcionar a través de la API: las aplicaciones usan una contraseña de aplicación. Los inicios de sesión SSO no se ven afectados, el proveedor de identidad gestiona su segundo factor.",
+      "tab_follows_note": "Nombra la pestaña del navegador según la nota abierta en ella, con el icono de esa nota, en lugar del nombre y el icono de esta instancia. Así se distinguen varias pestañas abiertas en varias notas.",
+      "update_badge_level": "Elige qué versiones ponen el punto rojo en las entradas de Ajustes. Elijas lo que elijas, la nueva versión se sigue anunciando en esta página, no se oculta nada.",
+      "update_check_interval": "Con qué frecuencia Poznote comprueba en segundo plano si hay una versión más reciente. El punto solo puede aparecer después de una comprobación, así que un intervalo más largo lo retrasa. La tarjeta Versión de arriba sigue comprobando al instante cuando la pulsas.",
+      "sessions": "Ver los navegadores y dispositivos conectados ahora mismo a tu cuenta, y cerrar la sesión de los que ya no uses.",
+      "session_lifetime": "Cuánto dura un inicio de sesión sin actividad. Se configura con POZNOTE_SESSION_LIFETIME_DAYS en el archivo .env, así que aquí solo se muestra y no se puede cambiar desde esta página. Iniciar sesión con «Recordarme» dura más; iniciar sesión por SSO, no."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "En el móvil, la barra de herramientas sobre el teclado tiene un botón + que abre el mismo menú, sea cual sea este ajuste."
@@ -617,6 +624,7 @@
     },
     "cards": {
       "tenant_isolation": "Aislamiento de cuentas",
+      "embeds": "Contenido incrustado",
       "backup_export": "Copia de seguridad / Exportar",
       "restore_import": "Restaurar / Importar",
       "git_sync": "Sincronización Git",
@@ -636,7 +644,7 @@
       "custom_css": "Archivo CSS personalizado",
       "theme_list": "Lista de temas",
       "install_extension": "Instalar extensión",
-      "install_app": "Instalar aplicación",
+      "install_app": "Instalar aplicación (PWA)",
       "release_notes": "Notas de la versión",
       "orphan_scanner": "Escáner de archivos adjuntos huérfanos",
       "storage_stats": "Estadísticas de almacenamiento del administrador",
@@ -671,7 +679,9 @@
       "outbound_hosts": "Acceso a la red local",
       "connected_apps": "Aplicaciones conectadas",
       "custom_logo": "Logo",
-      "two_factor_required": "Exigir verificación en dos pasos"
+      "two_factor_required": "Exigir verificación en dos pasos",
+      "sessions": "Dispositivos conectados",
+      "session_lifetime": "Duración de las sesiones"
     },
     "default_credentials": {
       "both": "Esta cuenta sigue usando el nombre de usuario y la contraseña predeterminados. Cualquiera que pueda acceder a esta instancia puede iniciar sesión.",
@@ -717,6 +727,11 @@
     "outbound_hosts": {
       "status_allowed": "{{count}} permitido(s)",
       "status_public_only": "Solo públicos"
+    },
+    "embeds": {
+      "status_all": "Todos los sitios",
+      "status_some": "{{count}} de {{total}}",
+      "status_none": "Ninguno"
     },
     "diary_template": {
       "none": "Ninguna",
@@ -911,6 +926,7 @@
       "markdown_colored": "Markdown a color",
       "code_block_word_wrap": "Ajuste de línea en bloques de código",
       "code_block_line_numbers": "Números de línea en bloques de código",
+      "code_block_collapsed_lines": "Bloques de código plegados",
       "attachment_previews_in_note": "Vistas previas de adjuntos",
       "attachments_at_bottom": "Adjuntos al final",
       "backlinks_at_bottom": "Backlinks al final",
@@ -928,7 +944,10 @@
       "format_toolbar_mode": "Barra de formato",
       "workspace_activity_emails": "Correos de espacios compartidos",
       "diary_template": "Plantilla de entrada del diario",
-      "markdown_view_cycle": "Menú de vistas"
+      "markdown_view_cycle": "Menú de vistas",
+      "tab_follows_note": "La pestaña sigue la nota abierta",
+      "update_badge_level": "Punto de actualización",
+      "update_check_interval": "Comprobación de actualizaciones"
     },
     "badges": {
       "font_size_default": "predeterminado ({{size}}px)",
@@ -1087,7 +1106,8 @@
     "priority_high": "Prioridad alta",
     "priority_medium": "Prioridad media",
     "priority_low": "Prioridad baja",
-    "priority_none": "Sin prioridad"
+    "priority_none": "Sin prioridad",
+    "delete_task": "Eliminar la tarea"
   },
   "tags": {
     "add_single": "Agregar etiqueta...",
@@ -1309,6 +1329,12 @@
       "live_hint": "Editar la nota ya con formato: la sintaxis Markdown aparece alrededor del cursor.",
       "rich_hint": "Editar la nota como en un procesador de textos: la sintaxis Markdown nunca se muestra.",
       "split_hint": "Código Markdown a un lado y vista previa con formato al otro, actualizada mientras escribes."
+    },
+    "code_block_collapse": {
+      "collapse": "Plegar el bloque de código",
+      "expand": "Desplegar el bloque de código",
+      "one_line": "1 línea",
+      "lines": "{{count}} líneas"
     }
   },
   "info": {
@@ -1331,7 +1357,9 @@
       "note_id": "ID de la nota:",
       "full_path": "Ruta completa:",
       "created_by": "Creado por:",
-      "last_modified_by": "Última modificación por:"
+      "last_modified_by": "Última modificación por:",
+      "last_modified_from": "Última modificación desde:",
+      "locked": "Bloqueada:"
     },
     "attachments": {
       "count_singular": "1 archivo",
@@ -1346,6 +1374,15 @@
     "users": {
       "user_id": "Usuario #{{id}}",
       "deleted": "Usuario #{{id}}"
+    },
+    "source": {
+      "app": "Poznote, en un ordenador",
+      "app_mobile": "Poznote, en móvil",
+      "api": "La API REST",
+      "mcp": "Una aplicación conectada por MCP",
+      "extension": "La extensión del navegador",
+      "ai": "El asistente de IA",
+      "public": "Un visitante del enlace público"
     }
   },
   "modals": {
@@ -1512,9 +1549,10 @@
       "note_scroll_arrows": "Flechas para ir al principio y al final de la nota",
       "tasklist_add_field": "Campo para añadir una tarea",
       "tasklist_frame": "Marco alrededor de cada tarea",
-      "tasklist_delete": "Eliminar una tarea completada",
+      "tasklist_delete": "Eliminar una tarea",
       "tasklist_menu": "Menú de opciones de la tarea (móvil)",
-      "tasklist_frame_color": "Color de prioridad del marco de las tareas"
+      "tasklist_frame_color": "Color de prioridad del marco de las tareas",
+      "note_id": "Mostrar el identificador de la nota"
     },
     "icon_sidebar_order": {
       "title": "Diseño de la barra de iconos",
@@ -1594,9 +1632,14 @@
       "workspace_destination": "Seleccionar destino del espacio de trabajo:",
       "target_folder": "Seleccionar carpeta de destino:",
       "recent_folders": "Carpetas recientes",
-      "new_folder": "Nueva carpeta",
+      "filter_placeholder": "Filtrar carpetas o escribir un nombre nuevo",
+      "clear_filter": "Limpiar el filtro",
+      "no_match": "Ninguna carpeta coincide.",
+      "no_folder_root": "Sin carpeta (mover a la raíz)",
+      "create_folder": "Crear carpeta",
+      "current_location": "Actualmente en {{folder}}",
+      "current_location_none": "Actualmente fuera de cualquier carpeta",
       "new_workspace": "Nuevo espacio de trabajo",
-      "folder_name_placeholder": "Nombre de la carpeta (usa / para subcarpetas)",
       "workspace_name_placeholder": "Nombre del espacio de trabajo",
       "enter_workspace_name": "Por favor ingresa un nombre de espacio de trabajo",
       "enter_folder_name": "Por favor ingresa un nombre de carpeta"
@@ -1718,6 +1761,10 @@
       "json": {
         "title": "Descargar como JSON",
         "description": "Descargar los datos sin procesar de la lista de tareas como archivo JSON"
+      },
+      "html_public": {
+        "title": "Exportar como página publicada",
+        "description": "Descargar un único archivo HTML con el mismo aspecto que la página pública de esta nota, imágenes incluidas"
       }
     },
     "task_move": {
@@ -1907,6 +1954,11 @@
         "user_s3_restore_help": "Los usuarios no administradores ya no ven la sección Restaurar desde S3 de la página Restaurar / Importar y no pueden restaurar archivos del bucket."
       }
     },
+    "embeds": {
+      "title": "Contenido incrustado",
+      "description": "Las notas pueden incrustar contenido de los sitios siguientes, como un vídeo o un applet interactivo. Desmarque los que esta instancia no deba cargar nunca. Ningún otro sitio puede incrustarse en una nota, y aquí no se pueden añadir sitios.",
+      "existing_hint": "Al desmarcar un sitio se ocultan los contenidos que las notas ya tienen: dejan de cargarse, y editar después una de esas notas elimina el contenido incrustado."
+    },
     "note": {
       "rename_title": "Renombrar nota",
       "rename_placeholder": "Nuevo título de la nota"
@@ -2004,6 +2056,25 @@
       "reset_confirm": "¿Volver al logo de Poznote para todos los usuarios?",
       "invalid": "Esta imagen no se puede usar. Elija un archivo PNG, JPEG, WebP, GIF o SVG de 20 MB como máximo.",
       "failed": "No se pudo guardar el logo."
+    },
+    "update_badge_level": {
+      "options": {
+        "all": "Versiones mayores, menores y parches",
+        "minor": "Solo versiones mayores y menores"
+      }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "Cada día",
+        "2": "Cada 2 días",
+        "3": "Cada 3 días",
+        "7": "Cada 7 días",
+        "14": "Cada 14 días",
+        "30": "Cada 30 días"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "líneas"
     }
   },
   "notes_list": {
@@ -2268,7 +2339,6 @@
     "toggle": "Toggle",
     "toggle_placeholder": "Toggle",
     "toggle_content_placeholder": "Escribe dentro del toggle aquí…",
-    "toggle_after_placeholder": "Escribe fuera del toggle aquí…",
     "code_block_normal": "Bloque normal",
     "code_block_placeholder_before": "Escribe texto aquí…",
     "code_block_placeholder_after": "Escribe texto aquí…",
@@ -2490,7 +2560,8 @@
       "access_check_only": "Solo marcar o desmarcar",
       "access_full": "Edición completa",
       "password": "Contraseña (opcional)",
-      "password_placeholder": "Ingrese una contraseña"
+      "password_placeholder": "Ingrese una contraseña",
+      "token_from_name": "Crear el token a partir del nombre"
     },
     "folder_share_modal": {
       "title": "URL de carpeta compartida",
@@ -2529,7 +2600,11 @@
           "one": "{{count}} línea",
           "other": "{{count}} líneas"
         }
-      }
+      },
+      "missing": "La nota #{{id}} no existe o se ha eliminado.",
+      "missing_trashed": "La nota #{{id}} está en la papelera. Restáurala para volver a abrirla.",
+      "copy_id": "Copiar el identificador de la nota",
+      "id_copied": "Identificador de nota {{id}} copiado"
     },
     "editor": {
       "placeholder_desktop": "Ingresa texto, usa / o el clic derecho para abrir el menú de comandos, pega imágenes o arrastra y suelta una imagen en el cursor.",
@@ -4134,7 +4209,8 @@
       "two_factor_recovery_used": "Inicio de sesión con un código de recuperación",
       "two_factor_recovery_regenerated": "Códigos de recuperación regenerados",
       "oauth_app_authorized": "Aplicación conectada (MCP)",
-      "oauth_app_revoked": "Aplicación desconectada (MCP)"
+      "oauth_app_revoked": "Aplicación desconectada (MCP)",
+      "session_revoked": "Dispositivo desconectado"
     },
     "filters": {
       "all_actions": "Todas las acciones",
@@ -4695,7 +4771,18 @@
     "take_over_failed": "No se pudo tomar el control de esta nota.",
     "taken_over_notice": "Has tomado el control de la edición de esta nota.",
     "lost_unsaved_kept": "Tus cambios sin guardar se conservan en este dispositivo y se te ofrecerán de nuevo cuando la nota quede libre.",
-    "read_only_share": "Este espacio de trabajo se ha compartido contigo en modo de solo lectura."
+    "read_only_share": "Este espacio de trabajo se ha compartido contigo en modo de solo lectura.",
+    "lock_note": "Bloquear esta nota",
+    "unlock_note": "Desbloquear esta nota",
+    "locked_error": "Esta nota está bloqueada. Desbloquéala desde la barra de herramientas antes de editarla.",
+    "locked_toast": "Nota bloqueada",
+    "unlocked_toast": "Nota desbloqueada",
+    "lock_failed": "No se ha podido cambiar el bloqueo de esta nota.",
+    "lock_all": "Bloquear todas las notas",
+    "unlock_all": "Desbloquear todas las notas",
+    "locked_all_toast": "Todas las notas bloqueadas",
+    "unlocked_all_toast": "Todas las notas desbloqueadas",
+    "lock_all_failed": "No se ha podido cambiar el bloqueo de las notas."
   },
   "live_refresh": {
     "note_changed": "Esta nota se modificó fuera de esta pestaña.",
@@ -5508,6 +5595,7 @@
     "italic": "Cursiva",
     "underline": "Subrayado",
     "strikethrough": "Tachado",
+    "clear_formatting": "Limpiar el formato del texto seleccionado",
     "link": "Insertar un enlace en el texto seleccionado",
     "code_block": "Bloque de código",
     "slash_menu": "Abrir el menú de comandos",
@@ -5544,7 +5632,9 @@
     "new_note": "Crear una nota:"
   },
   "icon_context_menu": {
-    "hide": "Ocultar el botón"
+    "hide": "Ocultar el botón",
+    "hide_element": "Ocultar «{{name}}»",
+    "hidden_notice": "«{{name}}» está oculto. Visibilidad de los elementos vuelve a mostrarlo."
   },
   "account_note": {
     "banner": "Nota de la cuenta {{account}}, solo lectura",
@@ -5931,6 +6021,48 @@
       "group_rules": "Separadores de los grupos",
       "size": "Botón de tamaño de los mosaicos",
       "boards": "Lista de accesos rápidos"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "Contenido incrustado bloqueado",
+      "detail_admin": "Esta instancia no permite contenido incrustado de {{host}}. Un administrador puede volver a permitirlo en Configuración > Herramientas de administración > Contenido incrustado.",
+      "detail_public": "Este sitio no permite contenido incrustado de {{host}}."
+    },
+    "resize": {
+      "hint": "Arrastra para cambiar el tamaño, haz doble clic para restablecerlo"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 sesión",
+      "count_other": "{{count}} sesiones"
+    },
+    "lifetime": {
+      "day_one": "1 día",
+      "day_other": "{{count}} días"
+    },
+    "modal": {
+      "title": "Dispositivos conectados",
+      "description": "Cada fila es un navegador con sesión en tu cuenta. Una sesión termina por sí sola tras {{duration}} sin actividad, y cada vez que cambias la contraseña.",
+      "loading": "Cargando...",
+      "empty": "No hay ninguna sesión abierta.",
+      "unknown_client": "Navegador desconocido",
+      "this_device": "Este dispositivo",
+      "last_active": "Última actividad {{date}}",
+      "revoke": "Cerrar sesión",
+      "revoke_others": "Cerrar sesión en los otros dispositivos",
+      "confirm": "Confirmar",
+      "close": "Cerrar"
+    },
+    "method": {
+      "password": "Contraseña",
+      "sso": "SSO",
+      "auto": "Sin inicio de sesión"
+    },
+    "errors": {
+      "load_failed": "No se pudieron cargar tus sesiones.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
     }
   }
 }

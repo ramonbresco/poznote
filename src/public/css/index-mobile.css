@@ -307,6 +307,26 @@ body.mobile-editor-bar-visible .note-scroll-edge-btn {
     display: none !important;
 }
 
+/* The same stack belongs to the open note: the AI assistant speaks of it, the
+   "..." menu holds its width and its information, the view button its view.
+   The list and the note are two columns of one horizontally scrolled body, so
+   the fixed stack would float over the list too: body.note-open marks the
+   column actually on screen (syncNoteOpenToScroll, js/index-events.js), as it
+   already does for the note's scroll arrows (css/notes/noteentry.css).
+   Element visibility is the exception: it hides the elements of the list
+   itself, so it has to be reachable from the list. On a phone that toggle is
+   normally swapped for an entry of the "..." menu
+   (css/ui-customization-panel.css); with the menu gone it takes the stack
+   back, alone. It still steps aside while its own panel is open, which is
+   what hides it everywhere else. */
+body:not(.note-open) .pz-edge-stack > *:not(#edgeCustomizeBtn) {
+    display: none !important;
+}
+
+body:not(.note-open):not(.ui-custom-panel-open) #edgeCustomizeBtn {
+    display: inline-flex !important;
+}
+
 /* The popups of its buttons (colour, title, alignment) open above the bar */
 body.mobile-editor-bar-visible .color-palette-popup,
 body.mobile-editor-bar-visible .font-size-popup {
@@ -340,8 +360,16 @@ body.mobile-editor-bar-visible .font-size-popup {
     overflow: visible !important;
 }
 
+/* Room kept under every note for the floating buttons and the keyboard. It is
+   named because it is also the floor of the "Space below the note" setting
+   (css/notes/noteentry.css), which must not shrink it; the property is
+   declared here only, so the setting reads 0 outside this stylesheet's width. */
+:root {
+    --pz-note-bottom-space-min: max(88px, calc(env(safe-area-inset-bottom, 0px) + 64px));
+}
+
 .note-bottom-space {
-    height: max(88px, calc(env(safe-area-inset-bottom, 0px) + 64px));
+    height: var(--pz-note-bottom-space-min);
     flex: 0 0 auto;
 }
 
@@ -773,6 +801,26 @@ a.links_arbo_left::-webkit-scrollbar,
     height: auto !important;
     aspect-ratio: 16 / 9;
     border: none;
+}
+
+/* Applet embeds (lib/embed-providers.php): an interactive applet is not a video,
+   so it does not take the 16/9 shape of the rule above, which squashed a
+   GeoGebra construction into a letterbox (#1742). 4/3 keeps the height tied to
+   the width, since an iframe without a height falls back to 150px. The host is
+   guaranteed by the sanitiser, so matching the src here is cosmetic only.
+
+   It takes the whole width of the note, whatever width the embed code carries:
+   an applet is worked in, not watched, and the toolbar and input bar GeoGebra
+   puts around it need the room. The width and height of the tag are
+   presentation hints, so the declarations here outrank them, and height: auto
+   is what lets the ratio set the height. */
+.noteentry iframe[src*="//www.geogebra.org/"],
+.noteentry iframe[src*="//geogebra.org/"],
+.markdown-preview iframe[src*="//www.geogebra.org/"],
+.markdown-preview iframe[src*="//geogebra.org/"] {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
 }
 
 .noteentry table:not(.markdown-table-scroll > table) td,

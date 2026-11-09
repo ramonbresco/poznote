@@ -88,6 +88,7 @@ $pzShortcutGroups = [
             ['keys' => [['mod', 'I']], 'label' => t_h('keyboard_shortcuts.italic', [], 'Italic')],
             ['keys' => [['mod', 'U']], 'label' => t_h('keyboard_shortcuts.underline', [], 'Underline')],
             ['keys' => [['mod', 'Shift', 'S']], 'label' => t_h('keyboard_shortcuts.strikethrough', [], 'Strikethrough')],
+            ['keys' => [['Ctrl', 'Space']], 'label' => t_h('keyboard_shortcuts.clear_formatting', [], 'Clear the formatting of the selected text')],
             ['keys' => [['mod', 'K']], 'label' => t_h('keyboard_shortcuts.link', [], 'Insert a link on the selected text')],
             ['keys' => [['mod', 'Shift', 'B']], 'label' => t_h('keyboard_shortcuts.code_block', [], 'Code block')],
             ['keys' => [['/']], 'label' => t_h('keyboard_shortcuts.slash_menu', [], 'Open the command menu'), 'hint' => t_h('keyboard_shortcuts.slash_menu_hint', [], 'Alt + / or no shortcut at all, depending on the option in Settings. A right-click in a note always opens it')],

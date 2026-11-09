@@ -412,6 +412,21 @@ class PublicController {
      * refresh brings the public change in.
      */
     private function currentRequestMayWriteNote(int $noteId, string $editorSessionId, string $type = ''): bool {
+        // A note its owner locked (lib/note-lock.php) is read-only for a
+        // visitor too, however editable the share itself is. Checked before
+        // the edit lock: this one is a decision, not a passing conflict.
+        require_once dirname(__DIR__, 3) . '/lib/note-lock.php';
+        if (poznoteNoteIsLocked($this->con, $noteId)) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'error' => poznoteNoteLockedMessage(),
+                'code' => POZNOTE_NOTE_LOCKED_CODE,
+                'locked' => true,
+            ], JSON_UNESCAPED_UNICODE);
+            return false;
+        }
+
         $ownerId = $this->getShareOwnerUserId();
         if ($ownerId <= 0) {
             return true;
@@ -746,8 +761,11 @@ class PublicController {
         createDirectoryWithPermissions($entriesDir);
         file_put_contents($filename, $content);
         
-        $stmt = $this->con->prepare('UPDATE entries SET entry = ?, updated = datetime("now") WHERE id = ?');
-        $stmt->execute([$content, $noteId]);
+        // A visitor of the share wrote this, which the Information dialog of
+        // the note reports (lib/write-source.php)
+        require_once dirname(__DIR__, 3) . '/lib/write-source.php';
+        $stmt = $this->con->prepare('UPDATE entries SET entry = ?, updated = datetime("now"), updated_source = ? WHERE id = ?');
+        $stmt->execute([$content, POZNOTE_SOURCE_PUBLIC, $noteId]);
     }
     
     private function sendSuccess(array $data): void {

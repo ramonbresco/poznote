@@ -66,6 +66,14 @@ body.public-note-page {
     /* container for note HTML */
     line-height: 1.2;
     white-space: normal;
+    /* A word with no break opportunity (a long URL, a long run of letters) is
+       cut at the edge of the card instead of pushing the page past the screen,
+       which made a phone zoom the whole share out to fit it. Same rule as the
+       editor (`.noteentry`, css/notes/noteentry.css). `break-word` and not
+       `anywhere`: `anywhere` counts towards the min-content width and would
+       shrink the tables that take `width: max-content` inside their
+       horizontal scroller. */
+    overflow-wrap: break-word;
 }
 
 /* Same highlight colour as in the app (css/notes/noteentry.css). */
@@ -194,6 +202,28 @@ body.public-note-page {
     border: none;
     border-radius: var(--pz-radius-lg);
     margin: 10px 0;
+}
+
+/* Applet embeds (lib/embed-providers.php): an interactive applet is not a video,
+   so it does not take the 16/9 shape of the rule above, which squashed a
+   GeoGebra construction into a letterbox (#1742). 4/3 keeps the height tied to
+   the width, since an iframe without a height falls back to 150px. The host is
+   guaranteed by the sanitiser, so matching the src here is cosmetic only. */
+/* Full width here too: half the page is cramped for something the visitor is
+   meant to manipulate, while it suits a video. */
+/* The :not() pair is what the video rule above carries: without the same
+   weight this rule lost, and the applet was served at half width in a 16/9
+   letterbox, which is exactly what it is here not to be. */
+.public-note iframe[src*="//www.geogebra.org/"]:not([data-is-audio]),
+.public-note iframe[src*="//geogebra.org/"]:not([data-is-audio]) {
+    max-width: 100%;
+    aspect-ratio: 4 / 3;
+    /* A thin frame, like the one an image can take: an applet is a panel of
+       its own, and GeoGebra's canvas is white on white without it. Counted
+       inside the width, or the frame would hang 2px past the note. */
+    box-sizing: border-box;
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-sm);
 }
 
 @media screen and (max-width: 768px) {
@@ -866,6 +896,17 @@ html[data-theme='dark'] #heading-copy-toast {
     margin: 0 0 1em 0;
 }
 
+/* A toggle is a block of the note like a paragraph, so it keeps the same air
+   under it. Its own margin is the tight one of the editor, where a paragraph
+   has none (css/components/toggle-block.css). */
+.public-note .content.public-note-markdown .toggle-block {
+    margin-bottom: 1em;
+}
+
+.public-note .content.public-note-markdown .toggle-block:last-child {
+    margin-bottom: 0;
+}
+
 .public-note .content.public-note-markdown p.blank-line {
     margin: 0;
 }
@@ -935,7 +976,7 @@ html[data-theme='dark'] #heading-copy-toast {
 @media screen and (max-width: 800px) {
     .public-note {
         margin-top: 0;
-        padding: 12px 16px 24px;
+        padding: 24px 28px 32px;
     }
 
     .public-note-top {

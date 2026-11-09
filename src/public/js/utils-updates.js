@@ -12,7 +12,8 @@ function checkForUpdates() {
     hideUpdateBadge();
 
     // User has manually checked, so clear the update available flag and reset the check time
-    // This prevents the badge from reappearing until the next automatic check (24h later)
+    // This prevents the badge from reappearing until the next automatic check
+    // (after the interval an administrator chose, a day by default)
     localStorage.removeItem('poznote_update_available');
     localStorage.setItem('poznote_last_update_check', Date.now().toString());
 
@@ -55,7 +56,70 @@ function checkForUpdates() {
         });
 }
 
-// Check for updates automatically (silent, once per day)
+/**
+ * Which releases light the dot up on the settings entries: every one of them
+ * ('all', what this always did and still the shipped default), or only the
+ * ones that change the first two numbers ('minor'), so a patch release goes
+ * by unmarked. Reported by a user for whom the dot was always on and so meant
+ * nothing. The release itself is announced in Settings > About either way;
+ * this only decides the dot.
+ */
+function updateBadgeLevel() {
+    var level = '';
+    try {
+        var el = document.getElementById('poznote-update-badge-level');
+        if (el) {
+            level = JSON.parse(el.textContent || '""');
+        }
+    } catch (e) {
+        level = '';
+    }
+    // 'major' was a third choice before the setting was narrowed to two, and
+    // the option closest to it is now 'minor'. icon_sidebar.php folds it too,
+    // this is the guard for a page served before that.
+    if (level === 'major') {
+        level = 'minor';
+    }
+    return ['all', 'minor'].indexOf(level) !== -1 ? level : 'all';
+}
+
+/**
+ * How many days between two background checks (setting
+ * update_check_interval_days, emitted by icon_sidebar.php). A day is what this
+ * always did and stays the shipped default. Anything from 1 to 365 is honoured,
+ * including a value set through the API that the list in Settings does not
+ * offer; anything else, or no tag at all on a page served by an older version,
+ * means a day.
+ */
+function updateCheckIntervalDays() {
+    var days = 0;
+    try {
+        var el = document.getElementById('poznote-update-check-interval');
+        if (el) {
+            days = parseInt(JSON.parse(el.textContent || '0'), 10);
+        }
+    } catch (e) {
+        days = 0;
+    }
+    if (!days || isNaN(days) || days < 1) {
+        return 1;
+    }
+    return Math.min(days, 365);
+}
+
+function updateDeservesBadge(kind) {
+    if (updateBadgeLevel() === 'all') {
+        return true;
+    }
+    // An unreadable version comes back as 'major', so nothing is hidden by
+    // accident; an answer from an older server carries no kind at all.
+    if (!kind) {
+        return true;
+    }
+    return kind === 'major' || kind === 'minor';
+}
+
+// Check for updates automatically (silent, once per interval, a day by default)
 function checkForUpdatesAutomatic() {
     // Only check for updates if user is admin
     // Check if badge exists in DOM (PHP only renders it for admins) as fallback
@@ -71,11 +135,12 @@ function checkForUpdatesAutomatic() {
     const lastCheck = localStorage.getItem('poznote_last_update_check');
     const lastCheckTime = lastCheck ? parseInt(lastCheck) : 0;
 
-    // Check only once per day (24 hours = 24 * 60 * 60 * 1000 ms)
-    const oneDayMs = 24 * 60 * 60 * 1000;
+    // Check once per interval: a day, as this always did, or the longer one an
+    // administrator chose (setting update_check_interval_days)
+    const intervalMs = updateCheckIntervalDays() * 24 * 60 * 60 * 1000;
 
-    if (now - lastCheckTime < oneDayMs) {
-        // Already checked today, restore badge if update was available
+    if (now - lastCheckTime < intervalMs) {
+        // Already checked within the interval, restore badge if update was available
         restoreUpdateBadge();
         return;
     }
@@ -99,7 +164,7 @@ function checkForUpdatesAutomatic() {
             return response.json();
         })
         .then(function (data) {
-            if (data.has_updates && !data.error) {
+            if (data.has_updates && !data.error && updateDeservesBadge(data.update_kind)) {
                 // Store update availability and version information
                 localStorage.setItem('poznote_update_available', 'true');
                 showUpdateBadge();

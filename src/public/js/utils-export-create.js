@@ -21,7 +21,11 @@ function showExportModal(noteId, filename, title, noteType) {
         var markdownOption = modal.querySelector('.export-option-markdown');
         var htmlOption = modal.querySelector('.export-option-html');
         var htmlEmbeddedOption = modal.querySelector('.export-option-html-embedded');
+        var htmlPublicOption = modal.querySelector('.export-option-html-public');
         var jsonOption = modal.querySelector('.export-option-json');
+
+        // The published look suits every note type that has a public page
+        if (htmlPublicOption) htmlPublicOption.style.display = 'flex';
 
         if (noteType === 'markdown') {
             // For markdown notes: allow MD export and HTML export

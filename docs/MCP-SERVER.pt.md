@@ -172,7 +172,7 @@ O servidor MCP usa os valores padrão do `docker-compose.yml`:
 # O log de depuração é false por padrão
 ```
 
-O Poznote gera automaticamente o token de serviço MCP em `data/.mcp_token`. O contêiner `mcp-server` lê esse arquivo pelo volume compartilhado `./data:/var/www/html/data:ro`, então não há senha para guardar no `.env`.
+O Poznote gera automaticamente o token de serviço MCP em `data/.mcp_token`. O contêiner `mcp-server` lê esse arquivo pelo volume compartilhado `./data:/var/www/html/data:ro`, então não há senha para guardar no `.env`. Enquanto o arquivo não existir, ele é lido de novo a cada chamada, então um servidor MCP que iniciou antes de o Poznote criá-lo pega o token sozinho, sem reiniciar. Um servidor executado fora desta pilha do Compose não enxerga esse caminho: aponte `POZNOTE_SERVICE_TOKEN_FILE` para onde `data/.mcp_token` realmente está nesse host.
 
 Para sobrescrever a porta e o modo de depuração em uma inicialização, recrie o contêiner MCP com variáveis de ambiente inline:
 

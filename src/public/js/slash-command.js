@@ -389,17 +389,22 @@
     // that takes.
     function placeMarkdownBlock(api, editor, from, to, insertText) {
         const placed = { from: from, to: to, text: insertText };
-        if (!/^(?:\||```|\n---\n$|\n\n<details\b|<(?:video|audio|iframe)\b)/.test(insertText) || !api || typeof api.getValue !== 'function') return placed;
+        if (!/^(?:\||```|\n---\n$|\n<details\b|<(?:video|audio|iframe)\b)/.test(insertText) || !api || typeof api.getValue !== 'function') return placed;
         const value = api.getValue(editor) || '';
         const lineStart = value.lastIndexOf('\n', from - 1) + 1;
         let lineEnd = value.indexOf('\n', to);
         if (lineEnd === -1) lineEnd = value.length;
         // (a rule right under a line of text would make it a heading)
         const isRule = insertText.charAt(0) === '\n' && insertText.charAt(1) === '-';
-        const isToggle = insertText.charAt(1) === '\n';
+        // A toggle opens its own line and nothing else: no blank line above
+        // or below it, the parser reads the block from the tag on its line
+        const isToggle = /^\n<details\b/.test(insertText);
         if (from === to && value.slice(lineStart, lineEnd).trim() !== '') {
             placed.from = placed.to = lineEnd;
             if (!isToggle) placed.text = (isRule ? '\n' : '\n\n') + insertText;
+        } else if (isToggle && value.slice(lineStart, lineEnd).trim() === '') {
+            // The line the caret is on is already empty: it is the block's
+            placed.text = insertText.slice(1);
         } else if (isRule) {
             const previousStart = value.lastIndexOf('\n', lineStart - 2) + 1;
             const previousBlank = lineStart === 0 || value.slice(previousStart, lineStart - 1).trim() === '';
@@ -1593,80 +1598,45 @@
         noteEntry.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
-    // Insert a toggle element (collapsible/expandable block)
+    // Insert a toggle block (js/toggle-block.js): closed and empty, the
+    // caret in its header where the placeholder is. Nothing is added around
+    // it, Enter in the header opens the line after it when one is wanted.
     function insertToggle() {
         const selection = window.getSelection();
-        if (!selection.rangeCount) return;
+        if (!selection.rangeCount || !window.PoznoteToggleBlock) return;
 
-        const range = selection.getRangeAt(0);
-
-        // Create the details element (HTML5 collapsible)
-        const details = document.createElement('details');
-        details.className = 'toggle-block';
-        details.open = true; // Open by default for easier editing
-
-        // Create summary (the always-visible label)
-        const summary = document.createElement('summary');
-        summary.className = 'toggle-header';
-        summary.textContent = window.t ? window.t('slash_menu.toggle_placeholder', null, 'Toggle') : 'Toggle';
-
-        const toggleContentPlaceholder = window.t
-            ? window.t('slash_menu.toggle_content_placeholder', null, 'Write inside the toggle…')
-            : 'Write inside the toggle…';
-        const toggleAfterPlaceholder = window.t
-            ? window.t('slash_menu.toggle_after_placeholder', null, 'Continue writing below…')
-            : 'Continue writing below…';
-
-        // Create content div (hidden content)
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'toggle-content';
-        contentDiv.setAttribute('contenteditable', 'true');
-        contentDiv.setAttribute('data-ph', toggleContentPlaceholder);
-        contentDiv.innerHTML = '';
-
-        details.appendChild(summary);
-        details.appendChild(contentDiv);
-
-        // Create empty lines before and after
-        const emptyLineBefore = document.createElement('p');
-        emptyLineBefore.className = 'toggle-before-placeholder';
-        emptyLineBefore.setAttribute('data-ph', toggleAfterPlaceholder);
-        emptyLineBefore.innerHTML = '';
-        const emptyLineAfter = document.createElement('p');
-        emptyLineAfter.className = 'toggle-after-placeholder';
-        emptyLineAfter.setAttribute('data-ph', toggleAfterPlaceholder);
-        emptyLineAfter.innerHTML = '';
+        let details = window.PoznoteToggleBlock.createElement();
 
         // Through insertHTML when possible, so Ctrl+Z takes the block back
         // (issue #1580)
-        let liveSummary = null;
-        const liveDetails = insertBlockElementUndoable(details, emptyLineBefore.outerHTML, emptyLineAfter.outerHTML);
-        if (liveDetails) {
-            liveSummary = liveDetails.querySelector('summary');
-            // Chrome drops the attribute
-            const liveContent = liveDetails.querySelector('.toggle-content');
-            if (liveContent && !liveContent.hasAttribute('contenteditable')) liveContent.setAttribute('contenteditable', 'true');
+        const live = insertBlockElementUndoable(details);
+        if (live) {
+            details = live;
         } else {
-            // Insert at cursor position
+            const range = selection.getRangeAt(0);
             range.deleteContents();
-
-            // Insert in reverse order to maintain correct sequence: before -> details -> after
-            range.insertNode(emptyLineAfter);
             range.insertNode(details);
-            range.insertNode(emptyLineBefore);
         }
 
-        // Place cursor at the end of the summary text
-        const newRange = document.createRange();
-        newRange.selectNodeContents(liveSummary || summary);
-        newRange.collapse(false);
-        selection.removeAllRanges();
-        selection.addRange(newRange);
+        const header = details.querySelector('summary');
+        const noteEntry = details.closest('.noteentry');
+        const caret = document.createRange();
+        caret.selectNodeContents(header || details);
+        caret.collapse(true);
 
-        // Trigger input event for autosave
-        const noteEntry = (liveDetails || details).closest('.noteentry');
+        // As for a callout: the note takes the focus first, the caret goes in
+        // a tick later so nothing steals it back
         if (noteEntry) {
-            noteEntry.dispatchEvent(new Event('input', { bubbles: true }));
+            try { noteEntry.focus({ preventScroll: true }); } catch (err) { noteEntry.focus(); }
+            setTimeout(function () {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(caret);
+                noteEntry.dispatchEvent(new Event('input', { bubbles: true }));
+            }, 10);
+        } else {
+            selection.removeAllRanges();
+            selection.addRange(caret);
         }
     }
 
@@ -3579,9 +3549,11 @@
                         icon: 'lucide-caret-down',
                         label: t('slash_menu.toggle', null, 'Toggle'),
                         action: function () {
-                            // Automatically add empty lines before and after for better spacing
-                            // (the caret at the end of the title, as in an HTML note)
-                            insertMarkdownAtCursor('\n\n<details class="toggle-block" open>\n<summary class="toggle-header">Toggle</summary>\n\n...\n\n</details>\n\n', -29);
+                            // Closed and empty, as in a rich-text note, the
+                            // caret in the header ready for the title. The
+                            // blank lines around the block are what makes
+                            // Markdown read it as HTML, not spacing.
+                            insertMarkdownAtCursor('\n<details class="toggle-block">\n<summary class="toggle-header"></summary>\n\n</details>', -22);
                         }
                     },
                     common.recordAudio,
@@ -6479,141 +6451,8 @@
             });
         }
 
-        // Position caret at the end of the toggle title when clicked
-        document.addEventListener('click', function (e) {
-            const header = e.target.closest('.toggle-header');
-            if (header && header.isContentEditable) {
-                const selection = window.getSelection();
-                const range = document.createRange();
-                range.selectNodeContents(header);
-                range.collapse(false);
-                selection.removeAllRanges();
-                selection.addRange(range);
-            }
-        });
-
-        // Prevent new lines and duplication in toggle title
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                const header = e.target.closest('.toggle-header');
-                if (header) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    // Move focus to the content area instead of creating a new line
-                    const content = header.nextElementSibling;
-                    if (content && content.classList.contains('toggle-content')) {
-                        const selection = window.getSelection();
-                        const range = document.createRange();
-                        range.selectNodeContents(content);
-                        range.collapse(true);
-                        selection.removeAllRanges();
-                        selection.addRange(range);
-                    }
-                }
-            }
-
-            // Delete toggle when backspace is pressed on empty header
-            if (e.key === 'Backspace') {
-                const selection = window.getSelection();
-                let header = e.target.closest('.toggle-header');
-                if (!header && selection && selection.anchorNode) {
-                    const anchorEl = selection.anchorNode.nodeType === Node.ELEMENT_NODE
-                        ? selection.anchorNode
-                        : selection.anchorNode.parentElement;
-                    if (anchorEl) {
-                        header = anchorEl.closest('.toggle-header');
-                    }
-                }
-
-                if (header && header.textContent.trim() === '') {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const toggleBlock = header.closest('.toggle-block');
-                    if (toggleBlock) {
-                        const parent = toggleBlock.parentNode;
-                        if (parent) {
-                            // Create a paragraph to maintain cursor position
-                            const p = document.createElement('p');
-                            p.innerHTML = '<br>';
-                            parent.insertBefore(p, toggleBlock);
-                            toggleBlock.remove();
-
-                            // Move cursor to the new paragraph
-                            const range = document.createRange();
-                            range.setStart(p, 0);
-                            range.collapse(true);
-                            const sel = window.getSelection();
-                            sel.removeAllRanges();
-                            sel.addRange(range);
-                        }
-                    }
-                }
-            }
-        }, true);
-
-        // Prevent multi-line pastes in toggle title
-        document.addEventListener('paste', function (e) {
-            const header = e.target.closest('.toggle-header');
-            if (header) {
-                e.preventDefault();
-                const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-                const cleanText = text.replace(/[\r\n]+/g, ' ');
-                document.execCommand('insertText', false, cleanText);
-            }
-        }, true);
-
-        // Aggressively sanitize toggle headers on input to enforce single-line structure
-        document.addEventListener('input', function (e) {
-            const target = e.target;
-            const toggleBlock = target.closest && target.closest('.toggle-block');
-
-            if (toggleBlock) {
-                // 1. Prevent multiple summaries (duplicate headers)
-                const summaries = toggleBlock.querySelectorAll('summary');
-                if (summaries.length > 1) {
-                    const first = summaries[0];
-                    let mergedText = first.textContent;
-
-                    for (let i = 1; i < summaries.length; i++) {
-                        mergedText += ' ' + summaries[i].textContent;
-                        summaries[i].remove();
-                    }
-
-                    first.textContent = mergedText;
-
-                    // Restore focus to first header (at end)
-                    const range = document.createRange();
-                    range.selectNodeContents(first);
-                    range.collapse(false);
-                    const sel = window.getSelection();
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                }
-
-                // 2. Flatten content inside the header (remove BRs, DIVs, newlines)
-                const header = toggleBlock.querySelector('.toggle-header');
-                if (header) {
-                    const hasBlockContent = header.querySelector('div, p, br');
-                    const hasNewlines = header.textContent.includes('\n');
-
-                    if (hasBlockContent || hasNewlines) {
-                        // Flatten text
-                        const cleanText = header.textContent.replace(/[\r\n]+/g, '');
-                        header.textContent = cleanText;
-
-                        // Restore caret to end
-                        const range = document.createRange();
-                        range.selectNodeContents(header);
-                        range.collapse(false);
-                        const sel = window.getSelection();
-                        sel.removeAllRanges();
-                        sel.addRange(range);
-                    }
-                }
-            }
-        }, true);
+        // The keys, clicks and pastes inside a toggle block live in
+        // js/toggle-block.js, with the block itself.
 
         // Handle slash menu in title inputs (notecards) and task inputs
         document.addEventListener('input', function (e) {

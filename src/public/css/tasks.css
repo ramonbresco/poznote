@@ -1,6 +1,12 @@
 .task-list-container {
     padding: 10px;
     font-family: inherit;
+    /* Lets a task row answer the width of the list itself (see the
+       @container rules at the end of this file). Safe here: every menu and
+       picker of a task row is appended to <body> and positioned fixed, so
+       the layout containment this brings cannot clip one. */
+    container-type: inline-size;
+    container-name: pz-tasklist;
 }
 
 .task-drag-handle {
@@ -429,7 +435,16 @@
     color: var(--pz-accent-text);
 }
 
-/* Due date pill shown next to the task text when a date is set */
+/* Due date pill shown next to the task text when a date is set.
+   The label is a <span> inside a note, so the !important font blanket of
+   css/notes/noteentry.css caught it and the date came out at the note font
+   size (15px by default) next to its 12px icon. The ID-level :is() boost
+   carries font-size only, like .tasklist-progress-label above. */
+.noteentry .task-due-chip:is(#pz-specificity-boost, *),
+.noteentry .task-due-chip:is(#pz-specificity-boost, *) span {
+    font-size: 12px !important;
+}
+
 .task-due-chip {
     display: inline-flex;
     align-items: center;
@@ -664,11 +679,39 @@
     flex-shrink: 0;
 }
 
+/* Delete: the danger colours of the shared row-actions menu */
+.task-actions-menu-item.is-danger {
+    color: var(--pz-danger-hover);
+}
+
+.task-actions-menu-item.is-danger i,
+.task-actions-menu-item.is-danger i[class*="lucide-"] {
+    color: var(--pz-danger-hover);
+    background-color: var(--pz-danger-hover);
+}
+
+.task-actions-menu-item.is-danger:hover {
+    background: color-mix(in srgb, var(--pz-danger) 8%, transparent);
+    color: var(--pz-danger-text-hover);
+}
+
+html[data-theme='dark'] .task-actions-menu-item.is-danger,
+html[data-theme='dark'] .task-actions-menu-item.is-danger i,
+html[data-theme='dark'] .task-actions-menu-item.is-danger i[class*="lucide-"] {
+    color: var(--pz-danger-text);
+}
+
+html[data-theme='dark'] .task-actions-menu-item.is-danger i,
+html[data-theme='dark'] .task-actions-menu-item.is-danger i[class*="lucide-"] {
+    background-color: var(--pz-danger-text);
+}
+
 @media (max-width: 768px) {
     /* Incomplete tasks: collapse the individual action buttons into the menu */
     .task-item:not(.completed) .task-row-actions .task-due-btn,
     .task-item:not(.completed) .task-row-actions .task-priority-btn,
     .task-item:not(.completed) .task-row-actions .task-move-btn,
+    .task-item:not(.completed) .task-row-actions .task-delete-btn,
     .task-item:not(.completed) .task-row-actions .task-subtask-btn {
         display: none;
     }
@@ -711,6 +754,68 @@
     /* Third row of the dated-task grid, under the checkbox and text */
     .task-item.has-due .task-subtasks {
         grid-column: 1 / -1;
+    }
+}
+
+/* A task row has to fit the width of the note column, not the width of the
+   window: with the notes list open, the note at 50% of a split view, or a
+   tasklist embedded in a narrow block, a dated task used to squeeze its text
+   into a sliver and push the due chip and the buttons off the row (reported
+   for tasks carrying a reminder, whose chip is the widest). The container
+   query below reads the list's own width, so the layout follows the column.
+   The @media (max-width: 768px) block above keeps the same rules for the
+   phone case, where it has always applied.
+
+   Two steps: under 600px the due chip takes a line of its own, which hands
+   the whole width back to the task text; under 460px the per-task buttons
+   also collapse into the three-dot menu, as on a phone. */
+@container pz-tasklist (max-width: 600px) {
+    .task-item.has-due {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas:
+            "chip chip actions"
+            "check text text";
+        row-gap: 6px;
+        align-items: center;
+    }
+
+    .task-item.has-due .task-due-chip {
+        grid-area: chip;
+        justify-self: start;
+        margin-left: 0;
+    }
+
+    .task-item.has-due .task-checkbox {
+        grid-area: check;
+        align-self: start;
+    }
+
+    .task-item.has-due .task-text {
+        grid-area: text;
+    }
+
+    .task-item.has-due .task-row-actions {
+        grid-area: actions;
+        justify-self: end;
+    }
+
+    .task-item.has-due .task-subtasks {
+        grid-column: 1 / -1;
+    }
+}
+
+@container pz-tasklist (max-width: 460px) {
+    .task-item:not(.completed) .task-row-actions .task-due-btn,
+    .task-item:not(.completed) .task-row-actions .task-priority-btn,
+    .task-item:not(.completed) .task-row-actions .task-move-btn,
+    .task-item:not(.completed) .task-row-actions .task-delete-btn,
+    .task-item:not(.completed) .task-row-actions .task-subtask-btn {
+        display: none;
+    }
+
+    .task-item:not(.completed) .task-menu-btn {
+        display: flex;
     }
 }
 
@@ -920,140 +1025,7 @@ details.callout:not([open]) .callout-fold-icon {
     fill: var(--pz-danger-text-hover);
 }
 
-/* Toggle / Collapsible block styles */
-.toggle-block {
-    display: block;
-    /* margin: 0.5em 0; */
-    overflow: hidden;
-    /* padding-bottom: 20px; */
-    /* padding-left: 10px; */
-    /* padding-right: 10px; */
-    /* border: 1px solid #e1e4e8; */
-    border-radius: var(--pz-radius);
-}
-
-/* Ensure caret is visible at the bottom of the open block */
-.toggle-block[open] {
-    padding-bottom: 20px;
-}
-
-/* Target only the first summary to avoid duplicate arrows if browser quirks occur */
-.toggle-block>summary {
-    display: flex;
-    align-items: center;
-    padding: 10px 0px 0px 1px;
-    font-weight: var(--pz-weight-semibold);
-    cursor: pointer;
-    list-style: none;
-    /* Hide default marker in Firefox */
-    user-select: none;
-    outline: none;
-    /* Remove focus outline */
-    white-space: nowrap;
-    overflow: hidden;
-    /* border-bottom: 1px solid #e1e4e8; */
-    text-overflow: ellipsis;
-    min-width: 0;
-    margin-bottom: 15px;
-}
-
-/* Hide any subsequent summaries that might be accidentally created */
-.toggle-block>summary~summary {
-    display: none !important;
-}
-
-/* Hide default marker in Webkit */
-.toggle-block>summary::-webkit-details-marker {
-    display: none;
-}
-
-.toggle-block>summary::before {
-    content: '';
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-right: 10px;
-    border-left: 5px solid currentColor;
-    border-top: 4px solid transparent;
-    border-bottom: 4px solid transparent;
-    transition: transform 0.2s ease;
-    opacity: 0.5;
-}
-
-.toggle-block[open]>summary::before {
-    transform: rotate(90deg);
-}
-
-/* .toggle-block > summary:hover handled by removing opacity */
-
-/* Move border to summary when open for consistent looking regardless of content structure */
-.toggle-block[open]>summary {
-    /* border-bottom: 1px solid #e1e4e8; */
-    margin-bottom: 15px;
-    /* Spacing between header and content */
-}
-
-/* Base style for content elements (both wrapper div and direct children) */
-.toggle-block>.toggle-content,
-.toggle-block>p,
-.toggle-block>ul,
-.toggle-block>ol,
-.toggle-block>div:not(.toggle-content),
-.toggle-block>pre,
-.toggle-block>blockquote {
-    font-size: 0.95em;
-    line-height: 1.6;
-}
-
-/* HTML Mode: Content inside wrapper */
-.toggle-block>.toggle-content {
-    padding: 8px 10px 0px 0px;
-    border-top: none;
-    /* Removed in favor of summary border */
-}
-
-/* Placeholder for empty toggle content */
-.toggle-block>.toggle-content[data-ph]:empty:before {
-    content: attr(data-ph);
-    color: var(--pz-text-subtle);
-    font-style: italic;
-    opacity: 0.6;
-}
-
-/* Markdown Mode: Direct children indentation */
-.toggle-block>p,
-.toggle-block>ul,
-.toggle-block>ol,
-.toggle-block>div:not(.toggle-content),
-.toggle-block>pre,
-.toggle-block>blockquote {
-    /* margin-left: 15px !important; */
-    margin-right: 10px;
-    margin-bottom: 0.5em;
-}
-
-/* Reset margin for p inside toggle-content (HTML mode) */
-.toggle-block>.toggle-content p {
-    margin: 0;
-}
-
-/* Placeholder line before/after toggle (HTML mode) */
-.toggle-before-placeholder:empty:before,
-.toggle-after-placeholder:empty:before {
-    content: attr(data-ph);
-    color: var(--pz-text-subtle);
-    font-style: italic;
-    opacity: 0.6;
-}
-
-/* Dark mode adjustments */
-html[data-theme='dark'] .toggle-block {
-    border-color: var(--pz-border);
-}
-
-html[data-theme='dark'] .toggle-block[open]>summary {
-    border-bottom-color: var(--pz-border);
-}
+/* Toggle blocks moved to css/components/toggle-block.css */
 
 /* ============================================
    Embedded task list in a regular note

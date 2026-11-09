@@ -253,6 +253,17 @@ function setAuthenticatedIdentity(array $authUser, ?string $authMethod = null): 
     $_SESSION['authenticated'] = true;
     $_SESSION['login_user_id'] = $authUserId;
     $_SESSION['login_user'] = $authUser;
+    // Read back by the "Connected devices" dialog (lib/session-store.php),
+    // which has nothing else to tell one open session from another. The user
+    // agent is kept as the browser sent it, trimmed, and only ever turned into
+    // a "Chrome, Android" label for display; no address is stored.
+    $_SESSION['session_created_at'] = time();
+    $sessionClient = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
+    if ($sessionClient !== '') {
+        $_SESSION['session_client'] = substr($sessionClient, 0, 255);
+    } else {
+        unset($_SESSION['session_client']);
+    }
     // Password fingerprint at sign-in: a later change ends this session
     // (sessionMatchesCurrentCredentials()). Unreadable, it is left unset and
     // the next request adopts the current one, never a wrong one.
@@ -270,6 +281,10 @@ function setAuthenticatedIdentity(array $authUser, ?string $authMethod = null): 
     }
 
     syncUserPreferenceCookie();
+    // The session now counts as signed in: give its cookie an expiry date so
+    // it survives closing the browser (poznoteRefreshSessionCookie() slides it
+    // afterwards, on every request).
+    poznoteRefreshSessionCookie();
 }
 
 /**

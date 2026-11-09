@@ -177,6 +177,30 @@
         }
     }
 
+    /**
+     * Opens the panel on the row of one key: its section unfolded, the others
+     * folded, the row scrolled to and marked for a moment. The way back from
+     * the right-click Hide menu (js/hide-element-menu.js), whose last entry
+     * leads here. A key this page's list does not hold (the sections are
+     * pruned per page) only opens the panel.
+     */
+    function revealKey(key) {
+        if (!panel || !key) return;
+        var box = panel.querySelector('[data-ui-key="' + key + '"]');
+        var section = box && box.closest ? box.closest('.ui-custom-section') : null;
+        if (!section) return;
+
+        panel.querySelectorAll('.ui-custom-section').forEach(function (candidate) {
+            setSectionCollapsed(candidate, candidate !== section);
+        });
+
+        var item = box.closest('.ui-custom-item');
+        if (!item) return;
+        if (typeof item.scrollIntoView === 'function') item.scrollIntoView({ block: 'center' });
+        item.classList.add('ui-custom-item-flash');
+        setTimeout(function () { item.classList.remove('ui-custom-item-flash'); }, 2000);
+    }
+
     function initSections() {
         panel.querySelectorAll('.ui-custom-section').forEach(function (section) {
             var title = section.querySelector('.ui-custom-section-title');
@@ -987,6 +1011,21 @@
             });
         }
     }
+
+    // Opened from elsewhere: the right-click Hide menu
+    // (js/hide-element-menu.js) sends the reader here for the key it just hid,
+    // or for the whole list.
+    window.PoznoteUiCustomizationPanel = {
+        open: function (key) {
+            if (!panel) return false;
+            setOpen(true);
+            revealKey(key);
+            return true;
+        },
+        hasKey: function (key) {
+            return !!(panel && key && panel.querySelector('[data-ui-key="' + key + '"]'));
+        }
+    };
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

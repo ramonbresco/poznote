@@ -88,10 +88,7 @@ function showNoteTagsModal(noteId) {
         }
     };
 
-    // Auto-focus the tag input
-    setTimeout(() => {
-        tagInput.focus();
-    }, 100);
+    // No auto-focus: the modal opens without the mobile keyboard taking the screen
 }
 
 /**

@@ -435,6 +435,14 @@ $router->post('/notes/{id}/lock/release', function($params) use ($notesControlle
     $notesController->releaseLock($params['id']);
 });
 
+// Lock or unlock a note against editing (entries.locked, lib/note-lock.php).
+// A state its owner sets, unrelated to the edit lock above; its own route so
+// that flipping it does not count as editing the note (no new modification
+// date, no new version token). PATCH /notes/{id} takes "locked" as well.
+$router->put('/notes/{id}/locked', function($params) use ($notesController) {
+    $notesController->setLocked($params['id']);
+});
+
 // Create a new note
 $router->post('/notes', function($params) use ($notesController) {
     $notesController->create();
@@ -510,6 +518,11 @@ $router->put('/notes/{id}/title-style', function($params) use ($notesController)
 // Same title size on every note ("Apply this size to all notes" of the menu)
 $router->put('/notes/title-style', function($params) use ($notesController) {
     $notesController->applyTitleSizeToAll();
+});
+
+// Lock or unlock every note at once (the padlock at the top of the tree)
+$router->put('/notes/locked', function($params) use ($notesController) {
+    $notesController->setLockedForAll();
 });
 
 // Duplicate a note
@@ -1075,6 +1088,21 @@ $router->post('/users/me/app-passwords', function($params) use ($usersController
 
 $router->delete('/users/me/app-passwords/{id}', function($params) use ($usersController) {
     echo json_encode($usersController->revokeAppPassword($params['id']));
+});
+
+// Open sessions of the current profile ("Connected devices"), see
+// src/lib/session-store.php. The handle in the path is a one-way fingerprint
+// of a session id, never the id itself.
+$router->get('/users/me/sessions', function($params) use ($usersController) {
+    echo json_encode($usersController->listSessions());
+});
+
+$router->delete('/users/me/sessions', function($params) use ($usersController) {
+    echo json_encode($usersController->revokeOtherSessions());
+});
+
+$router->delete('/users/me/sessions/{id}', function($params) use ($usersController) {
+    echo json_encode($usersController->revokeSession($params['id']));
 });
 
 // Connected apps: chat apps signed in to the MCP server through the OAuth

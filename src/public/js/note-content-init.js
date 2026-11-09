@@ -241,16 +241,23 @@ function reinitializeNoteContent(options) {
     // Translate callout titles to the current language
     translateCalloutTitles();
 
-    // Close all toggle blocks on page load (toggles should always start closed)
-    try {
-        const toggleBlocks = document.querySelectorAll('details.toggle-block');
-        if (!preserveRuntimeState) {
-            toggleBlocks.forEach(function (toggle) {
-                toggle.removeAttribute('open');
-            });
-        }
-    } catch (e) {
-        console.error('Error closing toggle blocks:', e);
+    // The grip that resizes an embed (js/embed-resize.js): an iframe takes
+    // every pointer event over it, so the handle cannot be drawn on it.
+    if (typeof window.poznoteRefreshEmbedGrips === 'function') {
+        window.poznoteRefreshEmbedGrips(document);
+    }
+
+    // An embed from a host this instance refuses would be an empty rectangle
+    // and a console error: js/embeds.js hides it and says why instead.
+    if (typeof window.poznoteMarkBlockedEmbeds === 'function') {
+        window.poznoteMarkBlockedEmbeds(document);
+    }
+
+    // Toggle blocks (js/toggle-block.js): their placeholders and whether each
+    // one is open are runtime state the note does not carry
+    if (window.PoznoteToggleBlock) {
+        window.PoznoteToggleBlock.refresh(document);
+        window.PoznoteToggleBlock.restoreState(document);
     }
 
     // On mobile, ensure the right column is properly displayed only when a specific note is selected

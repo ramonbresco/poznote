@@ -173,13 +173,21 @@
      * note is above it, so the arrow to the bottom stops there and hides
      * from there on. #right_col gets it from .note-bottom-space, a split pane
      * from its bottom padding (css/notes/noteentry.css, css/markdown.css).
+     * On a phone that div is at least as tall as the clearance the mobile
+     * layout keeps under every note for the floating buttons and the keyboard
+     * (its min-height, --pz-note-bottom-space-min): that part is real room,
+     * scrolled through as it was before the setting reached mobile, so the
+     * end of the note lands above the buttons and above the browser's own bar
+     * instead of flush with the bottom of a column that is 100vh tall.
      */
     function getNoteVirtualSpace(element) {
         if (!element || !document.body.classList.contains('note-virtual-space')) return 0;
 
         if (element.id === 'right_col') {
             var space = element.querySelector('.note-bottom-space');
-            return space ? space.offsetHeight : 0;
+            if (!space) return 0;
+            var floor = parseFloat(getComputedStyle(space).minHeight) || 0;
+            return Math.max(0, space.offsetHeight - floor);
         }
 
         var padded = element.classList.contains('cm-scroller') ? element.querySelector('.cm-content') : element;
@@ -984,6 +992,30 @@
                     window.showNoteInfoModal(noteId);
                 }
                 break;
+            case 'toggle-note-lock':
+                // Lock the note against editing, or unlock it
+                // (js/note-edit-lock.js, lib/note-lock.php)
+                if (noteId && typeof window.toggleNoteManualLock === 'function') {
+                    window.toggleNoteManualLock(noteId);
+                }
+                break;
+            case 'copy-note-id':
+                // The id under the note title (css/notes/subline.css): the
+                // number an API call, an MCP call or a ?note= link needs
+                if (noteId) {
+                    const copiedId = String(noteId);
+                    const toldCopied = function () {
+                        if (typeof window.poznoteShowToast === 'function') {
+                            window.poznoteShowToast((window.t
+                                ? window.t('index.note.id_copied', { id: copiedId }, 'Note id {{id}} copied')
+                                : 'Note id ' + copiedId + ' copied'));
+                        }
+                    };
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(copiedId).then(toldCopied, function () {});
+                    }
+                }
+                break;
             case 'navigate-tags':
                 window.location = 'list_tags.php?workspace=' + encodeURIComponent(window.selectedWorkspace || '');
                 break;
@@ -1201,10 +1233,39 @@
 
     /**
      * Helper to place cursor at the end of contentEditable
-     * @param {HTMLElement} el 
+     *
+     * The focus must not scroll (issue #1752): the caret lands at the end of
+     * the note, right above the click, but Chromium's own focus() brings the
+     * top of the element into view instead, which threw the reader back to
+     * the first line whenever the room the "Space below the note" setting
+     * leaves under a long note was clicked.
+     * @param {HTMLElement} el
      */
     function focusAtEnd(el) {
-        el.focus();
+        if (!el) return;
+
+        // A Markdown editor is CodeMirror: it owns its selection, and focusing
+        // its host div would place no caret at all (issue #1752)
+        var codeMirror = window.PoznoteMarkdownCodeMirror;
+        if (codeMirror && typeof codeMirror.isCodeMirrorEditor === 'function' && codeMirror.isCodeMirrorEditor(el)) {
+            var end = typeof codeMirror.getLength === 'function' ? codeMirror.getLength(el) : 0;
+            if (typeof codeMirror.setSelection === 'function') {
+                codeMirror.setSelection(el, end, end);
+            } else if (typeof codeMirror.focus === 'function') {
+                codeMirror.focus(el);
+            }
+            return;
+        }
+
+        // Nothing to focus in a note that takes no caret: a task list, a
+        // Markdown note showing its preview, a note held read-only
+        if (!el.isContentEditable) return;
+
+        try {
+            el.focus({ preventScroll: true });
+        } catch (e) {
+            el.focus();
+        }
         if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
             var range = document.createRange();
             var lastLine = getLastTextLine(el);
@@ -1316,16 +1377,6 @@
             window.trackAndProcessNotes();
         }
         checkForDrafts();
-
-        // Close all toggle blocks on page load (toggles should always start closed)
-        try {
-            const toggleBlocks = document.querySelectorAll('details.toggle-block');
-            toggleBlocks.forEach(function (toggle) {
-                toggle.removeAttribute('open');
-            });
-        } catch (e) {
-            console.error('Error closing toggle blocks:', e);
-        }
 
         // Initialize mobile note click handlers
         initializeNoteClickHandlers();

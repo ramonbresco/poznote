@@ -159,6 +159,7 @@
       "markdown_colored": "Acoloreix les notes Markdown: trieu un color per a cada nivell de títol, el codi en línia, el fons dels blocs de codi, les cites, les capçaleres de taula i els separadors.",
       "code_wrap": "Ajusta les línies llargues als blocs de codi en lloc de desplaçar-les horitzontalment.",
       "code_line_numbers": "Mostra els números de línia als blocs de codi de la previsualització Markdown.",
+      "code_block_collapsed_lines": "Quantes línies d'un bloc de codi continuen visibles un cop plegat, de 0 a 100. Amb 0, un bloc plegat no mostra res del seu codi. Un bloc que no tingui més línies que això no rep la fletxa per plegar, plegar-lo no amagaria res.",
       "attachment_previews": "Mostra previsualitzacions dels fitxers adjunts dins de les notes.",
       "attachments_at_bottom": "Mostra la secció de fitxers adjunts a la part inferior de les notes en lloc de la part superior.",
       "allow_executable_attachments": "Permet adjuntar scripts i executables (.sh, .ps1, .bat, .exe, .py...) a les notes, per a tots els comptes d'aquesta instància. El Poznote no els executa mai, només els emmagatzema i els serveix. Els tipus de fitxer que un servidor web podria executar, com ara .php, continuen bloquejats.",
@@ -208,11 +209,17 @@
       "release_notes": "Obre les notes de totes les versions de Poznote a GitHub.",
       "login_disabled": "Omet la pantalla d'inici de sessió: qualsevol navegador que arribi a aquesta instància obre directament el vostre compte, sense nom d'usuari, contrasenya ni codi de dos factors. Activeu-ho només si sou l'única persona que pot accedir a aquesta instància o si un servidor intermediari invers en gestiona l'autenticació. L'API continua demanant credencials.",
       "outbound_hosts": "Els usuaris que no són administradors només poden connectar els webhooks, la sincronització amb Git i els seus propis servidors d'IA, de transcripció o MCP a amfitrions públics d'Internet. Llisteu aquí els amfitrions o les xarxes locals que poden fer servir, com ara un servidor d'Ollama o d'n8n. Els administradors no tenen límits.",
+      "embeds": "Les notes poden incrustar contingut d'aquests llocs, com un vídeo de YouTube o una applet de GeoGebra. Desactiveu els que la vostra instància no hagi de carregar mai. Cap altre lloc es pot incrustar, i aquí no s'hi poden afegir llocs.",
       "diary_template": "Trieu una nota amb el contingut de la qual comença cada entrada nova del diari de l'espai de treball {{workspace}}. La llista mostra les notes d'una carpeta anomenada Templates (o Plantilles) d'aquest espai de treball. Cada espai de treball té la seva plantilla.",
       "markdown_view_cycle": "Trieu les visualitzacions que ofereix el menú de visualització d'una nota Markdown, a més de la visualització clàssica (previsualització, amb el llapis per editar). Les visualitzacions excloses no hi apareixen. Si no en trieu cap, el botó s'amaga. En un telèfon, el menú no ofereix mai el mode dividit.",
       "connected_apps": "Connecteu aplicacions de xat com ara ChatGPT o Claude a les notes mitjançant el servidor MCP i desconnecteu-les en qualsevol moment.",
       "custom_logo": "Substituïu el logotip del Poznote pel vostre, per a tots els usuaris: a la pestanya del navegador, a la pàgina d'inici de sessió, a la barra lateral d'icones i com a icona de l'aplicació instal·lada.",
-      "two_factor_required": "Tots els comptes que inicien la sessió amb contrasenya han de fer servir l'autenticació de dos factors. Un compte que no la té la configura en el proper inici de sessió, i les sessions obertes sense aquesta autenticació es tanquen. La contrasenya del compte deixa de funcionar a través de l'API: les aplicacions han de fer servir una contrasenya d'aplicació. Els inicis de sessió amb SSO no s'hi veuen afectats, ja que el proveïdor d'identitat en gestiona el segon factor."
+      "two_factor_required": "Tots els comptes que inicien la sessió amb contrasenya han de fer servir l'autenticació de dos factors. Un compte que no la té la configura en el proper inici de sessió, i les sessions obertes sense aquesta autenticació es tanquen. La contrasenya del compte deixa de funcionar a través de l'API: les aplicacions han de fer servir una contrasenya d'aplicació. Els inicis de sessió amb SSO no s'hi veuen afectats, ja que el proveïdor d'identitat en gestiona el segon factor.",
+      "tab_follows_note": "Anomena la pestanya del navegador segons la nota que hi ha oberta, amb la icona d'aquella nota, en lloc del nom i la icona d'aquesta instància. Així es distingeixen diverses pestanyes obertes en diverses notes.",
+      "update_badge_level": "Tria quines versions posen el punt vermell a les entrades de Configuració. Triïs el que triïs, la nova versió continua anunciant-se en aquesta pàgina, no s'amaga res.",
+      "update_check_interval": "Amb quina freqüència Poznote comprova en segon pla si hi ha una versió més recent. El punt només pot aparèixer després d'una comprovació, així que un interval més llarg el retarda. La targeta Versió de dalt continua comprovant-ho de seguida quan hi fas clic.",
+      "sessions": "Mireu els navegadors i dispositius que ara mateix tenen la sessió iniciada al vostre compte, i tanqueu la sessió dels que ja no feu servir.",
+      "session_lifetime": "Quant dura un inici de sessió sense activitat. Es configura amb POZNOTE_SESSION_LIFETIME_DAYS al fitxer .env, de manera que aquí només es mostra i no es pot canviar des d’aquesta pàgina. Iniciar la sessió amb «Recorda’m» dura més; iniciar-la amb SSO, no."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "En un mòbil, la barra d'eines de damunt del teclat té un botó + que obre el mateix menú, independentment d'aquest paràmetre."
@@ -263,6 +270,7 @@
     },
     "cards": {
       "tenant_isolation": "Aïllament d'inquilins",
+      "embeds": "Contingut incrustat",
       "user_management": "Gestió d'usuaris",
       "backup_export": "Còpia de seguretat / Exportació",
       "restore_import": "Restauració / Importació",
@@ -281,7 +289,7 @@
       "support": "Doneu suport al Poznote",
       "buy_me_a_coffee": "Convideu-me a un cafè",
       "install_extension": "Instal·la l'extensió",
-      "install_app": "Instal·la l'aplicació",
+      "install_app": "Instal·la l'aplicació (PWA)",
       "custom_css": "Camí del CSS personalitzat",
       "theme_list": "Llista de temes",
       "release_notes": "Notes de la versió",
@@ -317,7 +325,9 @@
       "outbound_hosts": "Accés a la xarxa local",
       "connected_apps": "Aplicacions connectades",
       "custom_logo": "Logotip",
-      "two_factor_required": "Dos factors obligatoris"
+      "two_factor_required": "Dos factors obligatoris",
+      "sessions": "Dispositius connectats",
+      "session_lifetime": "Durada de les sessions"
     },
     "default_credentials": {
       "both": "Aquest compte encara fa servir el nom d'usuari i la contrasenya per defecte. Qualsevol persona que pugui accedir a aquesta instància hi pot iniciar la sessió.",
@@ -380,6 +390,11 @@
     "outbound_hosts": {
       "status_allowed": "{{count}} permesos",
       "status_public_only": "Només públics"
+    },
+    "embeds": {
+      "status_all": "Tots els llocs",
+      "status_some": "{{count}} de {{total}}",
+      "status_none": "Cap"
     },
     "diary_template": {
       "none": "Cap",
@@ -546,6 +561,7 @@
       "markdown_colored": "Markdown acolorit",
       "code_block_word_wrap": "Ajust de línia als blocs de codi",
       "code_block_line_numbers": "Números de línia als blocs de codi",
+      "code_block_collapsed_lines": "Blocs de codi plegats",
       "attachment_previews_in_note": "Previsualitzacions dels fitxers adjunts",
       "attachments_at_bottom": "Fitxers adjunts a baix",
       "backlinks_at_bottom": "Enllaços entrants a baix",
@@ -561,7 +577,10 @@
       "format_toolbar_mode": "Barra d'eines de format",
       "workspace_activity_emails": "Correus dels espais de treball compartits",
       "diary_template": "Plantilla de les entrades del diari",
-      "markdown_view_cycle": "Menú de visualització"
+      "markdown_view_cycle": "Menú de visualització",
+      "tab_follows_note": "La pestanya segueix la nota oberta",
+      "update_badge_level": "Punt d'actualització",
+      "update_check_interval": "Comprovació d'actualitzacions"
     },
     "badges": {
       "font_size_default": "per defecte ({{size}} px)",
@@ -625,7 +644,8 @@
     "priority_high": "Prioritat alta",
     "priority_medium": "Prioritat mitjana",
     "priority_low": "Prioritat baixa",
-    "priority_none": "Sense prioritat"
+    "priority_none": "Sense prioritat",
+    "delete_task": "Elimina la tasca"
   },
   "tags": {
     "add_single": "Afegiu una etiqueta...",
@@ -698,7 +718,9 @@
       "words": "Paraules:",
       "lines": "Línies:",
       "note_id": "Identificador de la nota:",
-      "full_path": "Camí complet:"
+      "full_path": "Camí complet:",
+      "last_modified_from": "Última modificació des de:",
+      "locked": "Bloquejada:"
     },
     "attachments": {
       "count_singular": "1 fitxer",
@@ -713,6 +735,15 @@
     },
     "errors": {
       "load_failed": "No s'ha pogut carregar la informació de la nota."
+    },
+    "source": {
+      "app": "Poznote, en un ordinador",
+      "app_mobile": "Poznote, en mòbil",
+      "api": "L'API REST",
+      "mcp": "Una aplicació connectada per MCP",
+      "extension": "L'extensió del navegador",
+      "ai": "L'assistent d'IA",
+      "public": "Un visitant de l'enllaç públic"
     }
   },
   "attachments": {
@@ -996,9 +1027,10 @@
       "note_scroll_arrows": "Fletxes per desplaçar-se a dalt i a baix",
       "tasklist_add_field": "Camp per afegir una tasca",
       "tasklist_frame": "Marc al voltant de cada tasca",
-      "tasklist_delete": "Suprimeix una tasca completada",
+      "tasklist_delete": "Suprimeix una tasca",
       "tasklist_menu": "Menú d'opcions de la tasca (mòbil)",
-      "tasklist_frame_color": "Color de prioritat del marc de les tasques"
+      "tasklist_frame_color": "Color de prioritat del marc de les tasques",
+      "note_id": "Mostra l'identificador de la nota"
     },
     "icon_sidebar_order": {
       "title": "Disposició de la barra lateral d'icones",
@@ -1078,9 +1110,14 @@
       "workspace_destination": "Seleccioneu l'espai de treball de destinació:",
       "target_folder": "Seleccioneu la carpeta de destinació:",
       "recent_folders": "Carpetes recents",
-      "new_folder": "Carpeta nova",
+      "filter_placeholder": "Filtra les carpetes o escriu un nom nou",
+      "clear_filter": "Esborra el filtre",
+      "no_match": "No hi ha cap carpeta coincident.",
+      "no_folder_root": "Sense carpeta (mou a l’arrel)",
+      "create_folder": "Crea la carpeta",
+      "current_location": "Actualment a {{folder}}",
+      "current_location_none": "Actualment fora de qualsevol carpeta",
       "new_workspace": "Espai de treball nou",
-      "folder_name_placeholder": "Nom de la carpeta (feu servir / per a les subcarpetes)",
       "workspace_name_placeholder": "Nom de l'espai de treball",
       "enter_workspace_name": "Introduïu un nom per a l'espai de treball",
       "enter_folder_name": "Introduïu un nom per a la carpeta"
@@ -1213,6 +1250,10 @@
       "json": {
         "title": "Baixa com a JSON",
         "description": "Baixa les dades sense processar de la llista de tasques com a fitxer JSON"
+      },
+      "html_public": {
+        "title": "Exporta com a pàgina publicada",
+        "description": "Baixa un únic fitxer HTML amb el mateix aspecte que la pàgina pública d'aquesta nota, imatges incloses"
       }
     },
     "task_move": {
@@ -1391,6 +1432,11 @@
         "user_s3_restore_help": "Els usuaris que no són administradors ja no veuen la secció Restaura des d'S3 de la pàgina Restauració / Importació i no poden restaurar arxius del cubell."
       }
     },
+    "embeds": {
+      "title": "Contingut incrustat",
+      "description": "Les notes poden incrustar contingut dels llocs següents, com un vídeo o una applet interactiva. Desmarqueu els que aquesta instància no hagi de carregar mai. Cap altre lloc es pot incrustar en una nota, i aquí no s'hi poden afegir llocs.",
+      "existing_hint": "Si desmarqueu un lloc, els continguts que ja tenen les notes queden ocults: deixen de carregar-se, i si després editeu una nota així, el contingut incrustat se'n perd."
+    },
     "note": {
       "rename_title": "Canvi de nom de la nota",
       "rename_placeholder": "Títol nou de la nota"
@@ -1488,6 +1534,25 @@
       "reset_confirm": "Voleu tornar al logotip del Poznote per a tots els usuaris?",
       "invalid": "Aquesta imatge no es pot fer servir. Trieu un fitxer PNG, JPEG, WebP, GIF o SVG de 20 MB com a màxim.",
       "failed": "No s'ha pogut desar el logotip."
+    },
+    "update_badge_level": {
+      "options": {
+        "all": "Versions majors, menors i pegats",
+        "minor": "Només versions majors i menors"
+      }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "Cada dia",
+        "2": "Cada 2 dies",
+        "3": "Cada 3 dies",
+        "7": "Cada 7 dies",
+        "14": "Cada 14 dies",
+        "30": "Cada 30 dies"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "línies"
     }
   },
   "notes_list": {
@@ -1754,7 +1819,6 @@
     "toggle": "Desplegable",
     "toggle_placeholder": "Desplegable",
     "toggle_content_placeholder": "Escriviu aquí dins del desplegable...",
-    "toggle_after_placeholder": "Escriviu aquí fora del desplegable...",
     "code_block_placeholder_before": "Escriviu text aquí...",
     "code_block_placeholder_after": "Escriviu text aquí...",
     "youtube_video": "Vídeo de YouTube",
@@ -1971,7 +2035,8 @@
       "indexable": "Permet la indexació als motors de cerca",
       "indexable_mobile": "Permet la indexació",
       "password": "Contrasenya (opcional)",
-      "password_placeholder": "Introduïu una contrasenya"
+      "password_placeholder": "Introduïu una contrasenya",
+      "token_from_name": "Crea el testimoni a partir del nom"
     },
     "folder_share_modal": {
       "title": "URL de la carpeta compartida",
@@ -2010,7 +2075,11 @@
           "one": "{{count}} línia",
           "other": "{{count}} línies"
         }
-      }
+      },
+      "missing": "La nota #{{id}} no existeix o s'ha eliminat.",
+      "missing_trashed": "La nota #{{id}} és a la paperera. Restaura-la per tornar-la a obrir.",
+      "copy_id": "Copia l'identificador de la nota",
+      "id_copied": "Identificador de nota {{id}} copiat"
     },
     "editor": {
       "placeholder_desktop": "Escriviu text, feu servir / o el botó dret per obrir el menú d'ordres, enganxeu imatges o deixeu anar una imatge al cursor.",
@@ -2130,6 +2199,12 @@
       "live_hint": "Editar la nota ja amb format: la sintaxi Markdown apareix al voltant del cursor.",
       "rich_hint": "Editar la nota com en un processador de textos: la sintaxi Markdown no es mostra mai.",
       "split_hint": "Codi Markdown a un costat i previsualització amb format a l'altre, actualitzada mentre escrius."
+    },
+    "code_block_collapse": {
+      "collapse": "Plega el bloc de codi",
+      "expand": "Desplega el bloc de codi",
+      "one_line": "1 línia",
+      "lines": "{{count}} línies"
     }
   },
   "image_menu": {
@@ -3631,7 +3706,8 @@
       "two_factor_recovery_used": "Inici de sessió amb un codi de recuperació",
       "two_factor_recovery_regenerated": "Codis de recuperació regenerats",
       "oauth_app_authorized": "Aplicació connectada (MCP)",
-      "oauth_app_revoked": "Aplicació desconnectada (MCP)"
+      "oauth_app_revoked": "Aplicació desconnectada (MCP)",
+      "session_revoked": "Dispositiu desconnectat"
     },
     "filters": {
       "all_actions": "Totes les accions",
@@ -4326,7 +4402,18 @@
     "take_over_failed": "No es pot prendre el control d'aquesta nota.",
     "taken_over_notice": "Heu pres el control de l'edició d'aquesta nota.",
     "lost_unsaved_kept": "Els canvis no desats d'aquí es conserven en aquest dispositiu i se us tornaran a oferir quan la nota quedi lliure.",
-    "read_only_share": "Aquest espai de treball s'ha compartit amb tu en mode de només lectura."
+    "read_only_share": "Aquest espai de treball s'ha compartit amb tu en mode de només lectura.",
+    "lock_note": "Bloqueja aquesta nota",
+    "unlock_note": "Desbloqueja aquesta nota",
+    "locked_error": "Aquesta nota està bloquejada. Desbloqueja-la des de la barra d'eines abans d'editar-la.",
+    "locked_toast": "Nota bloquejada",
+    "unlocked_toast": "Nota desbloquejada",
+    "lock_failed": "No s'ha pogut canviar el bloqueig d'aquesta nota.",
+    "lock_all": "Bloqueja totes les notes",
+    "unlock_all": "Desbloqueja totes les notes",
+    "locked_all_toast": "Totes les notes estan bloquejades",
+    "unlocked_all_toast": "Totes les notes estan desbloquejades",
+    "lock_all_failed": "No s'ha pogut canviar el bloqueig de les notes."
   },
   "live_refresh": {
     "note_changed": "Aquesta nota s'ha modificat fora d'aquesta pestanya.",
@@ -5343,6 +5430,7 @@
     "italic": "Cursiva",
     "underline": "Subratllat",
     "strikethrough": "Ratllat",
+    "clear_formatting": "Esborra el format del text seleccionat",
     "link": "Insereix un enllaç al text seleccionat",
     "code_block": "Bloc de codi",
     "slash_menu": "Obre el menú d'ordres",
@@ -5379,7 +5467,9 @@
     "new_note": "Crea una nota:"
   },
   "icon_context_menu": {
-    "hide": "Amaga el botó"
+    "hide": "Amaga el botó",
+    "hide_element": "Amaga «{{name}}»",
+    "hidden_notice": "«{{name}}» està amagat. Visibilitat dels elements el torna a mostrar."
   },
   "account_note": {
     "banner": "Nota del compte {{account}}, només lectura",
@@ -5775,6 +5865,48 @@
       "group_rules": "Separadors dels grups",
       "size": "Botó de mida de les rajoles",
       "boards": "Llista d'accessos ràpids"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "Contingut incrustat bloquejat",
+      "detail_admin": "Aquesta instància no permet contingut incrustat de {{host}}. Un administrador el pot tornar a permetre a Paràmetres > Eines d'administració > Contingut incrustat.",
+      "detail_public": "Aquest lloc no permet contingut incrustat de {{host}}."
+    },
+    "resize": {
+      "hint": "Arrossega per canviar la mida, fes doble clic per restablir-la"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 sessió",
+      "count_other": "{{count}} sessions"
+    },
+    "lifetime": {
+      "day_one": "1 dia",
+      "day_other": "{{count}} dies"
+    },
+    "modal": {
+      "title": "Dispositius connectats",
+      "description": "Cada fila és un navegador amb la sessió iniciada al vostre compte. Una sessió s’acaba sola després de {{duration}} sense activitat, i cada vegada que canvieu la contrasenya.",
+      "loading": "S’està carregant...",
+      "empty": "No hi ha cap sessió oberta.",
+      "unknown_client": "Navegador desconegut",
+      "this_device": "Aquest dispositiu",
+      "last_active": "Darrera activitat {{date}}",
+      "revoke": "Tanca la sessió",
+      "revoke_others": "Tanca la sessió dels altres dispositius",
+      "confirm": "Confirma",
+      "close": "Tanca"
+    },
+    "method": {
+      "password": "Contrasenya",
+      "sso": "SSO",
+      "auto": "Sense inici de sessió"
+    },
+    "errors": {
+      "load_failed": "No s’han pogut carregar les vostres sessions.",
+      "generic": "Alguna cosa ha anat malament. Torneu-ho a provar."
     }
   }
 }

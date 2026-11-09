@@ -1032,12 +1032,30 @@ function parseMarkdown($text) {
         $attrs = html_entity_decode($attrs, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
         // Shared allow-list rebuild (functions.php): strict host match on src
-        // against ALLOWED_IFRAME_DOMAINS or Poznote's local audio player, and
-        // only safe attributes re-emitted with re-encoded values.
+        // against the enabled embed providers (lib/embed-providers.php) or
+        // Poznote's local audio player, and only safe attributes re-emitted
+        // with re-encoded values.
         $iframeTag = poznoteRebuildMediaTag('iframe', $attrs);
         if ($iframeTag === null) {
-            // If not allowed, return the original (will be escaped)
-            return $original;
+            // Not an allowed host: the notice goes where the frame would have
+            // been (lib/embed-providers.php). Without it the reader is left
+            // with the escaped source of the tag, which explains nothing.
+            $blockedSrc = '';
+            if (preg_match('/\\bsrc\\s*=\\s*["\']([^"\']*)["\']/i', $attrs, $srcMatch) === 1) {
+                $blockedSrc = $srcMatch[1];
+            }
+            if ($blockedSrc === '' || !function_exists('poznoteBlockedEmbedNoticeHtml')) {
+                return $original;
+            }
+
+            $placeholder = "\x00PIFRAME" . $protectedIndex . "\x00";
+            $protectedElements[$protectedIndex] = poznoteBlockedEmbedNoticeHtml(
+                $blockedSrc,
+                null,
+                html_entity_decode($original, ENT_QUOTES | ENT_HTML5, 'UTF-8')
+            );
+            $protectedIndex++;
+            return $placeholder;
         }
 
         $placeholder = "\x00PIFRAME" . $protectedIndex . "\x00";
@@ -1046,7 +1064,8 @@ function parseMarkdown($text) {
         return $placeholder;
     };
 
-    // Protect iframe tags (YouTube, Bilibili, and Poznote audio player embeds).
+    // Protect iframe tags (the enabled embed providers, and Poznote's own
+    // audio player).
     $text = preg_replace_callback('/<iframe\s+([^>]+)>\s*<\/iframe>/is', function($matches) use ($protectIframeTag) {
         return $protectIframeTag($matches[1], $matches[0]);
     }, $text);
@@ -1862,14 +1881,111 @@ function parseMarkdown($text) {
  * converted note glues the code block to the paragraph above it and welds two
  * consecutive code blocks together. Rich-text notes have no such margin to
  * lean on, so the empty lines have to be real: an empty paragraph, the same
- * one parseMarkdown() already emits for authored blank lines.
+ * one parseMarkdown() already emits for authored blank lines. A task list is
+ * rewritten for the same reason: the markup the Markdown preview styles means
+ * nothing to a rich-text note, which has a checklist of its own.
  *
  * Used by every path that turns Markdown into the content of an HTML note
  * (the "Convert to HTML" action, the "Insert Markdown" modal, the AI
- * assistant), so the three can never drift apart.
+ * assistant, a Markdown diary template), so they can never drift apart.
  */
 function parseMarkdownForRichText($text) {
-    return addRichTextCodeBlockSpacing(parseMarkdown($text));
+    return addRichTextParagraphSpacing(
+        addRichTextCodeBlockSpacing(
+            convertTaskListsToChecklists(parseMarkdown($text))
+        )
+    );
+}
+
+/**
+ * Turns the task lists of a Markdown rendering into the checklists a
+ * rich-text note is made of.
+ *
+ * parseMarkdown() writes "- [x] text" as <ul class="task-list"> with a
+ * <input class="markdown-task-checkbox">, markup the Markdown preview and the
+ * public pages style themselves. A rich-text note knows nothing about it:
+ * ".noteentry" carries no rule for it, so a converted list came out with the
+ * bullets of a plain list, no strikethrough on a ticked line, and a checkbox
+ * no script listens to. The editor's own checklist (js/checklist.js) is the
+ * same list one level down, so the conversion writes that instead: same look
+ * as the preview, and the boxes can be ticked, indented and edited like any
+ * other checklist. Converting back reads both shapes (html_to_markdown.php),
+ * so a note still goes to Markdown and back unchanged.
+ */
+function convertTaskListsToChecklists($html) {
+    if (strpos($html, 'task-list') === false) {
+        return $html;
+    }
+
+    // The inline styles createChecklist() writes, so a converted list and one
+    // typed in the editor are the same markup
+    $html = str_replace(
+        '<ul class="task-list">',
+        '<ul class="checklist" style="list-style: none; padding-left: 0; margin: 8px 0;">',
+        $html
+    );
+
+    return preg_replace_callback(
+        '~<li class="task-list-item"[^>]*>\s*(<input\b[^>]*class="markdown-task-checkbox"[^>]*>)\s*<span class="task-text"([^>]*)>~',
+        function ($matches) {
+            // Search the input tag itself: "checked" is an attribute of its
+            // own there, never a value of another one
+            $checked = (bool) preg_match('/\schecked(?=[\s>=\/])/i', $matches[1]);
+            $text = '';
+            if (preg_match('/\sdata-text="([^"]*)"/', $matches[2], $attribute)) {
+                // Already escaped by parseMarkdown(), and data-value holds the
+                // same plain text data-text does
+                $text = $attribute[1];
+            }
+
+            return '<li class="checklist-item' . ($checked ? ' checklist-item-checked' : '') . '">'
+                . '<input type="checkbox" class="checklist-checkbox" contenteditable="false"'
+                . ($checked ? ' checked="checked" data-checked="1"' : ' data-checked="0"') . '>'
+                . ' <span class="checklist-text" data-value="' . $text . '">';
+        },
+        $html
+    ) ?? $html;
+}
+
+/**
+ * Inserts an empty paragraph between two blocks that carry no air of their
+ * own: a paragraph, a toggle and a separator.
+ *
+ * A blank line is what separates two blocks in Markdown, and a page that
+ * renders Markdown shows that break as the air it puts under a paragraph. A
+ * rich-text note gives a paragraph no margin at all (css/notes/noteentry.css),
+ * so the break has no height there and the text came out of the conversion in
+ * one block. A heading, a list or a quote bring their own margins and are
+ * left alone; a toggle has next to none, so it counts with the paragraphs,
+ * and a separator has none at all ("hr { margin: 0 }", css/notes/editor.css),
+ * so the line the Markdown left under it was lost too. The empty paragraph is
+ * what the editor itself writes for a blank line, and converting back folds
+ * it into the paragraph break it came from, so a note can go back and forth
+ * without collecting blank lines.
+ *
+ * Code blocks are left untouched: the blank lines inside one are its text.
+ */
+function addRichTextParagraphSpacing($html) {
+    $spacer = '<p class="blank-line">&nbsp;</p>';
+
+    // Odd indexes hold the code blocks, even indexes the content between them
+    $parts = preg_split('/(<pre\b[^>]*>.*?<\/pre>)/s', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
+    if ($parts === false) {
+        return $html;
+    }
+
+    foreach ($parts as $index => $part) {
+        if ($index % 2 === 1) {
+            continue;
+        }
+        $parts[$index] = preg_replace(
+            '~(?<!class="blank-line">&nbsp;)(</(?:p|details)>|<hr\b[^>]*>)\s*\n\s*(?=<(?:p(?![^>]*class="blank-line")|details|hr)[\s>/])~',
+            '$1' . "\n" . $spacer . "\n",
+            $part
+        ) ?? $part;
+    }
+
+    return implode('', $parts);
 }
 
 /**

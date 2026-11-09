@@ -25,6 +25,7 @@ window.PoznoteShareSettings = (function() {
             txtCopyUrl: el.getAttribute('data-txt-copy-url') || 'Copy URL',
             txtCustomToken: el.getAttribute('data-txt-custom-token') || 'Custom token (optional)',
             txtCustomTokenPlaceholder: el.getAttribute('data-txt-custom-token-placeholder') || 'my_custom_token-1',
+            txtUseName: el.getAttribute('data-txt-use-name') || 'Use the name of the note or folder',
             txtError: el.getAttribute('data-txt-error') || 'Error',
             txtFolderEditable: el.getAttribute('data-txt-folder-editable') || 'Allow note editing',
             txtHidePassword: el.getAttribute('data-txt-hide-password') || 'Hide password',
@@ -413,15 +414,24 @@ window.PoznoteShareSettings = (function() {
         var titleBlock = document.createElement('div');
         titleBlock.className = 'shared-edit-token-modal-title';
         var title = document.createElement('h3');
+        // The name of the note or folder this link leads to. The dialog used
+        // to show the address alone, which says nothing about what is behind
+        // it once a custom token replaces the random one, and gives nothing
+        // to build that token from.
+        if (options.itemName) {
+            var nameText = document.createElement('span');
+            nameText.className = 'shared-edit-token-modal-title-name';
+            nameText.textContent = options.itemName;
+            nameText.title = options.itemName;
+            title.appendChild(nameText);
+        }
         var titleText = document.createElement('span');
         titleText.className = 'shared-edit-token-modal-title-link';
         title.appendChild(titleText);
         titleBlock.appendChild(title);
 
-        content.appendChild(titleBlock);
-
-        // Open and Copy act on the link: they sit with the dialog's own
-        // buttons at the bottom, as text, on a line of their own on mobile.
+        // Open and Copy act on the address above them, not on the dialog, so
+        // they sit under it rather than with Cancel / Revoke / Save.
         var openBtn = document.createElement('button');
         openBtn.type = 'button';
         openBtn.className = 'btn btn-success';
@@ -438,6 +448,14 @@ window.PoznoteShareSettings = (function() {
         copyBtn.addEventListener('click', function() {
             copyShareLink(titleText.textContent);
         });
+
+        var linkActions = document.createElement('div');
+        linkActions.className = 'shared-edit-token-modal-link-actions';
+        linkActions.appendChild(copyBtn);
+        linkActions.appendChild(openBtn);
+        titleBlock.appendChild(linkActions);
+
+        content.appendChild(titleBlock);
 
         var tokenRow = document.createElement('div');
         tokenRow.className = 'shared-edit-token-field-row';
@@ -464,6 +482,20 @@ window.PoznoteShareSettings = (function() {
         tokenLabel.appendChild(tokenHelp);
         tokenRow.appendChild(tokenLabel);
 
+        // A token built from the name, which is what one wants nine times out
+        // of ten and is tedious to type: accents dropped, spaces turned into
+        // dashes, the rest cut to what a token may hold.
+        function tokenFromName(name) {
+            var slug = String(name || '')
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .slice(0, 60)
+                .replace(/-+$/, '');
+            return slug;
+        }
+
         var tokenValue = document.createElement('div');
         tokenValue.className = 'shared-edit-token-field-value';
 
@@ -488,7 +520,23 @@ window.PoznoteShareSettings = (function() {
         renewBtn.setAttribute('aria-label', config.txtRenew);
         renewBtn.innerHTML = '<i class="lucide lucide-refresh-cw"></i>';
 
+        // Offered only when a slug can be made of the name: a title written
+        // entirely in a script this cannot transliterate leaves nothing.
+        var nameToken = tokenFromName(options.itemName);
+        var useNameBtn = null;
+        if (nameToken.length >= 4) {
+            useNameBtn = document.createElement('button');
+            useNameBtn.type = 'button';
+            useNameBtn.className = 'btn btn-secondary shared-edit-token-inline-renew';
+            useNameBtn.title = config.txtUseName;
+            useNameBtn.setAttribute('aria-label', config.txtUseName);
+            useNameBtn.innerHTML = '<i class="lucide lucide-type"></i>';
+        }
+
         tokenFieldGroup.appendChild(input);
+        if (useNameBtn) {
+            tokenFieldGroup.appendChild(useNameBtn);
+        }
         tokenFieldGroup.appendChild(renewBtn);
         tokenValue.appendChild(tokenFieldGroup);
         tokenRow.appendChild(tokenValue);
@@ -869,8 +917,27 @@ window.PoznoteShareSettings = (function() {
         renewBtn.addEventListener('click', function() {
             input.value = generateRandomToken();
             updatePreviewUrl();
+            // Same reason as the button next to it: on a phone the keyboard
+            // would cover the dialog for a token the button just filled in.
+            if (isMobileShareModalView()) {
+                return;
+            }
             input.focus();
         });
+        if (useNameBtn) {
+            useNameBtn.addEventListener('click', function() {
+                input.value = nameToken;
+                updatePreviewUrl();
+                // On a phone, focusing the field would raise the keyboard over
+                // the dialog for a token the button just filled in, and the
+                // selection it would make is invisible behind it.
+                if (isMobileShareModalView()) {
+                    return;
+                }
+                input.focus();
+                input.select();
+            });
+        }
         protocolCheckbox.addEventListener('change', updatePreviewUrl);
         input.addEventListener('input', updatePreviewUrl);
         saveBtn.addEventListener('click', function() {
@@ -933,11 +1000,6 @@ window.PoznoteShareSettings = (function() {
             }
         });
 
-        var linkActions = document.createElement('div');
-        linkActions.className = 'shared-edit-token-modal-link-actions';
-        linkActions.appendChild(copyBtn);
-        linkActions.appendChild(openBtn);
-        actions.appendChild(linkActions);
         actions.appendChild(cancelBtn);
         if (options.revoke) {
             actions.appendChild(buildRevokeButton());

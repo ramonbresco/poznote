@@ -182,8 +182,38 @@
     color: var(--pz-text);
 }
 
-#moveNoteFolderModal label[for="moveNoteTargetSelect"] {
-    margin-bottom: 22px;
+/* A single workspace leaves nothing to choose, so its whole row goes */
+#moveNoteFolderModal .form-group.initially-hidden {
+    display: none;
+}
+
+/* The note being moved, and the folder it is in */
+#moveNoteFolderModal .move-note-subject {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    min-width: 0;
+    color: var(--pz-text);
+    font-weight: var(--pz-weight-semibold);
+}
+
+#moveNoteFolderModal .move-note-subject i {
+    flex: 0 0 auto;
+    color: var(--pz-text-secondary);
+}
+
+#moveNoteFolderModal .move-note-subject-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#moveNoteFolderModal .move-note-subject-current {
+    margin: 2px 0 16px;
+    color: var(--pz-text-muted);
+    font-size: 13px;
 }
 
 #moveNoteFolderModal .move-note-label-row {
@@ -308,6 +338,138 @@
 
 #moveNoteFolderModal .move-note-recent-folder i {
     flex: 0 0 auto;
+}
+
+/* --- Target folder picker: filter bar, folder list --- */
+
+/* Holds the chosen folder and the option labels; the list below is what is seen */
+#moveNoteFolderModal .move-note-target-source {
+    display: none;
+}
+
+/* The dropdown sits between its label and the folder section, so it carries the
+   spacing of the group it is in, not the 15px of a modal control */
+#moveNoteFolderModal .workspace-select {
+    margin: 8px 0 0;
+}
+
+#moveNoteFolderModal .move-note-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 8px;
+}
+
+#moveNoteFolderModal .filter-input-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+#moveNoteFolderModal .move-note-filter-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--pz-text-subtle);
+    pointer-events: none;
+}
+
+/* !important beats the blanket .modal-content input padding of
+   modals/responsive.css, which would slide the text under the icon (its 16px
+   font size stays: it keeps iOS from zooming in on focus) */
+#moveNoteFolderModal .move-note-filter-bar .filter-input {
+    width: 100%;
+    margin: 0 !important;
+    padding: 10px 42px 10px 38px !important;
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-lg);
+    color: var(--pz-text);
+    background: var(--pz-bg);
+    box-sizing: border-box;
+}
+
+#moveNoteFolderModal .move-note-filter-bar .filter-input:focus {
+    outline: none;
+    border-color: var(--pz-accent-text);
+    box-shadow: 0 0 0 3px rgba(var(--pz-accent-text-rgb), 0.1);
+}
+
+#moveNoteFolderModal .clear-filter-btn {
+    position: absolute;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 6px;
+    border: none;
+    border-radius: var(--pz-radius);
+    background: none;
+    color: var(--pz-text-muted);
+    cursor: pointer;
+}
+
+#moveNoteFolderModal .clear-filter-btn:hover {
+    background: var(--pz-surface-hover);
+    color: var(--pz-text);
+}
+
+#moveNoteFolderModal .clear-filter-btn[hidden] {
+    display: none;
+}
+
+#moveNoteFolderModal .move-note-folder-list {
+    max-height: min(280px, 40vh);
+    margin-top: 0;
+}
+
+/* A folder row reads left to right: icon, path, then the mark of the chosen one,
+   so it does not space its parts out like the task picker it borrows from */
+#moveNoteFolderModal .move-note-folder-item {
+    justify-content: flex-start;
+    gap: 8px;
+    min-width: 0;
+    color: var(--pz-text);
+    font-size: 14px;
+    font-family: inherit;
+}
+
+#moveNoteFolderModal .move-note-folder-item > i {
+    flex: 0 0 auto;
+    color: var(--pz-text-secondary);
+}
+
+#moveNoteFolderModal .move-note-folder-path {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The folders above the one being picked: there to place it, not to be read */
+#moveNoteFolderModal .move-note-folder-parents {
+    color: var(--pz-text-muted);
+}
+
+/* The row the arrow keys point at, which Enter takes */
+#moveNoteFolderModal .move-note-folder-item.is-active {
+    outline: 1px solid var(--pz-accent-text);
+    outline-offset: -1px;
+}
+
+#moveNoteFolderModal .move-note-folder-check {
+    margin-left: auto;
+    visibility: hidden;
+    color: var(--pz-accent-text);
+}
+
+#moveNoteFolderModal .move-note-folder-item.selected .move-note-folder-check {
+    visibility: visible;
+}
+
+#moveNoteFolderModal .move-note-folder-item.move-task-create > i,
+#moveNoteFolderModal .move-note-folder-item.move-task-create {
+    color: var(--pz-accent);
 }
 
 /* Move Task Modal */
@@ -922,6 +1084,64 @@
 }
 
 /* ============================================
+   Embeds Modal (#embedsModal)
+   One line per embed provider the version ships: its name, and the hosts the
+   note may frame. Same shape as the tenant isolation feature list, with its
+   own names since the two lists are unrelated.
+   ============================================ */
+
+#embedsModal .modal-content {
+    max-width: 460px;
+}
+
+.embed-providers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.embed-provider {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.embed-provider input[type="checkbox"] {
+    margin-top: 3px;
+    flex: 0 0 auto;
+}
+
+.embed-provider-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.embed-provider-title {
+    font-weight: var(--pz-weight-semibold);
+}
+
+/* Inherit the modal text color so dark mode needs no override. */
+.embed-provider-help,
+.embed-providers-hint {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.embed-providers-hint {
+    margin: 0;
+}
+
+/* .modal-buttons only carries margin-top: auto, which collapses to nothing
+   once the list fills the modal: without this the row touches the hint above
+   it, while the modal padding leaves 28px under it. */
+#embedsModal .modal-buttons {
+    margin-top: 20px;
+}
+
+/* ============================================
    Local Network Access Modal (#outboundHostsModal)
    ============================================ */
 
@@ -961,6 +1181,12 @@
     margin: 8px 0 0;
     font-size: 12px;
     color: var(--pz-danger-text);
+}
+
+/* Same as #embedsModal: the hint (or the error under it) ends the modal with
+   no bottom margin, so the button row has to keep its own distance. */
+#outboundHostsModal .modal-buttons {
+    margin-top: 20px;
 }
 
 /* Code block language modal (js/code-block-language.js) */

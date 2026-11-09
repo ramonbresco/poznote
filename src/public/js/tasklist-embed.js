@@ -625,6 +625,12 @@
                 priorityButton.setAttribute('aria-haspopup', 'menu');
                 actions.appendChild(priorityButton);
             }
+            // An open task is deleted here too, like in the tasklist note:
+            // ticking it off first was the only way before.
+            actions.appendChild(actionButton('lucide-trash-2', t('tasklist.delete_task', null, 'Delete task'),
+                'tasklist-embed-action-delete', function () {
+                    deleteEmbedTask(embed, noteId, task);
+                }));
         }
         row.appendChild(actions);
 

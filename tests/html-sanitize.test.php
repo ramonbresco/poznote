@@ -95,3 +95,14 @@ test('a start number that is not an integer is dropped', function () {
     }
     assertContains('counter-reset: item -1', sanitizeHtml('<ol start="0"><li>x</li></ol>'), 'zero is a number');
 });
+
+test('a toggle stores neither whether it is open nor an editing host of its own', function () {
+    $html = sanitizeHtml('<details class="toggle-block" open onclick="x()"><summary class="toggle-header">T</summary><div class="toggle-content" contenteditable="true">x</div></details>');
+    // Open or closed is what the reader is doing right now, kept in the
+    // browser (js/toggle-block.js): in the note it would move the modified
+    // date and reach everyone the note is shared with.
+    assertNotContains('open', $html, 'open is runtime state');
+    assertNotContains('onclick', $html);
+    assertContains('<div class="toggle-content">x</div>', $html, 'the note is the only editing host');
+    assertNotContains('contenteditable', $html);
+});

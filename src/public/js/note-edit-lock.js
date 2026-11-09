@@ -267,6 +267,12 @@
             'btn-download',
             'btn-print',
             'btn-open-new-tab',
+            // The way out of a lock its owner set (lib/note-lock.php), and
+            // the menu that holds it on a phone, where the row shows only a
+            // handful of icons (css/index-mobile.css). The entries of that
+            // menu are disabled one by one just below.
+            'btn-lock-note',
+            'mobile-more-btn',
             'markdown-view-mode-btn',
             'markdown-edit-btn',
             'markdown-preview-btn'
@@ -292,6 +298,9 @@
             var selector = element.getAttribute('data-selector') || '';
             var keepEnabled = element.getAttribute('data-action') === 'print-note'
                 || selector === '.btn-download'
+                // The way out of a lock its owner set, when the row was too
+                // short to keep the button itself (js/toolbar-overflow.js)
+                || selector === '.btn-lock-note'
                 || selector === '.markdown-view-mode-btn'
                 || selector === '.markdown-edit-btn'
                 || selector === '.markdown-preview-btn';
@@ -342,7 +351,9 @@
     }
 
     function isLockHeldByDifferentUser(lock) {
-        return !!(lock && !lock.holder_is_current_user && !lock.holder_is_current_editor_session);
+        // manual_lock is the lock a note's owner set (entries.locked): it has
+        // no holder to take it over from, only a button to switch it off.
+        return !!(lock && !lock.manual_lock && !lock.holder_is_current_user && !lock.holder_is_current_editor_session);
     }
 
     function showLockConflictNotification(message) {
@@ -406,6 +417,144 @@
             });
             banner.appendChild(button);
         }
+    }
+
+    // ---- The lock a note's owner sets (entries.locked) ----------------------
+    //
+    // Not the lock above, which two people opening the same note take turns
+    // holding: this one is a decision, it survives reloads and nothing but
+    // the toolbar button clears it. The server refuses every write to the
+    // note's text while it is on (lib/note-lock.php); the editor shows the
+    // same read-only state so nothing is typed into a note that will not
+    // take it.
+
+    function isNoteManuallyLocked(noteId) {
+        var card = document.getElementById('note' + normalizeNoteId(noteId));
+        return !!(card && card.getAttribute('data-note-locked') === '1');
+    }
+
+    function paintManualLockButton(noteId, locked) {
+        var card = document.getElementById('note' + noteId);
+        if (!card) {
+            return;
+        }
+        card.setAttribute('data-note-locked', locked ? '1' : '0');
+        var button = card.querySelector('.btn-lock-note');
+        if (!button) {
+            return;
+        }
+        button.classList.toggle('active', !!locked);
+        button.setAttribute('data-locked', locked ? '1' : '0');
+        button.setAttribute('aria-pressed', locked ? 'true' : 'false');
+        button.setAttribute('title', locked
+            ? t('note_lock.unlock_note', {}, 'Unlock this note')
+            : t('note_lock.lock_note', {}, 'Lock this note against editing'));
+        var icon = button.querySelector('i');
+        if (icon) {
+            icon.className = 'lucide ' + (locked ? 'lucide-lock' : 'lucide-lock-open');
+        }
+
+        // The same control in the mobile menu (note_display.php), which is
+        // the only one on a phone: css/index-mobile.css keeps the row to a
+        // handful of icons.
+        var menuItem = card.querySelector('.mobile-lock-note-item');
+        if (menuItem) {
+            var label = menuItem.querySelector('.mobile-lock-note-label');
+            if (label) {
+                label.textContent = button.getAttribute('title') || '';
+            }
+            var menuIcon = menuItem.querySelector('i');
+            if (menuIcon) {
+                menuIcon.className = 'lucide ' + (locked ? 'lucide-lock' : 'lucide-lock-open');
+            }
+        }
+    }
+
+    function applyManualLockState(noteId) {
+        setNoteLockedState(noteId, { manual_lock: true });
+        paintManualLockButton(noteId, true);
+    }
+
+    /**
+     * The editor's side of the lock, without the request: paints the button
+     * and the menu entry, and switches the note between read-only and
+     * editable. Called after this tab's own PUT, and by the padlock of the
+     * notes tree (js/lock-all-notes.js), which locks every note at once and
+     * then has the open one follow without asking the server again.
+     */
+    function applyManualLockToNote(noteId, locked) {
+        noteId = normalizeNoteId(noteId);
+        if (!noteId || !document.getElementById('note' + noteId)) {
+            return;
+        }
+
+        paintManualLockButton(noteId, locked);
+        if (locked) {
+            stopHeartbeat();
+            stopStatusChecks();
+            releaseCurrentLock();
+            applyManualLockState(noteId);
+        } else {
+            clearNoteLockedState(noteId);
+            if (String(activeNoteId) === noteId) {
+                openNoteLock(noteId);
+            }
+        }
+    }
+
+    /**
+     * Flips entries.locked and the editor with it. A note with changes that
+     * have not reached the server yet is saved first: locking it would make
+     * the server refuse that save.
+     */
+    function setNoteManualLock(noteId, locked) {
+        noteId = normalizeNoteId(noteId);
+        if (!noteId) {
+            return;
+        }
+
+        var send = function () {
+            return fetch('/api/v1/notes/' + encodeURIComponent(noteId) + '/locked', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ locked: !!locked })
+            }).then(parseResponse).then(function (result) {
+                if (!result.ok || !result.data || !result.data.success) {
+                    showLockConflictNotification((result.data && result.data.error)
+                        || t('note_lock.lock_failed', {}, 'Unable to change the lock of this note.'));
+                    return;
+                }
+                applyManualLockToNote(noteId, locked);
+                if (typeof window.poznoteShowToast === 'function') {
+                    window.poznoteShowToast(locked
+                        ? t('note_lock.locked_toast', {}, 'Note locked')
+                        : t('note_lock.unlocked_toast', {}, 'Note unlocked'));
+                }
+            }).catch(function () {
+                showLockConflictNotification(t('note_lock.lock_failed', {}, 'Unable to change the lock of this note.'));
+            });
+        };
+
+        if (locked && typeof window.hasUnsavedChangesOnScreen === 'function' && window.hasUnsavedChangesOnScreen(noteId)
+            && typeof window.saveNoteImmediately === 'function') {
+            var done = false;
+            var go = function () {
+                if (done) { return; }
+                done = true;
+                send();
+            };
+            window.saveNoteImmediately({ onSaved: go });
+            // A save the server refuses never calls back
+            window.setTimeout(go, 2500);
+            return;
+        }
+
+        send();
     }
 
     /**
@@ -511,7 +660,13 @@
 
         if (noteCard) {
             noteCard.classList.add('note-edit-locked');
-            ensureLockBanner(noteCard, getLockBannerMessage(lock || null), lock || null);
+            if (lock && lock.manual_lock) {
+                // A lock its owner set needs no banner: the closed padlock in
+                // the toolbar is both the sign and the way out of it.
+                clearLockBanner(noteCard);
+            } else {
+                ensureLockBanner(noteCard, getLockBannerMessage(lock || null), lock || null);
+            }
             updateToolbarState(noteCard, true);
         }
 
@@ -908,6 +1063,12 @@
             setNoteLockedState(noteId, null);
             return;
         }
+        if (isNoteManuallyLocked(noteId)) {
+            // Its owner locked it: nothing can be typed into it, so there is
+            // no edit lock to take and no status to poll.
+            applyManualLockState(noteId);
+            return;
+        }
         setNoteCheckingState(noteId);
         sendOpenStatusRequest(noteId, acquireRequestId, 0);
     }
@@ -1073,6 +1234,27 @@
         handleLockConflict(noteId, lock, message, reason || 'lost');
     };
     window.releaseCurrentNoteEditLock = releaseCurrentLock;
+    // js/toolbar-overflow.js rebuilds the menu entries of a row too short to
+    // show every button: entries born after the note was locked would look
+    // usable (clicking one is already a no-op, the button behind it is
+    // disabled). Called once the row has been laid out again.
+    window.poznoteRefreshNoteLockToolbar = function (toolbar) {
+        var noteCard = toolbar && toolbar.closest ? toolbar.closest('.notecard') : null;
+        if (!noteCard) {
+            return;
+        }
+        var noteId = normalizeNoteId(String(noteCard.id || '').replace(/^note/, ''));
+        if (!noteId || !noteStates[noteId] || noteStates[noteId].editable !== false) {
+            return;
+        }
+        updateToolbarState(noteCard, true);
+    };
+    window.setNoteManualLock = setNoteManualLock;
+    window.applyNoteManualLockState = applyManualLockToNote;
+    window.isNoteManuallyLocked = isNoteManuallyLocked;
+    window.toggleNoteManualLock = function (noteId) {
+        setNoteManualLock(noteId, !isNoteManuallyLocked(noteId));
+    };
     window.noteEditLockActivity = noteEditActivity;
     window.acquireNoteEditLockForCurrentNote = handleCurrentNoteLoaded;
 

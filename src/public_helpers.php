@@ -165,6 +165,53 @@ function publicNoteIframeSrcIsTrusted(string $src): bool {
 }
 
 /**
+ * Put the "embedded content blocked" notice in place of an iframe this
+ * instance refuses to frame (lib/embed-providers.php).
+ *
+ * A page that only reads a note cannot leave the frame in the markup the way
+ * the editor does, since the allow-list below drops it; dropping it without a
+ * word is what made a disabled provider look like a note that lost content.
+ *
+ * @param DOMElement $iframe The refused frame, still in the document
+ * @param string|null $lang Language of the page, the reader's by default
+ */
+function poznoteReplaceWithBlockedEmbedNotice(DOMElement $iframe, ?string $lang = null): void {
+    $parent = $iframe->parentNode;
+    if ($parent === null) {
+        return;
+    }
+    $doc = $iframe->ownerDocument;
+    if ($doc === null || !function_exists('poznoteBlockedEmbedNoticeHtml')) {
+        $parent->removeChild($iframe);
+        return;
+    }
+
+    $notice = new DOMDocument();
+    $notice->encoding = 'UTF-8';
+    libxml_use_internal_errors(true);
+    $notice->loadHTML(
+        '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>'
+            . poznoteBlockedEmbedNoticeHtml(
+                (string) $iframe->getAttribute('src'),
+                $lang,
+                (string) $doc->saveHTML($iframe)
+            )
+            . '</body></html>',
+        LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+    );
+    libxml_clear_errors();
+
+    $body = $notice->getElementsByTagName('body')->item(0);
+    $built = ($body !== null) ? $body->firstChild : null;
+    if ($built === null) {
+        $parent->removeChild($iframe);
+        return;
+    }
+
+    $parent->replaceChild($doc->importNode($built, true), $iframe);
+}
+
+/**
  * Sanitize rendered HTML before it is echoed on a public (unauthenticated) page.
  *
  * This performs a real DOM parse + tag/attribute allowlist (not a regex pass),
@@ -183,7 +230,7 @@ function publicNoteIframeSrcIsTrusted(string $src): bool {
  * Server-generated markup (e.g. tasklist `data-index`/`data-text`) is preserved
  * because data-* / aria-* / title / class are kept.
  */
-function sanitizePublicNoteHtml(string $content): string {
+function sanitizePublicNoteHtml(string $content, ?string $lang = null): string {
     if (trim($content) === '') {
         return $content;
     }
@@ -216,6 +263,7 @@ function sanitizePublicNoteHtml(string $content): string {
         'td' => ['colspan', 'rowspan'],
         'th' => ['colspan', 'rowspan', 'scope'],
         'ol' => ['type', 'start'],
+        'details' => ['open'],
         'col' => ['span'],
         'colgroup' => ['span'],
         'input' => ['type', 'checked', 'disabled', 'readonly', 'value', 'placeholder'],
@@ -312,6 +360,12 @@ function sanitizePublicNoteHtml(string $content): string {
                 if (!$isSafeUrl($attr->value, $tag === 'img')) {
                     $el->removeAttribute($attr->name);
                 }
+            } elseif ($name === 'contenteditable' && $attr->value !== 'false') {
+                // A page nobody can edit: the only contenteditable that means
+                // anything here is the one that turns editing off. A toggle
+                // block of an older note carries contenteditable="true" on
+                // its body, which let a visitor type into the share.
+                $el->removeAttribute($attr->name);
             } elseif ($name === 'style') {
                 if (preg_match('/expression\s*\(|javascript\s*:|vbscript\s*:/i', $attr->value)) {
                     $el->removeAttribute($attr->name);
@@ -330,7 +384,10 @@ function sanitizePublicNoteHtml(string $content): string {
         }
 
         if ($tag === 'iframe' && !publicNoteIframeSrcIsTrusted($el->getAttribute('src'))) {
-            $el->parentNode->removeChild($el);
+            // Taking it out without a word leaves a hole the reader cannot
+            // explain, so the notice js/embeds.js shows in the app takes its
+            // place here too (css/components/embed-blocked.css).
+            poznoteReplaceWithBlockedEmbedNotice($el, $lang);
         }
     }
 
@@ -352,11 +409,19 @@ function renderPublicStatusPage($currentLang, array $options = []) {
 
     $statusStylesheetHref = getVersionedPublicAppAssetHref('css/public_folder.css');
     $statusVariablesStylesheetHref = getVersionedPublicAppAssetHref('css/tokens.css');
+    // The card asks for Inter and nothing loaded it, so the page fell back to
+    // whatever generic sans-serif the browser had, next to shared pages that
+    // do have the font.
+    $statusFontsStylesheetHref = getVersionedPublicAppAssetHref('css/fonts.css');
     $themeInitHref = getVersionedPublicAppAssetHref('js/theme-init.js');
     $title = $options['title'] ?? t_h('common.error', [], 'Error', $currentLang);
     $message = $options['message'] ?? '';
     $hint = $options['hint'] ?? '';
     $actions = $options['actions'] ?? [];
+    // Both were passed by every caller and rendered by none: the status code
+    // as a small pill, and a glyph standing in for what went wrong.
+    $icon = (string)($options['icon'] ?? '');
+    $badge = (string)($options['badge'] ?? '');
     $forcedTheme = normalizePublicForcedTheme($options['theme'] ?? null);
     ?>
     <!doctype html>
@@ -369,11 +434,22 @@ function renderPublicStatusPage($currentLang, array $options = []) {
         <?php renderPublicForcedThemeScript($forcedTheme); ?>
         <script src="<?php echo htmlspecialchars($themeInitHref, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"></script>
         <link rel="stylesheet" href="<?php echo htmlspecialchars($statusVariablesStylesheetHref, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+        <link rel="stylesheet" href="<?php echo htmlspecialchars($statusFontsStylesheetHref, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
         <link rel="stylesheet" href="<?php echo htmlspecialchars($statusStylesheetHref, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
     </head>
     <body class="status-page-body">
         <div class="status-page-shell">
             <main class="status-card" role="main">
+                <?php if ($icon !== '' || $badge !== ''): ?>
+                    <div class="status-card-head">
+                        <?php if ($icon !== ''): ?>
+                            <span class="status-card-icon" aria-hidden="true"><?php echo escapePublicStatusText($icon); ?></span>
+                        <?php endif; ?>
+                        <?php if ($badge !== ''): ?>
+                            <span class="status-card-badge"><?php echo escapePublicStatusText($badge); ?></span>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
                 <h1><?php echo escapePublicStatusText($title); ?></h1>
                 <p class="status-card-message"><?php echo escapePublicStatusText($message); ?></p>
 
@@ -405,7 +481,9 @@ function renderLoginRequiredPage($currentLang) {
     renderPublicStatusPage($currentLang, [
         'status' => 403,
         'icon' => '🔒',
-        'badge' => t_h('public.login_required_title', [], 'Login Required', $currentLang),
+        // The status code, now that the badge is rendered: it used to repeat
+        // the title word for word
+        'badge' => '403',
         'title' => t_h('public.login_required_title', [], 'Login Required', $currentLang),
         'message' => t_h('public.login_required_message', [], 'This content is restricted to specific users. Please log in to access it.', $currentLang),
         'hint' => t_h('public.restricted_help', [], 'When restricted, only the listed users can access this share after logging in.', $currentLang),
@@ -427,7 +505,7 @@ function renderAccessDeniedPage($currentLang) {
     renderPublicStatusPage($currentLang, [
         'status' => 403,
         'icon' => '⛔',
-        'badge' => t_h('public.access_denied_title', [], 'Access Denied', $currentLang),
+        'badge' => '403',
         'title' => t_h('public.access_denied_title', [], 'Access Denied', $currentLang),
         'message' => t_h('public.access_denied_message', [], 'You do not have permission to view this content.', $currentLang),
         'hint' => t_h('public.access_denied_hint', [], 'Only the accounts chosen by the owner can open this share. Contact the owner or the administrator if you need access.', $currentLang),
