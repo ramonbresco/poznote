@@ -311,6 +311,14 @@ html .note-edit-toolbar .toolbar-btn.is-toolbar-overflowed {
     display: none !important;
 }
 
+/* The lock lives in the menu only (note_display.php), on a computer as on a
+   phone, where css/index-mobile.css keeps the row to a handful of icons. The
+   button stays in the markup: it is what the menu entry clicks, what
+   js/note-edit-lock.js paints, and what the Element visibility key hides. */
+html .note-edit-toolbar .toolbar-btn.btn-lock-note {
+    display: none !important;
+}
+
 .note-edit-toolbar .toolbar-overflow-anchor {
     position: relative;
     display: inline-flex;
