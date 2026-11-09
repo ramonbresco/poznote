@@ -208,6 +208,7 @@
       "release_notes": "Obre les notes de totes les versions de Poznote a GitHub.",
       "login_disabled": "Omet la pantalla d'inici de sessió: qualsevol navegador que arribi a aquesta instància obre directament el vostre compte, sense nom d'usuari, contrasenya ni codi de dos factors. Activeu-ho només si sou l'única persona que pot accedir a aquesta instància o si un servidor intermediari invers en gestiona l'autenticació. L'API continua demanant credencials.",
       "outbound_hosts": "Els usuaris que no són administradors només poden connectar els webhooks, la sincronització amb Git i els seus propis servidors d'IA, de transcripció o MCP a amfitrions públics d'Internet. Llisteu aquí els amfitrions o les xarxes locals que poden fer servir, com ara un servidor d'Ollama o d'n8n. Els administradors no tenen límits.",
+      "embeds": "Les notes poden incrustar contingut d'aquests llocs, com un vídeo de YouTube o una applet de GeoGebra. Desactiveu els que la vostra instància no hagi de carregar mai. Cap altre lloc es pot incrustar, i aquí no s'hi poden afegir llocs.",
       "diary_template": "Trieu una nota amb el contingut de la qual comença cada entrada nova del diari de l'espai de treball {{workspace}}. La llista mostra les notes d'una carpeta anomenada Templates (o Plantilles) d'aquest espai de treball. Cada espai de treball té la seva plantilla.",
       "markdown_view_cycle": "Trieu les visualitzacions que ofereix el menú de visualització d'una nota Markdown, a més de la visualització clàssica (previsualització, amb el llapis per editar). Les visualitzacions excloses no hi apareixen. Si no en trieu cap, el botó s'amaga. En un telèfon, el menú no ofereix mai el mode dividit.",
       "connected_apps": "Connecteu aplicacions de xat com ara ChatGPT o Claude a les notes mitjançant el servidor MCP i desconnecteu-les en qualsevol moment.",
@@ -265,6 +266,7 @@
     },
     "cards": {
       "tenant_isolation": "Aïllament d'inquilins",
+      "embeds": "Contingut incrustat",
       "user_management": "Gestió d'usuaris",
       "backup_export": "Còpia de seguretat / Exportació",
       "restore_import": "Restauració / Importació",
@@ -382,6 +384,11 @@
     "outbound_hosts": {
       "status_allowed": "{{count}} permesos",
       "status_public_only": "Només públics"
+    },
+    "embeds": {
+      "status_all": "Tots els llocs",
+      "status_some": "{{count}} de {{total}}",
+      "status_none": "Cap"
     },
     "diary_template": {
       "none": "Cap",
@@ -1411,6 +1418,11 @@
         "user_s3_restore": "Restauració des d'S3 a la pàgina de restauració",
         "user_s3_restore_help": "Els usuaris que no són administradors ja no veuen la secció Restaura des d'S3 de la pàgina Restauració / Importació i no poden restaurar arxius del cubell."
       }
+    },
+    "embeds": {
+      "title": "Contingut incrustat",
+      "description": "Les notes poden incrustar contingut dels llocs següents, com un vídeo o una applet interactiva. Desmarqueu els que aquesta instància no hagi de carregar mai. Cap altre lloc es pot incrustar en una nota, i aquí no s'hi poden afegir llocs.",
+      "existing_hint": "Si desmarqueu un lloc, els continguts que ja tenen les notes queden ocults: deixen de carregar-se, i si després editeu una nota així, el contingut incrustat se'n perd."
     },
     "note": {
       "rename_title": "Canvi de nom de la nota",

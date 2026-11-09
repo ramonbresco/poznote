@@ -185,6 +185,9 @@
         if (document.getElementById('outbound-hosts-card')) {
             keys.push('outbound_allowed_hosts');
         }
+        if (document.getElementById('embeds-card')) {
+            keys.push('embed_providers_disabled');
+        }
 
         var unique = Object.create(null);
         return keys.filter(function (key) {
@@ -1811,6 +1814,62 @@
         });
     }
 
+    // Embed providers (embed_providers_disabled): the sites a note may frame.
+    // The stored value lists the providers switched OFF, so an empty value is
+    // "everything this version ships", and the modal can only ever narrow it.
+    // The provider ids and names come from the modal the page already holds,
+    // which the server built from the catalogue.
+    function embedProviderCheckboxes() {
+        var modal = document.getElementById('embedsModal');
+        if (!modal) return [];
+        return Array.prototype.slice.call(modal.querySelectorAll('[data-embed-provider]'));
+    }
+
+    function disabledEmbedProviders(raw) {
+        if (!raw || String(raw).trim() === '') return [];
+        var disabled = [];
+        try { disabled = JSON.parse(raw); } catch (e) { disabled = []; }
+        return Array.isArray(disabled) ? disabled : [];
+    }
+
+    function refreshEmbedsBadge() {
+        var badge = document.getElementById('embeds-status');
+        if (!badge) return;
+
+        getSetting('embed_providers_disabled', function (raw) {
+            var disabled = disabledEmbedProviders(raw);
+            var total = embedProviderCheckboxes().length;
+            var enabled = total - embedProviderCheckboxes().filter(function (checkbox) {
+                return disabled.indexOf(checkbox.getAttribute('data-embed-provider')) !== -1;
+            }).length;
+
+            if (total > 0 && enabled === 0) {
+                badge.textContent = tr('settings.embeds.status_none', {}, 'None');
+            } else if (enabled === total) {
+                badge.textContent = tr('settings.embeds.status_all', {}, 'All sites');
+            } else {
+                badge.textContent = tr('settings.embeds.status_some', { count: enabled, total: total }, '{{count}} of {{total}}');
+            }
+            // No state is a problem here: fewer sites is the safer one.
+            badge.className = 'setting-status neutral';
+        });
+    }
+
+    function showEmbedsModal() {
+        var modal = document.getElementById('embedsModal');
+        if (!modal) return;
+
+        getSetting('embed_providers_disabled', function (raw) {
+            var disabled = disabledEmbedProviders(raw);
+            embedProviderCheckboxes().forEach(function (checkbox) {
+                // Checked means allowed, so the checkbox is the opposite of
+                // what is stored.
+                checkbox.checked = disabled.indexOf(checkbox.getAttribute('data-embed-provider')) === -1;
+            });
+            modal.style.display = 'flex';
+        });
+    }
+
     function showTenantIsolationModal() {
         var modal = document.getElementById('tenantIsolationModal');
         if (!modal) return;
@@ -3267,6 +3326,11 @@
             outboundHostsCard.addEventListener('click', showOutboundHostsModal);
         }
 
+        var embedsCard = document.getElementById('embeds-card');
+        if (embedsCard) {
+            embedsCard.addEventListener('click', showEmbedsModal);
+        }
+
         var tenantIsolationCard = document.getElementById('tenant-isolation-card');
         if (tenantIsolationCard) {
             tenantIsolationCard.addEventListener('click', showTenantIsolationModal);
@@ -3860,6 +3924,32 @@
             });
         }
 
+        // Save the embed providers modal: posts the providers left unchecked.
+        var saveEmbedProvidersBtn = document.getElementById('saveEmbedProvidersBtn');
+        if (saveEmbedProvidersBtn) {
+            saveEmbedProvidersBtn.addEventListener('click', function () {
+                var disabled = embedProviderCheckboxes().filter(function (checkbox) {
+                    return !checkbox.checked;
+                }).map(function (checkbox) {
+                    return checkbox.getAttribute('data-embed-provider');
+                });
+
+                setSetting('embed_providers_disabled', JSON.stringify(disabled), function (ok) {
+                    if (!ok) {
+                        alert(tr('display.alerts.error_saving_preference', {}, 'Error saving preference'));
+                        return;
+                    }
+                    try { closeModal('embedsModal'); } catch (e) {
+                        console.debug('settings-page: closeModal(embedsModal) failed:', e);
+                    }
+                    refreshEmbedsBadge();
+                    // The pages that render notes build their frame-src from
+                    // this list when they load.
+                    reloadOpener();
+                });
+            });
+        }
+
         // Save tenant isolation modal button
         var saveTenantIsolationBtn = document.getElementById('saveTenantIsolationBtn');
         if (saveTenantIsolationBtn) {
@@ -3914,6 +4004,7 @@
             refreshGitSyncEnabledBadge();
             refreshTenantIsolationBadge();
             refreshOutboundHostsBadge();
+            refreshEmbedsBadge();
             refreshFolderTreeHighlightBadge();
             refreshUiCustomizationBadge();
         });

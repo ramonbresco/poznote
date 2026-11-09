@@ -922,6 +922,57 @@
 }
 
 /* ============================================
+   Embeds Modal (#embedsModal)
+   One line per embed provider the version ships: its name, and the hosts the
+   note may frame. Same shape as the tenant isolation feature list, with its
+   own names since the two lists are unrelated.
+   ============================================ */
+
+#embedsModal .modal-content {
+    max-width: 460px;
+}
+
+.embed-providers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.embed-provider {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.embed-provider input[type="checkbox"] {
+    margin-top: 3px;
+    flex: 0 0 auto;
+}
+
+.embed-provider-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.embed-provider-title {
+    font-weight: var(--pz-weight-semibold);
+}
+
+/* Inherit the modal text color so dark mode needs no override. */
+.embed-provider-help,
+.embed-providers-hint {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.embed-providers-hint {
+    margin: 0;
+}
+
+/* ============================================
    Local Network Access Modal (#outboundHostsModal)
    ============================================ */
 

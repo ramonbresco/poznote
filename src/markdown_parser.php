@@ -1032,8 +1032,9 @@ function parseMarkdown($text) {
         $attrs = html_entity_decode($attrs, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
         // Shared allow-list rebuild (functions.php): strict host match on src
-        // against ALLOWED_IFRAME_DOMAINS or Poznote's local audio player, and
-        // only safe attributes re-emitted with re-encoded values.
+        // against the enabled embed providers (lib/embed-providers.php) or
+        // Poznote's local audio player, and only safe attributes re-emitted
+        // with re-encoded values.
         $iframeTag = poznoteRebuildMediaTag('iframe', $attrs);
         if ($iframeTag === null) {
             // If not allowed, return the original (will be escaped)
@@ -1046,7 +1047,8 @@ function parseMarkdown($text) {
         return $placeholder;
     };
 
-    // Protect iframe tags (YouTube, Bilibili, and Poznote audio player embeds).
+    // Protect iframe tags (the enabled embed providers, and Poznote's own
+    // audio player).
     $text = preg_replace_callback('/<iframe\s+([^>]+)>\s*<\/iframe>/is', function($matches) use ($protectIframeTag) {
         return $protectIframeTag($matches[1], $matches[0]);
     }, $text);

@@ -196,6 +196,19 @@ body.public-note-page {
     margin: 10px 0;
 }
 
+/* Applet embeds (lib/embed-providers.php): an interactive applet is not a video,
+   so it does not take the 16/9 shape of the rule above, which squashed a
+   GeoGebra construction into a letterbox (#1742). 4/3 keeps the height tied to
+   the width, since an iframe without a height falls back to 150px. The host is
+   guaranteed by the sanitiser, so matching the src here is cosmetic only. */
+/* Full width here too: half the page is cramped for something the visitor is
+   meant to manipulate, while it suits a video. */
+.public-note iframe[src*="//www.geogebra.org/"],
+.public-note iframe[src*="//geogebra.org/"] {
+    max-width: 100%;
+    aspect-ratio: 4 / 3;
+}
+
 @media screen and (max-width: 768px) {
     .public-note iframe:not([data-is-audio]):not(.note-audio-embed) {
         max-width: 100%;

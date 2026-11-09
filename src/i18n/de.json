@@ -540,6 +540,7 @@
       "release_notes": "Die Versionshinweise aller Poznote-Versionen auf GitHub öffnen.",
       "login_disabled": "Überspringt die Anmeldeseite: Jeder Browser, der diese Instanz erreicht, öffnet direkt Ihr Konto, ohne Benutzername, Passwort oder Zwei-Faktor-Code. Nur aktivieren, wenn allein Sie diese Instanz erreichen können oder ein vorgeschalteter Reverse Proxy die Authentifizierung übernimmt. Die API verlangt weiterhin Zugangsdaten.",
       "outbound_hosts": "Benutzer ohne Administratorrechte können Webhooks, Git Sync und ihre eigenen KI-, Transkriptions- oder MCP-Server nur mit öffentlichen Internet-Hosts verbinden. Listen Sie hier die lokalen Hosts oder Netzwerke auf, die sie verwenden dürfen, etwa einen Ollama- oder n8n-Server. Administratoren sind nicht eingeschränkt.",
+      "embeds": "Notizen können Inhalte dieser Seiten einbetten, etwa ein YouTube-Video oder ein GeoGebra-Applet. Schalten Sie die Seiten ab, die diese Instanz niemals laden soll. Andere Seiten können nicht eingebettet werden, und hier lassen sich keine hinzufügen.",
       "diary_template": "Wählen Sie eine Notiz, mit deren Inhalt jeder neue Tagebucheintrag des Arbeitsbereichs {{workspace}} beginnt. Die Liste zeigt die Notizen in einem Ordner namens Vorlagen (oder Templates) dieses Arbeitsbereichs. Jeder Arbeitsbereich hat seine eigene Vorlage.",
       "markdown_view_cycle": "Wählen Sie die Ansichten, die das Ansichtsmenü einer Markdown-Notiz neben der klassischen Ansicht (Vorschau, mit dem Stift zum Bearbeiten) anbietet. Nicht gewählte Ansichten werden nicht aufgeführt. Ist keine gewählt, wird die Schaltfläche ausgeblendet. Auf einem Telefon bietet das Menü nie die geteilte Ansicht an.",
       "connected_apps": "Verbinden Sie Chat-Apps wie ChatGPT oder Claude über den MCP-Server mit Ihren Notizen und trennen Sie sie jederzeit.",
@@ -619,6 +620,7 @@
     },
     "cards": {
       "tenant_isolation": "Mandantentrennung",
+      "embeds": "Einbettungen",
       "backup_export": "Sicherung / Export",
       "restore_import": "Wiederherstellen / Importieren",
       "git_sync": "Git-Synchronisierung",
@@ -719,6 +721,11 @@
     "outbound_hosts": {
       "status_allowed": "{{count}} erlaubt",
       "status_public_only": "Nur öffentlich"
+    },
+    "embeds": {
+      "status_all": "Alle Seiten",
+      "status_some": "{{count}} von {{total}}",
+      "status_none": "Keine"
     },
     "diary_template": {
       "none": "Keine",
@@ -1933,6 +1940,11 @@
         "user_s3_restore": "S3-Wiederherstellung auf der Wiederherstellungsseite",
         "user_s3_restore_help": "Nicht-Admin-Benutzer sehen den Abschnitt Aus S3 wiederherstellen der Seite Wiederherstellen / Importieren nicht mehr und können keine Bucket-Archive mehr wiederherstellen."
       }
+    },
+    "embeds": {
+      "title": "Einbettungen",
+      "description": "Notizen können Inhalte der folgenden Seiten einbetten, etwa ein Video oder ein interaktives Applet. Entfernen Sie das Häkchen bei den Seiten, die diese Instanz niemals laden soll. Andere Seiten können nicht in eine Notiz eingebettet werden, und hier lassen sich keine hinzufügen.",
+      "existing_hint": "Wird eine Seite abgewählt, verschwinden die Einbettungen, die Notizen bereits enthalten: sie werden nicht mehr geladen, und wer eine solche Notiz danach bearbeitet, entfernt die Einbettung daraus."
     },
     "note": {
       "rename_title": "Notiz umbenennen",

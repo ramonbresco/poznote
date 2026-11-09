@@ -10,20 +10,18 @@
 // ============================================================================
 
 /**
- * Domains an embed may come from. Must stay the same list as
- * ALLOWED_IFRAME_DOMAINS in lib/html-sanitize.php and as the frame-src of the
- * Content-Security-Policy: an iframe this file lets through but the server
- * refuses is inserted, blocked by the browser, then deleted by the next save.
+ * Domains an embed may come from: the list the page received from the server
+ * (index.php, from lib/embed-providers.php), which is also the frame-src of
+ * the Content-Security-Policy and the list the sanitiser enforces on save. It
+ * was a fourth copy of the hosts, hardcoded here, so a provider an
+ * administrator switched off was still accepted on paste, inserted, blocked by
+ * the browser, then deleted by the next save. No list means nothing is
+ * pasteable rather than everything.
  */
-var PASTE_ALLOWED_EMBED_DOMAINS = [
-    'youtube.com',
-    'www.youtube.com',
-    'youtube-nocookie.com',
-    'www.youtube-nocookie.com',
-    'player.bilibili.com',
-    'www.bilibili.com',
-    'bilibili.com'
-];
+function pasteAllowedEmbedDomains() {
+    var domains = window.ALLOWED_IFRAME_DOMAINS;
+    return Array.isArray(domains) ? domains : [];
+}
 
 /**
  * Same rule as poznoteIframeSrcIsTrusted() server-side: exact host match (or a
@@ -48,7 +46,8 @@ function isTrustedEmbedSrc(src) {
     if (url.protocol !== 'http:' && url.protocol !== 'https:') return false;
 
     var host = url.hostname.toLowerCase();
-    return PASTE_ALLOWED_EMBED_DOMAINS.some(function (domain) {
+    return pasteAllowedEmbedDomains().some(function (domain) {
+        domain = String(domain).toLowerCase();
         return host === domain || host.slice(-(domain.length + 1)) === '.' + domain;
     });
 }
@@ -64,7 +63,7 @@ function insertPastedHtml(html) {
 }
 
 /**
- * Check if pasted content is iframe HTML (YouTube, Bilibili)
+ * Check if pasted content is iframe HTML (an enabled embed provider)
  * @param {string} plainText - The pasted plain text
  * @returns {boolean} True if iframe is allowed and inserted
  */

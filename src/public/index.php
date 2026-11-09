@@ -8,12 +8,19 @@ ini_set('display_startup_errors', $poznoteDebug ? '1' : '0');
 ini_set('log_errors', '1');
 error_reporting(E_ALL);
 
-// Load functions to get ALLOWED_IFRAME_DOMAINS
+// Load functions to get the allowed embed hosts (lib/embed-providers.php).
+// config.php comes with them, although auth.php below pulls it in anyway: the
+// embed providers an administrator switched off are stored in master.db, which
+// cannot be opened before config has run, and the frame-src built below would
+// then always be the full shipped list.
 require_once __DIR__ . '/../functions.php';
+require_once __DIR__ . '/../config.php';
 
-// Build CSP frame-src directive from allowed domains
+// Build CSP frame-src directive from the embed providers enabled on this
+// instance: a provider an administrator switched off is refused by the browser
+// here, as well as by the sanitiser that renders the note.
 $frameSrcDomains = "'self'";
-foreach (ALLOWED_IFRAME_DOMAINS as $domain) {
+foreach (poznoteAllowedIframeDomains() as $domain) {
     $frameSrcDomains .= " https://{$domain}";
 }
 
@@ -453,7 +460,7 @@ if ($center_note_content_enabled && $width_value !== '1' && $width_value !== 'tr
     </script>
     <?php endif; ?>
     <script src="pwa/pwa.js?v=<?php echo $v; ?>" defer></script>
-    <script>window.ALLOWED_IFRAME_DOMAINS = <?php echo json_encode(ALLOWED_IFRAME_DOMAINS); ?>;</script>
+    <script>window.ALLOWED_IFRAME_DOMAINS = <?php echo json_encode(poznoteAllowedIframeDomains()); ?>;</script>
     <meta name="color-scheme" content="dark light">
     <!-- Modular CSS served as two concatenated bundles (see index_css.php).
          css/index-mobile.css stays a separate media-scoped link between the two

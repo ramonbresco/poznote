@@ -15,9 +15,10 @@ require_once __DIR__ . '/../version_helper.php';
 
 $currentLang = getUserLanguage();
 
-// Build CSP frame-src directive from allowed domains
+// Build CSP frame-src directive from the embed providers enabled on this
+// instance (lib/embed-providers.php)
 $frameSrcDomains = "'self'";
-foreach (ALLOWED_IFRAME_DOMAINS as $domain) {
+foreach (poznoteAllowedIframeDomains() as $domain) {
     $frameSrcDomains .= " https://{$domain}";
 }
 
@@ -836,7 +837,7 @@ if (poznoteMarkdownColoredEnabled($markdownColoredTheme)) {
     <meta name="robots" content="noindex, nofollow">
     <?php endif; ?>
     <title><?php echo htmlspecialchars($note['heading'] ?: t('untitled', [], 'Untitled', $currentLang)); ?></title>
-    <script nonce="<?php echo htmlspecialchars($cspNonce, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">window.ALLOWED_IFRAME_DOMAINS = <?php echo json_encode(ALLOWED_IFRAME_DOMAINS); ?>;</script>
+    <script nonce="<?php echo htmlspecialchars($cspNonce, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">window.ALLOWED_IFRAME_DOMAINS = <?php echo json_encode(poznoteAllowedIframeDomains()); ?>;</script>
     <!-- CSP-compliant theme initialization -->
     <script type="application/json" id="public-note-config"><?php
         $apiBaseUrl = $scriptDir . '/api/v1';

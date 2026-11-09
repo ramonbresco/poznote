@@ -539,6 +539,7 @@
       "release_notes": "Ouvrir les notes de toutes les versions de Poznote sur GitHub.",
       "login_disabled": "Passe l'écran de connexion : tout navigateur qui atteint cette instance ouvre directement votre compte, sans nom d'utilisateur, mot de passe ni code à deux facteurs. À n'activer que si vous êtes seul à pouvoir joindre cette instance, ou si un reverse proxy placé devant elle gère l'authentification. L'API continue de demander des identifiants.",
       "outbound_hosts": "Les utilisateurs non administrateurs ne peuvent connecter les webhooks, Git Sync et leurs propres serveurs IA, de transcription ou MCP qu'à des hôtes publics d'Internet. Listez ici les hôtes ou réseaux locaux qu'ils peuvent utiliser, par exemple un serveur Ollama ou n8n. Les administrateurs ne sont pas limités.",
+      "embeds": "Les notes peuvent intégrer du contenu de ces sites, comme une vidéo YouTube ou une applet GeoGebra. Désactivez ceux que votre instance ne doit jamais charger. Aucun autre site ne peut être intégré, et aucun site ne peut être ajouté ici.",
       "diary_template": "Choisissez une note dont le contenu sert de point de départ à chaque nouvelle entrée de journal de l'espace de travail {{workspace}}. La liste montre les notes rangées dans un dossier nommé Modèles (ou Templates) de cet espace. Chaque espace de travail a son propre modèle.",
       "markdown_view_cycle": "Choisissez les vues que le menu des vues d'une note markdown propose en plus de la vue classique (aperçu, avec le crayon pour modifier). Les vues décochées n'y figurent pas. Si aucune n'est cochée, le bouton est masqué. Sur un téléphone, le menu ne propose jamais le mode partagé.",
       "connected_apps": "Connectez des applications de chat comme ChatGPT ou Claude à vos notes via le serveur MCP, et déconnectez-les à tout moment.",
@@ -618,6 +619,7 @@
     },
     "cards": {
       "tenant_isolation": "Isolation des comptes",
+      "embeds": "Contenus intégrés",
       "user_management": "Gestion des utilisateurs",
       "backup_export": "Sauvegarde / Export",
       "restore_import": "Restauration / Import",
@@ -718,6 +720,11 @@
     "outbound_hosts": {
       "status_allowed": "{{count}} autorisé(s)",
       "status_public_only": "Public uniquement"
+    },
+    "embeds": {
+      "status_all": "Tous les sites",
+      "status_some": "{{count}} sur {{total}}",
+      "status_none": "Aucun"
     },
     "diary_template": {
       "none": "Aucun",
@@ -1939,6 +1946,11 @@
         "user_s3_restore": "Restauration S3 sur la page Restauration",
         "user_s3_restore_help": "Les utilisateurs non administrateurs ne voient plus la section Restauration depuis S3 de la page Restauration / Import et ne peuvent plus restaurer d'archives du bucket."
       }
+    },
+    "embeds": {
+      "title": "Contenus intégrés",
+      "description": "Les notes peuvent intégrer du contenu des sites ci-dessous, comme une vidéo ou une applet interactive. Décochez ceux que cette instance ne doit jamais charger. Aucun autre site ne peut être intégré dans une note, et il n'est pas possible d'en ajouter ici.",
+      "existing_hint": "Décocher un site masque les contenus déjà présents dans les notes : ils ne se chargent plus, et modifier une telle note ensuite en retire le contenu intégré."
     },
     "note": {
       "rename_title": "Renommer la note",

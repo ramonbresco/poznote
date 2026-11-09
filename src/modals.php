@@ -363,6 +363,31 @@ $modalsPasswordDisabledHelp = $modalsPasswordDisabledReason === 'sso_only'
     </div>
 </div>
 
+<!-- Embeds Modal: which shipped providers a note may frame (lib/embed-providers.php, #1742).
+     The list of sites lives in the code; this only switches one off. -->
+<div id="embedsModal" class="modal">
+    <div class="modal-content">
+        <h3><?php echo t_h('modals.embeds.title', [], 'Embeds'); ?></h3>
+        <p><?php echo t_h('modals.embeds.description', [], 'Notes can embed content from the sites below, such as a video or an interactive applet. Uncheck the ones this instance should never load. No other site can be framed in a note, and sites cannot be added here.'); ?></p>
+        <div class="embed-providers">
+            <?php foreach (poznoteEmbedProviderCatalogue() as $embedProviderId => $embedProvider): ?>
+            <label class="embed-provider">
+                <input type="checkbox" data-embed-provider="<?php echo htmlspecialchars($embedProviderId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+                <span class="embed-provider-text">
+                    <span class="embed-provider-title"><?php echo htmlspecialchars($embedProvider['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></span>
+                    <span class="embed-provider-help"><?php echo htmlspecialchars(implode(', ', $embedProvider['domains']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></span>
+                </span>
+            </label>
+            <?php endforeach; ?>
+        </div>
+        <p class="embed-providers-hint"><?php echo t_h('modals.embeds.existing_hint', [], 'Unchecking a site hides the embeds that notes already hold: they stop loading, and editing such a note afterwards drops the embed from it.'); ?></p>
+        <div class="modal-buttons">
+            <button type="button" class="btn-cancel" data-action="close-modal" data-modal="embedsModal"><?php echo t_h('common.cancel'); ?></button>
+            <button type="button" class="btn-primary" id="saveEmbedProvidersBtn"><?php echo t_h('common.save'); ?></button>
+        </div>
+    </div>
+</div>
+
 <!-- Local Network Access Modal (lib/outbound-url.php) -->
 <div id="outboundHostsModal" class="modal">
     <div class="modal-content">

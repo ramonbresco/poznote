@@ -539,6 +539,7 @@
       "release_notes": "在 GitHub 上打开 Poznote 所有版本的版本说明。",
       "login_disabled": "跳过登录页面：任何能访问此实例的浏览器都会直接打开您的账户，无需用户名、密码或双重验证码。仅当只有您本人能访问此实例，或其前面的反向代理负责认证时才开启。API 仍然要求凭据。",
       "outbound_hosts": "非管理员用户只能将 Webhook、Git Sync 和他们自己的 AI、转录或 MCP 服务器连接到公共互联网主机。在此列出允许他们使用的本地主机或网络，例如 Ollama 或 n8n 服务器。管理员不受限制。",
+      "embeds": "笔记可以嵌入这些网站的内容，例如 YouTube 视频或 GeoGebra 小程序。关闭本实例不应加载的网站。其他网站无法嵌入，也无法在此添加网站。",
       "diary_template": "选择一篇笔记，工作区 {{workspace}} 中的每个新日记条目都以其内容开头。列表显示该工作区中名为“模板”（或 Templates）的文件夹里的笔记。每个工作区都有自己的模板。",
       "markdown_view_cycle": "选择 Markdown 笔记的视图菜单在经典视图（预览，用铅笔编辑）之外提供的视图。未选中的视图不会列出。如果一个都没有选中，按钮将被隐藏。在手机上，菜单不会提供分屏模式。",
       "connected_apps": "通过 MCP 服务器将 ChatGPT、Claude 等聊天应用连接到你的笔记，并可随时断开连接。",
@@ -618,6 +619,7 @@
     },
     "cards": {
       "tenant_isolation": "租户隔离",
+      "embeds": "嵌入内容",
       "user_management": "用户管理",
       "backup_export": "备份 / 导出",
       "restore_import": "还原 / 导入",
@@ -718,6 +720,11 @@
     "outbound_hosts": {
       "status_allowed": "已允许 {{count}} 项",
       "status_public_only": "仅公共主机"
+    },
+    "embeds": {
+      "status_all": "全部网站",
+      "status_some": "{{count}} / {{total}}",
+      "status_none": "无"
     },
     "diary_template": {
       "none": "无",
@@ -1914,6 +1921,11 @@
         "user_s3_restore": "恢复页面上的 S3 恢复",
         "user_s3_restore_help": "非管理员用户将不再看到恢复 / 导入页面中的从 S3 恢复部分,也无法恢复存储桶归档。"
       }
+    },
+    "embeds": {
+      "title": "嵌入内容",
+      "description": "笔记可以嵌入下列网站的内容，例如视频或交互式小程序。取消勾选本实例不应加载的网站。其他网站无法嵌入笔记，也无法在此添加网站。",
+      "existing_hint": "取消勾选某个网站后，笔记中已有的嵌入内容会隐藏：它们不再加载，之后编辑这类笔记会把嵌入内容从笔记里删除。"
     },
     "task_move": {
       "create_new": "创建任务列表",

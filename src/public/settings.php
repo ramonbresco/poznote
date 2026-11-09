@@ -306,6 +306,7 @@ if ($isAdmin) {
             'tenant_isolation_applied_ui_keys',
             'outbound_allowed_hosts',
             'update_badge_level',
+            'embed_providers_disabled',
         ];
         foreach ($settingsPageGlobalKeys as $settingsPageKey) {
             $settingsPageConfig['settings'][$settingsPageKey] = getGlobalSetting($settingsPageKey, '');
@@ -1831,6 +1832,20 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     <div class="home-card-content">
                         <span class="home-card-title"><?php echo t_h('settings.cards.outbound_hosts', [], 'Local network access'); ?></span>
                         <span id="outbound-hosts-status" class="setting-status"><?php echo t_h('common.loading'); ?></span>
+                    </div>
+                </div>
+
+                <!-- Which embed providers a note may frame (lib/embed-providers.php).
+                     The card can only switch off what the version ships: no host can
+                     be added here, see issue #1742 -->
+                <div class="home-card" id="embeds-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.embeds', [], 'Notes can embed content from these sites, such as a YouTube video or a GeoGebra applet. Switch off the ones your instance should never load. No other site can be framed, and no site can be added here.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon">
+                        <i class="lucide lucide-app-window"></i>
+                    </div>
+                    <div class="home-card-content">
+                        <span class="home-card-title"><?php echo t_h('settings.cards.embeds', [], 'Embeds'); ?></span>
+                        <span id="embeds-status" class="setting-status"><?php echo t_h('common.loading'); ?></span>
                     </div>
                 </div>
             </div>

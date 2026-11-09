@@ -1264,6 +1264,19 @@ html[data-theme='dark'] .markdown-preview pre.indented-pre {
     border: none;
 }
 
+/* Applet embeds (lib/embed-providers.php): an interactive applet is not a video,
+   so it does not take the 16/9 shape of the rule above, which squashed a
+   GeoGebra construction into a letterbox (#1742). 4/3 keeps the height tied to
+   the width, since an iframe without a height falls back to 150px. The host is
+   guaranteed by the sanitiser, so matching the src here is cosmetic only. */
+.markdown-preview iframe[src*="//www.geogebra.org/"],
+.markdown-preview iframe[src*="//geogebra.org/"],
+.markdown-codemirror-host .cm-live-media iframe[src*="//www.geogebra.org/"],
+.markdown-codemirror-host .cm-live-media iframe[src*="//geogebra.org/"] {
+    aspect-ratio: 4 / 3;
+    height: auto;
+}
+
 .markdown-preview video,
 .markdown-codemirror-host .cm-live-media video {
     max-width: 100%;
