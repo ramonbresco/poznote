@@ -66,6 +66,14 @@ body.public-note-page {
     /* container for note HTML */
     line-height: 1.2;
     white-space: normal;
+    /* A word with no break opportunity (a long URL, a long run of letters) is
+       cut at the edge of the card instead of pushing the page past the screen,
+       which made a phone zoom the whole share out to fit it. Same rule as the
+       editor (`.noteentry`, css/notes/noteentry.css). `break-word` and not
+       `anywhere`: `anywhere` counts towards the min-content width and would
+       shrink the tables that take `width: max-content` inside their
+       horizontal scroller. */
+    overflow-wrap: break-word;
 }
 
 /* Same highlight colour as in the app (css/notes/noteentry.css). */
