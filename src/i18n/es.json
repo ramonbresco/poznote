@@ -4701,7 +4701,15 @@
     "take_over_failed": "No se pudo tomar el control de esta nota.",
     "taken_over_notice": "Has tomado el control de la edición de esta nota.",
     "lost_unsaved_kept": "Tus cambios sin guardar se conservan en este dispositivo y se te ofrecerán de nuevo cuando la nota quede libre.",
-    "read_only_share": "Este espacio de trabajo se ha compartido contigo en modo de solo lectura."
+    "read_only_share": "Este espacio de trabajo se ha compartido contigo en modo de solo lectura.",
+    "lock_note": "Bloquear esta nota",
+    "unlock_note": "Desbloquear esta nota",
+    "unlock": "Desbloquear",
+    "locked_banner": "Esta nota está bloqueada. Usa el botón del candado de la barra de herramientas para volver a editarla.",
+    "locked_error": "Esta nota está bloqueada. Desbloquéala desde la barra de herramientas antes de editarla.",
+    "locked_toast": "Nota bloqueada",
+    "unlocked_toast": "Nota desbloqueada",
+    "lock_failed": "No se ha podido cambiar el bloqueo de esta nota."
   },
   "live_refresh": {
     "note_changed": "Esta nota se modificó fuera de esta pestaña.",

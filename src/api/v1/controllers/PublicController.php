@@ -412,6 +412,21 @@ class PublicController {
      * refresh brings the public change in.
      */
     private function currentRequestMayWriteNote(int $noteId, string $editorSessionId, string $type = ''): bool {
+        // A note its owner locked (lib/note-lock.php) is read-only for a
+        // visitor too, however editable the share itself is. Checked before
+        // the edit lock: this one is a decision, not a passing conflict.
+        require_once dirname(__DIR__, 3) . '/lib/note-lock.php';
+        if (poznoteNoteIsLocked($this->con, $noteId)) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'error' => poznoteNoteLockedMessage(),
+                'code' => POZNOTE_NOTE_LOCKED_CODE,
+                'locked' => true,
+            ], JSON_UNESCAPED_UNICODE);
+            return false;
+        }
+
         $ownerId = $this->getShareOwnerUserId();
         if ($ownerId <= 0) {
             return true;

@@ -4797,7 +4797,15 @@
     "take_over_failed": "无法接管此笔记。",
     "taken_over_notice": "您已接管此笔记的编辑。",
     "lost_unsaved_kept": "您在此处未保存的更改已保留在此设备上，笔记空闲后会再次提供。",
-    "read_only_share": "此工作区以只读模式与您共享。"
+    "read_only_share": "此工作区以只读模式与您共享。",
+    "lock_note": "锁定此笔记，禁止编辑",
+    "unlock_note": "解锁此笔记",
+    "unlock": "解锁",
+    "locked_banner": "此笔记已锁定。请使用工具栏中的锁按钮以重新编辑。",
+    "locked_error": "此笔记已锁定。请先在工具栏中解锁，然后再编辑。",
+    "locked_toast": "笔记已锁定",
+    "unlocked_toast": "笔记已解锁",
+    "lock_failed": "无法更改此笔记的锁定状态。"
   },
   "live_refresh": {
     "note_changed": "此笔记已在本标签页之外被修改。",

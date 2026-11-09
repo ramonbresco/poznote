@@ -4700,7 +4700,15 @@
     "take_over_failed": "Diese Notiz konnte nicht übernommen werden.",
     "taken_over_notice": "Sie haben die Bearbeitung dieser Notiz übernommen.",
     "lost_unsaved_kept": "Ihre hier nicht gespeicherten Änderungen bleiben auf diesem Gerät erhalten und werden erneut angeboten, sobald die Notiz frei ist.",
-    "read_only_share": "Dieser Arbeitsbereich wird schreibgeschützt mit Ihnen geteilt."
+    "read_only_share": "Dieser Arbeitsbereich wird schreibgeschützt mit Ihnen geteilt.",
+    "lock_note": "Diese Notiz gegen Bearbeitung sperren",
+    "unlock_note": "Diese Notiz entsperren",
+    "unlock": "Entsperren",
+    "locked_banner": "Diese Notiz ist gesperrt. Nutze die Schlosstaste in der Werkzeugleiste, um sie wieder zu bearbeiten.",
+    "locked_error": "Diese Notiz ist gesperrt. Entsperre sie in der Werkzeugleiste, bevor du sie bearbeitest.",
+    "locked_toast": "Notiz gesperrt",
+    "unlocked_toast": "Notiz entsperrt",
+    "lock_failed": "Die Sperre dieser Notiz konnte nicht geändert werden."
   },
   "live_refresh": {
     "note_changed": "Diese Notiz wurde außerhalb dieses Tabs geändert.",

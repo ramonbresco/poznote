@@ -435,6 +435,14 @@ $router->post('/notes/{id}/lock/release', function($params) use ($notesControlle
     $notesController->releaseLock($params['id']);
 });
 
+// Lock or unlock a note against editing (entries.locked, lib/note-lock.php).
+// A state its owner sets, unrelated to the edit lock above; its own route so
+// that flipping it does not count as editing the note (no new modification
+// date, no new version token). PATCH /notes/{id} takes "locked" as well.
+$router->put('/notes/{id}/locked', function($params) use ($notesController) {
+    $notesController->setLocked($params['id']);
+});
+
 // Create a new note
 $router->post('/notes', function($params) use ($notesController) {
     $notesController->create();

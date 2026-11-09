@@ -161,7 +161,7 @@ try {
     // migrations, indexes, default settings, welcome note, legacy repair)
     // is skipped when the database is already at the current version, leaving
     // a single SELECT on the settings table per request.
-    $CURRENT_SCHEMA_VERSION = 53; // 53: shared_notes.password_exempt (per-note exemption from an inherited folder share password); 52: folders.title_color (#1729); 51: the speed dial's rail entry shown again; 50: entries.speed_dial_order
+    $CURRENT_SCHEMA_VERSION = 54; // 54: entries.locked (a note its owner locked against editing); 53: shared_notes.password_exempt (per-note exemption from an inherited folder share password); 52: folders.title_color (#1729); 51: the speed dial's rail entry shown again; 50: entries.speed_dial_order
     $currentVersion = 0;
 
     // Whether this database is being created right now, as opposed to an
@@ -271,7 +271,8 @@ try {
             display_order INTEGER DEFAULT 0,
             dashboard_order INTEGER DEFAULT 0,
             speed_dial_order INTEGER DEFAULT 0,
-            kanban_order INTEGER DEFAULT 0
+            kanban_order INTEGER DEFAULT 0,
+            locked INTEGER DEFAULT 0
         )');
 
         // Create folders table for empty folders (scoped by workspace)
@@ -853,6 +854,22 @@ try {
             }
         } catch (Exception $e) {
             error_log('Could not add title style columns to entries: ' . $e->getMessage());
+        }
+
+        // Ensure the lock column exists: a note its owner locked against
+        // editing (the lock entry of the note toolbar). 1 means the text and
+        // the title cannot be changed, by the editor, the API, the MCP
+        // server, the assistant or a visitor of an editable public share,
+        // until it is unlocked. Everything else about the note (tags,
+        // favourite, folder, attachments, reminders) stays as it was.
+        try {
+            $cols = $con->query("PRAGMA table_info(entries)")->fetchAll(PDO::FETCH_ASSOC);
+            $existingColumns = array_column($cols, 'name');
+            if (!in_array('locked', $existingColumns)) {
+                $con->exec("ALTER TABLE entries ADD COLUMN locked INTEGER DEFAULT 0");
+            }
+        } catch (Exception $e) {
+            error_log('Could not add locked column to entries: ' . $e->getMessage());
         }
 
         // Ensure the client state columns exist: the fingerprint of the editor

@@ -266,6 +266,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="toolbar:btn-uncheck-all" checked><span><?php echo t_h('tasklist.uncheck_all', [], 'Uncheck all tasks'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="toolbar:btn-open-tasks-page" checked><span><?php echo t_h('tasklist.open_tasks_page', [], 'View all tasks'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="toolbar:btn-snapshot" checked><span><?php echo t_h('snapshot.menu_item', [], 'Revisions'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="toolbar:btn-lock-note" checked><span><?php echo t_h('note_lock.lock_note', [], 'Lock this note against editing'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="toolbar:btn-trash" checked><span><?php echo t_h('common.delete', [], 'Delete'); ?></span></label>
 </div>
 </div>

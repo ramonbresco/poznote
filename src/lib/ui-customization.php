@@ -432,6 +432,7 @@ function poznoteTidyIconSidebarDividers(array $items) {
 function poznoteGetToolbarMenuActions() {
     return [
         'btn-snapshot' => ['show-snapshot'],
+        'btn-lock-note' => ['toggle-note-lock'],
         'btn-audio' => ['insert-audio-file'],
         'btn-clear-completed' => ['clear-completed-tasks'],
         'btn-uncheck-all' => ['uncheck-all-tasks'],

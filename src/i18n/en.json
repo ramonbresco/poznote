@@ -4332,7 +4332,15 @@
     "take_over_failed": "Unable to take over this note.",
     "taken_over_notice": "You took over editing this note.",
     "lost_unsaved_kept": "Your unsaved changes here are kept on this device and offered again once the note is free.",
-    "read_only_share": "This workspace is shared with you in read-only mode."
+    "read_only_share": "This workspace is shared with you in read-only mode.",
+    "lock_note": "Lock this note against editing",
+    "unlock_note": "Unlock this note",
+    "unlock": "Unlock",
+    "locked_banner": "This note is locked. Use the lock button in the toolbar to edit it again.",
+    "locked_error": "This note is locked. Unlock it from the note toolbar before editing it.",
+    "locked_toast": "Note locked",
+    "unlocked_toast": "Note unlocked",
+    "lock_failed": "Unable to change the lock of this note."
   },
   "live_refresh": {
     "note_changed": "This note was modified outside this tab.",

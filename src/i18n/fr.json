@@ -4805,7 +4805,15 @@
     "take_over_failed": "Impossible de prendre la main sur cette note.",
     "taken_over_notice": "Vous avez pris la main sur cette note.",
     "lost_unsaved_kept": "Vos modifications non enregistrées ici sont conservées sur cet appareil et vous seront proposées à nouveau dès que la note sera libre.",
-    "read_only_share": "Cet espace de travail est partagé avec vous en lecture seule."
+    "read_only_share": "Cet espace de travail est partagé avec vous en lecture seule.",
+    "lock_note": "Verrouiller cette note",
+    "unlock_note": "Déverrouiller cette note",
+    "unlock": "Déverrouiller",
+    "locked_banner": "Cette note est verrouillée. Utilisez le bouton cadenas de la barre d'outils pour la modifier à nouveau.",
+    "locked_error": "Cette note est verrouillée. Déverrouillez-la depuis la barre d'outils avant de la modifier.",
+    "locked_toast": "Note verrouillée",
+    "unlocked_toast": "Note déverrouillée",
+    "lock_failed": "Impossible de changer le verrouillage de cette note."
   },
   "live_refresh": {
     "note_changed": "Cette note a été modifiée en dehors de cet onglet.",

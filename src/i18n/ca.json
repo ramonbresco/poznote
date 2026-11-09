@@ -4332,7 +4332,15 @@
     "take_over_failed": "No es pot prendre el control d'aquesta nota.",
     "taken_over_notice": "Heu pres el control de l'edició d'aquesta nota.",
     "lost_unsaved_kept": "Els canvis no desats d'aquí es conserven en aquest dispositiu i se us tornaran a oferir quan la nota quedi lliure.",
-    "read_only_share": "Aquest espai de treball s'ha compartit amb tu en mode de només lectura."
+    "read_only_share": "Aquest espai de treball s'ha compartit amb tu en mode de només lectura.",
+    "lock_note": "Bloqueja aquesta nota",
+    "unlock_note": "Desbloqueja aquesta nota",
+    "unlock": "Desbloqueja",
+    "locked_banner": "Aquesta nota està bloquejada. Fes servir el botó del cadenat de la barra d'eines per tornar-la a editar.",
+    "locked_error": "Aquesta nota està bloquejada. Desbloqueja-la des de la barra d'eines abans d'editar-la.",
+    "locked_toast": "Nota bloquejada",
+    "unlocked_toast": "Nota desbloquejada",
+    "lock_failed": "No s'ha pogut canviar el bloqueig d'aquesta nota."
   },
   "live_refresh": {
     "note_changed": "Aquesta nota s'ha modificat fora d'aquesta pestanya.",

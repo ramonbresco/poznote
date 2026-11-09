@@ -149,7 +149,12 @@
                         $content_width = min(100, max(10, (int)$row['content_width']));
                         $content_width_attrs = ' data-content-width="' . $content_width . '" style="--note-content-width: ' . $content_width . '%"';
                     }
-                    echo '<div id="note'.$row['id'].'" class="notecard"'.$content_width_attrs.'>';
+                    // A note its owner locked (entries.locked, lib/note-lock.php):
+                    // the editor opens it read-only from the first paint
+                    // (js/note-edit-lock.js reads the attribute, no round trip).
+                    $note_is_locked = (int)($row['locked'] ?? 0) === 1;
+                    $locked_attr = $note_is_locked ? ' data-note-locked="1"' : '';
+                    echo '<div id="note'.$row['id'].'" class="notecard"'.$content_width_attrs.$locked_attr.'>';
                     echo '<div class="innernote"'.$markdown_attr.$tasklist_attr.'>';
                     echo '<div class="note-header">';
                     echo '<div class="note-edit-toolbar">';
@@ -368,6 +373,14 @@
                     }
 
                     echo '<button type="button" class="toolbar-btn btn-snapshot note-action-btn" data-action="show-snapshot" data-note-id="'.$row['id'].'" title="'.t_h('snapshot.menu_item', [], 'Revisions').'"><i class="lucide lucide-history"></i></button>';
+
+                    // Lock the note against editing. A deliberate state, not
+                    // the passing edit lock of two people in the same note:
+                    // nothing clears it but this button (lib/note-lock.php).
+                    $lock_title = $note_is_locked
+                        ? t_h('note_lock.unlock_note', [], 'Unlock this note')
+                        : t_h('note_lock.lock_note', [], 'Lock this note against editing');
+                    echo '<button type="button" class="toolbar-btn btn-lock-note note-action-btn'.($note_is_locked ? ' active' : '').'" data-action="toggle-note-lock" data-note-id="'.$row['id'].'" data-locked="'.($note_is_locked ? '1' : '0').'" title="'.$lock_title.'" aria-pressed="'.($note_is_locked ? 'true' : 'false').'"><i class="lucide '.($note_is_locked ? 'lucide-lock' : 'lucide-lock-open').'"></i></button>';
 
                     // The note width and the split view are set from the "..."
                     // menu of the floating stack (ui_customization_panel.php),

@@ -267,6 +267,8 @@
             'btn-download',
             'btn-print',
             'btn-open-new-tab',
+            // The way out of a lock its owner set (lib/note-lock.php)
+            'btn-lock-note',
             'markdown-view-mode-btn',
             'markdown-edit-btn',
             'markdown-preview-btn'
@@ -310,6 +312,11 @@
     }
 
     function getLockBannerMessage(lock) {
+        if (lock && lock.manual_lock) {
+            return t('note_lock.locked_banner', {},
+                'This note is locked. Use the lock button in the toolbar to edit it again.');
+        }
+
         if (isReadOnlyShare()) {
             return t('note_lock.read_only_share', {}, 'This workspace is shared with you in read-only mode.');
         }
@@ -342,7 +349,9 @@
     }
 
     function isLockHeldByDifferentUser(lock) {
-        return !!(lock && !lock.holder_is_current_user && !lock.holder_is_current_editor_session);
+        // manual_lock is the lock a note's owner set (entries.locked): it has
+        // no holder to take it over from, only a button to switch it off.
+        return !!(lock && !lock.manual_lock && !lock.holder_is_current_user && !lock.holder_is_current_editor_session);
     }
 
     function showLockConflictNotification(message) {
@@ -383,7 +392,8 @@
 
         var noteId = normalizeNoteId(String(noteCard.id || '').replace(/^note/, ''));
         var canTakeOver = !!(noteId && lock && isLockHeldByDifferentUser(lock) && !isReadOnlyShare());
-        var signature = message + '|' + (canTakeOver ? 'takeover' : '');
+        var canUnlock = !!(noteId && lock && lock.manual_lock && !isReadOnlyShare());
+        var signature = message + '|' + (canTakeOver ? 'takeover' : '') + (canUnlock ? 'unlock' : '');
         if (banner.dataset.lockBannerSignature === signature) {
             return;   // same banner already on screen (status check): no blink
         }
@@ -406,6 +416,123 @@
             });
             banner.appendChild(button);
         }
+
+        if (canUnlock) {
+            var unlockButton = document.createElement('button');
+            unlockButton.type = 'button';
+            unlockButton.textContent = t('note_lock.unlock', {}, 'Unlock');
+            unlockButton.addEventListener('click', function () {
+                setNoteManualLock(noteId, false);
+            });
+            banner.appendChild(unlockButton);
+        }
+    }
+
+    // ---- The lock a note's owner sets (entries.locked) ----------------------
+    //
+    // Not the lock above, which two people opening the same note take turns
+    // holding: this one is a decision, it survives reloads and nothing but
+    // the toolbar button clears it. The server refuses every write to the
+    // note's text while it is on (lib/note-lock.php); the editor shows the
+    // same read-only state so nothing is typed into a note that will not
+    // take it.
+
+    function isNoteManuallyLocked(noteId) {
+        var card = document.getElementById('note' + normalizeNoteId(noteId));
+        return !!(card && card.getAttribute('data-note-locked') === '1');
+    }
+
+    function paintManualLockButton(noteId, locked) {
+        var card = document.getElementById('note' + noteId);
+        if (!card) {
+            return;
+        }
+        card.setAttribute('data-note-locked', locked ? '1' : '0');
+        var button = card.querySelector('.btn-lock-note');
+        if (!button) {
+            return;
+        }
+        button.classList.toggle('active', !!locked);
+        button.setAttribute('data-locked', locked ? '1' : '0');
+        button.setAttribute('aria-pressed', locked ? 'true' : 'false');
+        button.setAttribute('title', locked
+            ? t('note_lock.unlock_note', {}, 'Unlock this note')
+            : t('note_lock.lock_note', {}, 'Lock this note against editing'));
+        var icon = button.querySelector('i');
+        if (icon) {
+            icon.className = 'lucide ' + (locked ? 'lucide-lock' : 'lucide-lock-open');
+        }
+    }
+
+    function applyManualLockState(noteId) {
+        setNoteLockedState(noteId, { manual_lock: true });
+        paintManualLockButton(noteId, true);
+    }
+
+    /**
+     * Flips entries.locked and the editor with it. A note with changes that
+     * have not reached the server yet is saved first: locking it would make
+     * the server refuse that save.
+     */
+    function setNoteManualLock(noteId, locked) {
+        noteId = normalizeNoteId(noteId);
+        if (!noteId) {
+            return;
+        }
+
+        var send = function () {
+            return fetch('/api/v1/notes/' + encodeURIComponent(noteId) + '/locked', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ locked: !!locked })
+            }).then(parseResponse).then(function (result) {
+                if (!result.ok || !result.data || !result.data.success) {
+                    showLockConflictNotification((result.data && result.data.error)
+                        || t('note_lock.lock_failed', {}, 'Unable to change the lock of this note.'));
+                    return;
+                }
+                paintManualLockButton(noteId, locked);
+                if (locked) {
+                    stopHeartbeat();
+                    stopStatusChecks();
+                    releaseCurrentLock();
+                    applyManualLockState(noteId);
+                } else {
+                    clearNoteLockedState(noteId);
+                    if (String(activeNoteId) === noteId) {
+                        openNoteLock(noteId);
+                    }
+                }
+                if (typeof window.poznoteShowToast === 'function') {
+                    window.poznoteShowToast(locked
+                        ? t('note_lock.locked_toast', {}, 'Note locked')
+                        : t('note_lock.unlocked_toast', {}, 'Note unlocked'));
+                }
+            }).catch(function () {
+                showLockConflictNotification(t('note_lock.lock_failed', {}, 'Unable to change the lock of this note.'));
+            });
+        };
+
+        if (locked && typeof window.hasUnsavedChangesOnScreen === 'function' && window.hasUnsavedChangesOnScreen(noteId)
+            && typeof window.saveNoteImmediately === 'function') {
+            var done = false;
+            var go = function () {
+                if (done) { return; }
+                done = true;
+                send();
+            };
+            window.saveNoteImmediately({ onSaved: go });
+            // A save the server refuses never calls back
+            window.setTimeout(go, 2500);
+            return;
+        }
+
+        send();
     }
 
     /**
@@ -908,6 +1035,12 @@
             setNoteLockedState(noteId, null);
             return;
         }
+        if (isNoteManuallyLocked(noteId)) {
+            // Its owner locked it: nothing can be typed into it, so there is
+            // no edit lock to take and no status to poll.
+            applyManualLockState(noteId);
+            return;
+        }
         setNoteCheckingState(noteId);
         sendOpenStatusRequest(noteId, acquireRequestId, 0);
     }
@@ -1073,6 +1206,11 @@
         handleLockConflict(noteId, lock, message, reason || 'lost');
     };
     window.releaseCurrentNoteEditLock = releaseCurrentLock;
+    window.setNoteManualLock = setNoteManualLock;
+    window.isNoteManuallyLocked = isNoteManuallyLocked;
+    window.toggleNoteManualLock = function (noteId) {
+        setNoteManualLock(noteId, !isNoteManuallyLocked(noteId));
+    };
     window.noteEditLockActivity = noteEditActivity;
     window.acquireNoteEditLockForCurrentNote = handleCurrentNoteLoaded;
 

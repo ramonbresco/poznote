@@ -206,6 +206,9 @@ class TasksController
      */
     public function createForNote(string $id): void
     {
+        if ($this->refuseLockedNote((int) $id)) {
+            return;
+        }
         $note = $this->loadTasklistNote($id);
         if ($note === null) {
             return;
@@ -260,6 +263,9 @@ class TasksController
      */
     public function updateForNote(string $id, string $taskId): void
     {
+        if ($this->refuseLockedNote((int) $id)) {
+            return;
+        }
         $note = $this->loadTasklistNote($id);
         if ($note === null) {
             return;
@@ -338,6 +344,9 @@ class TasksController
      */
     public function deleteForNote(string $id, string $taskId): void
     {
+        if ($this->refuseLockedNote((int) $id)) {
+            return;
+        }
         $note = $this->loadTasklistNote($id);
         if ($note === null) {
             return;
@@ -457,6 +466,9 @@ class TasksController
      */
     private function writeSubtasks(string $id, string $taskId, bool $readsBody, callable $change): void
     {
+        if ($this->refuseLockedNote((int) $id)) {
+            return;
+        }
         $note = $this->loadTasklistNote($id);
         if ($note === null) {
             return;
@@ -934,6 +946,27 @@ class TasksController
     private function sendSuccess(array $data): void
     {
         apiSuccess($data);
+    }
+
+    /**
+     * A task list its owner locked (lib/note-lock.php) refuses every change
+     * to its tasks, like any other note refuses a change to its text.
+     * Answers the request itself and returns true when it did.
+     */
+    private function refuseLockedNote(int $noteId): bool
+    {
+        require_once dirname(__DIR__, 3) . '/lib/note-lock.php';
+        if (!poznoteNoteIsLocked($this->con, $noteId)) {
+            return false;
+        }
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'error' => poznoteNoteLockedMessage(),
+            'code' => POZNOTE_NOTE_LOCKED_CODE,
+            'locked' => true,
+        ], JSON_UNESCAPED_UNICODE);
+        return true;
     }
 
     private function sendError(int $code, string $message): void

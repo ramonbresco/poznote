@@ -190,7 +190,20 @@ function aiReadNote($con, $noteId, $maxLen = 24000, $workspace = '', $offset = 0
  * autosave of that editor would silently drop the AI's change anyway).
  * Null when the write may proceed.
  */
-function aiNoteEditLockError(int $noteId): ?string {
+function aiNoteEditLockError(int $noteId, ?PDO $con = null): ?string {
+    // A note its owner locked refuses every change to its text, the
+    // assistant's included (lib/note-lock.php). Checked first: unlike the
+    // edit lock below, waiting will not clear it. The connection is optional
+    // only so an older caller keeps working; every caller here passes it.
+    require_once __DIR__ . '/note-lock.php';
+    if ($con !== null && poznoteNoteIsLocked($con, $noteId)) {
+        return json_encode([
+            'error' => 'This note is locked by its owner and cannot be edited. '
+                . 'Ask them to unlock it from the note toolbar first.',
+            'code' => POZNOTE_NOTE_LOCKED_CODE,
+        ], JSON_UNESCAPED_UNICODE);
+    }
+
     $blockingLock = getBlockingNoteEditLock(
         (int)(getCurrentUserId() ?? ($_SESSION['user_id'] ?? 0)),
         $noteId,
@@ -565,7 +578,7 @@ function aiSaveTaskSubtasks(PDO $con, array $note, int $index, array $subtasks, 
  * note. JSON error string, or null when written.
  */
 function aiPersistTasks(PDO $con, int $noteId, array $tasks, $actorUserId): ?string {
-    $lockError = aiNoteEditLockError($noteId);
+    $lockError = aiNoteEditLockError($noteId, $con);
     if ($lockError !== null) return $lockError;
     $content = json_encode(array_values($tasks), JSON_UNESCAPED_UNICODE);
     if ($content === false) return json_encode(['error' => 'Failed to encode tasks']);
@@ -1066,7 +1079,7 @@ function aiToolRenameNote($con, array $args, $chatWorkspace, $actorUserId): stri
     if (!$note) {
         return json_encode(['error' => 'Note not found in the current workspace']);
     }
-    $lockError = aiNoteEditLockError($noteId);
+    $lockError = aiNoteEditLockError($noteId, $con);
     if ($lockError !== null) {
         return $lockError;
     }
@@ -1152,7 +1165,7 @@ function aiEditableNote($con, int $noteId, $chatWorkspace, ?string &$error): ?ar
         $error = json_encode(['error' => 'Note not found in the current workspace']);
         return null;
     }
-    $lockError = aiNoteEditLockError($noteId);
+    $lockError = aiNoteEditLockError($noteId, $con);
     if ($lockError !== null) {
         $error = $lockError;
         return null;
@@ -1280,7 +1293,7 @@ function aiToolDeleteNote($con, array $args, $chatWorkspace, $actorUserId): stri
     if (!$note) {
         return json_encode(['error' => 'Note not found in the current workspace (already in the trash?)']);
     }
-    $lockError = aiNoteEditLockError($noteId);
+    $lockError = aiNoteEditLockError($noteId, $con);
     if ($lockError !== null) {
         return $lockError;
     }
@@ -1304,7 +1317,7 @@ function aiToolDeleteFolder($con, array $args, $chatWorkspace, $actorUserId): st
     $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // Never trash a note out from under someone editing it
     foreach ($notes as $n) {
-        $lockError = aiNoteEditLockError((int)$n['id']);
+        $lockError = aiNoteEditLockError((int)$n['id'], $con);
         if ($lockError !== null) {
             return $lockError;
         }
@@ -1870,7 +1883,7 @@ function aiToolSetChecklistItem($con, array $args, $chatWorkspace, $actorUserId)
     if ($noteType !== 'markdown' && $noteType !== 'note') {
         return json_encode(['error' => 'This note has no checklist (type "' . $noteType . '")']);
     }
-    $lockError = aiNoteEditLockError($noteId);
+    $lockError = aiNoteEditLockError($noteId, $con);
     if ($lockError !== null) {
         return $lockError;
     }

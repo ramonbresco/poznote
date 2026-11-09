@@ -7,6 +7,7 @@
 
 require_once __DIR__ . '/../../../note_loader.php';
 require_once __DIR__ . '/../../../users/db_master.php';
+require_once __DIR__ . '/../../../lib/note-lock.php';
 
 class NotesController {
     private PDO $con;
@@ -906,12 +907,12 @@ class NotesController {
             if ($id !== null && is_numeric($id)) {
                 $noteId = (int)$id;
                 if ($useWorkspaceFilter) {
-                    $sql = "SELECT id, heading, type, workspace, tags, folder, folder_id, favorite, created, updated, linked_note_id, reminder_at, icon, icon_color, color, content_width, title_color, title_size, display_order, dashboard_order, client_state_hash, client_state_version, entry FROM entries WHERE id = ? AND trash = 0 AND workspace = ?";
+                    $sql = "SELECT id, heading, type, workspace, tags, folder, folder_id, favorite, created, updated, linked_note_id, reminder_at, icon, icon_color, color, content_width, title_color, title_size, display_order, dashboard_order, locked, client_state_hash, client_state_version, entry FROM entries WHERE id = ? AND trash = 0 AND workspace = ?";
                     $params = [$noteId, $workspace];
                     $stmt = $this->con->prepare($sql);
                     $stmt->execute($params);
                 } else {
-                    $sql = "SELECT id, heading, type, workspace, tags, folder, folder_id, favorite, created, updated, linked_note_id, reminder_at, icon, icon_color, color, content_width, title_color, title_size, display_order, dashboard_order, client_state_hash, client_state_version, entry FROM entries WHERE id = ? AND trash = 0";
+                    $sql = "SELECT id, heading, type, workspace, tags, folder, folder_id, favorite, created, updated, linked_note_id, reminder_at, icon, icon_color, color, content_width, title_color, title_size, display_order, dashboard_order, locked, client_state_hash, client_state_version, entry FROM entries WHERE id = ? AND trash = 0";
                     $params = [$noteId];
                     $stmt = $this->con->prepare($sql);
                     $stmt->execute($params);
@@ -931,7 +932,7 @@ class NotesController {
                 $refId = is_numeric($reference)
                     ? (int)$reference
                     : findNoteIdByTitle($this->con, $reference, $workspace, true);
-                $sql = "SELECT id, heading, type, workspace, tags, folder, folder_id, favorite, created, updated, linked_note_id, reminder_at, icon, icon_color, color, content_width, title_color, title_size, display_order, dashboard_order, client_state_hash, client_state_version, entry FROM entries WHERE id = ? AND trash = 0 AND workspace = ?";
+                $sql = "SELECT id, heading, type, workspace, tags, folder, folder_id, favorite, created, updated, linked_note_id, reminder_at, icon, icon_color, color, content_width, title_color, title_size, display_order, dashboard_order, locked, client_state_hash, client_state_version, entry FROM entries WHERE id = ? AND trash = 0 AND workspace = ?";
                 $params = [$refId, $workspace];
                 $stmt = $this->con->prepare($sql);
                 $stmt->execute($params);
@@ -1002,6 +1003,9 @@ class NotesController {
                     'title_size' => isset($row['title_size']) ? (int)$row['title_size'] : null,
                     'display_order' => (int)($row['display_order'] ?? 0),
                     'dashboard_order' => (int)($row['dashboard_order'] ?? 0),
+                    // Locked by its owner against any change to text or title
+                    // (lib/note-lock.php)
+                    'locked' => (int)($row['locked'] ?? 0) === 1,
                     // Fingerprint of the editor state the web client last saved,
                     // only while the note has not changed since (db_connect.php)
                     'state_hash' => (!empty($row['client_state_hash']) && hash_equals((string)($row['client_state_version'] ?? ''), $version))
@@ -1291,13 +1295,35 @@ class NotesController {
         
         try {
             // Get current note (including attachments for base64 image conversion)
-            $stmt = $this->con->prepare("SELECT id, heading, type, workspace, folder, folder_id, attachments, updated, entry FROM entries WHERE id = ? AND trash = 0");
+            $stmt = $this->con->prepare("SELECT id, heading, type, workspace, folder, folder_id, attachments, updated, entry, locked FROM entries WHERE id = ? AND trash = 0");
             $stmt->execute([$noteId]);
             $note = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$note) {
                 $this->sendError(404, 'Note not found');
                 return;
+            }
+
+            // A note its owner locked (lib/note-lock.php) refuses every change
+            // to its text and its title, whoever is asking. The same request
+            // may still unlock it, which is how the editor's Unlock works, and
+            // everything else about the note stays editable.
+            $wasLocked = (int)($note['locked'] ?? 0) === 1;
+            $lockedInput = array_key_exists('locked', $input) ? (bool)$input['locked'] : null;
+            if ($wasLocked && $lockedInput !== false) {
+                $touchesText = array_key_exists('content', $input)
+                    || array_key_exists('entry', $input)
+                    || (array_key_exists('heading', $input) && trim((string)$input['heading']) !== (string)$note['heading']);
+                if ($touchesText) {
+                    http_response_code(403);
+                    echo json_encode([
+                        'success' => false,
+                        'error' => poznoteNoteLockedMessage(),
+                        'code' => POZNOTE_NOTE_LOCKED_CODE,
+                        'locked' => true,
+                    ], JSON_UNESCAPED_UNICODE);
+                    return;
+                }
             }
 
             // Optimistic concurrency: when the caller declares which version it
@@ -1590,6 +1616,13 @@ class NotesController {
             $updateFields[] = "workspace = ?";
             $updateParams[] = $workspace;
 
+            // Locking and unlocking the note (lib/note-lock.php). Only this
+            // request can change it; a locked note refused everything above.
+            if ($lockedInput !== null) {
+                $updateFields[] = "locked = ?";
+                $updateParams[] = $lockedInput ? 1 : 0;
+            }
+
             // New version token so the caller can chain conditional writes
             // without re-reading the note. Content is reloaded through the
             // same path show() uses, keeping both tokens consistent.
@@ -1642,7 +1675,8 @@ class NotesController {
                         // format, for the line under the note title
                         // (js/note-stats.js)
                         'updated_display' => formatUtcDateTimeForDisplay($now_utc, 'd/m/Y H:i'),
-                        'version' => $newVersion
+                        'version' => $newVersion,
+                        'locked' => $lockedInput !== null ? $lockedInput : $wasLocked
                     ]
                 ];
                 if ($diaryFolderMoved) {
@@ -1686,6 +1720,46 @@ class NotesController {
             }
             
         } catch (Exception $e) {
+            $this->sendError(500, 'Database error occurred');
+        }
+    }
+
+    /**
+     * PUT /api/v1/notes/{id}/locked
+     *
+     * Locks or unlocks a note against editing (entries.locked). Body:
+     * {"locked": true|false}.
+     *
+     * Deliberately NOT a content write: the modification date and the version
+     * token are left alone, because locking a note says nothing about what it
+     * holds. A locked note still answers this endpoint, it is the way out.
+     */
+    public function setLocked(string $id): void {
+        if (!is_numeric($id)) {
+            $this->sendError(400, 'Invalid note ID');
+            return;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($input) || !array_key_exists('locked', $input)) {
+            $this->sendError(400, 'Missing "locked" boolean in request body');
+            return;
+        }
+
+        $noteId = (int)$id;
+        $locked = filter_var($input['locked'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+
+        try {
+            $stmt = $this->con->prepare('SELECT id FROM entries WHERE id = ? AND trash = 0');
+            $stmt->execute([$noteId]);
+            if (!$stmt->fetchColumn()) {
+                $this->sendError(404, 'Note not found');
+                return;
+            }
+
+            $this->con->prepare('UPDATE entries SET locked = ? WHERE id = ?')->execute([$locked, $noteId]);
+            $this->sendSuccess(['note' => ['id' => $noteId, 'locked' => $locked === 1]]);
+        } catch (PDOException $e) {
             $this->sendError(500, 'Database error occurred');
         }
     }

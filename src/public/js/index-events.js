@@ -984,6 +984,13 @@
                     window.showNoteInfoModal(noteId);
                 }
                 break;
+            case 'toggle-note-lock':
+                // Lock the note against editing, or unlock it
+                // (js/note-edit-lock.js, lib/note-lock.php)
+                if (noteId && typeof window.toggleNoteManualLock === 'function') {
+                    window.toggleNoteManualLock(noteId);
+                }
+                break;
             case 'copy-note-id':
                 // The id under the note title (css/notes/subline.css): the
                 // number an API call, an MCP call or a ?note= link needs

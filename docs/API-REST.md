@@ -462,6 +462,7 @@ Update an existing note by ID. Only include fields you want to modify.
 | `git_push` | boolean | Trigger Git sync after update |
 | `if_version` | string | Optimistic concurrency token (see below) |
 | `state_hash` | string | Fingerprint of the editor state being saved, used by the web editor's draft recovery. `GET /notes/{id}` returns it as `state_hash` until the note is written again by anyone, `null` otherwise. Other API clients can leave it out. |
+| `locked` | boolean | Lock the note against editing, or unlock it (see [Note Lock](#note-lock)). Sending `false` in the same request that changes the text unlocks it first, so one call can reopen a note and rewrite it |
 
 ```bash
 curl -X PATCH -u 'username:password' -H "X-User-ID: 1" \
@@ -488,9 +489,40 @@ curl -X PATCH -u 'username:password' -H "X-User-ID: 1" \
   http://YOUR_SERVER/api/v1/notes/123
 ```
 
+**A locked note:**
+
+A note its owner locked (see [Note Lock](#note-lock)) refuses every change to its text and its title with `403` and the code `note_is_locked`. Everything else about the note stays writable: tags, folder, workspace, icon, colour, favourite, attachments and reminders. Unlock it first, with `PUT /notes/{id}/locked` or by sending `"locked": false` in the same request.
+
 **Edit locks:**
 
 The web editor takes the note's edit lock when a change is saved, and gives it back after 15 seconds without changes (see [Note Locks](#note-locks)); a note that is only open for reading does not hold it. A write without an `editor_session_id` (the MCP server, a script using your credentials) is not blocked by your own lock: the open tab picks the change up within a few seconds, and its autosave sends `if_version`, so it cannot overwrite yours. The write is rejected with `423 Locked` only while another user of the account, or a visitor on a public share link, is editing the note; the response names the holder in `error` and carries the lock details in `lock`.
+
+### Note Lock
+
+```
+PUT /notes/{id}/locked
+```
+
+Lock a note against editing, or unlock it. This is the deliberate lock its owner sets from the note toolbar, not the short-lived [edit lock](#note-locks) two people take turns holding: nothing clears it on its own.
+
+While it is on, the note's text and title cannot be changed by anyone, through the editor, this API, the MCP server, the built-in assistant or a visitor of an editable public share. Every such write is answered with `403` and the code `note_is_locked`. The rest of the note stays as writable as before, since none of it can lose a word that was written: tags, folder, workspace, icon, colour, favourite, attachments, reminders, and moving the note to the trash, which is reversible.
+
+Changing the lock is not an edit: the note's modification date and its `version` token are left alone.
+
+**Request Body (JSON):**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `locked` | boolean | `true` locks the note, `false` unlocks it |
+
+```bash
+curl -X PUT -u 'username:password' -H "X-User-ID: 1" \
+  -H "Content-Type: application/json" \
+  -d '{"locked": true}' \
+  http://YOUR_SERVER/api/v1/notes/123/locked
+```
+
+`GET /notes/{id}` reports the current state as a `locked` boolean.
 
 ### Delete Note
 
