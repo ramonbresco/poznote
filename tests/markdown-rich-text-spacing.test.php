@@ -37,3 +37,19 @@ test('an empty line already there is not doubled', function () {
     $html = parseMarkdownForRichText("Avant\n\n\nApres\n");
     assertSame(1, substr_count($html, 'class="blank-line"'));
 });
+
+test('a separator keeps the blank line the Markdown left around it', function () {
+    $html = parseMarkdownForRichText("Avant\n\n---\n\nApres\n");
+    assertSame(2, substr_count($html, 'class="blank-line"'), 'one on each side of the rule');
+    assertSame(1, substr_count($html, '<hr>'), 'one rule in, one rule out');
+    assertSame("Avant\n\n---\n\nApres", trim(poznoteHtmlToMarkdown($html)), 'and folds back');
+});
+
+test('a separator next to a block that has margins of its own is left alone', function () {
+    $html = parseMarkdownForRichText("# Titre\n\n---\n\nApres\n");
+    assertSame(1, substr_count($html, 'class="blank-line"'), 'only under the rule');
+});
+
+test('a separator at the edge of a note gets no empty line of its own', function () {
+    assertNotContains('class="blank-line"', parseMarkdownForRichText("---\n"));
+});
