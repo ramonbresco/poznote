@@ -432,6 +432,12 @@
 
                     echo '<button type="button" class="dropdown-item mobile-toolbar-item" role="menuitem" data-action="trigger-mobile-action" data-selector=".btn-duplicate"><i class="lucide lucide-copy"></i> '.t_h('common.duplicate', [], 'Duplicate').'</button>';
                     echo '<button type="button" class="dropdown-item mobile-toolbar-item" role="menuitem" data-action="trigger-mobile-action" data-selector=".btn-move"><i class="lucide lucide-folder-output"></i> '.t_h('common.move', [], 'Move').'</button>';
+                    // The lock, which the row itself does not show on a phone
+                    // (css/index-mobile.css keeps a handful of icons): without
+                    // this entry a note locked from a computer could not be
+                    // unlocked from a phone. Labelled like the entries
+                    // js/toolbar-overflow.js builds, from the button's title.
+                    echo '<button type="button" class="dropdown-item mobile-toolbar-item mobile-lock-note-item" role="menuitem" data-action="trigger-mobile-action" data-selector=".btn-lock-note"><i class="lucide '.($note_is_locked ? 'lucide-lock' : 'lucide-lock-open').'"></i> <span class="mobile-lock-note-label">'.$lock_title.'</span></button>';
                     if ($note_type !== 'linked') {
                         // Two variants, shown as the menu opens (js/clickable-tags.js)
                         echo '<button type="button" class="dropdown-item mobile-toolbar-item speed-dial-state-on" role="menuitem" data-action="toggle-speed-dial" data-note-id="'.$row['id'].'" style="display: none;"><i class="lucide lucide-zap"></i> '.t_h('speed_dial.remove', [], 'Remove from speed dial').'</button>';

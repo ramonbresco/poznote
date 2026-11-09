@@ -4737,8 +4737,6 @@
     "read_only_share": "Este espaço de trabalho é partilhado consigo em modo de só leitura.",
     "lock_note": "Bloquear esta nota",
     "unlock_note": "Desbloquear esta nota",
-    "unlock": "Desbloquear",
-    "locked_banner": "Esta nota está bloqueada. Use o botão do cadeado na barra de ferramentas para voltar a editá-la.",
     "locked_error": "Esta nota está bloqueada. Desbloqueie-a na barra de ferramentas antes de editá-la.",
     "locked_toast": "Nota bloqueada",
     "unlocked_toast": "Nota desbloqueada",

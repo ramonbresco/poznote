@@ -267,8 +267,12 @@
             'btn-download',
             'btn-print',
             'btn-open-new-tab',
-            // The way out of a lock its owner set (lib/note-lock.php)
+            // The way out of a lock its owner set (lib/note-lock.php), and
+            // the menu that holds it on a phone, where the row shows only a
+            // handful of icons (css/index-mobile.css). The entries of that
+            // menu are disabled one by one just below.
             'btn-lock-note',
+            'mobile-more-btn',
             'markdown-view-mode-btn',
             'markdown-edit-btn',
             'markdown-preview-btn'
@@ -294,6 +298,9 @@
             var selector = element.getAttribute('data-selector') || '';
             var keepEnabled = element.getAttribute('data-action') === 'print-note'
                 || selector === '.btn-download'
+                // The way out of a lock its owner set, when the row was too
+                // short to keep the button itself (js/toolbar-overflow.js)
+                || selector === '.btn-lock-note'
                 || selector === '.markdown-view-mode-btn'
                 || selector === '.markdown-edit-btn'
                 || selector === '.markdown-preview-btn';
@@ -312,11 +319,6 @@
     }
 
     function getLockBannerMessage(lock) {
-        if (lock && lock.manual_lock) {
-            return t('note_lock.locked_banner', {},
-                'This note is locked. Use the lock button in the toolbar to edit it again.');
-        }
-
         if (isReadOnlyShare()) {
             return t('note_lock.read_only_share', {}, 'This workspace is shared with you in read-only mode.');
         }
@@ -392,8 +394,7 @@
 
         var noteId = normalizeNoteId(String(noteCard.id || '').replace(/^note/, ''));
         var canTakeOver = !!(noteId && lock && isLockHeldByDifferentUser(lock) && !isReadOnlyShare());
-        var canUnlock = !!(noteId && lock && lock.manual_lock && !isReadOnlyShare());
-        var signature = message + '|' + (canTakeOver ? 'takeover' : '') + (canUnlock ? 'unlock' : '');
+        var signature = message + '|' + (canTakeOver ? 'takeover' : '');
         if (banner.dataset.lockBannerSignature === signature) {
             return;   // same banner already on screen (status check): no blink
         }
@@ -415,16 +416,6 @@
                 takeOverLock(noteId, lock, button);
             });
             banner.appendChild(button);
-        }
-
-        if (canUnlock) {
-            var unlockButton = document.createElement('button');
-            unlockButton.type = 'button';
-            unlockButton.textContent = t('note_lock.unlock', {}, 'Unlock');
-            unlockButton.addEventListener('click', function () {
-                setNoteManualLock(noteId, false);
-            });
-            banner.appendChild(unlockButton);
         }
     }
 
@@ -461,6 +452,21 @@
         var icon = button.querySelector('i');
         if (icon) {
             icon.className = 'lucide ' + (locked ? 'lucide-lock' : 'lucide-lock-open');
+        }
+
+        // The same control in the mobile menu (note_display.php), which is
+        // the only one on a phone: css/index-mobile.css keeps the row to a
+        // handful of icons.
+        var menuItem = card.querySelector('.mobile-lock-note-item');
+        if (menuItem) {
+            var label = menuItem.querySelector('.mobile-lock-note-label');
+            if (label) {
+                label.textContent = button.getAttribute('title') || '';
+            }
+            var menuIcon = menuItem.querySelector('i');
+            if (menuIcon) {
+                menuIcon.className = 'lucide ' + (locked ? 'lucide-lock' : 'lucide-lock-open');
+            }
         }
     }
 
@@ -638,7 +644,13 @@
 
         if (noteCard) {
             noteCard.classList.add('note-edit-locked');
-            ensureLockBanner(noteCard, getLockBannerMessage(lock || null), lock || null);
+            if (lock && lock.manual_lock) {
+                // A lock its owner set needs no banner: the closed padlock in
+                // the toolbar is both the sign and the way out of it.
+                clearLockBanner(noteCard);
+            } else {
+                ensureLockBanner(noteCard, getLockBannerMessage(lock || null), lock || null);
+            }
             updateToolbarState(noteCard, true);
         }
 
@@ -1206,6 +1218,21 @@
         handleLockConflict(noteId, lock, message, reason || 'lost');
     };
     window.releaseCurrentNoteEditLock = releaseCurrentLock;
+    // js/toolbar-overflow.js rebuilds the menu entries of a row too short to
+    // show every button: entries born after the note was locked would look
+    // usable (clicking one is already a no-op, the button behind it is
+    // disabled). Called once the row has been laid out again.
+    window.poznoteRefreshNoteLockToolbar = function (toolbar) {
+        var noteCard = toolbar && toolbar.closest ? toolbar.closest('.notecard') : null;
+        if (!noteCard) {
+            return;
+        }
+        var noteId = normalizeNoteId(String(noteCard.id || '').replace(/^note/, ''));
+        if (!noteId || !noteStates[noteId] || noteStates[noteId].editable !== false) {
+            return;
+        }
+        updateToolbarState(noteCard, true);
+    };
     window.setNoteManualLock = setNoteManualLock;
     window.isNoteManuallyLocked = isNoteManuallyLocked;
     window.toggleNoteManualLock = function (noteId) {

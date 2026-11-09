@@ -4368,8 +4368,6 @@
     "read_only_share": "Aquest espai de treball s'ha compartit amb tu en mode de només lectura.",
     "lock_note": "Bloqueja aquesta nota",
     "unlock_note": "Desbloqueja aquesta nota",
-    "unlock": "Desbloqueja",
-    "locked_banner": "Aquesta nota està bloquejada. Fes servir el botó del cadenat de la barra d'eines per tornar-la a editar.",
     "locked_error": "Aquesta nota està bloquejada. Desbloqueja-la des de la barra d'eines abans d'editar-la.",
     "locked_toast": "Nota bloquejada",
     "unlocked_toast": "Nota desbloquejada",

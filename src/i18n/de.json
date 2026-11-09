@@ -4736,8 +4736,6 @@
     "read_only_share": "Dieser Arbeitsbereich wird schreibgeschützt mit Ihnen geteilt.",
     "lock_note": "Diese Notiz gegen Bearbeitung sperren",
     "unlock_note": "Diese Notiz entsperren",
-    "unlock": "Entsperren",
-    "locked_banner": "Diese Notiz ist gesperrt. Nutze die Schlosstaste in der Werkzeugleiste, um sie wieder zu bearbeiten.",
     "locked_error": "Diese Notiz ist gesperrt. Entsperre sie in der Werkzeugleiste, bevor du sie bearbeitest.",
     "locked_toast": "Notiz gesperrt",
     "unlocked_toast": "Notiz entsperrt",

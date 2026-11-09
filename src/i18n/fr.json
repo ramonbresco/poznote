@@ -4841,8 +4841,6 @@
     "read_only_share": "Cet espace de travail est partagé avec vous en lecture seule.",
     "lock_note": "Verrouiller cette note",
     "unlock_note": "Déverrouiller cette note",
-    "unlock": "Déverrouiller",
-    "locked_banner": "Cette note est verrouillée. Utilisez le bouton cadenas de la barre d'outils pour la modifier à nouveau.",
     "locked_error": "Cette note est verrouillée. Déverrouillez-la depuis la barre d'outils avant de la modifier.",
     "locked_toast": "Note verrouillée",
     "unlocked_toast": "Note déverrouillée",

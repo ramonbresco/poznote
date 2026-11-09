@@ -4833,8 +4833,6 @@
     "read_only_share": "此工作区以只读模式与您共享。",
     "lock_note": "锁定此笔记，禁止编辑",
     "unlock_note": "解锁此笔记",
-    "unlock": "解锁",
-    "locked_banner": "此笔记已锁定。请使用工具栏中的锁按钮以重新编辑。",
     "locked_error": "此笔记已锁定。请先在工具栏中解锁，然后再编辑。",
     "locked_toast": "笔记已锁定",
     "unlocked_toast": "笔记已解锁",

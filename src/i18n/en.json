@@ -4368,8 +4368,6 @@
     "read_only_share": "This workspace is shared with you in read-only mode.",
     "lock_note": "Lock this note against editing",
     "unlock_note": "Unlock this note",
-    "unlock": "Unlock",
-    "locked_banner": "This note is locked. Use the lock button in the toolbar to edit it again.",
     "locked_error": "This note is locked. Unlock it from the note toolbar before editing it.",
     "locked_toast": "Note locked",
     "unlocked_toast": "Note unlocked",
