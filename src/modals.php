@@ -484,9 +484,17 @@ $modalsPasswordDisabledHelp = $modalsPasswordDisabledReason === 'sso_only'
 <div id="moveNoteFolderModal" class="modal">
     <div class="modal-content">
         <h3><?php echo t_h('modals.move_note_folder.title'); ?></h3>
-        
-        <!-- Workspace selection -->
-        <div class="form-group">
+
+        <!-- Which note is moving, and where it sits now: the folder it is in is
+             left out of the list below, so the dialog has to name it -->
+        <p class="move-note-subject">
+            <i class="lucide lucide-file-text" aria-hidden="true"></i>
+            <span id="moveNoteFolderNoteTitle" class="move-note-subject-title"></span>
+        </p>
+        <p id="moveNoteFolderCurrent" class="move-note-subject-current"></p>
+
+        <!-- Workspace selection (hidden while the account has a single workspace) -->
+        <div class="form-group" id="moveNoteWorkspaceGroup">
             <div class="move-note-label-row">
                 <label for="workspaceSelect"><?php echo t_h('modals.move_note_folder.workspace_destination'); ?></label>
                 <?php if ((!function_exists('isActiveAccountOwnedByAuthenticatedUser') || isActiveAccountOwnedByAuthenticatedUser())): ?>
@@ -507,10 +515,7 @@ $modalsPasswordDisabledHelp = $modalsPasswordDisabledReason === 'sso_only'
 
         <div class="form-group">
             <div class="move-note-label-row">
-                <label for="moveNoteTargetSelect"><?php echo t_h('modals.move_note_folder.target_folder'); ?></label>
-                <button type="button" class="move-note-inline-create-toggle" data-action="toggle-move-create-folder">
-                    <i class="lucide lucide-plus"></i><?php echo t_h('modals.move_note_folder.new_folder', [], 'New folder'); ?>
-                </button>
+                <label for="moveNoteFolderFilter"><?php echo t_h('modals.move_note_folder.target_folder'); ?></label>
             </div>
             <div id="moveNoteRecentFolders" class="move-note-recent-folders initially-hidden">
                 <div class="move-note-recent-label">
@@ -519,14 +524,23 @@ $modalsPasswordDisabledHelp = $modalsPasswordDisabledReason === 'sso_only'
                 </div>
                 <div id="moveNoteRecentFoldersList" class="move-note-recent-list"></div>
             </div>
-            <select id="moveNoteTargetSelect" class="workspace-select">
+            <!-- Filter bar: narrows the list below, and names the folder to create
+                 when nothing matches -->
+            <div class="move-note-filter-bar">
+                <div class="filter-input-wrapper">
+                    <i class="lucide lucide-search move-note-filter-icon" aria-hidden="true"></i>
+                    <input type="text" id="moveNoteFolderFilter" class="filter-input" autocomplete="off" role="combobox" aria-controls="moveNoteFolderList" aria-expanded="true" placeholder="<?php echo t_h('modals.move_note_folder.filter_placeholder', [], 'Filter folders, or type a new name'); ?>" aria-label="<?php echo t_h('modals.move_note_folder.filter_placeholder', [], 'Filter folders, or type a new name'); ?>">
+                    <button type="button" id="moveNoteFolderFilterClear" class="clear-filter-btn" hidden title="<?php echo t_h('modals.move_note_folder.clear_filter', [], 'Clear the filter'); ?>" aria-label="<?php echo t_h('modals.move_note_folder.clear_filter', [], 'Clear the filter'); ?>">
+                        <i class="lucide lucide-x" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="moveNoteFolderList" class="move-task-list move-note-folder-list" role="listbox" aria-label="<?php echo t_h('modals.move_note_folder.target_folder'); ?>"></div>
+            <!-- Out of sight: holds the chosen folder and the option labels, which
+                 the move itself and the recent-folder shortcuts read -->
+            <select id="moveNoteTargetSelect" class="move-note-target-source" tabindex="-1" aria-hidden="true">
                 <!-- Options will be populated dynamically -->
             </select>
-            <div id="moveCreateFolderRow" class="move-note-inline-create initially-hidden">
-                <input type="text" id="moveCreateFolderName" maxlength="255" placeholder="<?php echo t_h('modals.move_note_folder.folder_name_placeholder', [], 'Folder name (use / for subfolders)'); ?>" data-enter-action="create-move-modal-folder">
-                <button type="button" class="btn-primary" data-action="create-move-modal-folder"><?php echo t_h('common.create'); ?></button>
-                <button type="button" class="btn-cancel" data-action="toggle-move-create-folder"><?php echo t_h('common.cancel'); ?></button>
-            </div>
         </div>
         
         <!-- Action buttons -->

@@ -116,19 +116,9 @@
                     toggleMoveCreateWorkspace();
                 }
                 break;
-            case 'toggle-move-create-folder':
-                if (typeof toggleMoveCreateFolder === 'function') {
-                    toggleMoveCreateFolder();
-                }
-                break;
             case 'create-move-modal-workspace':
                 if (typeof createWorkspaceFromMoveModal === 'function') {
                     createWorkspaceFromMoveModal();
-                }
-                break;
-            case 'create-move-modal-folder':
-                if (typeof createFolderFromMoveModal === 'function') {
-                    createFolderFromMoveModal();
                 }
                 break;
 
@@ -255,11 +245,6 @@
                 case 'create-move-modal-workspace':
                     if (typeof createWorkspaceFromMoveModal === 'function') {
                         createWorkspaceFromMoveModal();
-                    }
-                    break;
-                case 'create-move-modal-folder':
-                    if (typeof createFolderFromMoveModal === 'function') {
-                        createFolderFromMoveModal();
                     }
                     break;
             }

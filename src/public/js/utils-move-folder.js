@@ -135,6 +135,14 @@ function populateTargetFolderDropdown(excludeFolderId, excludeFolderName, select
         .then(function (data) {
             if (select.dataset.loadToken !== loadToken) return;
             if (data.success && data.folders) {
+                // The excluded folder is the note's own: name it by its full path
+                if (isMoveNoteTargetSelect(selectId)
+                    && excludeFolderId
+                    && data.folders[excludeFolderId]
+                    && typeof setMoveNoteModalCurrentPath === 'function') {
+                    setMoveNoteModalCurrentPath(data.folders[excludeFolderId].path || data.folders[excludeFolderId].name);
+                }
+
                 for (var folderId in data.folders) {
                     if (!data.folders.hasOwnProperty(folderId)) continue;
                     var folderData = data.folders[folderId];
@@ -150,19 +158,29 @@ function populateTargetFolderDropdown(excludeFolderId, excludeFolderName, select
                 }
                 // Don't auto-select any folder - leave "No folder" selected by default
                 if (preselectFolderId != null && findSelectOptionByValue(select, preselectFolderId)) {
-                    select.value = String(preselectFolderId);
                     try {
-                        updateMoveButton(select.value, true);
+                        if (isMoveNoteTargetSelect(selectId) && typeof selectMoveNoteFolder === 'function') {
+                            // Creating a folder from the filter bar is a choice: it counts
+                            selectMoveNoteFolder(preselectFolderId);
+                        } else {
+                            select.value = String(preselectFolderId);
+                            updateMoveButton(select.value, true);
+                        }
                     } catch (e) {
                         console.debug('utils-move-folder: populateTargetFolderDropdown() failed:', e);
                     }
                 }
                 loadMoveNoteRecentFolders(excludeFolderId, selectId, workspace);
             }
+            if (isMoveNoteTargetSelect(selectId) && typeof renderMoveNoteFolderList === 'function') {
+                // The move-note modal shows these options as a filtered list
+                renderMoveNoteFolderList();
+            }
         })
         .catch(function (error) {
             if (isMoveNoteTargetSelect(selectId)) {
                 clearMoveNoteRecentFolders();
+                if (typeof renderMoveNoteFolderList === 'function') renderMoveNoteFolderList();
             }
             showNotificationPopup(
                 (window.t ? window.t('folders.errors.load_prefix', { error: String(error) }, 'Error loading folders: {{error}}') : ('Error loading folders: ' + error)),
@@ -181,8 +199,13 @@ function populateTargetFolderDropdown(excludeFolderId, excludeFolderName, select
             }
         };
 
-        // Initialize button state - "No folder" is pre-selected
-        updateMoveButton(select.value || 'no-folder', true);
+        // The move-note modal picks nothing for the user, so its Move button waits for a
+        // choice (js/utils-move-note.js); the other modals keep their preselected option
+        if (isMoveNoteTargetSelect(selectId)) {
+            updateMoveButton('');
+        } else {
+            updateMoveButton(select.value || 'no-folder', true);
+        }
     } catch (e) {
         // ignore if updateMoveButton is not available in this context
         console.debug('utils-move-folder: populateTargetFolderDropdown() failed:', e);
@@ -237,14 +260,22 @@ function findSelectOptionByValue(select, value) {
 }
 
 function syncMoveNoteRecentSelection(selectedValue) {
-    var list = document.getElementById('moveNoteRecentFoldersList');
-    if (!list) return;
     selectedValue = String(selectedValue || '');
-    list.querySelectorAll('.move-note-recent-folder').forEach(function (button) {
-        var isSelected = selectedValue !== '' && button.dataset.folderId === selectedValue;
-        button.classList.toggle('is-selected', isSelected);
-        button.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
-    });
+
+    var list = document.getElementById('moveNoteRecentFoldersList');
+    if (list) {
+        list.querySelectorAll('.move-note-recent-folder').forEach(function (button) {
+            var isSelected = selectedValue !== '' && button.dataset.folderId === selectedValue;
+            button.classList.toggle('is-selected', isSelected);
+            button.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+        });
+    }
+
+    // Both ways of picking a folder (a chip, a row of the list) land here, so this is
+    // where the list learns which row is the chosen one (js/utils-move-note.js)
+    if (typeof renderMoveNoteFolderList === 'function') {
+        renderMoveNoteFolderList();
+    }
 }
 
 function loadMoveNoteRecentFolders(excludeFolderId, selectId, workspace) {
@@ -314,6 +345,10 @@ function renderMoveNoteRecentFolders(folders, excludeFolderId) {
         button.appendChild(icon);
         button.appendChild(text);
         button.addEventListener('click', function () {
+            if (typeof selectMoveNoteFolder === 'function') {
+                selectMoveNoteFolder(folderId);
+                return;
+            }
             select.value = folderId;
             updateMoveButton(folderId, true);
             syncMoveNoteRecentSelection(folderId);
