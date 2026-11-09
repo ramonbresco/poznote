@@ -1871,7 +1871,45 @@ function parseMarkdown($text) {
  * assistant), so the three can never drift apart.
  */
 function parseMarkdownForRichText($text) {
-    return addRichTextCodeBlockSpacing(parseMarkdown($text));
+    return addRichTextParagraphSpacing(addRichTextCodeBlockSpacing(parseMarkdown($text)));
+}
+
+/**
+ * Inserts an empty paragraph between two blocks that carry no air of their
+ * own: a paragraph and a toggle.
+ *
+ * A blank line is what separates two blocks in Markdown, and a page that
+ * renders Markdown shows that break as the air it puts under a paragraph. A
+ * rich-text note gives a paragraph no margin at all (css/notes/noteentry.css),
+ * so the break has no height there and the text came out of the conversion in
+ * one block. A heading, a list or a quote bring their own margins and are
+ * left alone; a toggle has next to none, so it counts with the paragraphs. The empty paragraph is what the editor itself writes for a blank
+ * line, and converting back folds it into the paragraph break it came from,
+ * so a note can go back and forth without collecting blank lines.
+ *
+ * Code blocks are left untouched: the blank lines inside one are its text.
+ */
+function addRichTextParagraphSpacing($html) {
+    $spacer = '<p class="blank-line">&nbsp;</p>';
+
+    // Odd indexes hold the code blocks, even indexes the content between them
+    $parts = preg_split('/(<pre\b[^>]*>.*?<\/pre>)/s', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
+    if ($parts === false) {
+        return $html;
+    }
+
+    foreach ($parts as $index => $part) {
+        if ($index % 2 === 1) {
+            continue;
+        }
+        $parts[$index] = preg_replace(
+            '~(?<!class="blank-line">&nbsp;)</(p|details)>\s*\n\s*(?=<(?:p(?![^>]*class="blank-line")|details)[\s>])~',
+            '</$1>' . "\n" . $spacer . "\n",
+            $part
+        ) ?? $part;
+    }
+
+    return implode('', $parts);
 }
 
 /**

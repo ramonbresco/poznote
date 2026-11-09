@@ -896,6 +896,55 @@
         document.execCommand('insertText', false, newLine);
     }
 
+    // The title of a toggle block written in a Markdown note sits on a
+    // <summary> line of raw HTML. A leading "# " there is plain text to the
+    // parser, which then stops reading the line as a tag and breaks the
+    // block, so the heading goes inside the <summary> instead, as it does in
+    // a rich-text note (js/toggle-block.js).
+    var MARKDOWN_SUMMARY_LINE = /^(\s*<summary\b[^>]*>)([\s\S]*?)(<\/summary>\s*)$/i;
+
+    function isMarkdownSummaryLine(line) {
+        return MARKDOWN_SUMMARY_LINE.test(line);
+    }
+
+    /** The open tag of a <summary>, carrying the asked heading class. */
+    function markdownSummaryTagWithLevel(openTag, level) {
+        var wanted = level ? 'toggle-h' + level : '';
+        var rewritten = false;
+        var next = openTag.replace(/(\sclass\s*=\s*")([^"]*)(")/i, function (all, before, value, after) {
+            rewritten = true;
+            var kept = value.split(/\s+/).filter(function (name) {
+                return name && !/^toggle-h[1-6]$/.test(name);
+            });
+            if (wanted) kept.push(wanted);
+            return kept.length ? before + kept.join(' ') + after : '';
+        });
+        if (!rewritten && wanted) next = openTag.replace(/\s*>$/, ' class="' + wanted + '">');
+        return next;
+    }
+
+    /**
+     * The heading level on a <summary> line, applied in place. Returns false
+     * when the caret is not on such a line and the usual path takes over.
+     */
+    function applyMarkdownSummaryHeading(editor, offsets, level) {
+        var fullText = getMarkdownEditorValue(editor);
+        var lineStart = fullText.lastIndexOf('\n', Math.max(0, offsets.start - 1)) + 1;
+        var lineEnd = fullText.indexOf('\n', offsets.start);
+        if (lineEnd === -1) lineEnd = fullText.length;
+
+        var line = fullText.slice(lineStart, lineEnd);
+        var parts = MARKDOWN_SUMMARY_LINE.exec(line);
+        if (!parts) return false;
+
+        var next = markdownSummaryTagWithLevel(parts[1], level) + parts[2] + parts[3];
+        if (next !== line) {
+            var caret = lineStart + next.length - parts[3].length;
+            replaceMarkdownRangeAndSelect(editor, lineStart, lineEnd, next, caret, caret);
+        }
+        return true;
+    }
+
     /**
      * Apply markdown heading level from toolbar (wraps selected text like bold does)
      * @param {string|number} style - 'normal' to remove heading, or '1', '2', '3' for heading level
@@ -916,6 +965,7 @@
         if (editor && offsets) {
             var level = style === 'normal' ? 0 : parseInt(style, 10);
             if (style !== 'normal' && (!level || level < 1 || level > 6)) return;
+            if (applyMarkdownSummaryHeading(editor, offsets, level)) return;
             var prefix = level ? '#'.repeat(level) + ' ' : '';
 
             var fullText = getMarkdownEditorValue(editor);
@@ -942,7 +992,11 @@
                 var result = line;
                 var oldPrefixLength = 0;
                 var newPrefixLength = 0;
-                if ((line.trim() !== '' || start === end) && (level || block[2])) {
+                // A <summary> line caught in a wider selection keeps the
+                // title it has: a "# " in front of the tag would break the
+                // toggle it opens
+                if (!isMarkdownSummaryLine(line)
+                    && (line.trim() !== '' || start === end) && (level || block[2])) {
                     var kept = level ? '' : block[0].slice(0, block[0].length - block[2].length);
                     result = frame + kept + prefix + body.slice(block[0].length);
                     oldPrefixLength = frame.length + block[0].length;

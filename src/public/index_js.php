@@ -51,6 +51,7 @@ function poznoteGetIndexJsGroups(): array {
         'js/note-loader.js',
         'js/note-image-menu.js',
         'js/note-content-init.js',
+        'js/toggle-block.js',
         'js/note-image-actions.js',
         'js/note-reference.js',
         'js/linked-note-selector.js',

@@ -705,6 +705,11 @@ body[data-markdown-live-syntax='0'] .markdown-codemirror-host .cm-live-preview :
     display: inline-block;
     width: 0;
     height: 0;
+    /* The editor clips at the left of its lines, and the patch drawn behind
+       the triangle on hover reaches 7px further left than the triangle does;
+       4px of them are the room the content box has, the triangle makes up
+       the rest by starting a little further in. */
+    margin-left: 4px;
     margin-right: 10px;
     vertical-align: 1px;
     border-left: 5px solid currentColor;
@@ -716,8 +721,54 @@ body[data-markdown-live-syntax='0'] .markdown-codemirror-host .cm-live-preview :
     cursor: pointer;
 }
 
+/* The triangle reads as a button under the pointer, as it does on a rendered
+   toggle (css/components/toggle-block.css). js/toggle-block.js marks <body>
+   while the pointer is in the strip that folds the block. */
+body.pz-toggle-marker-hover .markdown-codemirror-host .cm-live-preview .cm-line.cm-live-toggle-header:hover::before {
+    border-radius: var(--pz-radius-sm);
+    box-shadow: 0 0 0 7px var(--pz-surface-hover);
+    opacity: 1;
+}
+
 .markdown-codemirror-host .cm-live-preview .cm-line.cm-live-toggle-open::before {
     transform: rotate(90deg);
+}
+
+/* A title shown at a heading's size, from the class on the <summary>
+   (css/components/toggle-block.css). The same six sizes, so the three views
+   of a Markdown note agree. */
+.markdown-codemirror-host .cm-live-preview .cm-line.cm-live-toggle-h1 {
+    font-size: 2em;
+}
+
+.markdown-codemirror-host .cm-live-preview .cm-line.cm-live-toggle-h2 {
+    font-size: 1.5em;
+}
+
+.markdown-codemirror-host .cm-live-preview .cm-line.cm-live-toggle-h3 {
+    font-size: 1.17em;
+}
+
+.markdown-codemirror-host .cm-live-preview .cm-line.cm-live-toggle-h4 {
+    font-size: 1em;
+}
+
+.markdown-codemirror-host .cm-live-preview .cm-line.cm-live-toggle-h5 {
+    font-size: 0.83em;
+}
+
+.markdown-codemirror-host .cm-live-preview .cm-line.cm-live-toggle-h6 {
+    font-size: 0.67em;
+}
+
+/* The body of an open toggle, under the guide line the rendered preview and
+   the rich-text editor draw as well (css/components/toggle-block.css). The
+   lines of an editor sit one on top of the other, so a border on each makes
+   one unbroken line. */
+.markdown-codemirror-host .cm-live-preview .cm-line.cm-live-toggle-body {
+    margin-left: 6px;
+    padding-left: 16px;
+    border-left: 1px solid var(--pz-border);
 }
 
 .markdown-codemirror-host .cm-live-preview .cm-line:is(.cm-live-toggle-edge, .cm-live-toggle-folded) {
@@ -1116,6 +1167,18 @@ body.slash-menu-cursor-hidden * {
 
 .markdown-preview p {
     margin: 0 0 1em 0;
+}
+
+/* A toggle is a block of the note like a paragraph, so it keeps the same air
+   under it. Its own margin is the tight one of the editor, where a paragraph
+   has none (css/components/toggle-block.css); here the next line would
+   otherwise come 4px under the block while two paragraphs are a line apart. */
+.markdown-preview .toggle-block {
+    margin-bottom: 1em;
+}
+
+.markdown-preview .toggle-block:last-child {
+    margin-bottom: 0;
 }
 
 /* Blank lines to preserve spacing in markdown */

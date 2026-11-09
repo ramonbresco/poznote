@@ -1794,7 +1794,6 @@
     "toggle": "折りたたみ",
     "toggle_placeholder": "折りたたみ",
     "toggle_content_placeholder": "ここに折りたたみの中身を書きます…",
-    "toggle_after_placeholder": "ここに折りたたみの外の内容を書きます…",
     "code_block_placeholder_before": "ここにテキストを書きます…",
     "code_block_placeholder_after": "ここにテキストを書きます…",
     "youtube_video": "YouTube動画",

@@ -346,6 +346,14 @@ function sanitizeHtml($html) {
         }
     }
     
+    // The body of a toggle block is not an editing host of its own: the note
+    // around it is. A second one cut the caret and the undo history in two,
+    // and on a public page it let a visitor type into the block.
+    $toggleBodies = $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " toggle-content ")]');
+    foreach ($toggleBodies as $body) {
+        $body->removeAttribute('contenteditable');
+    }
+
     // Remove all disallowed tags
     $allElements = $xpath->query('//body//*');
     $elementsToRemove = [];

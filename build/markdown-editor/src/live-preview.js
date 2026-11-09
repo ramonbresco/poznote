@@ -262,6 +262,30 @@ const toggleEdgeLineDecoration = Decoration.line({ class: 'cm-live-toggle-edge' 
 const toggleFoldedLineDecoration = Decoration.line({ class: 'cm-live-toggle-folded' })
 const toggleHeaderOpenDecoration = Decoration.line({ class: 'cm-live-toggle-header cm-live-toggle-open' })
 const toggleHeaderClosedDecoration = Decoration.line({ class: 'cm-live-toggle-header' })
+// The body of an open toggle: the lines carry the guide line the preview
+// draws along the body of a toggle (css/markdown.css)
+const toggleBodyLineDecoration = Decoration.line({ class: 'cm-live-toggle-body' })
+// Where the guide line of a toggle body sits, the same numbers as
+// .cm-live-toggle-body in css/markdown.css
+const TOGGLE_BODY_MARGIN = 6
+const TOGGLE_BODY_PADDING = 16
+
+// The size a toggle's title is shown at, from the class the <summary> carries
+// (css/components/toggle-block.css). 0 when it has none.
+function toggleHeadingLevel(doc, toggle) {
+  const match = /<summary\b[^>]*\bclass\s*=\s*"[^"]*\btoggle-h([1-6])\b/i.exec(doc.line(toggle.summaryLine).text)
+  return match ? Number(match[1]) : 0
+}
+
+// Is this line in the body of an open toggle? A line that sets its own left
+// offset, a list item, has to add the toggle's to it rather than replace it,
+// or the guide line would step right where the list starts.
+function isOpenToggleBodyLine(state, doc, lineFrom) {
+  const number = doc.lineAt(lineFrom).number
+  return getToggles(doc).some(toggle => number > toggle.summaryLine
+    && number < toggle.lastLine
+    && isToggleOpen(state, toggle))
+}
 
 // The choice made on a block is also kept in the browser, per note: closing
 // the note's tab, or reloading, no longer loses it. A block is known by its
@@ -1153,12 +1177,23 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
         }
 
         if (number === toggle.summaryLine) {
-          decorations.push((isOpen ? toggleHeaderOpenDecoration : toggleHeaderClosedDecoration).range(line.from))
+          const level = toggleHeadingLevel(doc, toggle)
+          const header = level
+            ? Decoration.line({ class: 'cm-live-toggle-header cm-live-toggle-h' + level + (isOpen ? ' cm-live-toggle-open' : '') })
+            : (isOpen ? toggleHeaderOpenDecoration : toggleHeaderClosedDecoration)
+          decorations.push(header.range(line.from))
         } else if (!rest.trim() && (number === toggle.firstLine || number === toggle.lastLine)) {
           // Nothing left on the line of <details> or </details>
           decorations.push(toggleEdgeLineDecoration.range(line.from))
+        } else if (!rest.trim() && (number === toggle.summaryLine + 1 || number === toggle.lastLine - 1)) {
+          // The blank line a Markdown parser wants between the title and the
+          // body, and the one before the closing tag: they separate nothing
+          // on the page, and the rendered preview leaves no gap for them
+          decorations.push(toggleEdgeLineDecoration.range(line.from))
         } else if (!isOpen && number > toggle.summaryLine) {
           decorations.push(toggleFoldedLineDecoration.range(line.from))
+        } else if (number > toggle.summaryLine) {
+          decorations.push(toggleBodyLineDecoration.range(line.from))
         }
       }
     })
@@ -1415,8 +1450,15 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
                 // (the base depends on how wide the marker itself is; items
                 // are spaced as the <li> of the preview are)
                 const base = list.name === 'OrderedList' ? 13 : (item.getChild('Task') ? 22 : 19)
+                const indent = base + depth * 16
+                // Inside a toggle the margin belongs to its guide line, so
+                // the list's own offset becomes padding behind it
+                const inToggle = isOpenToggleBodyLine(state, doc, lineFrom)
+                const offset = inToggle
+                  ? 'margin-left:' + TOGGLE_BODY_MARGIN + 'px;padding-left:' + (TOGGLE_BODY_PADDING + indent) + 'px'
+                  : 'margin-left:' + indent + 'px'
                 decorations.push(Decoration.line({
-                  attributes: { style: 'margin-left:' + (base + depth * 16) + 'px;padding-top:3px;padding-bottom:3px' }
+                  attributes: { style: offset + ';padding-top:3px;padding-bottom:3px' }
                 }).range(lineFrom))
               }
               if (list.name === 'OrderedList') decorations.push(listNumberDecoration.range(node.from, node.to))

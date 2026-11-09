@@ -1794,7 +1794,6 @@
     "toggle": "토글 목록",
     "toggle_placeholder": "토글 목록",
     "toggle_content_placeholder": "토글 목록 안에 내용을 입력하세요…",
-    "toggle_after_placeholder": "토글 목록 밖에 내용을 입력하세요…",
     "code_block_placeholder_before": "여기에 텍스트를 작성하세요…",
     "code_block_placeholder_after": "여기에 텍스트를 작성하세요…",
     "youtube_video": "유튜브 영상",

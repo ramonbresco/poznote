@@ -958,6 +958,7 @@ function generatePublicLookHtml($content, $title, $noteType, $referenceResolver 
         $cssRoot . '/components/selection.css',
         $cssRoot . '/components/task-priority.css',
         $cssRoot . '/components/code-block-fold.css',
+        $cssRoot . '/components/toggle-block.css',
         $cssRoot . '/public_note.css',
         $cssRoot . '/tasks.css',
         $cssRoot . '/markdown.css',

@@ -216,6 +216,7 @@ function sanitizePublicNoteHtml(string $content): string {
         'td' => ['colspan', 'rowspan'],
         'th' => ['colspan', 'rowspan', 'scope'],
         'ol' => ['type', 'start'],
+        'details' => ['open'],
         'col' => ['span'],
         'colgroup' => ['span'],
         'input' => ['type', 'checked', 'disabled', 'readonly', 'value', 'placeholder'],
@@ -312,6 +313,12 @@ function sanitizePublicNoteHtml(string $content): string {
                 if (!$isSafeUrl($attr->value, $tag === 'img')) {
                     $el->removeAttribute($attr->name);
                 }
+            } elseif ($name === 'contenteditable' && $attr->value !== 'false') {
+                // A page nobody can edit: the only contenteditable that means
+                // anything here is the one that turns editing off. A toggle
+                // block of an older note carries contenteditable="true" on
+                // its body, which let a visitor type into the share.
+                $el->removeAttribute($attr->name);
             } elseif ($name === 'style') {
                 if (preg_match('/expression\s*\(|javascript\s*:|vbscript\s*:/i', $attr->value)) {
                     $el->removeAttribute($attr->name);

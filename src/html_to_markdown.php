@@ -64,15 +64,24 @@ function poznoteHtmlToMarkdown(string $html): string {
     }, $md);
     
     // ---- Toggle blocks (<details class="toggle-block">) ----
-    $md = preg_replace_callback('/<details[^>]*class="[^"]*toggle-block[^"]*"[^>]*>\s*<summary[^>]*>(.*?)<\/summary>\s*(?:<div[^>]*class="[^"]*toggle-content[^"]*"[^>]*>(.*?)<\/div>)?\s*<\/details>/is', function($matches) {
-        $summary = strip_tags(trim($matches[1]));
-        $content = isset($matches[2]) ? trim($matches[2]) : '';
+    // The classes come along: they are what makes the block a toggle on the
+    // other side (the triangle, the guide line along its body) and what
+    // carries the size its title is shown at (toggle-h1 to toggle-h6). The
+    // body's wrapper is not written out: a toggle in Markdown holds its
+    // blocks directly and the app puts the wrapper back (js/toggle-block.js).
+    $md = preg_replace_callback('/<details[^>]*class="[^"]*toggle-block[^"]*"[^>]*>\s*<summary([^>]*)>(.*?)<\/summary>\s*(?:<div[^>]*class="[^"]*toggle-content[^"]*"[^>]*>(.*?)<\/div>)?\s*<\/details>/is', function($matches) {
+        $summary = strip_tags(trim($matches[2]));
+        $content = isset($matches[3]) ? trim($matches[3]) : '';
         $innerMd = $content ? poznoteHtmlToMarkdown($content) : '';
-        return "\n\n<details>\n<summary>" . $summary . "</summary>\n\n" . $innerMd . "\n\n</details>\n\n";
+        $headingClass = preg_match('/\btoggle-h([1-6])\b/i', $matches[1], $level) ? ' toggle-h' . $level[1] : '';
+        return "\n\n<details class=\"toggle-block\">\n<summary class=\"toggle-header" . $headingClass . "\">"
+            . $summary . "</summary>\n\n" . $innerMd . "\n\n</details>\n\n";
     }, $md);
     
-    // Handle generic <details>/<summary>
-    $md = preg_replace_callback('/<details[^>]*>\s*<summary[^>]*>(.*?)<\/summary>(.*?)<\/details>/is', function($matches) {
+    // Handle generic <details>/<summary>. A toggle is left alone: the rule
+    // above has just written it out with its classes, and without this it
+    // would be taken apart again and lose them.
+    $md = preg_replace_callback('/<details(?![^>]*toggle-block)[^>]*>\s*<summary[^>]*>(.*?)<\/summary>(.*?)<\/details>/is', function($matches) {
         $summary = strip_tags(trim($matches[1]));
         $content = trim($matches[2]);
         $innerMd = $content ? poznoteHtmlToMarkdown($content) : '';

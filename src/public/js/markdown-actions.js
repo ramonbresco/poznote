@@ -540,6 +540,13 @@ function setupPreviewInteractivity(noteId, roots) {
         }
     }
 
+    // A redraw rebuilds the toggles from the source, which holds neither the
+    // body's wrapper nor what the reader opened (js/toggle-block.js)
+    if (window.PoznoteToggleBlock && typeof window.PoznoteToggleBlock.restoreState === 'function') {
+        window.PoznoteToggleBlock.refresh(previewDiv);
+        window.PoznoteToggleBlock.restoreState(previewDiv);
+    }
+
     // Right-click context menu on tables in preview (same gesture as HTML tables)
     var previewTables = _mdQueryPreviewRoots(scopes, 'table[data-start-line]');
     previewTables.forEach(function(table) {

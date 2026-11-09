@@ -879,6 +879,17 @@ html[data-theme='dark'] #heading-copy-toast {
     margin: 0 0 1em 0;
 }
 
+/* A toggle is a block of the note like a paragraph, so it keeps the same air
+   under it. Its own margin is the tight one of the editor, where a paragraph
+   has none (css/components/toggle-block.css). */
+.public-note .content.public-note-markdown .toggle-block {
+    margin-bottom: 1em;
+}
+
+.public-note .content.public-note-markdown .toggle-block:last-child {
+    margin-bottom: 0;
+}
+
 .public-note .content.public-note-markdown p.blank-line {
     margin: 0;
 }
