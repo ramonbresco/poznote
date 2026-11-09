@@ -248,30 +248,56 @@
      * scroll it natively.
      */
     function wireSublineDrag(list) {
+        var DRAG_THRESHOLD = 4;
         var startX = 0;
         var startScroll = 0;
+        var pointerId = null;
+        var pending = false;
         var dragging = false;
+        var dragged = false;
 
         list.addEventListener('pointerdown', function (e) {
             if (e.pointerType !== 'mouse' || e.button !== 0) {
                 return;
             }
-            dragging = true;
+            // The capture is taken on the first move, not here: capturing the
+            // pointer right away makes the browser fire the click on the
+            // strip instead of on whatever was pressed, which left nothing
+            // inside the strip clickable (the note id entry).
+            pending = true;
+            dragging = false;
+            dragged = false;
+            pointerId = e.pointerId;
             startX = e.clientX;
             startScroll = list.scrollLeft;
-            list.setPointerCapture(e.pointerId);
         });
         list.addEventListener('pointermove', function (e) {
+            if (pending && Math.abs(e.clientX - startX) > DRAG_THRESHOLD) {
+                pending = false;
+                dragging = true;
+                dragged = true;
+                try { list.setPointerCapture(pointerId); } catch (err) { /* pointer already gone */ }
+            }
             if (dragging) {
                 list.scrollLeft = startScroll - (e.clientX - startX);
             }
         });
         function stop() {
+            pending = false;
             dragging = false;
         }
         list.addEventListener('pointerup', stop);
         list.addEventListener('pointercancel', stop);
         list.addEventListener('lostpointercapture', stop);
+        // Letting go after dragging the strip must not also press whatever
+        // ended up under the pointer
+        list.addEventListener('click', function (e) {
+            if (dragged) {
+                dragged = false;
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
     }
 
     /**

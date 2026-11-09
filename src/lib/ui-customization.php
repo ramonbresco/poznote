@@ -547,6 +547,9 @@ function poznoteBuildUiCustomizationRules(array $hiddenKeys) {
                 $rules[] = '.note-sub-stat-words { display: none !important; }';
             } elseif ($id === 'note-stats-lines') {
                 $rules[] = '.note-sub-stat-lines { display: none !important; }';
+            } elseif ($id === 'note-id') {
+                // The note id, last entry of that line
+                $rules[] = '.note-sub-id { display: none !important; }';
             } elseif ($id === 'note-info-icon') {
                 // Information icon that closes that line
                 $rules[] = '.note-sub-info { display: none !important; }';

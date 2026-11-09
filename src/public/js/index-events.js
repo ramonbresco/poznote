@@ -984,6 +984,23 @@
                     window.showNoteInfoModal(noteId);
                 }
                 break;
+            case 'copy-note-id':
+                // The id under the note title (css/notes/subline.css): the
+                // number an API call, an MCP call or a ?note= link needs
+                if (noteId) {
+                    const copiedId = String(noteId);
+                    const toldCopied = function () {
+                        if (typeof window.poznoteShowToast === 'function') {
+                            window.poznoteShowToast((window.t
+                                ? window.t('index.note.id_copied', { id: copiedId }, 'Note id {{id}} copied')
+                                : 'Note id ' + copiedId + ' copied'));
+                        }
+                    };
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(copiedId).then(toldCopied, function () {});
+                    }
+                }
+                break;
             case 'navigate-tags':
                 window.location = 'list_tags.php?workspace=' + encodeURIComponent(window.selectedWorkspace || '');
                 break;

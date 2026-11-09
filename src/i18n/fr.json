@@ -1515,7 +1515,8 @@
       "tasklist_frame": "Cadre autour de chaque tâche",
       "tasklist_delete": "Supprimer une tâche",
       "tasklist_menu": "Menu des options de tâche (mobile)",
-      "tasklist_frame_color": "Couleur de priorité du cadre des tâches"
+      "tasklist_frame_color": "Couleur de priorité du cadre des tâches",
+      "note_id": "Afficher l'identifiant de la note"
     },
     "icon_sidebar_order": {
       "title": "Disposition de la barre d'icônes",
@@ -2534,7 +2535,9 @@
         }
       },
       "missing": "La note #{{id}} n'existe pas, ou elle a été supprimée.",
-      "missing_trashed": "La note #{{id}} est dans la corbeille. Restaurez-la pour l'ouvrir à nouveau."
+      "missing_trashed": "La note #{{id}} est dans la corbeille. Restaurez-la pour l'ouvrir à nouveau.",
+      "copy_id": "Copier l'identifiant de la note",
+      "id_copied": "Identifiant de note {{id}} copié"
     },
     "editor": {
       "placeholder_desktop": "Saisissez du texte, utilisez / ou le clic droit pour ouvrir le menu des commandes, collez des images ou glissez-déposez une image à l’emplacement du curseur.",

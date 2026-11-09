@@ -1515,7 +1515,8 @@
       "tasklist_frame": "Moldura em volta de cada tarefa",
       "tasklist_delete": "Excluir uma tarefa",
       "tasklist_menu": "Menu de opções da tarefa (celular)",
-      "tasklist_frame_color": "Cor de prioridade da moldura das tarefas"
+      "tasklist_frame_color": "Cor de prioridade da moldura das tarefas",
+      "note_id": "Mostrar o identificador da nota"
     },
     "icon_sidebar_order": {
       "title": "Layout da barra de ícones",
@@ -2532,7 +2533,9 @@
         }
       },
       "missing": "A nota #{{id}} não existe ou foi excluída.",
-      "missing_trashed": "A nota #{{id}} está na lixeira. Restaure-a para abri-la novamente."
+      "missing_trashed": "A nota #{{id}} está na lixeira. Restaure-a para abri-la novamente.",
+      "copy_id": "Copiar o identificador da nota",
+      "id_copied": "Identificador da nota {{id}} copiado"
     },
     "editor": {
       "placeholder_desktop": "Insira texto, use / ou o clique com o botão direito para abrir o menu de comandos, cole imagens ou arraste e solte uma imagem no cursor.",

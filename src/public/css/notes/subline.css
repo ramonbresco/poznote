@@ -89,11 +89,32 @@ body.show-note-created .note-subline {
 .note-sub-created,
 .note-sub-updated,
 .note-sub-stat,
+.note-sub-id,
 .note-sub-info {
     flex-shrink: 0;
     margin-top: calc(-1 * var(--note-sub-pull));
     margin-bottom: 16px;
     white-space: nowrap;
+}
+
+/* The note id closes the strip: the number the address bar and every API or
+   MCP call names the note by. A button, because clicking it copies the
+   number, but it reads as one more entry of the line, not as a control. */
+.note-sub-id-btn {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    line-height: inherit;
+    cursor: pointer;
+}
+
+.note-sub-id-btn:hover,
+.note-sub-id-btn:focus-visible {
+    color: var(--pz-text);
 }
 
 /* The information icon stands after the strip, not in it: it stays in view
@@ -120,7 +141,8 @@ body.show-note-created .note-subline {
    whatever entries are hidden, which no selector could tell. */
 .note-sub-created::before,
 .note-sub-updated::before,
-.note-sub-stat::before {
+.note-sub-stat::before,
+.note-sub-id::before {
     content: "\00b7";
     display: inline-block;
     width: var(--note-sub-dot-slot);

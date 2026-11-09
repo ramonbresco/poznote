@@ -999,7 +999,8 @@
       "tasklist_frame": "Frame around each task",
       "tasklist_delete": "Delete a task",
       "tasklist_menu": "Task options menu (mobile)",
-      "tasklist_frame_color": "Priority colour of the task frame"
+      "tasklist_frame_color": "Priority colour of the task frame",
+      "note_id": "Show the note id"
     },
     "icon_sidebar_order": {
       "title": "Icon sidebar layout",
@@ -2013,7 +2014,9 @@
         }
       },
       "missing": "Note #{{id}} does not exist, or it was deleted.",
-      "missing_trashed": "Note #{{id}} is in the trash. Restore it to open it again."
+      "missing_trashed": "Note #{{id}} is in the trash. Restore it to open it again.",
+      "copy_id": "Copy the note id",
+      "id_copied": "Note id {{id}} copied"
     },
     "editor": {
       "placeholder_desktop": "Enter text, use / or right-click for command menu, paste images or drop an image at cursor.",

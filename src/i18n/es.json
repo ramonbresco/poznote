@@ -1515,7 +1515,8 @@
       "tasklist_frame": "Marco alrededor de cada tarea",
       "tasklist_delete": "Eliminar una tarea",
       "tasklist_menu": "Menú de opciones de la tarea (móvil)",
-      "tasklist_frame_color": "Color de prioridad del marco de las tareas"
+      "tasklist_frame_color": "Color de prioridad del marco de las tareas",
+      "note_id": "Mostrar el identificador de la nota"
     },
     "icon_sidebar_order": {
       "title": "Diseño de la barra de iconos",
@@ -2532,7 +2533,9 @@
         }
       },
       "missing": "La nota #{{id}} no existe o se ha eliminado.",
-      "missing_trashed": "La nota #{{id}} está en la papelera. Restáurala para volver a abrirla."
+      "missing_trashed": "La nota #{{id}} está en la papelera. Restáurala para volver a abrirla.",
+      "copy_id": "Copiar el identificador de la nota",
+      "id_copied": "Identificador de nota {{id}} copiado"
     },
     "editor": {
       "placeholder_desktop": "Ingresa texto, usa / o el clic derecho para abrir el menú de comandos, pega imágenes o arrastra y suelta una imagen en el cursor.",

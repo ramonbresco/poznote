@@ -999,7 +999,8 @@
       "tasklist_frame": "Marc al voltant de cada tasca",
       "tasklist_delete": "Suprimeix una tasca",
       "tasklist_menu": "Menú d'opcions de la tasca (mòbil)",
-      "tasklist_frame_color": "Color de prioritat del marc de les tasques"
+      "tasklist_frame_color": "Color de prioritat del marc de les tasques",
+      "note_id": "Mostra l'identificador de la nota"
     },
     "icon_sidebar_order": {
       "title": "Disposició de la barra lateral d'icones",
@@ -2013,7 +2014,9 @@
         }
       },
       "missing": "La nota #{{id}} no existeix o s'ha eliminat.",
-      "missing_trashed": "La nota #{{id}} és a la paperera. Restaura-la per tornar-la a obrir."
+      "missing_trashed": "La nota #{{id}} és a la paperera. Restaura-la per tornar-la a obrir.",
+      "copy_id": "Copia l'identificador de la nota",
+      "id_copied": "Identificador de nota {{id}} copiat"
     },
     "editor": {
       "placeholder_desktop": "Escriviu text, feu servir / o el botó dret per obrir el menú d'ordres, enganxeu imatges o deixeu anar una imatge al cursor.",

@@ -1515,7 +1515,8 @@
       "tasklist_frame": "Rahmen um jede Aufgabe",
       "tasklist_delete": "Aufgabe löschen",
       "tasklist_menu": "Menü der Aufgabenoptionen (Mobil)",
-      "tasklist_frame_color": "Prioritätsfarbe des Aufgabenrahmens"
+      "tasklist_frame_color": "Prioritätsfarbe des Aufgabenrahmens",
+      "note_id": "Notiz-ID anzeigen"
     },
     "icon_sidebar_order": {
       "title": "Layout der Icon-Seitenleiste",
@@ -2532,7 +2533,9 @@
         }
       },
       "missing": "Die Notiz #{{id}} existiert nicht oder wurde gelöscht.",
-      "missing_trashed": "Die Notiz #{{id}} liegt im Papierkorb. Stelle sie wieder her, um sie erneut zu öffnen."
+      "missing_trashed": "Die Notiz #{{id}} liegt im Papierkorb. Stelle sie wieder her, um sie erneut zu öffnen.",
+      "copy_id": "Notiz-ID kopieren",
+      "id_copied": "Notiz-ID {{id}} kopiert"
     },
     "editor": {
       "placeholder_desktop": "Text eingeben, / oder Rechtsklick verwenden, um das Befehlsmenü zu öffnen, Bilder einfügen oder ein Bild am Cursor ablegen.",

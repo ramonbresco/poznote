@@ -1513,7 +1513,8 @@
       "tasklist_frame": "每个任务的边框",
       "tasklist_delete": "删除任务",
       "tasklist_menu": "任务选项菜单（移动端）",
-      "tasklist_frame_color": "任务边框的优先级颜色"
+      "tasklist_frame_color": "任务边框的优先级颜色",
+      "note_id": "显示笔记 ID"
     },
     "icon_sidebar_order": {
       "title": "图标侧边栏布局",
@@ -2527,7 +2528,9 @@
         }
       },
       "missing": "笔记 #{{id}} 不存在，或者已被删除。",
-      "missing_trashed": "笔记 #{{id}} 在回收站中。请先恢复它才能打开。"
+      "missing_trashed": "笔记 #{{id}} 在回收站中。请先恢复它才能打开。",
+      "copy_id": "复制笔记 ID",
+      "id_copied": "已复制笔记 ID {{id}}"
     },
     "editor": {
       "placeholder_desktop": "输入文本，使用 / 或右键打开命令菜单，粘贴图片或在光标处拖放图片。",

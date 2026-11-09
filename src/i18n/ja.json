@@ -999,7 +999,8 @@
       "tasklist_frame": "各タスクの枠",
       "tasklist_delete": "タスクの削除",
       "tasklist_menu": "タスクのオプションメニュー（モバイル）",
-      "tasklist_frame_color": "タスクの枠の優先度の色"
+      "tasklist_frame_color": "タスクの枠の優先度の色",
+      "note_id": "ノート ID を表示"
     },
     "icon_sidebar_order": {
       "title": "アイコンサイドバーのレイアウト",
@@ -2013,7 +2014,9 @@
         }
       },
       "missing": "ノート #{{id}} は存在しません。削除された可能性があります。",
-      "missing_trashed": "ノート #{{id}} はごみ箱にあります。開くには復元してください。"
+      "missing_trashed": "ノート #{{id}} はごみ箱にあります。開くには復元してください。",
+      "copy_id": "ノート ID をコピー",
+      "id_copied": "ノート ID {{id}} をコピーしました"
     },
     "editor": {
       "placeholder_desktop": "テキストを入力してください。「/」か右クリックでコマンドメニューを開けます。画像は貼り付けるか、カーソル位置にドロップして追加できます。",

@@ -494,6 +494,8 @@
                     rules.push('.note-sub-stat-words { display: none !important; }');
                 } else if (id === 'note-stats-lines') {
                     rules.push('.note-sub-stat-lines { display: none !important; }');
+                } else if (id === 'note-id') {
+                    rules.push('.note-sub-id { display: none !important; }');
                 } else if (id === 'note-info-icon') {
                     rules.push('.note-sub-info { display: none !important; }');
                 } else if (id === 'note-icons') {
