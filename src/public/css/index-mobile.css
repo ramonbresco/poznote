@@ -307,6 +307,16 @@ body.mobile-editor-bar-visible .note-scroll-edge-btn {
     display: none !important;
 }
 
+/* The same stack belongs to the open note: the AI assistant speaks of it, the
+   "..." menu holds its width and its information, the view button its view.
+   The list and the note are two columns of one horizontally scrolled body, so
+   the fixed stack would float over the list too: body.note-open marks the
+   column actually on screen (syncNoteOpenToScroll, js/index-events.js), as it
+   already does for the note's scroll arrows (css/notes/noteentry.css). */
+body:not(.note-open) .pz-edge-stack {
+    display: none !important;
+}
+
 /* The popups of its buttons (colour, title, alignment) open above the bar */
 body.mobile-editor-bar-visible .color-palette-popup,
 body.mobile-editor-bar-visible .font-size-popup {
