@@ -2530,7 +2530,9 @@
           "one": "{{count}} Zeile",
           "other": "{{count}} Zeilen"
         }
-      }
+      },
+      "missing": "Die Notiz #{{id}} existiert nicht oder wurde gelöscht.",
+      "missing_trashed": "Die Notiz #{{id}} liegt im Papierkorb. Stelle sie wieder her, um sie erneut zu öffnen."
     },
     "editor": {
       "placeholder_desktop": "Text eingeben, / oder Rechtsklick verwenden, um das Befehlsmenü zu öffnen, Bilder einfügen oder ein Bild am Cursor ablegen.",

@@ -2530,7 +2530,9 @@
           "one": "{{count}} linha",
           "other": "{{count}} linhas"
         }
-      }
+      },
+      "missing": "A nota #{{id}} não existe ou foi excluída.",
+      "missing_trashed": "A nota #{{id}} está na lixeira. Restaure-a para abri-la novamente."
     },
     "editor": {
       "placeholder_desktop": "Insira texto, use / ou o clique com o botão direito para abrir o menu de comandos, cole imagens ou arraste e solte uma imagem no cursor.",

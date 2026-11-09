@@ -222,6 +222,10 @@ if (($kanban_restore_id > 0 || $blank_note_pane) && empty($note)) {
 $default_note_folder = $note_load_result['default_note_folder'] ?? null;
 $current_note_folder = $note_load_result['current_note_folder'] ?? null;
 $res_right = $note_load_result['res_right'] ?? null;
+// A ?note=<id> nobody can open: the page falls back to the last opened note,
+// which alone looks like a plain reload, so it says so instead (js/ui.js
+// toast, fired by js/note-loader.js).
+$missing_note = $note_load_result['missing_note'] ?? null;
 
 // Two counts over the same rows the notifications modal lists (everything
 // triggered and not dismissed, see RemindersController::index): the total says
@@ -707,7 +711,14 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
             // Preselected in the dialog's language menu, which can override it
             // for one recording; empty means the server detects the language
             'speechToTextLanguage' => $sttEnabled ? (string)$sttConfig['language'] : '',
-            'speechToTextMaxSeconds' => poznoteSttMaxRecordingSeconds()
+            'speechToTextMaxSeconds' => poznoteSttMaxRecordingSeconds(),
+            // The note the address named and that could not be opened
+            'missingNote' => $missing_note === null ? null : [
+                'id' => $missing_note['id'],
+                'message' => $missing_note['trashed']
+                    ? t('index.note.missing_trashed', ['id' => $missing_note['id']], 'Note #{{id}} is in the trash. Restore it from the trash to open it again.')
+                    : t('index.note.missing', ['id' => $missing_note['id']], 'Note #{{id}} does not exist, or it was deleted.'),
+            ]
         ], JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?: '{}';
     ?></script>
     <!-- js/error-handler.js is bundled as the first file of index_js.php?group=app -->

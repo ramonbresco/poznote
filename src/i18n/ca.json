@@ -2011,7 +2011,9 @@
           "one": "{{count}} línia",
           "other": "{{count}} línies"
         }
-      }
+      },
+      "missing": "La nota #{{id}} no existeix o s'ha eliminat.",
+      "missing_trashed": "La nota #{{id}} és a la paperera. Restaura-la per tornar-la a obrir."
     },
     "editor": {
       "placeholder_desktop": "Escriviu text, feu servir / o el botó dret per obrir el menú d'ordres, enganxeu imatges o deixeu anar una imatge al cursor.",

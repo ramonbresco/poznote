@@ -2525,7 +2525,9 @@
         "lines": {
           "other": "{{count}} 行"
         }
-      }
+      },
+      "missing": "笔记 #{{id}} 不存在，或者已被删除。",
+      "missing_trashed": "笔记 #{{id}} 在回收站中。请先恢复它才能打开。"
     },
     "editor": {
       "placeholder_desktop": "输入文本，使用 / 或右键打开命令菜单，粘贴图片或在光标处拖放图片。",

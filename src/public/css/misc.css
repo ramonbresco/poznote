@@ -346,6 +346,14 @@ img.img-with-border-no-padding {
     max-width: 300px;
     animation: slideInRight 0.3s ease;
 }
+/* Something that did not work, rather than an acknowledgement (js/ui.js
+   poznoteShowToast with variant 'warning'): a note the address bar named and
+   that does not exist, for instance. */
+.save-notification.is-warning {
+    background: var(--pz-danger);
+    max-width: 360px;
+}
+
 /* Inside the shared top-right column (js/ui.js poznoteToastStack) the column
    places it, so a second toast lands below instead of on top (issue 1508). */
 #pz-toast-stack > .save-notification {

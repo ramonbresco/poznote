@@ -2011,7 +2011,9 @@
           "one": "{{count}} line",
           "other": "{{count}} lines"
         }
-      }
+      },
+      "missing": "Note #{{id}} does not exist, or it was deleted.",
+      "missing_trashed": "Note #{{id}} is in the trash. Restore it to open it again."
     },
     "editor": {
       "placeholder_desktop": "Enter text, use / or right-click for command menu, paste images or drop an image at cursor.",

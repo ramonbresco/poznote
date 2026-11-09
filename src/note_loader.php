@@ -58,6 +58,7 @@ function loadNoteData($con, &$note, $workspace_filter) {
     $default_note_folder = null;
     $res_right = null;
     $current_note_folder = null;
+    $missing_note = null;
     
     if($note != '') {
         // If the note is not empty, it means we have just clicked on a note (now using ID)
@@ -92,7 +93,18 @@ function loadNoteData($con, &$note, $workspace_filter) {
             $stmt_right->execute($note_params);
             $res_right = $stmt_right;
         } else {
-            // If the requested note doesn't exist, display the last opened (or updated) note
+            // No such note in this workspace. The page still opens the last
+            // opened one, which on its own looked exactly like a reload of the
+            // same page: $missing_note says what happened so the page can tell
+            // ("this note does not exist or was deleted"). A note sitting in
+            // the trash is named as such, since restoring it is one click away.
+            $trashedStmt = $con->prepare('SELECT 1 FROM entries WHERE id = ? AND trash = 1 AND workspace = ?');
+            $trashedStmt->execute([$note_id, $workspace_filter]);
+            $missing_note = [
+                'id' => $note_id,
+                'trashed' => (bool)$trashedStmt->fetchColumn(),
+            ];
+
             $note = ''; // Reset note to trigger showing latest note
             $latest_note_data = getLatestNote($con, $workspace_filter);
             $res_right = $latest_note_data['res_right'];
@@ -108,7 +120,8 @@ function loadNoteData($con, &$note, $workspace_filter) {
     return [
         'default_note_folder' => $default_note_folder,
         'current_note_folder' => $current_note_folder,
-        'res_right' => $res_right
+        'res_right' => $res_right,
+        'missing_note' => $missing_note
     ];
 }
 

@@ -6,6 +6,17 @@
  * selected-note styling and the browser URL.
  */
 
+// A ?note=<id> that names no note of this workspace: the page opened the last
+// note instead, so without this it looked like the address bar had simply
+// reloaded the same page. The server worked out the wording (index.php), this
+// only shows it once the toast helper is there.
+document.addEventListener('DOMContentLoaded', function () {
+    var missing = (window.POZNOTE_CONFIG || {}).missingNote;
+    if (!missing || !missing.message) return;
+    if (typeof window.poznoteShowToast !== 'function') return;
+    window.poznoteShowToast(missing.message, { variant: 'warning' });
+});
+
 function restoreNoteDomFromCache(url, noteId, options) {
     options = options || {};
     if (!isNoteDomCacheAllowed(url, noteId, options)) return false;
