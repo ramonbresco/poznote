@@ -172,7 +172,7 @@ MCPサーバーは、`docker-compose.yml`の既定値を使います：
 # デバッグログの既定値はfalse
 ```
 
-Poznoteは、MCPサービストークンを`data/.mcp_token`に自動で生成します。`mcp-server`コンテナーは、共有ボリューム`./data:/var/www/html/data:ro`を通してこのファイルを読み取るので、`.env`にパスワードを置いておく必要はありません。
+Poznoteは、MCPサービストークンを`data/.mcp_token`に自動で生成します。`mcp-server`コンテナーは、共有ボリューム`./data:/var/www/html/data:ro`を通してこのファイルを読み取るので、`.env`にパスワードを置いておく必要はありません。ファイルがない間は呼び出しのたびに読み直すので、Poznoteが作成する前に起動したMCPサーバーでも、再起動なしに自分でトークンを取得します。このCompose構成の外で動かすサーバーはこのパスを見られないため、そのホストで`data/.mcp_token`が実際に置かれている場所を`POZNOTE_SERVICE_TOKEN_FILE`に指定してください。
 
 1回の起動だけポートとデバッグの設定を変えるには、コマンドの前に環境変数を書いて、MCPコンテナーを作り直します：
 

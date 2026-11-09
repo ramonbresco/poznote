@@ -69,6 +69,12 @@ python3 tools/docs-i18n.py check                      # translated docs
 
 The first four only need PHP, with `phpstan.phar` downloaded once from the [PHPStan releases](https://github.com/phpstan/phpstan/releases) (CI pins its version in `.github/workflows/ci-php.yml`). The JavaScript one needs Node, and only its `correctness` errors fail the build, warnings are fine to leave alone. The docs one needs Python 3 and nothing else.
 
+No PHP on your machine? Run them in a throwaway container with the repository mounted, the Poznote image only carries `src/` so `docker compose exec` cannot reach `tests/` or `tools/`:
+
+```bash
+docker run --rm -v "$PWD":/app -w /app php:8.5-cli php tests/run.php
+```
+
 ## Running a dev instance
 
 `docker-compose-dev.yml` bind mounts `./src` and `./data`, so your edits are live without rebuilding:
@@ -86,7 +92,7 @@ Keep `--build` after pulling changes: the nginx config is mounted from the repos
 - Dark mode rules go in `src/public/css/dark-mode/`, written as `html[data-theme='dark'] X`, with single quotes and no other spelling. See [src/public/css/README.md](src/public/css/README.md).
 - User facing strings go through the translation helpers, never hardcoded.
 - The README and the pages in `docs/` (except `API-REST.md`) exist in every app language, as `docs/README.fr.md`, `docs/WEBHOOKS.de.md` and so on. Rewording the English page alone passes CI. Adding or removing a heading, a code block, an image or a link fails the docs check until the translations follow: say so in the pull request if you would rather leave them to a maintainer. When you edit a translation, keep the same headings as the English page, leave link targets and anchors in English, then run `python3 tools/docs-i18n.py fix` and `python3 tools/docs-i18n.py check`.
-- Do not edit a generated bundle under `src/public/js/excalidraw-dist` or `src/public/js/codemirror-dist` without rebuilding it from its source directory under `build/`.
+- Do not edit a generated bundle under `src/public/js/excalidraw-dist` or `src/public/js/codemirror-dist` without rebuilding it from its source directory under `build/`. Those builds run on Vite 8, which needs Node `^20.19.0 || >=22.12.0`, the range both `build/*/package.json` declare. An older Node, Node 18 for instance, fails the build partway through.
 
 ## Bugs and ideas
 

@@ -490,6 +490,7 @@
       "markdown_colored": "Colorez les notes markdown : choisissez une couleur pour chaque niveau de titre, le code en ligne, le fond des blocs de code, les citations, les en-têtes de tableaux et les séparateurs.",
       "code_wrap": "Renvoyez à la ligne les longues lignes des blocs de code au lieu de défiler horizontalement.",
       "code_line_numbers": "Affichez les numéros de ligne dans les blocs de code de l'aperçu markdown.",
+      "code_block_collapsed_lines": "Combien de lignes d'un bloc de code restent affichées une fois le bloc replié, de 0 à 100. À 0, un bloc replié ne montre rien de son listing. Un bloc qui n'a pas plus de lignes que ça ne reçoit pas le chevron, le replier ne masquerait rien.",
       "attachment_previews": "Affichez un aperçu des pièces jointes dans les notes.",
       "attachments_at_bottom": "Affichez la section des pièces jointes en bas des notes plutôt qu'en haut.",
       "allow_executable_attachments": "Autorise les scripts et exécutables (.sh, .ps1, .bat, .exe, .py, ...) en pièce jointe, pour tous les comptes de cette instance. Poznote ne les exécute jamais, il ne fait que les stocker et les servir. Les types qu'un serveur web pourrait exécuter, comme .php, restent bloqués.",
@@ -546,7 +547,10 @@
       "custom_logo": "Remplacer le logo Poznote par le vôtre, pour tous les utilisateurs : dans l'onglet du navigateur, sur la page de connexion, dans la barre d'icônes et comme icône de l'application installée.",
       "two_factor_required": "Chaque compte qui se connecte avec un mot de passe doit utiliser l'authentification à deux facteurs. Un compte qui ne l'a pas la configure à sa prochaine connexion, et les sessions ouvertes sans elle prennent fin. Son mot de passe ne fonctionne plus via l'API : les applications utilisent un mot de passe d'application. Les connexions SSO ne sont pas concernées, le fournisseur d'identité gère leur second facteur.",
       "tab_follows_note": "Nommer l'onglet du navigateur d'après la note qui y est ouverte, avec l'icône de cette note, au lieu du nom et de l'icône de cette instance. Plusieurs onglets ouverts sur plusieurs notes se distinguent alors.",
-      "update_badge_level": "Choisissez quelles versions posent la pastille rouge sur les entrées Réglages. Quel que soit le choix, la nouvelle version reste annoncée sur cette page, rien n'est caché."
+      "update_badge_level": "Choisissez quelles versions posent la pastille rouge sur les entrées Réglages. Quel que soit le choix, la nouvelle version reste annoncée sur cette page, rien n'est caché.",
+      "update_check_interval": "À quelle fréquence Poznote vérifie en arrière-plan s'il existe une version plus récente. La pastille n'apparaît qu'après une vérification, donc un intervalle plus long la retarde. La carte Version ci-dessus vérifie toujours tout de suite quand on clique dessus.",
+      "sessions": "Voir les navigateurs et les appareils actuellement connectés à votre compte, et déconnecter ceux que vous n’utilisez plus.",
+      "session_lifetime": "Combien de temps une connexion dure sans activité. Réglée avec POZNOTE_SESSION_LIFETIME_DAYS dans le fichier .env, donc affichée ici sans pouvoir être modifiée depuis cette page. Une connexion avec « Se souvenir de moi » dure plus longtemps ; une connexion par SSO, non."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "Sur mobile, la barre d'outils au-dessus du clavier a un bouton + qui ouvre le même menu, quel que soit ce réglage."
@@ -638,7 +642,7 @@
       "support": "Soutenir Poznote",
       "buy_me_a_coffee": "Offrez-moi un café",
       "install_extension": "Installer l'extension",
-      "install_app": "Installer l'application",
+      "install_app": "Installer l'application (PWA)",
       "custom_css": "Chemin CSS personnalisé",
       "theme_list": "Liste des thèmes",
       "release_notes": "Notes de version",
@@ -674,7 +678,9 @@
       "outbound_hosts": "Accès au réseau local",
       "connected_apps": "Applications connectées",
       "custom_logo": "Logo",
-      "two_factor_required": "Double authentification obligatoire"
+      "two_factor_required": "Double authentification obligatoire",
+      "sessions": "Appareils connectés",
+      "session_lifetime": "Durée des sessions"
     },
     "default_credentials": {
       "both": "Ce compte utilise encore le login et le mot de passe livrés par défaut. N'importe qui pouvant joindre cette instance peut s'y connecter.",
@@ -922,6 +928,7 @@
       "markdown_colored": "Markdown coloré",
       "code_block_word_wrap": "Retour à la ligne des blocs de code",
       "code_block_line_numbers": "Numéros de ligne des blocs de code",
+      "code_block_collapsed_lines": "Blocs de code repliés",
       "attachment_previews_in_note": "Aperçus des pièces jointes",
       "attachments_at_bottom": "Pièces jointes en bas",
       "backlinks_at_bottom": "Backlinks en bas",
@@ -939,7 +946,8 @@
       "diary_template": "Modèle d'entrée de journal",
       "markdown_view_cycle": "Menu des vues",
       "tab_follows_note": "L'onglet suit la note ouverte",
-      "update_badge_level": "Pastille de mise à jour"
+      "update_badge_level": "Pastille de mise à jour",
+      "update_check_interval": "Vérification des mises à jour"
     },
     "badges": {
       "font_size_default": "par défaut ({{size}}px)",
@@ -1369,7 +1377,7 @@
     },
     "source": {
       "app": "Poznote, sur un ordinateur",
-      "app_mobile": "Poznote, sur un téléphone ou une tablette",
+      "app_mobile": "Poznote, sur mobile",
       "api": "L'API REST",
       "mcp": "Une application connectée par MCP",
       "extension": "L'extension de navigateur",
@@ -2057,10 +2065,22 @@
     },
     "update_badge_level": {
       "options": {
-        "all": "Chaque version",
-        "minor": "Versions mineures et majeures",
-        "major": "Versions majeures seulement"
+        "all": "Versions majeures, mineures et correctifs",
+        "minor": "Versions majeures et mineures seulement"
       }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "Chaque jour",
+        "2": "Tous les 2 jours",
+        "3": "Tous les 3 jours",
+        "7": "Tous les 7 jours",
+        "14": "Tous les 14 jours",
+        "30": "Tous les 30 jours"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "lignes"
     }
   },
   "notes_list": {
@@ -4293,7 +4313,8 @@
       "two_factor_recovery_used": "Connexion avec un code de récupération",
       "two_factor_recovery_regenerated": "Codes de récupération régénérés",
       "oauth_app_authorized": "Application connectée (MCP)",
-      "oauth_app_revoked": "Application déconnectée (MCP)"
+      "oauth_app_revoked": "Application déconnectée (MCP)",
+      "session_revoked": "Appareil déconnecté"
     },
     "filters": {
       "all_actions": "Toutes les actions",
@@ -5678,6 +5699,7 @@
     "italic": "Italique",
     "underline": "Souligné",
     "strikethrough": "Barré",
+    "clear_formatting": "Effacer la mise en forme du texte sélectionné",
     "link": "Insérer un lien sur le texte sélectionné",
     "code_block": "Bloc de code",
     "slash_menu": "Ouvrir le menu de commandes",
@@ -6103,6 +6125,48 @@
       "group_rules": "Séparateurs des groupes",
       "size": "Bouton de taille des tuiles",
       "boards": "Liste des accès rapides"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "Contenu intégré bloqué",
+      "detail_admin": "Cette instance n'autorise pas le contenu intégré provenant de {{host}}. Un administrateur peut l'autoriser de nouveau dans Paramètres > Outils d'administration > Contenus intégrés.",
+      "detail_public": "Ce site n'autorise pas le contenu intégré provenant de {{host}}."
+    },
+    "resize": {
+      "hint": "Faites glisser pour redimensionner, double-cliquez pour revenir à la taille par défaut"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 session",
+      "count_other": "{{count}} sessions"
+    },
+    "lifetime": {
+      "day_one": "1 jour",
+      "day_other": "{{count}} jours"
+    },
+    "modal": {
+      "title": "Appareils connectés",
+      "description": "Chaque ligne est un navigateur connecté à votre compte. Une session se termine d’elle-même après {{duration}} sans activité, et à chaque changement de mot de passe.",
+      "loading": "Chargement...",
+      "empty": "Aucune session ouverte.",
+      "unknown_client": "Navigateur inconnu",
+      "this_device": "Cet appareil",
+      "last_active": "Dernière activité {{date}}",
+      "revoke": "Déconnecter",
+      "revoke_others": "Déconnecter les autres appareils",
+      "confirm": "Confirmer",
+      "close": "Fermer"
+    },
+    "method": {
+      "password": "Mot de passe",
+      "sso": "SSO",
+      "auto": "Sans connexion"
+    },
+    "errors": {
+      "load_failed": "Impossible de charger vos sessions.",
+      "generic": "Une erreur est survenue. Réessayez."
     }
   }
 }

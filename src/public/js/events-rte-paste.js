@@ -10,46 +10,18 @@
 // ============================================================================
 
 /**
- * Domains an embed may come from: the list the page received from the server
- * (index.php, from lib/embed-providers.php), which is also the frame-src of
- * the Content-Security-Policy and the list the sanitiser enforces on save. It
- * was a fourth copy of the hosts, hardcoded here, so a provider an
- * administrator switched off was still accepted on paste, inserted, blocked by
- * the browser, then deleted by the next save. No list means nothing is
- * pasteable rather than everything.
- */
-function pasteAllowedEmbedDomains() {
-    var domains = window.ALLOWED_IFRAME_DOMAINS;
-    return Array.isArray(domains) ? domains : [];
-}
-
-/**
- * Same rule as poznoteIframeSrcIsTrusted() server-side: exact host match (or a
- * subdomain of an allowed domain) over http(s), plus same-origin relative
- * paths. A trusted name anywhere else in the URL does not count.
+ * Whether a pasted embed may be inserted: js/embeds.js owns the rule and the
+ * list of hosts the server published, which the sanitiser enforces on save and
+ * the Content Security Policy of the page carries. It was a fourth copy of the
+ * hosts, hardcoded here, so a provider an administrator switched off was still
+ * accepted on paste, inserted, blocked by the browser, then deleted by the next
+ * save. No rule means nothing is pasteable rather than everything.
  * @param {string} src - The iframe src attribute
  * @returns {boolean} True when the embed may be inserted
  */
 function isTrustedEmbedSrc(src) {
-    src = (src || '').trim();
-    if (src === '') return false;
-
-    if (src.indexOf('//') === 0) return false;
-    if (src.charAt(0) === '/' || src.indexOf('./') === 0) return true;
-
-    var url;
-    try {
-        url = new URL(src, window.location.href);
-    } catch (e) {
-        return false;
-    }
-    if (url.protocol !== 'http:' && url.protocol !== 'https:') return false;
-
-    var host = url.hostname.toLowerCase();
-    return pasteAllowedEmbedDomains().some(function (domain) {
-        domain = String(domain).toLowerCase();
-        return host === domain || host.slice(-(domain.length + 1)) === '.' + domain;
-    });
+    return typeof window.poznoteEmbedSrcAllowed === 'function'
+        && window.poznoteEmbedSrcAllowed(src);
 }
 
 /**
@@ -63,45 +35,117 @@ function insertPastedHtml(html) {
 }
 
 /**
- * Check if pasted content is iframe HTML (an enabled embed provider)
- * @param {string} plainText - The pasted plain text
- * @returns {boolean} True if iframe is allowed and inserted
+ * Text pasted next to an embed, as HTML for insertPastedHtml().
+ * @param {string} text
+ * @returns {string}
  */
-function handleIframePaste(plainText) {
-    var iframeMatch = plainText.match(/<iframe\s+([^>]+)>\s*<\/iframe>/i);
-    if (!iframeMatch) return false;
+function escapePastedText(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .split('\n').join('<br>');
+}
 
-    var iframeHtml = iframeMatch[0];
-    var srcMatch = iframeHtml.match(/src\s*=\s*["']([^"']+)["']/i);
-    if (!srcMatch) return false;
+/**
+ * Tell the reader why a snippet they pasted stayed a snippet, with the
+ * sentence the blocked-embed notice uses (index.php publishes it already
+ * translated). Without it, a provider an administrator switched off looks
+ * like a paste that went wrong.
+ * @param {string} src - The refused src
+ */
+function warnEmbedRefused(src) {
+    if (typeof window.poznoteShowToast !== 'function') return;
 
-    var src = srcMatch[1];
-
-    if (!isTrustedEmbedSrc(src)) {
-        console.warn('Iframe domain not in whitelist:', src);
-        return false;
+    var host = src;
+    try {
+        host = new URL(src, window.location.href).hostname.toLowerCase();
+    } catch (e) {
+        host = src;
     }
 
-    // Create iframe element
-    var tempContainer = document.createElement('div');
-    tempContainer.innerHTML = iframeHtml;
-    var iframeElement = tempContainer.querySelector('iframe');
-    if (!iframeElement) return false;
+    var blocked = window.POZNOTE_EMBED_BLOCKED || {};
+    var message = (blocked.detail || 'Content from {{host}} cannot be embedded here.')
+        .split('{{host}}').join(host);
+    window.poznoteShowToast(message, { variant: 'warning' });
+}
 
-    // Insert iframe at cursor, with spacing around it
+/**
+ * Turn the embed code of an enabled provider into a real embed as it is pasted.
+ *
+ * Everything the paste holds is kept: each iframe of an enabled provider
+ * becomes a frame, and the text around them, labels and all, is pasted as
+ * text. Only the first frame used to survive and the rest of the paste was
+ * dropped on the floor, which cost the author the lines they had written
+ * around it.
+ *
+ * A refused embed stays the code it was, said once in a toast; when nothing
+ * can be framed the paste is left to the ordinary path, which keeps the text.
+ *
+ * @param {string} plainText - The pasted plain text
+ * @returns {boolean} True when this function pasted the content itself
+ */
+function handleIframePaste(plainText) {
+    if (!plainText) return false;
+
+    var iframeRegex = /<iframe\s+[^>]*>\s*<\/iframe>/gi;
+    if (!iframeRegex.test(plainText)) return false;
+    iframeRegex.lastIndex = 0;
+
     var selection = window.getSelection();
     if (selection.rangeCount === 0) return false;
 
-    var container = document.createElement('div');
-    var lineBefore = document.createElement('div');
-    lineBefore.innerHTML = '<br>';
-    container.appendChild(lineBefore);
-    container.appendChild(iframeElement);
-    var lineAfter = document.createElement('div');
-    lineAfter.innerHTML = '<br>';
-    container.appendChild(lineAfter);
+    var html = '';
+    var framed = 0;
+    var refusedSrc = '';
+    var readFrom = 0;
+    var match;
 
-    insertPastedHtml(container.innerHTML);
+    while ((match = iframeRegex.exec(plainText)) !== null) {
+        html += escapePastedText(plainText.slice(readFrom, match.index));
+        readFrom = match.index + match[0].length;
+
+        var srcMatch = match[0].match(/src\s*=\s*["']([^"']+)["']/i);
+        var src = srcMatch ? srcMatch[1] : '';
+
+        if (src !== '' && isTrustedEmbedSrc(src)) {
+            // Through the DOM, so only a real iframe tag is inserted.
+            var tempContainer = document.createElement('div');
+            tempContainer.innerHTML = match[0];
+            var iframeElement = tempContainer.querySelector('iframe');
+            if (iframeElement) {
+                html += iframeElement.outerHTML;
+                framed++;
+                continue;
+            }
+        }
+
+        if (src !== '' && refusedSrc === '') {
+            refusedSrc = src;
+            console.warn('Iframe domain not in whitelist:', src);
+        }
+        html += escapePastedText(match[0]);
+    }
+
+    html += escapePastedText(plainText.slice(readFrom));
+
+    if (refusedSrc !== '') {
+        warnEmbedRefused(refusedSrc);
+    }
+
+    // Nothing to frame: the ordinary paste path keeps the text as it is.
+    if (framed === 0) return false;
+
+    // An embed pasted on its own gets a line above and below to sit in.
+    if (framed === 1 && plainText.trim() === plainText.trim().match(iframeRegex)[0]) {
+        html = '<div><br></div>' + html + '<div><br></div>';
+    }
+
+    insertPastedHtml(html);
+    if (typeof window.poznoteRefreshEmbedGrips === 'function') {
+        window.poznoteRefreshEmbedGrips(document);
+    }
     triggerNoteSave();
     return true;
 }

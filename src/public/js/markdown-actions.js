@@ -540,6 +540,20 @@ function setupPreviewInteractivity(noteId, roots) {
         }
     }
 
+    // A redraw brings the refused embeds back as empty rectangles (js/embeds.js)
+    if (typeof window.poznoteMarkBlockedEmbeds === 'function') {
+        scopes.forEach(function (scope) {
+            window.poznoteMarkBlockedEmbeds(scope);
+        });
+    }
+
+    // and takes the resize grips with it (js/embed-resize.js)
+    if (typeof window.poznoteRefreshEmbedGrips === 'function') {
+        scopes.forEach(function (scope) {
+            window.poznoteRefreshEmbedGrips(scope);
+        });
+    }
+
     // A redraw rebuilds the toggles from the source, which holds neither the
     // body's wrapper nor what the reader opened (js/toggle-block.js)
     if (window.PoznoteToggleBlock && typeof window.PoznoteToggleBlock.restoreState === 'function') {

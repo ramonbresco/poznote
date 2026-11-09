@@ -40,6 +40,8 @@ function poznoteGetIndexCssGroups(): array {
             'css/components/folder-title.css',
             'css/components/task-priority.css',
             'css/components/code-block-fold.css',
+            'css/components/embed-blocked.css',
+            'css/components/resize-handle.css',
             'css/components/toggle-block.css',
             'css/utilities.css',
             'css/layout.css',

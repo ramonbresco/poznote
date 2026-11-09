@@ -40,6 +40,25 @@
     var COLLAPSE_ICON_CLOSED = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
     var MARKDOWN_COLLAPSED_KEY = 'markdown_code_collapsed';
 
+    // How many lines a folded block keeps on screen: the account's choice
+    // (code_block_collapsed_lines), written on <body> by index.php together
+    // with the --pz-code-collapsed-lines the stylesheet reads. A page that
+    // carries nothing, such as a public share, keeps the same 5 as the token
+    // (css/tokens.css). 0 means a folded block shows none of its code.
+    function collapsedPreviewLines() {
+        var raw = document.body ? document.body.getAttribute('data-code-collapsed-lines') : null;
+        var lines = parseInt(raw, 10);
+        return (isFinite(lines) && lines >= 0) ? lines : 5;
+    }
+
+    // Folding a block no longer than that would hide nothing, so the chevron
+    // is not offered. With the setting at 0 (a folded block shows none of its
+    // code) every block can be folded, however short.
+    function canCollapseCodeBlock(block) {
+        var lines = collapsedPreviewLines();
+        return lines === 0 || codeBlockLineCount(block) > lines;
+    }
+
     function isCodeBlockCollapsed(block) {
         var pre = getPreForBlock(block);
         return !!(pre && pre.getAttribute('data-collapsed') === '1');
@@ -92,14 +111,7 @@
 
         var next = !isCodeBlockCollapsed(pre);
         pre.setAttribute('data-collapsed', next ? '1' : '0');
-        storeMarkdownPreviewCollapsed(pre, next);
-
-        var noteentry = pre.closest ? pre.closest('.noteentry') : null;
-        if (noteentry && typeof window.markNoteAsModified === 'function'
-            && !pre.closest('.markdown-preview')) {
-            // HTML notes only: the attribute is part of what is stored
-            window.markNoteAsModified(noteentry.id.replace(/^entry/, ''));
-        }
+        storeCollapsedChoice(pre, next);
         return next;
     }
 
@@ -138,23 +150,37 @@
         }
     }
 
-    function markdownPreviewBlocks(preview) {
-        return Array.prototype.filter.call(preview.querySelectorAll('pre'), function (pre) {
+    // The code blocks of a store root, in the order their rank counts them
+    function codeBlockStoreBlocks(root) {
+        return Array.prototype.filter.call(root.querySelectorAll('pre'), function (pre) {
             return !!pre.querySelector('code');
         });
     }
 
-    function markdownPreviewNoteId(preview) {
-        var entry = preview.closest ? preview.closest('.noteentry') : null;
+    // The note a store root belongs to, which both stores are keyed by
+    function codeBlockStoreNoteId(root) {
+        var entry = root.closest ? root.closest('.noteentry') : null;
         var id = entry ? (entry.getAttribute('data-note-id') || String(entry.id || '').replace(/^entry/, '')) : '';
         return /^\d+$/.test(id) ? id : '';
+    }
+
+    /**
+     * Where a block's rank is counted from: the preview of a Markdown note,
+     * so that the rank is the one the editor's own views store for the same
+     * block (build/markdown-editor/src/live-preview.js), and the note itself
+     * for an HTML note. A page with no note of ours (a public share) has no
+     * root, so nothing is kept there and a fold lasts the visit.
+     */
+    function codeBlockStoreRoot(pre) {
+        if (!pre || !pre.closest) return null;
+        return pre.closest('.markdown-preview') || pre.closest('.noteentry');
     }
 
     function storeMarkdownPreviewLineNumbers(pre, visible) {
         var preview = pre.closest ? pre.closest('.markdown-preview') : null;
         if (!preview) return;
-        var noteId = markdownPreviewNoteId(preview);
-        var rank = markdownPreviewBlocks(preview).indexOf(pre);
+        var noteId = codeBlockStoreNoteId(preview);
+        var rank = codeBlockStoreBlocks(preview).indexOf(pre);
         if (!noteId || rank === -1) return;
         try {
             var all = readStoredMarkdownLineNumbers();
@@ -170,10 +196,15 @@
         }
     }
 
-    // The folded state of a Markdown preview's blocks, kept the same way as
-    // the line numbers right above: the preview is redrawn from the source,
-    // which has nowhere to carry it.
-    function readStoredMarkdownCollapsed() {
+    // Which blocks of a note are folded, kept in the browser like the line
+    // numbers right above. Folding is a reading gesture: it must survive a
+    // refresh without touching the note, so it changes neither its
+    // modification date nor what the next save stores (the same reason the
+    // toggles of a note keep their state here, js/toggle-block.js). It is
+    // kept for every kind of note, not only a Markdown preview: an HTML note
+    // writes data-collapsed in its content too, but only a save sends that to
+    // the server, and nothing is saved for a fold.
+    function readStoredCollapsedChoices() {
         try {
             var storage = window.__poznoteUserStorage || window.localStorage;
             var parsed = JSON.parse(storage.getItem(MARKDOWN_COLLAPSED_KEY) || '{}');
@@ -183,14 +214,14 @@
         }
     }
 
-    function storeMarkdownPreviewCollapsed(pre, collapsed) {
-        var preview = pre.closest ? pre.closest('.markdown-preview') : null;
-        if (!preview) return;
-        var noteId = markdownPreviewNoteId(preview);
-        var rank = markdownPreviewBlocks(preview).indexOf(pre);
+    function storeCollapsedChoice(pre, collapsed) {
+        var root = codeBlockStoreRoot(pre);
+        if (!root) return;
+        var noteId = codeBlockStoreNoteId(root);
+        var rank = codeBlockStoreBlocks(root).indexOf(pre);
         if (!noteId || rank === -1) return;
         try {
-            var all = readStoredMarkdownCollapsed();
+            var all = readStoredCollapsedChoices();
             var note = all[noteId] && typeof all[noteId] === 'object' ? all[noteId] : {};
             note[rank] = collapsed ? 1 : 0;
             delete all[noteId];
@@ -203,21 +234,33 @@
         }
     }
 
-    window.restoreMarkdownPreviewCollapsed = function (container) {
+    /**
+     * Put a block back the way this browser last left it. An HTML note whose
+     * stored content already says data-collapsed (the attribute is part of
+     * what the sanitizer keeps, so a note written by the API can ask for a
+     * folded block) opens on it, and what was done here afterwards wins.
+     */
+    function applyStoredCollapsed(pre) {
+        var root = codeBlockStoreRoot(pre);
+        if (!root) return;
+        var noteId = codeBlockStoreNoteId(root);
+        if (!noteId) return;
+        var note = readStoredCollapsedChoices()[noteId];
+        if (!note || typeof note !== 'object') return;
+        var rank = codeBlockStoreBlocks(root).indexOf(pre);
+        if (rank === -1 || note[rank] === undefined) return;
+        pre.setAttribute('data-collapsed', note[rank] ? '1' : '0');
+    }
+
+    // Called before the gutters are drawn (js/syntax-highlight.js), and for
+    // every block that is set up (addCopyButtonToCodeBlocks)
+    window.restoreCodeBlockCollapsed = function (container) {
         var root = (container && container.querySelectorAll) ? container : document;
-        var previews = Array.prototype.slice.call(root.querySelectorAll('.markdown-preview'));
-        if (root.classList && root.classList.contains('markdown-preview')) previews.push(root);
-        if (!previews.length && root.closest && root.closest('.markdown-preview')) previews.push(root.closest('.markdown-preview'));
-        if (!previews.length) return;
-        var all = readStoredMarkdownCollapsed();
-        previews.forEach(function (preview) {
-            var note = all[markdownPreviewNoteId(preview)];
-            if (!note || typeof note !== 'object') return;
-            markdownPreviewBlocks(preview).forEach(function (pre, rank) {
-                if (note[rank] === undefined || pre.hasAttribute('data-collapsed')) return;
-                pre.setAttribute('data-collapsed', note[rank] ? '1' : '0');
-            });
-        });
+        if (root.tagName === 'PRE') {
+            applyStoredCollapsed(root);
+            return;
+        }
+        Array.prototype.forEach.call(root.querySelectorAll('pre'), applyStoredCollapsed);
     };
 
     // Called before the gutters are drawn (js/syntax-highlight.js)
@@ -229,9 +272,9 @@
         if (!previews.length) return;
         var all = readStoredMarkdownLineNumbers();
         previews.forEach(function (preview) {
-            var note = all[markdownPreviewNoteId(preview)];
+            var note = all[codeBlockStoreNoteId(preview)];
             if (!note || typeof note !== 'object') return;
-            markdownPreviewBlocks(preview).forEach(function (pre, rank) {
+            codeBlockStoreBlocks(preview).forEach(function (pre, rank) {
                 if (note[rank] === undefined || pre.hasAttribute('data-line-numbers')) return;
                 pre.setAttribute('data-line-numbers', note[rank] ? '1' : '0');
             });
@@ -273,6 +316,10 @@
     window.poznoteCodeBlockLineNumberIcons = {
         on: LINE_NUMBERS_ICON_SVG,
         off: LINE_NUMBERS_OFF_ICON_SVG
+    };
+    window.poznoteCodeBlockCollapseIcons = {
+        open: COLLAPSE_ICON_OPEN,
+        closed: COLLAPSE_ICON_CLOSED
     };
 
     function setCopyIcon(btn) {
@@ -776,6 +823,67 @@
         return !!(block && block.closest('.noteentry'));
     }
 
+    /**
+     * The chevron of a block and the number of lines next to it. Separate from
+     * the buttons around it because it comes and goes with what the block
+     * holds: a block no longer than the setting is not offered it, so it is
+     * refreshed while the block is being written too (observeCodeBlocks).
+     *
+     * rebuildListeners: addCopyButtonToCodeBlocks() replaces the buttons of a
+     * block it is given again, dropping their listeners with them; the
+     * typing path keeps the button it finds and only repaints it.
+     */
+    function syncCollapseButton(block, actionHost, rebuildListeners) {
+        var existing = findActionButton(block, actionHost, 'code-block-collapse-btn');
+
+        if (!canCollapseCodeBlock(block)) {
+            // A block that lost lines while folded, or one folded before the
+            // setting was raised: nothing could unfold it again once the
+            // chevron goes, so it is unfolded here. The note is not marked as
+            // modified for it, the attribute leaving the stored content at
+            // the next save of its own.
+            var shortPre = getPreForBlock(block);
+            if (shortPre && shortPre.getAttribute('data-collapsed') === '1') {
+                shortPre.setAttribute('data-collapsed', '0');
+                storeCollapsedChoice(shortPre, false);
+            }
+            if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+            paintCollapsedSummary(actionHost, block, false);
+            return;
+        }
+
+        var collapsed = isCodeBlockCollapsed(block);
+        if (existing && !rebuildListeners) {
+            setCollapseButtonState(existing, collapsed);
+            paintCollapsedSummary(actionHost, block, collapsed);
+            return;
+        }
+
+        var collapseBtn;
+        if (existing) {
+            collapseBtn = existing.cloneNode(false);
+            existing.parentNode.replaceChild(collapseBtn, existing);
+        } else {
+            collapseBtn = document.createElement('button');
+            collapseBtn.className = 'code-block-collapse-btn';
+            collapseBtn.setAttribute('type', 'button');
+            collapseBtn.setAttribute('contenteditable', 'false');
+        }
+        setCollapseButtonState(collapseBtn, collapsed);
+        if (collapseBtn.parentNode !== actionHost) {
+            if (collapseBtn.parentNode) collapseBtn.parentNode.removeChild(collapseBtn);
+            actionHost.appendChild(collapseBtn);
+        }
+        paintCollapsedSummary(actionHost, block, collapsed);
+        collapseBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var next = toggleCodeBlockCollapsed(block);
+            setCollapseButtonState(collapseBtn, next);
+            paintCollapsedSummary(actionHost, block, next);
+        });
+    }
+
     // Add copy button to code blocks: the given ones, or every block of the page
     function addCopyButtonToCodeBlocks(blocks) {
         var codeBlocks = Array.isArray(blocks) ? blocks : getCodeBlockElements(document);
@@ -786,35 +894,12 @@
                 return;
             }
 
+            applyStoredCollapsed(block);
+
             var actionHost = ensureCodeBlockActionHost(block);
             var allowDelete = canDeleteCodeBlock(block);
             var allowLineNumbers = canToggleLineNumbers(block);
-            
-            // Check if button already exists
-            var existingCollapseBtn = findActionButton(block, actionHost, 'code-block-collapse-btn');
-            var collapseBtn;
-            if (existingCollapseBtn) {
-                collapseBtn = existingCollapseBtn.cloneNode(false);
-                existingCollapseBtn.parentNode.replaceChild(collapseBtn, existingCollapseBtn);
-            } else {
-                collapseBtn = document.createElement('button');
-                collapseBtn.className = 'code-block-collapse-btn';
-                collapseBtn.setAttribute('type', 'button');
-                collapseBtn.setAttribute('contenteditable', 'false');
-            }
-            setCollapseButtonState(collapseBtn, isCodeBlockCollapsed(block));
-            if (collapseBtn.parentNode !== actionHost) {
-                if (collapseBtn.parentNode) collapseBtn.parentNode.removeChild(collapseBtn);
-                actionHost.appendChild(collapseBtn);
-            }
-            paintCollapsedSummary(actionHost, block, isCodeBlockCollapsed(block));
-            collapseBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var collapsed = toggleCodeBlockCollapsed(block);
-                setCollapseButtonState(collapseBtn, collapsed);
-                paintCollapsedSummary(actionHost, block, collapsed);
-            });
+            syncCollapseButton(block, actionHost, true);
 
             var existingBtn = findActionButton(block, actionHost, 'code-block-copy-btn');
             var existingDelBtn = findActionButton(block, actionHost, 'code-block-delete-btn');
@@ -1083,10 +1168,28 @@
                 addCopyButtonToCodeBlocks(addedBlocks);
                 updateCodeBlockOverflow(addedBlocks);
             }
+
+            // A block being written crosses the length that deserves a
+            // chevron, in either direction: the chevron follows as it is
+            // typed instead of waiting for the note to be opened again. Only
+            // it is refreshed, the buttons around it do not depend on what
+            // the block holds.
+            var touched = [];
+            mutations.forEach(function (mutation) {
+                var node = mutation.target;
+                var element = node && node.nodeType === 1 ? node : (node ? node.parentElement : null);
+                var block = element && element.closest ? element.closest('pre') : null;
+                if (!block || !block.isConnected) return;
+                if (addedBlocks.indexOf(block) !== -1 || touched.indexOf(block) !== -1) return;
+                touched.push(block);
+                var host = block.parentElement;
+                if (isDedicatedActionHost(host, block)) syncCollapseButton(block, host, false);
+            });
         });
-        
+
         observer.observe(document.body, {
             childList: true,
+            characterData: true,
             subtree: true
         });
     }

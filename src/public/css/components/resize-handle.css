@@ -1,0 +1,99 @@
+/* The handle that resizes what a note holds: an image (js/note-image-actions.js)
+   and an embed (js/embed-resize.js) wear the same badge.
+
+   Both carry it on its own line just under what it resizes, at the right end.
+   An embed has no choice: a pointer over an iframe belongs to the document
+   inside it and never reaches a badge drawn on top. A picture could wear one
+   over its corner, but then it hides a piece of itself, and the two would not
+   look alike. That line is editor furniture and never part of the note:
+   js/notes.js strips it from the copy that is saved. */
+
+/* Only while the note takes an edit, which is read in two places: a rich text
+   note carries the editable flag itself, a Markdown note never does (its
+   editor is CodeMirror, the note body is only what it draws). A locked note
+   keeps the size it has, in both kinds. */
+.noteentry:not([contenteditable="true"]):not([data-note-type="markdown"]) .embed-resize-grip,
+.noteentry:not([contenteditable="true"]):not([data-note-type="markdown"]) .image-resize-grip,
+.notecard[data-note-locked="1"] .embed-resize-grip,
+.notecard[data-note-locked="1"] .image-resize-grip {
+    display: none;
+}
+
+.embed-resize-grip,
+.image-resize-grip {
+    display: block;
+    height: 22px;
+    margin: 2px 0 4px;
+    /* Its width is set by the script, to follow the frame above it. */
+    max-width: 100%;
+    text-align: right;
+    line-height: 0;
+    cursor: var(--pz-cursor-resize-diagonal);
+    user-select: none;
+}
+
+/* An embed's badge waits out of sight: a note is read far more often than it
+   is resized, and a right click cannot be used to ask for it the way an image
+   does, since a pointer over an iframe belongs to the document inside it. The
+   line keeps its height, so nothing moves when the badge appears. */
+.embed-resize-grip .embed-resize-grip-handle {
+    opacity: 0;
+}
+
+.embed-resize-grip:hover .embed-resize-grip-handle,
+.embed-resize-grip.is-resizing .embed-resize-grip-handle,
+.embed-resize-grip:focus-within .embed-resize-grip-handle {
+    opacity: 1;
+}
+
+/* The badge itself. Quiet until the pointer is on it: it sits under what it
+   resizes, so it asks for the room rather than taking it. */
+.image-resize-handle,
+.embed-resize-grip-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--pz-border-strong);
+    border-radius: var(--pz-radius-sm);
+    background: var(--pz-bg);
+    color: var(--pz-text-muted);
+    box-shadow: 0 1px 3px rgba(var(--pz-shadow-rgb), 0.18);
+    cursor: var(--pz-cursor-resize-diagonal);
+    touch-action: none;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.12s ease;
+}
+
+.image-resize-handle::before,
+.embed-resize-grip-handle::before {
+    content: "";
+    width: 13px;
+    height: 13px;
+    background-color: currentColor;
+    -webkit-mask: var(--pz-icon-resize-diagonal) center / contain no-repeat;
+    mask: var(--pz-icon-resize-diagonal) center / contain no-repeat;
+}
+
+.image-resize-grip:hover .image-resize-handle,
+.embed-resize-grip:hover .embed-resize-grip-handle,
+.embed-resize-grip.is-resizing .embed-resize-grip-handle {
+    background: var(--pz-accent);
+    border-color: var(--pz-accent);
+    color: var(--pz-text-inverse);
+}
+
+
+
+/* Over everything while a drag lasts: an embed would take the pointer back
+   the moment it crossed the frame, and an image would start the browser's own
+   drag and swallow the rest of the gesture. */
+.embed-resize-overlay,
+.pz-resize-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    cursor: var(--pz-cursor-resize-diagonal);
+    background: transparent;
+}

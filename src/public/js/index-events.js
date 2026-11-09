@@ -173,13 +173,21 @@
      * note is above it, so the arrow to the bottom stops there and hides
      * from there on. #right_col gets it from .note-bottom-space, a split pane
      * from its bottom padding (css/notes/noteentry.css, css/markdown.css).
+     * On a phone that div is at least as tall as the clearance the mobile
+     * layout keeps under every note for the floating buttons and the keyboard
+     * (its min-height, --pz-note-bottom-space-min): that part is real room,
+     * scrolled through as it was before the setting reached mobile, so the
+     * end of the note lands above the buttons and above the browser's own bar
+     * instead of flush with the bottom of a column that is 100vh tall.
      */
     function getNoteVirtualSpace(element) {
         if (!element || !document.body.classList.contains('note-virtual-space')) return 0;
 
         if (element.id === 'right_col') {
             var space = element.querySelector('.note-bottom-space');
-            return space ? space.offsetHeight : 0;
+            if (!space) return 0;
+            var floor = parseFloat(getComputedStyle(space).minHeight) || 0;
+            return Math.max(0, space.offsetHeight - floor);
         }
 
         var padded = element.classList.contains('cm-scroller') ? element.querySelector('.cm-content') : element;

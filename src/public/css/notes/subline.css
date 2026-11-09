@@ -2,8 +2,8 @@
  * Notes - Subline & Title Spacing
  *
  * Styles for the note subline, the small line of metadata under the title
- * (creation date, modification date, characters / words / lines with a dot
- * between two entries, then an information icon), and innernote h4 title
+ * (note id, creation date, modification date, characters / words / lines with
+ * a dot between two entries, then an information icon), and innernote h4 title
  * spacing.
  */
 
@@ -86,10 +86,10 @@ body.show-note-created .note-subline {
    block. Below, it keeps the note text at a distance.
    The figures are empty until js/note-stats.js fills them in and hold their
    place from the first paint. */
+.note-sub-id,
 .note-sub-created,
 .note-sub-updated,
 .note-sub-stat,
-.note-sub-id,
 .note-sub-info {
     flex-shrink: 0;
     margin-top: calc(-1 * var(--note-sub-pull));
@@ -97,7 +97,7 @@ body.show-note-created .note-subline {
     white-space: nowrap;
 }
 
-/* The note id closes the strip: the number the address bar and every API or
+/* The note id opens the strip: the number the address bar and every API or
    MCP call names the note by. A button, because clicking it copies the
    number, but it reads as one more entry of the line, not as a control. */
 .note-sub-id-btn {
@@ -139,10 +139,10 @@ body.show-note-created .note-subline {
    left by the width of that slot (see the heading rules below) and the strip
    masks it, so the dot of whichever entry comes first is cut off. That holds
    whatever entries are hidden, which no selector could tell. */
+.note-sub-id::before,
 .note-sub-created::before,
 .note-sub-updated::before,
-.note-sub-stat::before,
-.note-sub-id::before {
+.note-sub-stat::before {
     content: "\00b7";
     display: inline-block;
     width: var(--note-sub-dot-slot);

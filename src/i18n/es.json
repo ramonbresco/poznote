@@ -491,6 +491,7 @@
       "markdown_colored": "Colorea las notas markdown: elige un color para cada nivel de título, el código en línea, el fondo de los bloques de código, las citas, los encabezados de tabla y los separadores.",
       "code_wrap": "Ajusta las líneas largas en los bloques de código en lugar de desplazarse horizontalmente.",
       "code_line_numbers": "Muestra los números de línea en los bloques de código de la vista previa de markdown.",
+      "code_block_collapsed_lines": "Cuántas líneas de un bloque de código siguen visibles cuando está plegado, de 0 a 100. Con 0, un bloque plegado no muestra nada de su código. Un bloque que no tenga más líneas que esto no recibe la flecha para plegar, plegarlo no ocultaría nada.",
       "attachment_previews": "Muestra vistas previas de los adjuntos dentro de las notas.",
       "attachments_at_bottom": "Muestra la sección de adjuntos en la parte inferior de las notas en lugar de arriba.",
       "allow_executable_attachments": "Permite adjuntar scripts y ejecutables (.sh, .ps1, .bat, .exe, .py, ...), para todas las cuentas de esta instancia. Poznote nunca los ejecuta, solo los almacena y los sirve. Los tipos que un servidor web podría ejecutar, como .php, siguen bloqueados.",
@@ -547,7 +548,10 @@
       "custom_logo": "Sustituir el logo de Poznote por el suyo, para todos los usuarios: en la pestaña del navegador, en la página de inicio de sesión, en la barra de iconos y como icono de la aplicación instalada.",
       "two_factor_required": "Toda cuenta que inicie sesión con contraseña debe usar la autenticación en dos pasos. Una cuenta que no la tenga la configura en su próximo inicio de sesión, y las sesiones abiertas sin ella se cierran. Su contraseña deja de funcionar a través de la API: las aplicaciones usan una contraseña de aplicación. Los inicios de sesión SSO no se ven afectados, el proveedor de identidad gestiona su segundo factor.",
       "tab_follows_note": "Nombra la pestaña del navegador según la nota abierta en ella, con el icono de esa nota, en lugar del nombre y el icono de esta instancia. Así se distinguen varias pestañas abiertas en varias notas.",
-      "update_badge_level": "Elige qué versiones ponen el punto rojo en las entradas de Ajustes. Elijas lo que elijas, la nueva versión se sigue anunciando en esta página, no se oculta nada."
+      "update_badge_level": "Elige qué versiones ponen el punto rojo en las entradas de Ajustes. Elijas lo que elijas, la nueva versión se sigue anunciando en esta página, no se oculta nada.",
+      "update_check_interval": "Con qué frecuencia Poznote comprueba en segundo plano si hay una versión más reciente. El punto solo puede aparecer después de una comprobación, así que un intervalo más largo lo retrasa. La tarjeta Versión de arriba sigue comprobando al instante cuando la pulsas.",
+      "sessions": "Ver los navegadores y dispositivos conectados ahora mismo a tu cuenta, y cerrar la sesión de los que ya no uses.",
+      "session_lifetime": "Cuánto dura un inicio de sesión sin actividad. Se configura con POZNOTE_SESSION_LIFETIME_DAYS en el archivo .env, así que aquí solo se muestra y no se puede cambiar desde esta página. Iniciar sesión con «Recordarme» dura más; iniciar sesión por SSO, no."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "En el móvil, la barra de herramientas sobre el teclado tiene un botón + que abre el mismo menú, sea cual sea este ajuste."
@@ -640,7 +644,7 @@
       "custom_css": "Archivo CSS personalizado",
       "theme_list": "Lista de temas",
       "install_extension": "Instalar extensión",
-      "install_app": "Instalar aplicación",
+      "install_app": "Instalar aplicación (PWA)",
       "release_notes": "Notas de la versión",
       "orphan_scanner": "Escáner de archivos adjuntos huérfanos",
       "storage_stats": "Estadísticas de almacenamiento del administrador",
@@ -675,7 +679,9 @@
       "outbound_hosts": "Acceso a la red local",
       "connected_apps": "Aplicaciones conectadas",
       "custom_logo": "Logo",
-      "two_factor_required": "Exigir verificación en dos pasos"
+      "two_factor_required": "Exigir verificación en dos pasos",
+      "sessions": "Dispositivos conectados",
+      "session_lifetime": "Duración de las sesiones"
     },
     "default_credentials": {
       "both": "Esta cuenta sigue usando el nombre de usuario y la contraseña predeterminados. Cualquiera que pueda acceder a esta instancia puede iniciar sesión.",
@@ -920,6 +926,7 @@
       "markdown_colored": "Markdown a color",
       "code_block_word_wrap": "Ajuste de línea en bloques de código",
       "code_block_line_numbers": "Números de línea en bloques de código",
+      "code_block_collapsed_lines": "Bloques de código plegados",
       "attachment_previews_in_note": "Vistas previas de adjuntos",
       "attachments_at_bottom": "Adjuntos al final",
       "backlinks_at_bottom": "Backlinks al final",
@@ -939,7 +946,8 @@
       "diary_template": "Plantilla de entrada del diario",
       "markdown_view_cycle": "Menú de vistas",
       "tab_follows_note": "La pestaña sigue la nota abierta",
-      "update_badge_level": "Punto de actualización"
+      "update_badge_level": "Punto de actualización",
+      "update_check_interval": "Comprobación de actualizaciones"
     },
     "badges": {
       "font_size_default": "predeterminado ({{size}}px)",
@@ -1369,7 +1377,7 @@
     },
     "source": {
       "app": "Poznote, en un ordenador",
-      "app_mobile": "Poznote, en un móvil o una tableta",
+      "app_mobile": "Poznote, en móvil",
       "api": "La API REST",
       "mcp": "Una aplicación conectada por MCP",
       "extension": "La extensión del navegador",
@@ -2051,10 +2059,22 @@
     },
     "update_badge_level": {
       "options": {
-        "all": "Cada versión",
-        "minor": "Versiones menores y mayores",
-        "major": "Solo versiones mayores"
+        "all": "Versiones mayores, menores y parches",
+        "minor": "Solo versiones mayores y menores"
       }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "Cada día",
+        "2": "Cada 2 días",
+        "3": "Cada 3 días",
+        "7": "Cada 7 días",
+        "14": "Cada 14 días",
+        "30": "Cada 30 días"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "líneas"
     }
   },
   "notes_list": {
@@ -4189,7 +4209,8 @@
       "two_factor_recovery_used": "Inicio de sesión con un código de recuperación",
       "two_factor_recovery_regenerated": "Códigos de recuperación regenerados",
       "oauth_app_authorized": "Aplicación conectada (MCP)",
-      "oauth_app_revoked": "Aplicación desconectada (MCP)"
+      "oauth_app_revoked": "Aplicación desconectada (MCP)",
+      "session_revoked": "Dispositivo desconectado"
     },
     "filters": {
       "all_actions": "Todas las acciones",
@@ -5574,6 +5595,7 @@
     "italic": "Cursiva",
     "underline": "Subrayado",
     "strikethrough": "Tachado",
+    "clear_formatting": "Limpiar el formato del texto seleccionado",
     "link": "Insertar un enlace en el texto seleccionado",
     "code_block": "Bloque de código",
     "slash_menu": "Abrir el menú de comandos",
@@ -5999,6 +6021,48 @@
       "group_rules": "Separadores de los grupos",
       "size": "Botón de tamaño de los mosaicos",
       "boards": "Lista de accesos rápidos"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "Contenido incrustado bloqueado",
+      "detail_admin": "Esta instancia no permite contenido incrustado de {{host}}. Un administrador puede volver a permitirlo en Configuración > Herramientas de administración > Contenido incrustado.",
+      "detail_public": "Este sitio no permite contenido incrustado de {{host}}."
+    },
+    "resize": {
+      "hint": "Arrastra para cambiar el tamaño, haz doble clic para restablecerlo"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 sesión",
+      "count_other": "{{count}} sesiones"
+    },
+    "lifetime": {
+      "day_one": "1 día",
+      "day_other": "{{count}} días"
+    },
+    "modal": {
+      "title": "Dispositivos conectados",
+      "description": "Cada fila es un navegador con sesión en tu cuenta. Una sesión termina por sí sola tras {{duration}} sin actividad, y cada vez que cambias la contraseña.",
+      "loading": "Cargando...",
+      "empty": "No hay ninguna sesión abierta.",
+      "unknown_client": "Navegador desconocido",
+      "this_device": "Este dispositivo",
+      "last_active": "Última actividad {{date}}",
+      "revoke": "Cerrar sesión",
+      "revoke_others": "Cerrar sesión en los otros dispositivos",
+      "confirm": "Confirmar",
+      "close": "Cerrar"
+    },
+    "method": {
+      "password": "Contraseña",
+      "sso": "SSO",
+      "auto": "Sin inicio de sesión"
+    },
+    "errors": {
+      "load_failed": "No se pudieron cargar tus sesiones.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
     }
   }
 }

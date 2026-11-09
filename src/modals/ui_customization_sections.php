@@ -76,6 +76,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:change-password-card" checked><span><?php echo t_h('settings.cards.change_password', [], 'Change Password'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:two-factor-card" checked><span><?php echo t_h('settings.cards.two_factor', [], 'Two-factor authentication'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:app-passwords-card" checked><span><?php echo t_h('settings.cards.app_passwords', [], 'App passwords'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:sessions-card" checked><span><?php echo t_h('settings.cards.sessions', [], 'Connected devices'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:delete-account-card" checked><span><?php echo t_h('settings.cards.delete_account', [], 'Delete Account'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:default-workspace-card" checked><span><?php echo t_h('workspaces.default.title', [], 'Default Workspace'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:git-sync-card" checked><span><?php echo t_h('settings.cards.git_sync', [], 'Git Sync'); ?></span></label>
@@ -125,6 +126,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:markdown-colored-card" checked><span><?php echo t_h('display.cards.markdown_colored', [], 'Colored markdown'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:code-wrap-card" checked><span><?php echo t_h('display.cards.code_block_word_wrap', [], 'Code block word wrap'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:code-line-numbers-card" checked><span><?php echo t_h('display.cards.code_block_line_numbers', [], 'Code block line numbers'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:code-collapsed-lines-card" checked><span><?php echo t_h('display.cards.code_block_collapsed_lines', [], 'Folded code blocks'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:attachment-previews-card" checked><span><?php echo t_h('display.cards.attachment_previews_in_note', [], 'Attachment previews'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:attachments-at-bottom-card" checked><span><?php echo t_h('display.cards.attachments_at_bottom', [], 'Attachments at bottom'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:backlinks-at-bottom-card" checked><span><?php echo t_h('display.cards.backlinks_at_bottom', [], 'Backlinks at bottom'); ?></span></label>
@@ -162,10 +164,13 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:orphan-scanner-card" checked><span><?php echo t_h('settings.cards.orphan_scanner', [], 'Orphan attachments scanner'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:activity-log-card" checked><span><?php echo t_h('settings.cards.activity_log', [], 'Activity log'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:check-updates-card" checked><span><?php echo t_h('settings.cards.version', [], 'Version'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:update-badge-level-card" checked><span><?php echo t_h('display.cards.update_badge_level', [], 'Update dot'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:update-check-interval-card" checked><span><?php echo t_h('display.cards.update_check_interval', [], 'Update check'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:whats-new-card" checked><span><?php echo t_h('settings.cards.whats_new', [], "What's new after updates"); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:release-notes-card" checked><span><?php echo t_h('settings.cards.release_notes', [], 'Release notes'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:github-card" checked><span><?php echo t_h('settings.cards.documentation', [], 'Documentation GitHub'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:discussions-card" checked><span><?php echo t_h('settings.cards.discussions', [], 'GitHub discussions'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:session-lifetime-card" checked><span><?php echo t_h('settings.cards.session_lifetime', [], 'Session lifetime'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:website-card" checked><span><?php echo t_h('settings.cards.website', [], 'Poznote Website'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:tips-card" checked><span><?php echo t_h('settings.cards.tips', [], 'Tips'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:discord-card" checked><span><?php echo t_h('settings.cards.discord', [], 'Discord'); ?></span></label>

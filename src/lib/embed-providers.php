@@ -238,6 +238,70 @@ function poznoteAllowedIframeDomains(): array {
 }
 
 /**
+ * The notice a reader gets in place of an embed this instance refuses.
+ *
+ * A refused frame is an empty rectangle and an error in the browser console,
+ * or, in Markdown, the escaped source of the tag: neither tells the reader
+ * that a provider was switched off here. Every page that renders note content
+ * puts this box there instead, and js/embeds.js builds the same one in the
+ * editor, where the frame is in the DOM and is hidden rather than replaced.
+ * The classes are styled by css/components/embed-blocked.css.
+ *
+ * The text is the visitor's half of it, without the administrator's, which a
+ * reader could not act on anyway; the app says more (index.php).
+ *
+ * The refused markup is shown under it, as written: hiding the frame must not
+ * hide what the author put in the note, and in Markdown that line is something
+ * they typed by hand.
+ *
+ * @param string $src The refused src, shown as a link when it is a web address
+ * @param string|null $lang Language of the page, the reader's by default
+ * @param string $source The markup that was refused, shown as written
+ */
+function poznoteBlockedEmbedNoticeHtml(string $src, ?string $lang = null, string $source = ''): string {
+    // A caller may render a note without the translator loaded.
+    $say = static function (string $key, array $vars, string $fallback) use ($lang): string {
+        if (function_exists('t')) {
+            return t($key, $vars, $fallback, $lang);
+        }
+        foreach ($vars as $name => $value) {
+            $fallback = str_replace('{{' . $name . '}}', (string) $value, $fallback);
+        }
+        return $fallback;
+    };
+    $esc = static function (string $value): string {
+        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    };
+
+    $parts = parse_url($src);
+    $host = (is_array($parts) && isset($parts['host'])) ? strtolower((string) $parts['host']) : '';
+    $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+
+    $html = '<div class="embed-blocked">'
+        . '<i class="lucide lucide-eye-off embed-blocked-icon" aria-hidden="true"></i>'
+        . '<div class="embed-blocked-text">'
+        . '<strong>' . $esc($say('embeds.blocked.title', [], 'Embedded content blocked')) . '</strong>'
+        . '<span>' . $esc($say(
+            'embeds.blocked.detail_public',
+            ['host' => ($host !== '' ? $host : '?')],
+            'This site does not allow embedded content from {{host}}.'
+        )) . '</span>';
+
+    if (trim($source) !== '') {
+        $html .= '<code class="embed-blocked-source">' . $esc(trim($source)) . '</code>';
+    }
+
+    // Only an ordinary web address is offered as a link.
+    if ($scheme === 'http' || $scheme === 'https') {
+        $html .= '<a href="' . $esc($src) . '" target="_blank" rel="noopener noreferrer">'
+            . $esc($say('attachments.page.open_in_new_tab', [], 'Open in new tab'))
+            . '</a>';
+    }
+
+    return $html . '</div></div>';
+}
+
+/**
  * Validate what the settings API is asked to store, and return it in a stable
  * shape ('[]' when nothing is disabled).
  *

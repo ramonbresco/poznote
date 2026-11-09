@@ -172,7 +172,7 @@ MCP 서버는 `docker-compose.yml`의 기본값을 사용합니다.
 # 디버그 로그 기본값: false
 ```
 
-Poznote는 `data/.mcp_token`에 MCP 서비스 토큰을 자동 생성합니다. `mcp-server` 컨테이너는 공유 볼륨 `./data:/var/www/html/data:ro`에서 읽으므로 `.env`에 비밀번호를 보관할 필요가 없습니다.
+Poznote는 `data/.mcp_token`에 MCP 서비스 토큰을 자동 생성합니다. `mcp-server` 컨테이너는 공유 볼륨 `./data:/var/www/html/data:ro`에서 읽으므로 `.env`에 비밀번호를 보관할 필요가 없습니다. 파일이 없는 동안에는 호출할 때마다 다시 읽으므로, Poznote가 파일을 만들기 전에 시작된 MCP 서버도 재시작 없이 스스로 토큰을 가져옵니다. 이 Compose 스택 밖에서 실행되는 서버는 이 경로를 볼 수 없으니, 해당 호스트에서 `data/.mcp_token`이 실제로 있는 위치를 `POZNOTE_SERVICE_TOKEN_FILE`에 지정하세요.
 
 한 번의 실행에서 포트와 디버그 설정을 변경하려면 환경 변수를 명령에 지정해 MCP 컨테이너를 재생성하세요.
 

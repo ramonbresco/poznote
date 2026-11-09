@@ -211,10 +211,19 @@ body.public-note-page {
    guaranteed by the sanitiser, so matching the src here is cosmetic only. */
 /* Full width here too: half the page is cramped for something the visitor is
    meant to manipulate, while it suits a video. */
-.public-note iframe[src*="//www.geogebra.org/"],
-.public-note iframe[src*="//geogebra.org/"] {
+/* The :not() pair is what the video rule above carries: without the same
+   weight this rule lost, and the applet was served at half width in a 16/9
+   letterbox, which is exactly what it is here not to be. */
+.public-note iframe[src*="//www.geogebra.org/"]:not([data-is-audio]),
+.public-note iframe[src*="//geogebra.org/"]:not([data-is-audio]) {
     max-width: 100%;
     aspect-ratio: 4 / 3;
+    /* A thin frame, like the one an image can take: an applet is a panel of
+       its own, and GeoGebra's canvas is white on white without it. Counted
+       inside the width, or the frame would hang 2px past the note. */
+    box-sizing: border-box;
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-sm);
 }
 
 @media screen and (max-width: 768px) {

@@ -1037,8 +1037,25 @@ function parseMarkdown($text) {
         // with re-encoded values.
         $iframeTag = poznoteRebuildMediaTag('iframe', $attrs);
         if ($iframeTag === null) {
-            // If not allowed, return the original (will be escaped)
-            return $original;
+            // Not an allowed host: the notice goes where the frame would have
+            // been (lib/embed-providers.php). Without it the reader is left
+            // with the escaped source of the tag, which explains nothing.
+            $blockedSrc = '';
+            if (preg_match('/\\bsrc\\s*=\\s*["\']([^"\']*)["\']/i', $attrs, $srcMatch) === 1) {
+                $blockedSrc = $srcMatch[1];
+            }
+            if ($blockedSrc === '' || !function_exists('poznoteBlockedEmbedNoticeHtml')) {
+                return $original;
+            }
+
+            $placeholder = "\x00PIFRAME" . $protectedIndex . "\x00";
+            $protectedElements[$protectedIndex] = poznoteBlockedEmbedNoticeHtml(
+                $blockedSrc,
+                null,
+                html_entity_decode($original, ENT_QUOTES | ENT_HTML5, 'UTF-8')
+            );
+            $protectedIndex++;
+            return $placeholder;
         }
 
         $placeholder = "\x00PIFRAME" . $protectedIndex . "\x00";

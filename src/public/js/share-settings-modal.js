@@ -430,10 +430,8 @@ window.PoznoteShareSettings = (function() {
         title.appendChild(titleText);
         titleBlock.appendChild(title);
 
-        content.appendChild(titleBlock);
-
-        // Open and Copy act on the link: they sit with the dialog's own
-        // buttons at the bottom, as text, on a line of their own on mobile.
+        // Open and Copy act on the address above them, not on the dialog, so
+        // they sit under it rather than with Cancel / Revoke / Save.
         var openBtn = document.createElement('button');
         openBtn.type = 'button';
         openBtn.className = 'btn btn-success';
@@ -450,6 +448,14 @@ window.PoznoteShareSettings = (function() {
         copyBtn.addEventListener('click', function() {
             copyShareLink(titleText.textContent);
         });
+
+        var linkActions = document.createElement('div');
+        linkActions.className = 'shared-edit-token-modal-link-actions';
+        linkActions.appendChild(copyBtn);
+        linkActions.appendChild(openBtn);
+        titleBlock.appendChild(linkActions);
+
+        content.appendChild(titleBlock);
 
         var tokenRow = document.createElement('div');
         tokenRow.className = 'shared-edit-token-field-row';
@@ -911,12 +917,23 @@ window.PoznoteShareSettings = (function() {
         renewBtn.addEventListener('click', function() {
             input.value = generateRandomToken();
             updatePreviewUrl();
+            // Same reason as the button next to it: on a phone the keyboard
+            // would cover the dialog for a token the button just filled in.
+            if (isMobileShareModalView()) {
+                return;
+            }
             input.focus();
         });
         if (useNameBtn) {
             useNameBtn.addEventListener('click', function() {
                 input.value = nameToken;
                 updatePreviewUrl();
+                // On a phone, focusing the field would raise the keyboard over
+                // the dialog for a token the button just filled in, and the
+                // selection it would make is invisible behind it.
+                if (isMobileShareModalView()) {
+                    return;
+                }
                 input.focus();
                 input.select();
             });
@@ -983,11 +1000,6 @@ window.PoznoteShareSettings = (function() {
             }
         });
 
-        var linkActions = document.createElement('div');
-        linkActions.className = 'shared-edit-token-modal-link-actions';
-        linkActions.appendChild(copyBtn);
-        linkActions.appendChild(openBtn);
-        actions.appendChild(linkActions);
         actions.appendChild(cancelBtn);
         if (options.revoke) {
             actions.appendChild(buildRevokeButton());

@@ -28,8 +28,11 @@ class SettingsController {
         'tenant_isolation_applied_ui_keys',
         'outbound_allowed_hosts',
         // Which releases light the red dot on the Settings entries
-        // ('all', 'minor', 'major'; js/utils-updates.js)
+        // ('all' or 'minor'; js/utils-updates.js)
         'update_badge_level',
+        // Days between two background update checks (1 to 365, default 1;
+        // js/utils-updates.js)
+        'update_check_interval_days',
         'embed_providers_disabled',
         'import_max_individual_files',
         'import_max_zip_files',

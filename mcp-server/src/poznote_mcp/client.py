@@ -55,7 +55,9 @@ class PoznoteClient:
         # Default includes Poznote's typical dev port (8040). Users can override with POZNOTE_API_URL.
         self.base_url = (base_url or os.getenv("POZNOTE_API_URL", "http://localhost:8040/api/v1")).rstrip("/")
         self.service_token_file = service_token_file or os.getenv("POZNOTE_SERVICE_TOKEN_FILE", DEFAULT_SERVICE_TOKEN_FILE)
-        self.service_token = service_token or self._load_service_token(self.service_token_file)
+        # A token passed in is pinned: it must never be replaced by a file read.
+        self._explicit_service_token = (service_token or "").strip()
+        self._service_token = self._explicit_service_token or self._load_service_token(self.service_token_file)
         self.password = password or ""
 
         # By default the MCP server operates as the first admin profile.
@@ -84,8 +86,8 @@ class PoznoteClient:
             "X-Poznote-Client": "mcp",
         }
 
-        if self.service_token:
-            self._base_headers["Authorization"] = f"Bearer {self.service_token}"
+        if self._service_token:
+            self._base_headers["Authorization"] = f"Bearer {self._service_token}"
         elif self.password:
             auth = httpx.BasicAuth(self.username, self.password)
         
@@ -118,8 +120,45 @@ class PoznoteClient:
         except OSError:
             return ""
 
-    def _headers_for_user(self, user_id: str | int | None) -> dict:
+    @property
+    def service_token(self) -> str:
+        """The Bearer token for the Poznote API, read again while it is missing.
+
+        Poznote writes data/.mcp_token when its own container starts, which can
+        be after this server started. Read once at construction, the token would
+        then stay empty for the life of the process and every call would keep
+        failing with a configuration error long after the file appeared. Read
+        again only while it is empty, so the normal path costs no extra syscall.
+        PoznoteIntrospectionProvider.resolve() re-reads it for the same reason.
+        """
+        if self._service_token or self._explicit_service_token:
+            return self._service_token
+        if self.password:
+            # Basic auth was configured on the httpx client at construction and
+            # takes precedence over an Authorization header set per request, so
+            # a token picked up now would be ignored. Leave that path alone.
+            return ""
+        token = self._load_service_token(self.service_token_file)
+        if token:
+            self._service_token = token
+        return self._service_token
+
+    @service_token.setter
+    def service_token(self, value: str) -> None:
+        """Kept writable: a token set by hand pins the same way as one passed in."""
+        self._explicit_service_token = (value or "").strip()
+        self._service_token = self._explicit_service_token
+
+    def _current_base_headers(self) -> dict:
+        """A fresh copy of the base headers, carrying the token if readable now."""
         headers = dict(self._base_headers)
+        token = self.service_token
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+        return headers
+
+    def _headers_for_user(self, user_id: str | int | None) -> dict:
+        headers = self._current_base_headers()
 
         # Per-caller authentication. The caller's own verified identity decides
         # the target profile, and an explicit user_id may only AGREE with it.
@@ -171,7 +210,7 @@ class PoznoteClient:
         Uses the service token and the server's own default profile: this is a
         lookup, not an action taken as the caller.
         """
-        response = self.client.get("/admin/users", headers=dict(self._base_headers))
+        response = self.client.get("/admin/users", headers=self._current_base_headers())
         response.raise_for_status()
         payload = response.json()
         if isinstance(payload, list):
@@ -914,19 +953,19 @@ class PoznoteClient:
 
     def get_system_version(self) -> dict:
         """Get Poznote version information"""
-        response = self.client.get("/system/version")
+        response = self.client.get("/system/version", headers=self._current_base_headers())
         response.raise_for_status()
         return response.json()
 
     def list_backups(self) -> list[dict]:
         """List all available backups"""
-        response = self.client.get("/backups")
+        response = self.client.get("/backups", headers=self._current_base_headers())
         response.raise_for_status()
         return response.json()
 
     def create_backup(self) -> dict:
         """Trigger a new full backup"""
-        response = self.client.post("/backups", timeout=HEAVY_TIMEOUT)
+        response = self.client.post("/backups", timeout=HEAVY_TIMEOUT, headers=self._current_base_headers())
         response.raise_for_status()
         return response.json()
 

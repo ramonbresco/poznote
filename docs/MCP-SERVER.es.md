@@ -172,7 +172,7 @@ El servidor MCP usa los valores por defecto de `docker-compose.yml`:
 # El registro de depuración está desactivado (false) por defecto
 ```
 
-Poznote genera automáticamente el token de servicio MCP en `data/.mcp_token`. El contenedor `mcp-server` lee ese archivo a través del volumen compartido `./data:/var/www/html/data:ro`, así que no hay ninguna contraseña que guardar en `.env`.
+Poznote genera automáticamente el token de servicio MCP en `data/.mcp_token`. El contenedor `mcp-server` lee ese archivo a través del volumen compartido `./data:/var/www/html/data:ro`, así que no hay ninguna contraseña que guardar en `.env`. Mientras el archivo no exista se vuelve a leer en cada llamada, así que un servidor MCP que arrancó antes de que Poznote lo creara recoge el token por sí solo, sin reiniciar. Un servidor que se ejecuta fuera de esta pila de Compose no ve esa ruta: apunta `POZNOTE_SERVICE_TOKEN_FILE` al lugar donde `data/.mcp_token` esté realmente en ese host.
 
 Para cambiar el puerto y la depuración en un solo arranque, vuelve a crear el contenedor MCP con variables de entorno en línea:
 

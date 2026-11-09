@@ -491,6 +491,7 @@
       "markdown_colored": "Adicione cor às notas markdown: escolha uma cor para cada nível de título, código embutido, fundo dos blocos de código, citações, cabeçalhos de tabela e separadores.",
       "code_wrap": "Quebre linhas longas nos blocos de código em vez de rolar horizontalmente.",
       "code_line_numbers": "Mostre os números de linha nos blocos de código na pré-visualização de markdown.",
+      "code_block_collapsed_lines": "Quantas linhas de um bloco de código ficam visíveis depois de recolhido, de 0 a 100. Com 0, um bloco recolhido não mostra nada do seu código. Um bloco que não tenha mais linhas do que isto não recebe a seta para recolher, recolhê-lo não esconderia nada.",
       "attachment_previews": "Mostre pré-visualizações dos anexos dentro das notas.",
       "attachments_at_bottom": "Mostre a seção de anexos na parte inferior das notas em vez do topo.",
       "allow_executable_attachments": "Permite anexar scripts e executáveis (.sh, .ps1, .bat, .exe, .py, ...), para todas as contas desta instância. O Poznote nunca os executa, apenas os armazena e os entrega. Os tipos que um servidor web poderia executar, como .php, continuam bloqueados.",
@@ -547,7 +548,10 @@
       "custom_logo": "Substituir o logótipo do Poznote pelo seu, para todos os utilizadores: no separador do navegador, na página de início de sessão, na barra de ícones e como ícone da aplicação instalada.",
       "two_factor_required": "Toda conta que entra com senha precisa usar a autenticação em dois fatores. Uma conta sem ela a configura no próximo login, e as sessões abertas sem ela são encerradas. A senha da conta deixa de funcionar pela API: os aplicativos usam uma senha de aplicativo. Os logins por SSO não são afetados, o provedor de identidade cuida do segundo fator deles.",
       "tab_follows_note": "Dá ao separador do navegador o nome da nota nele aberta, com o ícone dessa nota, em vez do nome e do ícone desta instância. Assim distinguem-se vários separadores abertos em várias notas.",
-      "update_badge_level": "Escolha que versões colocam o ponto vermelho nas entradas das Definições. Seja qual for a escolha, a nova versão continua a ser anunciada nesta página, nada fica escondido."
+      "update_badge_level": "Escolha que versões colocam o ponto vermelho nas entradas das Definições. Seja qual for a escolha, a nova versão continua a ser anunciada nesta página, nada fica escondido.",
+      "update_check_interval": "Com que frequência o Poznote verifica em segundo plano se existe uma versão mais recente. O ponto só pode aparecer depois de uma verificação, por isso um intervalo maior atrasa-o. O cartão Versão acima continua a verificar logo que clica nele.",
+      "sessions": "Veja os navegadores e dispositivos conectados à sua conta agora e encerre a sessão dos que você não usa mais.",
+      "session_lifetime": "Quanto tempo um login dura sem atividade. Definido com POZNOTE_SESSION_LIFETIME_DAYS no arquivo .env, por isso aparece aqui mas não pode ser alterado nesta página. Entrar com \"Lembrar-me\" dura mais; entrar por SSO, não."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "No telemóvel, a barra de ferramentas acima do teclado tem um botão + que abre o mesmo menu, seja qual for esta definição."
@@ -640,7 +644,7 @@
       "custom_css": "Arquivo CSS personalizado",
       "theme_list": "Lista de temas",
       "install_extension": "Instalar extensão",
-      "install_app": "Instalar aplicação",
+      "install_app": "Instalar aplicação (PWA)",
       "release_notes": "Notas de versão",
       "orphan_scanner": "Scanner de anexos órfãos",
       "storage_stats": "Estatísticas de armazenamento do administrador",
@@ -675,7 +679,9 @@
       "outbound_hosts": "Acesso à rede local",
       "connected_apps": "Aplicativos conectados",
       "custom_logo": "Logótipo",
-      "two_factor_required": "Exigir dois fatores"
+      "two_factor_required": "Exigir dois fatores",
+      "sessions": "Dispositivos conectados",
+      "session_lifetime": "Duração das sessões"
     },
     "default_credentials": {
       "both": "Esta conta ainda usa o nome de usuário e a palavra-passe de origem. Qualquer pessoa que consiga aceder a esta instância pode entrar.",
@@ -920,6 +926,7 @@
       "markdown_colored": "Markdown colorido",
       "code_block_word_wrap": "Quebra de linha em blocos de código",
       "code_block_line_numbers": "Números de linha em blocos de código",
+      "code_block_collapsed_lines": "Blocos de código recolhidos",
       "attachment_previews_in_note": "Pré-visualizações de anexos",
       "attachments_at_bottom": "Anexos no final",
       "backlinks_at_bottom": "Backlinks no final",
@@ -939,7 +946,8 @@
       "diary_template": "Modelo de entrada do diário",
       "markdown_view_cycle": "Menu de visualizações",
       "tab_follows_note": "O separador segue a nota aberta",
-      "update_badge_level": "Ponto de atualização"
+      "update_badge_level": "Ponto de atualização",
+      "update_check_interval": "Verificação de atualizações"
     },
     "badges": {
       "font_size_default": "padrão ({{size}}px)",
@@ -1369,7 +1377,7 @@
     },
     "source": {
       "app": "Poznote, num computador",
-      "app_mobile": "Poznote, num telemóvel ou tablet",
+      "app_mobile": "Poznote, no dispositivo móvel",
       "api": "A API REST",
       "mcp": "Uma aplicação ligada por MCP",
       "extension": "A extensão do navegador",
@@ -2051,10 +2059,22 @@
     },
     "update_badge_level": {
       "options": {
-        "all": "Todas as versões",
-        "minor": "Versões menores e maiores",
-        "major": "Apenas versões maiores"
+        "all": "Versões maiores, menores e correções",
+        "minor": "Apenas versões maiores e menores"
       }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "Todos os dias",
+        "2": "A cada 2 dias",
+        "3": "A cada 3 dias",
+        "7": "A cada 7 dias",
+        "14": "A cada 14 dias",
+        "30": "A cada 30 dias"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "linhas"
     }
   },
   "notes_list": {
@@ -4189,7 +4209,8 @@
       "two_factor_recovery_used": "Login com um código de recuperação",
       "two_factor_recovery_regenerated": "Códigos de recuperação gerados novamente",
       "oauth_app_authorized": "Aplicativo conectado (MCP)",
-      "oauth_app_revoked": "Aplicativo desconectado (MCP)"
+      "oauth_app_revoked": "Aplicativo desconectado (MCP)",
+      "session_revoked": "Dispositivo desconectado"
     },
     "filters": {
       "all_actions": "Todas as ações",
@@ -5574,6 +5595,7 @@
     "italic": "Itálico",
     "underline": "Sublinhado",
     "strikethrough": "Riscado",
+    "clear_formatting": "Limpar a formatação do texto selecionado",
     "link": "Inserir uma ligação no texto selecionado",
     "code_block": "Bloco de código",
     "slash_menu": "Abrir o menu de comandos",
@@ -5999,6 +6021,48 @@
       "group_rules": "Separadores dos grupos",
       "size": "Botão de tamanho dos mosaicos",
       "boards": "Lista de acessos rápidos"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "Conteúdo incorporado bloqueado",
+      "detail_admin": "Esta instância não permite conteúdo incorporado de {{host}}. Um administrador pode permiti-lo novamente em Configurações > Ferramentas de administração > Conteúdo incorporado.",
+      "detail_public": "Este site não permite conteúdo incorporado de {{host}}."
+    },
+    "resize": {
+      "hint": "Arraste para redimensionar, clique duas vezes para restaurar o tamanho"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 sessão",
+      "count_other": "{{count}} sessões"
+    },
+    "lifetime": {
+      "day_one": "1 dia",
+      "day_other": "{{count}} dias"
+    },
+    "modal": {
+      "title": "Dispositivos conectados",
+      "description": "Cada linha é um navegador conectado à sua conta. Uma sessão termina por conta própria depois de {{duration}} sem atividade, e sempre que a sua senha muda.",
+      "loading": "Carregando...",
+      "empty": "Nenhuma sessão aberta.",
+      "unknown_client": "Navegador desconhecido",
+      "this_device": "Este dispositivo",
+      "last_active": "Última atividade {{date}}",
+      "revoke": "Encerrar sessão",
+      "revoke_others": "Encerrar a sessão dos outros dispositivos",
+      "confirm": "Confirmar",
+      "close": "Fechar"
+    },
+    "method": {
+      "password": "Senha",
+      "sso": "SSO",
+      "auto": "Sem login"
+    },
+    "errors": {
+      "load_failed": "Não foi possível carregar as suas sessões.",
+      "generic": "Algo deu errado. Tente novamente."
     }
   }
 }

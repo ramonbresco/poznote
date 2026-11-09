@@ -172,7 +172,7 @@ Der MCP-Server verwendet die Standardwerte aus `docker-compose.yml`:
 # Debug-Logging ist standardmäßig false
 ```
 
-Poznote erzeugt das MCP-Diensttoken automatisch in `data/.mcp_token`. Der Container `mcp-server` liest diese Datei über das gemeinsam genutzte Volume `./data:/var/www/html/data:ro`, sodass kein Passwort in `.env` hinterlegt werden muss.
+Poznote erzeugt das MCP-Diensttoken automatisch in `data/.mcp_token`. Der Container `mcp-server` liest diese Datei über das gemeinsam genutzte Volume `./data:/var/www/html/data:ro`, sodass kein Passwort in `.env` hinterlegt werden muss. Solange die Datei fehlt, wird sie bei jedem Aufruf erneut gelesen: Ein MCP-Server, der vor ihrer Erstellung durch Poznote gestartet wurde, übernimmt das Token also von selbst, ohne Neustart. Ein Server außerhalb dieses Compose-Stacks sieht diesen Pfad gar nicht: Setzen Sie `POZNOTE_SERVICE_TOKEN_FILE` auf den Ort, an dem `data/.mcp_token` auf diesem Host tatsächlich liegt.
 
 Um Port und Debug-Modus für einen einzelnen Start zu überschreiben, erstellen Sie den MCP-Container mit Umgebungsvariablen in der Befehlszeile neu:
 

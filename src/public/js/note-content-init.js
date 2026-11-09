@@ -241,6 +241,18 @@ function reinitializeNoteContent(options) {
     // Translate callout titles to the current language
     translateCalloutTitles();
 
+    // The grip that resizes an embed (js/embed-resize.js): an iframe takes
+    // every pointer event over it, so the handle cannot be drawn on it.
+    if (typeof window.poznoteRefreshEmbedGrips === 'function') {
+        window.poznoteRefreshEmbedGrips(document);
+    }
+
+    // An embed from a host this instance refuses would be an empty rectangle
+    // and a console error: js/embeds.js hides it and says why instead.
+    if (typeof window.poznoteMarkBlockedEmbeds === 'function') {
+        window.poznoteMarkBlockedEmbeds(document);
+    }
+
     // Toggle blocks (js/toggle-block.js): their placeholders and whether each
     // one is open are runtime state the note does not carry
     if (window.PoznoteToggleBlock) {

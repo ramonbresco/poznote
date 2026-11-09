@@ -104,7 +104,10 @@ p.code-block-placeholder-after[data-ph]:empty:before {
    A phone scrolls the same column, so it gets the room too; what the mobile
    layout already keeps under every note stays the floor
    (--pz-note-bottom-space-min, css/index-mobile.css, undeclared and therefore
-   0 above 800px).
+   0 above 800px). That floor is carried by min-height rather than folded into
+   height, so getNoteVirtualSpace can read it back resolved: it is room the
+   arrow still scrolls through, the note ending above the floating buttons and
+   the browser's own bar rather than flush with the bottom of the column.
    The markdown split view scrolls its two panes instead of the column: they
    get the same room in css/markdown.css and the div gives its own back. That
    pair stays at the desktop width, where split mode is the only place it
@@ -116,7 +119,8 @@ body.note-virtual-space {
 }
 
 body.note-virtual-space #right_col .note-bottom-space {
-    height: max(var(--pz-note-virtual-space), var(--pz-note-bottom-space-min, 0px));
+    height: var(--pz-note-virtual-space);
+    min-height: var(--pz-note-bottom-space-min, 0px);
 }
 
 @media screen and (min-width: 801px) {
@@ -254,9 +258,11 @@ textarea:focus {
    inherits the heading size instead of dropping to the body size (#1418).
    The title of a toggle is left out for the same reason: its own size is a
    class, not an <hN> (css/components/toggle-block.css), and this rule would
-   flatten it back to the body size. */
+   flatten it back to the body size. So is the number of lines of a folded
+   code block, which sits next to the chevron rather than inside the <pre>
+   and reads at its own small size (css/components/code-block-fold.css). */
 .noteentry,
-.noteentry *:not(.lucide):not([class*="lucide-"]):not(i):not(a):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(h1 *):not(h2 *):not(h3 *):not(h4 *):not(h5 *):not(h6 *):not(.toggle-header):not(.toggle-header *):not(.cm-live-toggle-header):not(pre):not(pre *):not(code):not(code *):not(.code-block):not(.code-block *):not(.hljs):not(.hljs *) {
+.noteentry *:not(.lucide):not([class*="lucide-"]):not(i):not(a):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(h1 *):not(h2 *):not(h3 *):not(h4 *):not(h5 *):not(h6 *):not(.toggle-header):not(.toggle-header *):not(.embed-blocked):not(.embed-blocked *):not(.cm-live-toggle-header):not(.code-block-collapsed-summary):not(pre):not(pre *):not(code):not(code *):not(.code-block):not(.code-block *):not(.hljs):not(.hljs *) {
     font-size: var(--note-font-size, 15px) !important;
 }
 
@@ -415,10 +421,24 @@ textarea:focus {
    so it does not take the 16/9 shape of the rule above, which squashed a
    GeoGebra construction into a letterbox (#1742). 4/3 keeps the height tied to
    the width, since an iframe without a height falls back to 150px. The host is
-   guaranteed by the sanitiser, so matching the src here is cosmetic only. */
+   guaranteed by the sanitiser, so matching the src here is cosmetic only.
+
+   It takes the whole width of the note, whatever width the embed code carries:
+   an applet is worked in, not watched, and the toolbar and input bar GeoGebra
+   puts around it need the room. The width and height of the tag are
+   presentation hints, so the declarations here outrank them, and height: auto
+   is what lets the ratio set the height. */
 .noteentry iframe[src*="//www.geogebra.org/"],
 .noteentry iframe[src*="//geogebra.org/"] {
+    width: 100%;
+    height: auto;
     aspect-ratio: 4 / 3;
+    /* A thin frame, like the one an image can take: an applet is a panel of
+       its own, and GeoGebra's canvas is white on white without it. Counted
+       inside the width, or the frame would hang 2px past the note. */
+    box-sizing: border-box;
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-sm);
 }
 
 /* Video embeds from attachments */

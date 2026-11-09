@@ -96,7 +96,7 @@ function poznoteWriteSourceLabel(string $source): string {
         case POZNOTE_SOURCE_APP:
             return t('info.source.app', [], 'Poznote, on a computer');
         case POZNOTE_SOURCE_APP_MOBILE:
-            return t('info.source.app_mobile', [], 'Poznote, on a phone or tablet');
+            return t('info.source.app_mobile', [], 'Poznote, on mobile');
         case POZNOTE_SOURCE_API:
             return t('info.source.api', [], 'The REST API');
         case POZNOTE_SOURCE_MCP:

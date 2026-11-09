@@ -491,6 +491,7 @@
       "markdown_colored": "Färben Sie Markdown-Notizen: Wählen Sie eine Farbe für jede Überschriftenebene, Inline-Code, Codeblock-Hintergrund, Zitate, Tabellenköpfe und Trennlinien.",
       "code_wrap": "Lange Zeilen in Codeblöcken umbrechen statt horizontal zu scrollen.",
       "code_line_numbers": "Zeilennummern in Codeblöcken in der Markdown-Vorschau anzeigen.",
+      "code_block_collapsed_lines": "Wie viele Zeilen eines Codeblocks sichtbar bleiben, wenn er eingeklappt ist, von 0 bis 100. Bei 0 zeigt ein eingeklappter Block nichts von seinem Code. Ein Block mit nicht mehr Zeilen als dieser Wert erhält keinen Einklapppfeil, das Einklappen würde nichts verbergen.",
       "attachment_previews": "Zeigen Sie Vorschauen von Anhängen in Notizen an.",
       "attachments_at_bottom": "Zeigen Sie den Anhangsbereich unten statt oben in Notizen an.",
       "allow_executable_attachments": "Erlaubt Skripte und ausführbare Dateien (.sh, .ps1, .bat, .exe, .py, ...) als Anhang, für alle Konten dieser Instanz. Poznote führt sie nie aus, es speichert und liefert sie nur aus. Dateitypen, die ein Webserver ausführen könnte, etwa .php, bleiben blockiert.",
@@ -547,7 +548,10 @@
       "custom_logo": "Das Poznote-Logo für alle Benutzer durch ein eigenes ersetzen: im Browser-Tab, auf der Anmeldeseite, in der Symbolleiste und als Symbol der installierten App.",
       "two_factor_required": "Jedes Konto, das sich mit einem Passwort anmeldet, muss die Zwei-Faktor-Authentifizierung nutzen. Ein Konto ohne sie richtet sie bei der nächsten Anmeldung ein, und ohne sie geöffnete Sitzungen werden beendet. Das Kontopasswort funktioniert nicht mehr über die API: Apps verwenden stattdessen ein App-Passwort. SSO-Anmeldungen sind nicht betroffen, der Identitätsanbieter verwaltet ihren zweiten Faktor.",
       "tab_follows_note": "Benennt den Browser-Tab nach der darin geöffneten Notiz, mit deren Symbol, statt nach Name und Symbol dieser Instanz. So lassen sich mehrere Tabs mit mehreren Notizen unterscheiden.",
-      "update_badge_level": "Lege fest, welche Versionen den roten Punkt auf den Einstellungen anzeigen. Was du auch wählst, die neue Version wird auf dieser Seite weiterhin angekündigt, nichts wird verborgen."
+      "update_badge_level": "Lege fest, welche Versionen den roten Punkt auf den Einstellungen anzeigen. Was du auch wählst, die neue Version wird auf dieser Seite weiterhin angekündigt, nichts wird verborgen.",
+      "update_check_interval": "Wie oft Poznote im Hintergrund prüft, ob eine neuere Version verfügbar ist. Der Punkt kann erst nach einer Prüfung erscheinen, ein längerer Abstand verzögert ihn also. Die Karte Version darüber prüft bei jedem Klick weiterhin sofort.",
+      "sessions": "Die Browser und Geräte ansehen, die gerade in Ihrem Konto angemeldet sind, und die abmelden, die Sie nicht mehr nutzen.",
+      "session_lifetime": "Wie lange eine Anmeldung ohne Aktivität gilt. Wird mit POZNOTE_SESSION_LIFETIME_DAYS in der .env-Datei gesetzt, hier also nur angezeigt und auf dieser Seite nicht änderbar. Eine Anmeldung mit „Angemeldet bleiben“ hält länger, eine Anmeldung über SSO nicht."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "Auf Mobilgeräten hat die Leiste über der Tastatur eine +-Schaltfläche, die unabhängig von dieser Einstellung dasselbe Menü öffnet."
@@ -640,7 +644,7 @@
       "custom_css": "Benutzerdefinierte CSS-Datei",
       "theme_list": "Theme-Liste",
       "install_extension": "Erweiterung installieren",
-      "install_app": "App installieren",
+      "install_app": "App installieren (PWA)",
       "release_notes": "Versionshinweise",
       "orphan_scanner": "Verwaiste Anhänge-Scanner",
       "storage_stats": "Admin-Speicherstatistik",
@@ -675,7 +679,9 @@
       "outbound_hosts": "Zugriff auf das lokale Netzwerk",
       "connected_apps": "Verbundene Apps",
       "custom_logo": "Logo",
-      "two_factor_required": "Zwei-Faktor erzwingen"
+      "two_factor_required": "Zwei-Faktor erzwingen",
+      "sessions": "Verbundene Geräte",
+      "session_lifetime": "Sitzungsdauer"
     },
     "default_credentials": {
       "both": "Dieses Konto verwendet noch den mitgelieferten Benutzernamen und das mitgelieferte Passwort. Jeder, der diese Instanz erreichen kann, kann sich anmelden.",
@@ -920,6 +926,7 @@
       "markdown_colored": "Farbiges Markdown",
       "code_block_word_wrap": "Codeblock-Zeilenumbruch",
       "code_block_line_numbers": "Codeblock-Zeilennummern",
+      "code_block_collapsed_lines": "Eingeklappte Codeblöcke",
       "attachment_previews_in_note": "Anhangsvorschauen",
       "attachments_at_bottom": "Anhänge unten",
       "backlinks_at_bottom": "Backlinks unten",
@@ -939,7 +946,8 @@
       "diary_template": "Vorlage für Tagebucheinträge",
       "markdown_view_cycle": "Ansichtsmenü",
       "tab_follows_note": "Tab folgt der geöffneten Notiz",
-      "update_badge_level": "Update-Punkt"
+      "update_badge_level": "Update-Punkt",
+      "update_check_interval": "Update-Prüfung"
     },
     "badges": {
       "font_size_default": "Standard ({{size}}px)",
@@ -1369,7 +1377,7 @@
     },
     "source": {
       "app": "Poznote, auf einem Computer",
-      "app_mobile": "Poznote, auf einem Handy oder Tablet",
+      "app_mobile": "Poznote, auf dem Mobilgerät",
       "api": "Die REST-API",
       "mcp": "Eine über MCP verbundene App",
       "extension": "Die Browser-Erweiterung",
@@ -2051,10 +2059,22 @@
     },
     "update_badge_level": {
       "options": {
-        "all": "Jede Version",
-        "minor": "Minor- und Major-Versionen",
-        "major": "Nur Major-Versionen"
+        "all": "Haupt-, Neben- und Patch-Versionen",
+        "minor": "Nur Haupt- und Nebenversionen"
       }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "Täglich",
+        "2": "Alle 2 Tage",
+        "3": "Alle 3 Tage",
+        "7": "Alle 7 Tage",
+        "14": "Alle 14 Tage",
+        "30": "Alle 30 Tage"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "Zeilen"
     }
   },
   "notes_list": {
@@ -4188,7 +4208,8 @@
       "two_factor_recovery_used": "Anmeldung mit Wiederherstellungscode",
       "two_factor_recovery_regenerated": "Wiederherstellungscodes neu erzeugt",
       "oauth_app_authorized": "App verbunden (MCP)",
-      "oauth_app_revoked": "App getrennt (MCP)"
+      "oauth_app_revoked": "App getrennt (MCP)",
+      "session_revoked": "Gerät abgemeldet"
     },
     "filters": {
       "all_actions": "Alle Aktionen",
@@ -5573,6 +5594,7 @@
     "italic": "Kursiv",
     "underline": "Unterstrichen",
     "strikethrough": "Durchgestrichen",
+    "clear_formatting": "Formatierung des markierten Textes löschen",
     "link": "Link auf den markierten Text setzen",
     "code_block": "Codeblock",
     "slash_menu": "Befehlsmenü öffnen",
@@ -5998,6 +6020,48 @@
       "group_rules": "Gruppentrennlinien",
       "size": "Schaltfläche für die Kachelgröße",
       "boards": "Liste der Schnellwahlen"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "Eingebetteter Inhalt blockiert",
+      "detail_admin": "Diese Instanz erlaubt keine eingebetteten Inhalte von {{host}}. Ein Administrator kann sie unter Einstellungen > Admin-Werkzeuge > Einbettungen wieder erlauben.",
+      "detail_public": "Diese Website erlaubt keine eingebetteten Inhalte von {{host}}."
+    },
+    "resize": {
+      "hint": "Zum Ändern der Größe ziehen, Doppelklick setzt sie zurück"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 Sitzung",
+      "count_other": "{{count}} Sitzungen"
+    },
+    "lifetime": {
+      "day_one": "1 Tag",
+      "day_other": "{{count}} Tage"
+    },
+    "modal": {
+      "title": "Verbundene Geräte",
+      "description": "Jede Zeile ist ein in Ihrem Konto angemeldeter Browser. Eine Sitzung endet von selbst nach {{duration}} ohne Aktivität und bei jeder Passwortänderung.",
+      "loading": "Wird geladen...",
+      "empty": "Keine offene Sitzung gefunden.",
+      "unknown_client": "Unbekannter Browser",
+      "this_device": "Dieses Gerät",
+      "last_active": "Letzte Aktivität {{date}}",
+      "revoke": "Abmelden",
+      "revoke_others": "Andere Geräte abmelden",
+      "confirm": "Bestätigen",
+      "close": "Schließen"
+    },
+    "method": {
+      "password": "Passwort",
+      "sso": "SSO",
+      "auto": "Ohne Anmeldung"
+    },
+    "errors": {
+      "load_failed": "Ihre Sitzungen konnten nicht geladen werden.",
+      "generic": "Etwas ist schiefgelaufen. Versuchen Sie es erneut."
     }
   }
 }

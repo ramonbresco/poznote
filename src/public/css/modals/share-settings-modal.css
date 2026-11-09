@@ -95,9 +95,12 @@ body .shared-edit-token-modal.share-settings-modal {
     padding: 16px;
 }
 
+/* The name, the address, then the two buttons that act on the address: a
+   column, so Copy URL and Open URL sit under the link and not beside it. */
 body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-title {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: stretch;
     gap: 12px;
     padding: 0 0 14px;
     margin-bottom: 2px;
@@ -105,7 +108,7 @@ body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-titl
 }
 
 body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-title h3 {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
 }
 
@@ -114,7 +117,7 @@ body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-titl
    custom token replaces the random one. */
 body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-title-name {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -303,12 +306,10 @@ body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-acti
     background: var(--pz-bg);
 }
 
-/* Open and Copy URL, on the left of the dialog's own buttons */
+/* Copy URL and Open URL, under the address they act on */
 body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-link-actions {
     display: flex;
-    align-self: stretch;
     gap: 8px;
-    margin-right: auto;
 }
 
 body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-actions > .btn,
@@ -475,12 +476,6 @@ body .modal.shared-revoke-modal .shared-revoke-modal-actions > .btn {
         margin-bottom: -16px;
         padding-left: 16px;
         padding-right: 16px;
-    }
-
-    /* Open and Copy URL on the first line, the three others below */
-    body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-link-actions {
-        flex: 1 1 100%;
-        margin-right: 0;
     }
 
     body .shared-edit-token-modal.share-settings-modal .shared-edit-token-modal-actions > .btn,

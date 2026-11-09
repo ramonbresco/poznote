@@ -1090,6 +1090,21 @@ $router->delete('/users/me/app-passwords/{id}', function($params) use ($usersCon
     echo json_encode($usersController->revokeAppPassword($params['id']));
 });
 
+// Open sessions of the current profile ("Connected devices"), see
+// src/lib/session-store.php. The handle in the path is a one-way fingerprint
+// of a session id, never the id itself.
+$router->get('/users/me/sessions', function($params) use ($usersController) {
+    echo json_encode($usersController->listSessions());
+});
+
+$router->delete('/users/me/sessions', function($params) use ($usersController) {
+    echo json_encode($usersController->revokeOtherSessions());
+});
+
+$router->delete('/users/me/sessions/{id}', function($params) use ($usersController) {
+    echo json_encode($usersController->revokeSession($params['id']));
+});
+
 // Connected apps: chat apps signed in to the MCP server through the OAuth
 // consent page (oauth/authorize.php), see src/lib/oauth-server.php
 $router->get('/users/me/connected-apps', function($params) use ($usersController) {

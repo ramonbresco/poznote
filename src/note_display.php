@@ -656,6 +656,13 @@
                         // for them, like the tags (js/note-stats.js wires it)
                         echo '<span class="note-subline">';
                         echo '<span class="note-subline-list">';
+                        // The note id opens the line: the number the address bar
+                        // and every API and MCP call name the note by, so it is
+                        // worth having in sight rather than only in the
+                        // Information dialog. Clicking it copies it
+                        // (js/index-events.js).
+                        $copy_id_label = t_h('index.note.copy_id', [], 'Copy the note id');
+                        echo '<span class="note-sub-id"><button type="button" class="note-sub-id-btn" data-action="copy-note-id" data-note-id="' . $row['id'] . '" title="' . $copy_id_label . '" aria-label="' . $copy_id_label . '">#' . (int)$row['id'] . '</button></span>';
                         echo '<span class="note-sub-dates">';
                         if ($created_display !== '') {
                             echo '<span class="note-sub-created">' . t_h('index.note.created_on', ['date' => $created_display], 'Created {{date}}') . '</span>';
@@ -672,12 +679,6 @@
                         echo ' <span class="note-sub-stat note-sub-stat-words" data-stat="words"></span>';
                         echo ' <span class="note-sub-stat note-sub-stat-lines" data-stat="lines"></span>';
                         echo '</span>';
-                        // The note id, which names the note in the address bar
-                        // and in every API and MCP call, so it is worth having
-                        // in sight rather than only in the Information dialog.
-                        // Clicking it copies it (js/index-events.js).
-                        $copy_id_label = t_h('index.note.copy_id', [], 'Copy the note id');
-                        echo '<span class="note-sub-id"><button type="button" class="note-sub-id-btn" data-action="copy-note-id" data-note-id="' . $row['id'] . '" title="' . $copy_id_label . '" aria-label="' . $copy_id_label . '">#' . (int)$row['id'] . '</button></span>';
                         echo '</span>';
                         // Last entry, outside the strip so that it stays in
                         // view however far the strip is scrolled: opens the

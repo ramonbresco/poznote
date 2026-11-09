@@ -1918,6 +1918,21 @@
                 markDirty();
                 commitDirty();
             }
+            // Ctrl + Space clears the formatting of the selected text, like
+            // the eraser button of the toolbar (discussion #1753). Same reach
+            // as that button: the notes the offline app lets you edit, which
+            // leaves out a markdown note (served read-only here).
+            if (event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey &&
+                (event.key === ' ' || event.key === 'Spacebar' || event.code === 'Space')) {
+                var editable = event.target && event.target.closest
+                    ? event.target.closest('.noteentry[contenteditable="true"]')
+                    : null;
+                if (editable) {
+                    event.preventDefault();
+                    document.execCommand('removeFormat');
+                    markDirty();
+                }
+            }
         });
 
         window.addEventListener('online', checkConnection);

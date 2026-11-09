@@ -446,10 +446,18 @@ function cleanExportContent($content, $referenceResolver = null) {
     libxml_clear_errors();
 
     $xpath = new DOMXPath($dom);
-    // Code block UI affordances (copy / delete / language badge / line numbers)
-    $actionButtons = $xpath->query("//*[contains(@class, 'code-block-copy-btn') or contains(@class, 'code-block-delete-btn') or contains(@class, 'code-block-lang-btn') or contains(@class, 'code-block-line-numbers-btn')]");
+    // Code block UI affordances (copy / delete / language badge / line numbers
+    // / fold chevron and its line count)
+    $actionButtons = $xpath->query("//*[contains(@class, 'code-block-copy-btn') or contains(@class, 'code-block-delete-btn') or contains(@class, 'code-block-lang-btn') or contains(@class, 'code-block-line-numbers-btn') or contains(@class, 'code-block-collapse-btn') or contains(@class, 'code-block-collapsed-summary')]");
     foreach ($actionButtons as $button) {
         $button->parentNode->removeChild($button);
+    }
+
+    // A block the reader had folded comes back whole: the exported page has no
+    // chevron left to unfold it with (css/components/code-block-fold.css)
+    $foldedBlocks = $xpath->query("//pre[@data-collapsed]");
+    foreach ($foldedBlocks as $pre) {
+        $pre->removeAttribute('data-collapsed');
     }
 
     if ($referenceResolver !== null && strpos($content, '[[') !== false) {
@@ -958,6 +966,7 @@ function generatePublicLookHtml($content, $title, $noteType, $referenceResolver 
         $cssRoot . '/components/selection.css',
         $cssRoot . '/components/task-priority.css',
         $cssRoot . '/components/code-block-fold.css',
+        $cssRoot . '/components/embed-blocked.css',
         $cssRoot . '/components/toggle-block.css',
         $cssRoot . '/public_note.css',
         $cssRoot . '/tasks.css',

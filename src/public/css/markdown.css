@@ -110,9 +110,10 @@
 }
 
 /* They also take the size the Font size setting gives code blocks. The language
-   badge of the live view keeps its own, relative to the line. */
+   badge of the live view keeps its own, relative to the line, and so does the
+   number of lines of a folded block, which is not code either. */
 .markdown-editor .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line),
-.markdown-editor .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line) span:not(.cm-live-code-lang) {
+.markdown-editor .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line) span:not(.cm-live-code-lang):not(.cm-live-code-lines-count) {
     font-size: var(--code-block-font-size, 15px) !important;
 }
 
@@ -872,7 +873,37 @@ body.pz-toggle-marker-hover .markdown-codemirror-host .cm-live-preview .cm-line.
     top: 2px;
     right: 8px;
     display: flex;
+    align-items: center;
     gap: 4px;
+}
+
+/* A folded code block: the lines past the first few are flattened, as a
+   folded toggle's body is, and the number of lines of the whole listing is
+   read next to the chevron (live-preview.js). The preview and the public
+   pages do the same from css/components/code-block-fold.css. */
+.markdown-codemirror-host .cm-live-preview .cm-line.cm-live-code-folded {
+    height: 0;
+    min-height: 0;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-width: 0;
+}
+
+.markdown-codemirror-host .cm-live-preview .cm-live-code-lines-count {
+    color: var(--pz-text-subtle);
+    opacity: 0.8;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* The same boost as the language badge above: the note font size reaches
+   every element of the editor from notes/noteentry.css with !important, and
+   the #id is what outranks it. The code font size, which carries an #id too,
+   leaves it out the way it leaves out the language badge. */
+.markdown-editor .cm-live-preview :is(#poznote-md-live-size-boost, .cm-live-code-lines-count) {
+    font-size: 11px !important;
 }
 
 /* Line numbers: one per source line, in the gutter the preview draws */
@@ -928,7 +959,7 @@ body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code
     box-sizing: border-box;
 }
 
-.markdown-codemirror-host .cm-live-preview :is(.cm-live-code-copy, .cm-live-code-lines, .cm-live-code-delete) {
+.markdown-codemirror-host .cm-live-preview :is(.cm-live-code-copy, .cm-live-code-lines, .cm-live-code-delete, .cm-live-code-collapse) {
     width: 28px;
     height: 28px;
     padding: 0;
@@ -944,7 +975,7 @@ body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code
     transition: opacity 0.2s ease;
 }
 
-.markdown-codemirror-host .cm-live-preview :is(.cm-live-code-copy, .cm-live-code-lines, .cm-live-code-delete):hover {
+.markdown-codemirror-host .cm-live-preview :is(.cm-live-code-copy, .cm-live-code-lines, .cm-live-code-delete, .cm-live-code-collapse):hover {
     opacity: 1;
     color: var(--pz-text-strong);
 }
@@ -960,6 +991,7 @@ body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code
 }
 
 .markdown-codemirror-host .cm-live-preview .cm-live-code-delete svg,
+.markdown-codemirror-host .cm-live-preview .cm-live-code-collapse svg,
 .markdown-codemirror-host .cm-live-preview .cm-live-code-lines svg {
     width: 14px;
     height: 14px;
@@ -1331,13 +1363,26 @@ html[data-theme='dark'] .markdown-preview pre.indented-pre {
    so it does not take the 16/9 shape of the rule above, which squashed a
    GeoGebra construction into a letterbox (#1742). 4/3 keeps the height tied to
    the width, since an iframe without a height falls back to 150px. The host is
-   guaranteed by the sanitiser, so matching the src here is cosmetic only. */
+   guaranteed by the sanitiser, so matching the src here is cosmetic only.
+
+   It takes the whole width of the note, whatever width the embed code carries:
+   an applet is worked in, not watched, and the toolbar and input bar GeoGebra
+   puts around it need the room. The width and height of the tag are
+   presentation hints, so the declarations here outrank them, and height: auto
+   is what lets the ratio set the height. */
 .markdown-preview iframe[src*="//www.geogebra.org/"],
 .markdown-preview iframe[src*="//geogebra.org/"],
 .markdown-codemirror-host .cm-live-media iframe[src*="//www.geogebra.org/"],
 .markdown-codemirror-host .cm-live-media iframe[src*="//geogebra.org/"] {
-    aspect-ratio: 4 / 3;
+    width: 100%;
     height: auto;
+    aspect-ratio: 4 / 3;
+    /* A thin frame, like the one an image can take: an applet is a panel of
+       its own, and GeoGebra's canvas is white on white without it. Counted
+       inside the width, or the frame would hang 2px past the note. */
+    box-sizing: border-box;
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-sm);
 }
 
 .markdown-preview video,

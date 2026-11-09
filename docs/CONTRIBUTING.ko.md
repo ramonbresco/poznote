@@ -67,6 +67,12 @@ python3 tools/docs-i18n.py check                      # 번역 문서
 
 처음 네 검사는 PHP만 필요하며, `phpstan.phar`는 [PHPStan 릴리스](https://github.com/phpstan/phpstan/releases)에서 한 번 내려받습니다(CI는 `.github/workflows/ci-php.yml`에 버전을 고정합니다). JavaScript 검사는 Node, 문서 검사는 Python 3만 필요합니다. JavaScript의 `correctness` 오류만 빌드를 실패시키며 기존 경고는 남겨도 됩니다.
 
+PHP가 설치되어 있지 않다면 저장소를 마운트한 일회용 컨테이너에서 실행하세요. Poznote 이미지에는 `src/`만 들어 있어서 `docker compose exec`로는 `tests/`나 `tools/`에 접근할 수 없습니다:
+
+```bash
+docker run --rm -v "$PWD":/app -w /app php:8.5-cli php tests/run.php
+```
+
 ## 개발 인스턴스 실행
 
 `docker-compose-dev.yml`은 `./src`와 `./data`를 연결하므로 재빌드 없이 소스 수정이 반영됩니다.
@@ -84,7 +90,7 @@ docker compose -f docker-compose-dev.yml up -d --build
 - 다크 모드는 `src/public/css/dark-mode/`에 `html[data-theme='dark'] X` 형태로 작성하세요. 작은따옴표와 표기를 유지하세요. [CSS 안내](../src/public/css/README.md)를 참고하세요.
 - 사용자에게 보이는 문구는 하드코딩하지 말고 번역 도우미를 사용하세요.
 - README와 `docs/`의 문서(`API-REST.md` 제외)는 앱의 각 지원 언어로 제공됩니다. 파일명은 `docs/README.fr.md`, `docs/WEBHOOKS.de.md` 같은 형식입니다. 영어 문구만 바꾸는 것은 CI를 통과하지만 제목·코드 블록·이미지·링크를 추가하거나 제거하면 번역도 함께 맞춰야 합니다. 문서 작업을 관리자에게 맡기고 싶다면 PR에 명시하세요. 번역할 때 영어판과 같은 제목 구조와 순서를 유지하고 링크 대상과 앵커는 우선 영어판 그대로 둔 뒤 `python3 tools/docs-i18n.py fix`와 `python3 tools/docs-i18n.py check`를 실행하세요.
-- `src/public/js/excalidraw-dist`나 `src/public/js/codemirror-dist`의 생성된 번들은 직접 고치지 마세요. `build/`의 소스를 수정하고 재빌드하세요.
+- `src/public/js/excalidraw-dist`나 `src/public/js/codemirror-dist`의 생성된 번들은 직접 고치지 마세요. `build/`의 소스를 수정하고 재빌드하세요. 이 빌드는 Vite 8을 사용하므로 Node `^20.19.0 || >=22.12.0`가 필요하며, 두 `build/*/package.json`이 이 범위를 선언합니다. 그보다 낮은 Node, 예를 들어 Node 18에서는 빌드가 도중에 실패합니다.
 
 ## 버그와 아이디어
 

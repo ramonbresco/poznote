@@ -1,11 +1,11 @@
 /**
  * Right-click menu of the line under the note title.
  *
- * A right-click on the line of the opened note (dates, characters, words,
- * lines, information icon: note_display.php, css/notes/subline.css) opens a
- * small menu (#noteSublineMenu) with one entry per item of that line, ticked
- * when it is shown. A click shows or hides the item at once and leaves the
- * menu open, so several can be changed in a row.
+ * A right-click on the line of the opened note (note id, dates, characters,
+ * words, lines, information icon: note_display.php, css/notes/subline.css)
+ * opens a small menu (#noteSublineMenu) with one entry per item of that line,
+ * ticked when it is shown. A click shows or hides the item at once and leaves
+ * the menu open, so several can be changed in a row.
  *
  * Each item is a key of the 'hidden_ui_elements' user setting, the one the
  * Element visibility list edits (js/ui-customization-panel.js), so both stay
@@ -19,9 +19,10 @@
     var MENU_ID = 'noteSublineMenu';
     var HIDDEN_UI_URL = '/api/v1/settings/hidden_ui_elements';
     var TARGET_SELECTOR = '.innernote .note-title-heading .note-subline';
-    // In the order of the line, labels shared with the Element visibility list
-    // (modals/ui_customization_sections.php).
+    // In the order of the line, the note id first, labels shared with the
+    // Element visibility list (modals/ui_customization_sections.php).
     var ENTRIES = [
+        { key: 'panel:note-id', label: 'modals.ui_customization.note_id', fallback: 'Show the note id' },
         { key: 'panel:note-created-date', label: 'display.cards.show_note_created', fallback: 'Show creation date' },
         { key: 'panel:note-updated-date', label: 'modals.ui_customization.note_updated_date', fallback: 'Show modification date' },
         { key: 'panel:note-stats-characters', label: 'modals.ui_customization.note_stats_characters', fallback: 'Show character count' },

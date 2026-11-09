@@ -172,7 +172,7 @@ MCP 服务器使用 `docker-compose.yml` 中的默认值：
 # 调试日志默认关闭（false）
 ```
 
-Poznote 会自动在 `data/.mcp_token` 中生成 MCP 服务令牌。`mcp-server` 容器通过共享卷 `./data:/var/www/html/data:ro` 读取该文件，因此无需在 `.env` 中保存密码。
+Poznote 会自动在 `data/.mcp_token` 中生成 MCP 服务令牌。`mcp-server` 容器通过共享卷 `./data:/var/www/html/data:ro` 读取该文件，因此无需在 `.env` 中保存密码。只要该文件还不存在，每次调用都会重新读取，因此先于 Poznote 创建该文件而启动的 MCP 服务器也会自行取得令牌，无需重启。在这套 Compose 之外运行的服务器根本看不到该路径：请把 `POZNOTE_SERVICE_TOKEN_FILE` 指向 `data/.mcp_token` 在该主机上的实际位置。
 
 要在某次启动时覆盖端口和调试设置，请使用内联环境变量重建 MCP 容器：
 

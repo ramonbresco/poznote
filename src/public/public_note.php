@@ -759,7 +759,7 @@ if (is_array($attachmentsData)) {
 // srcdoc), and clean media tags before the content is echoed. Centralized in
 // public_helpers.php so it can be unit tested.
 
-$content = sanitizePublicNoteHtml($content);
+$content = sanitizePublicNoteHtml($content, $currentLang);
 
 // The sanitizer drops <form>/<input> together with their content, so the
 // public add-task UI cannot be part of the note body it processes. Inject it
@@ -838,6 +838,12 @@ if (poznoteMarkdownColoredEnabled($markdownColoredTheme)) {
     <?php endif; ?>
     <title><?php echo htmlspecialchars($note['heading'] ?: t('untitled', [], 'Untitled', $currentLang)); ?></title>
     <script nonce="<?php echo htmlspecialchars($cspNonce, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">window.ALLOWED_IFRAME_DOMAINS = <?php echo json_encode(poznoteAllowedIframeDomains()); ?>;</script>
+    <?php // A visitor cannot change the setting, so they are told what happened without the administrator's half of it (js/embeds.js). ?>
+    <script nonce="<?php echo htmlspecialchars($cspNonce, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">window.POZNOTE_EMBED_BLOCKED = <?php echo json_encode([
+        'title' => t('embeds.blocked.title', [], 'Embedded content blocked', $currentLang),
+        'detail' => t('embeds.blocked.detail_public', [], 'This site does not allow embedded content from {{host}}.', $currentLang),
+        'open' => t('attachments.page.open_in_new_tab', [], 'Open in new tab', $currentLang),
+    ]); ?>;</script>
     <!-- CSP-compliant theme initialization -->
     <script type="application/json" id="public-note-config"><?php
         $apiBaseUrl = $scriptDir . '/api/v1';
@@ -1043,6 +1049,7 @@ if (poznoteMarkdownColoredEnabled($markdownColoredTheme)) {
 <script src="<?php echo poznoteAsset('js/mermaid-theme.js'); ?>"></script>
 <script src="<?php echo poznoteAsset('js/mermaid-zoom.js'); ?>"></script>
 <script src="<?php echo poznoteAsset('js/excalidraw-theme-colors.js'); ?>"></script>
+<script src="<?php echo poznoteAsset('js/embeds.js'); ?>"></script>
 <script src="<?php echo poznoteAsset('js/public-note.js'); ?>"></script>
 <?php if ($noteBodyEditable): ?>
 <script src="<?php echo poznoteAsset('js/shortcut-key.js'); ?>"></script>

@@ -435,7 +435,16 @@
     color: var(--pz-accent-text);
 }
 
-/* Due date pill shown next to the task text when a date is set */
+/* Due date pill shown next to the task text when a date is set.
+   The label is a <span> inside a note, so the !important font blanket of
+   css/notes/noteentry.css caught it and the date came out at the note font
+   size (15px by default) next to its 12px icon. The ID-level :is() boost
+   carries font-size only, like .tasklist-progress-label above. */
+.noteentry .task-due-chip:is(#pz-specificity-boost, *),
+.noteentry .task-due-chip:is(#pz-specificity-boost, *) span {
+    font-size: 12px !important;
+}
+
 .task-due-chip {
     display: inline-flex;
     align-items: center;

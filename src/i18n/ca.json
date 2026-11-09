@@ -159,6 +159,7 @@
       "markdown_colored": "Acoloreix les notes Markdown: trieu un color per a cada nivell de títol, el codi en línia, el fons dels blocs de codi, les cites, les capçaleres de taula i els separadors.",
       "code_wrap": "Ajusta les línies llargues als blocs de codi en lloc de desplaçar-les horitzontalment.",
       "code_line_numbers": "Mostra els números de línia als blocs de codi de la previsualització Markdown.",
+      "code_block_collapsed_lines": "Quantes línies d'un bloc de codi continuen visibles un cop plegat, de 0 a 100. Amb 0, un bloc plegat no mostra res del seu codi. Un bloc que no tingui més línies que això no rep la fletxa per plegar, plegar-lo no amagaria res.",
       "attachment_previews": "Mostra previsualitzacions dels fitxers adjunts dins de les notes.",
       "attachments_at_bottom": "Mostra la secció de fitxers adjunts a la part inferior de les notes en lloc de la part superior.",
       "allow_executable_attachments": "Permet adjuntar scripts i executables (.sh, .ps1, .bat, .exe, .py...) a les notes, per a tots els comptes d'aquesta instància. El Poznote no els executa mai, només els emmagatzema i els serveix. Els tipus de fitxer que un servidor web podria executar, com ara .php, continuen bloquejats.",
@@ -215,7 +216,10 @@
       "custom_logo": "Substituïu el logotip del Poznote pel vostre, per a tots els usuaris: a la pestanya del navegador, a la pàgina d'inici de sessió, a la barra lateral d'icones i com a icona de l'aplicació instal·lada.",
       "two_factor_required": "Tots els comptes que inicien la sessió amb contrasenya han de fer servir l'autenticació de dos factors. Un compte que no la té la configura en el proper inici de sessió, i les sessions obertes sense aquesta autenticació es tanquen. La contrasenya del compte deixa de funcionar a través de l'API: les aplicacions han de fer servir una contrasenya d'aplicació. Els inicis de sessió amb SSO no s'hi veuen afectats, ja que el proveïdor d'identitat en gestiona el segon factor.",
       "tab_follows_note": "Anomena la pestanya del navegador segons la nota que hi ha oberta, amb la icona d'aquella nota, en lloc del nom i la icona d'aquesta instància. Així es distingeixen diverses pestanyes obertes en diverses notes.",
-      "update_badge_level": "Tria quines versions posen el punt vermell a les entrades de Configuració. Triïs el que triïs, la nova versió continua anunciant-se en aquesta pàgina, no s'amaga res."
+      "update_badge_level": "Tria quines versions posen el punt vermell a les entrades de Configuració. Triïs el que triïs, la nova versió continua anunciant-se en aquesta pàgina, no s'amaga res.",
+      "update_check_interval": "Amb quina freqüència Poznote comprova en segon pla si hi ha una versió més recent. El punt només pot aparèixer després d'una comprovació, així que un interval més llarg el retarda. La targeta Versió de dalt continua comprovant-ho de seguida quan hi fas clic.",
+      "sessions": "Mireu els navegadors i dispositius que ara mateix tenen la sessió iniciada al vostre compte, i tanqueu la sessió dels que ja no feu servir.",
+      "session_lifetime": "Quant dura un inici de sessió sense activitat. Es configura amb POZNOTE_SESSION_LIFETIME_DAYS al fitxer .env, de manera que aquí només es mostra i no es pot canviar des d’aquesta pàgina. Iniciar la sessió amb «Recorda’m» dura més; iniciar-la amb SSO, no."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "En un mòbil, la barra d'eines de damunt del teclat té un botó + que obre el mateix menú, independentment d'aquest paràmetre."
@@ -285,7 +289,7 @@
       "support": "Doneu suport al Poznote",
       "buy_me_a_coffee": "Convideu-me a un cafè",
       "install_extension": "Instal·la l'extensió",
-      "install_app": "Instal·la l'aplicació",
+      "install_app": "Instal·la l'aplicació (PWA)",
       "custom_css": "Camí del CSS personalitzat",
       "theme_list": "Llista de temes",
       "release_notes": "Notes de la versió",
@@ -321,7 +325,9 @@
       "outbound_hosts": "Accés a la xarxa local",
       "connected_apps": "Aplicacions connectades",
       "custom_logo": "Logotip",
-      "two_factor_required": "Dos factors obligatoris"
+      "two_factor_required": "Dos factors obligatoris",
+      "sessions": "Dispositius connectats",
+      "session_lifetime": "Durada de les sessions"
     },
     "default_credentials": {
       "both": "Aquest compte encara fa servir el nom d'usuari i la contrasenya per defecte. Qualsevol persona que pugui accedir a aquesta instància hi pot iniciar la sessió.",
@@ -555,6 +561,7 @@
       "markdown_colored": "Markdown acolorit",
       "code_block_word_wrap": "Ajust de línia als blocs de codi",
       "code_block_line_numbers": "Números de línia als blocs de codi",
+      "code_block_collapsed_lines": "Blocs de codi plegats",
       "attachment_previews_in_note": "Previsualitzacions dels fitxers adjunts",
       "attachments_at_bottom": "Fitxers adjunts a baix",
       "backlinks_at_bottom": "Enllaços entrants a baix",
@@ -572,7 +579,8 @@
       "diary_template": "Plantilla de les entrades del diari",
       "markdown_view_cycle": "Menú de visualització",
       "tab_follows_note": "La pestanya segueix la nota oberta",
-      "update_badge_level": "Punt d'actualització"
+      "update_badge_level": "Punt d'actualització",
+      "update_check_interval": "Comprovació d'actualitzacions"
     },
     "badges": {
       "font_size_default": "per defecte ({{size}} px)",
@@ -730,7 +738,7 @@
     },
     "source": {
       "app": "Poznote, en un ordinador",
-      "app_mobile": "Poznote, en un mòbil o una tauleta",
+      "app_mobile": "Poznote, en mòbil",
       "api": "L'API REST",
       "mcp": "Una aplicació connectada per MCP",
       "extension": "L'extensió del navegador",
@@ -1529,10 +1537,22 @@
     },
     "update_badge_level": {
       "options": {
-        "all": "Totes les versions",
-        "minor": "Versions menors i majors",
-        "major": "Només versions majors"
+        "all": "Versions majors, menors i pegats",
+        "minor": "Només versions majors i menors"
       }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "Cada dia",
+        "2": "Cada 2 dies",
+        "3": "Cada 3 dies",
+        "7": "Cada 7 dies",
+        "14": "Cada 14 dies",
+        "30": "Cada 30 dies"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "línies"
     }
   },
   "notes_list": {
@@ -3686,7 +3706,8 @@
       "two_factor_recovery_used": "Inici de sessió amb un codi de recuperació",
       "two_factor_recovery_regenerated": "Codis de recuperació regenerats",
       "oauth_app_authorized": "Aplicació connectada (MCP)",
-      "oauth_app_revoked": "Aplicació desconnectada (MCP)"
+      "oauth_app_revoked": "Aplicació desconnectada (MCP)",
+      "session_revoked": "Dispositiu desconnectat"
     },
     "filters": {
       "all_actions": "Totes les accions",
@@ -5409,6 +5430,7 @@
     "italic": "Cursiva",
     "underline": "Subratllat",
     "strikethrough": "Ratllat",
+    "clear_formatting": "Esborra el format del text seleccionat",
     "link": "Insereix un enllaç al text seleccionat",
     "code_block": "Bloc de codi",
     "slash_menu": "Obre el menú d'ordres",
@@ -5843,6 +5865,48 @@
       "group_rules": "Separadors dels grups",
       "size": "Botó de mida de les rajoles",
       "boards": "Llista d'accessos ràpids"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "Contingut incrustat bloquejat",
+      "detail_admin": "Aquesta instància no permet contingut incrustat de {{host}}. Un administrador el pot tornar a permetre a Paràmetres > Eines d'administració > Contingut incrustat.",
+      "detail_public": "Aquest lloc no permet contingut incrustat de {{host}}."
+    },
+    "resize": {
+      "hint": "Arrossega per canviar la mida, fes doble clic per restablir-la"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 sessió",
+      "count_other": "{{count}} sessions"
+    },
+    "lifetime": {
+      "day_one": "1 dia",
+      "day_other": "{{count}} dies"
+    },
+    "modal": {
+      "title": "Dispositius connectats",
+      "description": "Cada fila és un navegador amb la sessió iniciada al vostre compte. Una sessió s’acaba sola després de {{duration}} sense activitat, i cada vegada que canvieu la contrasenya.",
+      "loading": "S’està carregant...",
+      "empty": "No hi ha cap sessió oberta.",
+      "unknown_client": "Navegador desconegut",
+      "this_device": "Aquest dispositiu",
+      "last_active": "Darrera activitat {{date}}",
+      "revoke": "Tanca la sessió",
+      "revoke_others": "Tanca la sessió dels altres dispositius",
+      "confirm": "Confirma",
+      "close": "Tanca"
+    },
+    "method": {
+      "password": "Contrasenya",
+      "sso": "SSO",
+      "auto": "Sense inici de sessió"
+    },
+    "errors": {
+      "load_failed": "No s’han pogut carregar les vostres sessions.",
+      "generic": "Alguna cosa ha anat malament. Torneu-ho a provar."
     }
   }
 }

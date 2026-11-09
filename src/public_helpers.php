@@ -165,6 +165,53 @@ function publicNoteIframeSrcIsTrusted(string $src): bool {
 }
 
 /**
+ * Put the "embedded content blocked" notice in place of an iframe this
+ * instance refuses to frame (lib/embed-providers.php).
+ *
+ * A page that only reads a note cannot leave the frame in the markup the way
+ * the editor does, since the allow-list below drops it; dropping it without a
+ * word is what made a disabled provider look like a note that lost content.
+ *
+ * @param DOMElement $iframe The refused frame, still in the document
+ * @param string|null $lang Language of the page, the reader's by default
+ */
+function poznoteReplaceWithBlockedEmbedNotice(DOMElement $iframe, ?string $lang = null): void {
+    $parent = $iframe->parentNode;
+    if ($parent === null) {
+        return;
+    }
+    $doc = $iframe->ownerDocument;
+    if ($doc === null || !function_exists('poznoteBlockedEmbedNoticeHtml')) {
+        $parent->removeChild($iframe);
+        return;
+    }
+
+    $notice = new DOMDocument();
+    $notice->encoding = 'UTF-8';
+    libxml_use_internal_errors(true);
+    $notice->loadHTML(
+        '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>'
+            . poznoteBlockedEmbedNoticeHtml(
+                (string) $iframe->getAttribute('src'),
+                $lang,
+                (string) $doc->saveHTML($iframe)
+            )
+            . '</body></html>',
+        LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+    );
+    libxml_clear_errors();
+
+    $body = $notice->getElementsByTagName('body')->item(0);
+    $built = ($body !== null) ? $body->firstChild : null;
+    if ($built === null) {
+        $parent->removeChild($iframe);
+        return;
+    }
+
+    $parent->replaceChild($doc->importNode($built, true), $iframe);
+}
+
+/**
  * Sanitize rendered HTML before it is echoed on a public (unauthenticated) page.
  *
  * This performs a real DOM parse + tag/attribute allowlist (not a regex pass),
@@ -183,7 +230,7 @@ function publicNoteIframeSrcIsTrusted(string $src): bool {
  * Server-generated markup (e.g. tasklist `data-index`/`data-text`) is preserved
  * because data-* / aria-* / title / class are kept.
  */
-function sanitizePublicNoteHtml(string $content): string {
+function sanitizePublicNoteHtml(string $content, ?string $lang = null): string {
     if (trim($content) === '') {
         return $content;
     }
@@ -337,7 +384,10 @@ function sanitizePublicNoteHtml(string $content): string {
         }
 
         if ($tag === 'iframe' && !publicNoteIframeSrcIsTrusted($el->getAttribute('src'))) {
-            $el->parentNode->removeChild($el);
+            // Taking it out without a word leaves a hole the reader cannot
+            // explain, so the notice js/embeds.js shows in the app takes its
+            // place here too (css/components/embed-blocked.css).
+            poznoteReplaceWithBlockedEmbedNotice($el, $lang);
         }
     }
 

@@ -329,6 +329,86 @@ body:not(.dark-mode) #changePasswordModal .change-password-description {
     color: var(--pz-text-muted);
 }
 
+/* Connected devices modal: one row per open session of the account. Same
+   shape as the app passwords list above, minus the create form. */
+#userSessionsModal .user-sessions-description {
+    color: var(--pz-text-muted);
+    line-height: 1.45;
+    margin: 0 0 14px 0;
+}
+
+#userSessionsModal .user-sessions-error {
+    color: var(--pz-danger-text);
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+}
+
+#userSessionsModal .user-session-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--pz-border);
+    max-height: 40vh;
+    overflow-y: auto;
+}
+
+#userSessionsModal .user-session-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--pz-border);
+}
+
+#userSessionsModal .user-session-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#userSessionsModal .user-session-client {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* "This device": the row the dialog is being read from, which has no button */
+#userSessionsModal .user-session-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: var(--pz-radius-pill);
+    font-size: 0.75rem;
+    background-color: var(--pz-surface-hover);
+    color: var(--pz-text-muted);
+    vertical-align: 1px;
+}
+
+#userSessionsModal .user-session-meta {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--pz-text-muted);
+    line-height: 1.4;
+}
+
+#userSessionsModal .user-session-revoke {
+    flex: 0 0 auto;
+    padding: 4px 10px;
+    font-size: 0.85rem;
+}
+
+#userSessionsModal .user-sessions-empty {
+    padding: 12px 0;
+    color: var(--pz-text-muted);
+}
+
+/* The list ends on a row border and .modal-buttons only carries margin-top:
+   auto, so the buttons touched it. Same per-modal fix, and same value, as
+   #embedsModal and #outboundHostsModal. */
+#userSessionsModal .modal-buttons {
+    margin-top: 20px;
+}
+
 /* Connected apps modal, administrators only: where chat apps are sent to
    sign in, and a warning when that address cannot work. The warning tokens
    switch with the theme (tokens.css), so no dark block is needed. */
@@ -1881,7 +1961,8 @@ html[data-theme='dark'] body:has(> .settings-shell.settings-subpage) {
 }
 
 .settings-inline-select,
-.settings-inline-text {
+.settings-inline-text,
+.settings-inline-number {
     box-sizing: border-box;
     max-width: 55%;
     padding: 5px 8px;
@@ -1897,6 +1978,20 @@ html[data-theme='dark'] body:has(> .settings-shell.settings-subpage) {
 .settings-inline-text {
     width: 240px;
     cursor: text;
+}
+
+/* A number typed in the row (the lines a folded code block keeps). As wide as
+   three digits and their spinner, with the unit named next to it. */
+.settings-inline-number {
+    width: 86px;
+    cursor: text;
+    text-align: right;
+}
+
+.settings-inline-unit {
+    margin-left: 8px;
+    font-size: calc(13px * var(--settings-font-scale, 1));
+    color: var(--pz-text-muted);
 }
 
 /* An action in the row rather than a value: the Show button of the
@@ -1930,7 +2025,8 @@ html[data-theme='dark'] body:has(> .settings-shell.settings-subpage) {
 }
 
 .settings-inline-select:focus,
-.settings-inline-text:focus {
+.settings-inline-text:focus,
+.settings-inline-number:focus {
     outline: none;
     border-color: var(--pz-accent);
     box-shadow: 0 0 0 3px rgba(var(--pz-accent-rgb), 0.1);
@@ -1985,7 +2081,8 @@ html[data-theme='dark'] body:has(> .settings-shell.settings-subpage) {
 }
 
 html[data-theme='dark'] .settings-inline-select,
-html[data-theme='dark'] .settings-inline-text {
+html[data-theme='dark'] .settings-inline-text,
+html[data-theme='dark'] .settings-inline-number {
     background-color: var(--pz-surface);
     border-color: var(--pz-border);
     color: var(--pz-text);

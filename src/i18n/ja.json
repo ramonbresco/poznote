@@ -159,6 +159,7 @@
       "markdown_colored": "Markdownノートに色を付けます。見出しのレベルごと、インラインコード、コードブロックの背景、引用、表のヘッダー、区切り線の色を選択できます。",
       "code_wrap": "コードブロックの長い行を、横スクロールさせずに折り返します。",
       "code_line_numbers": "Markdownプレビューのコードブロックに行番号を表示します。",
+      "code_block_collapsed_lines": "コードブロックを折りたたんだときに画面に残す行数です（0 〜 100）。0 にすると折りたたんだブロックは中身をまったく表示しません。これ以下の行数のブロックには折りたたみボタンを出しません。折りたたんでも何も隠れないからです。",
       "attachment_previews": "ノート内に添付ファイルのプレビューを表示します。",
       "attachments_at_bottom": "添付ファイルのセクションを、ノートの上部ではなく下部に表示します。",
       "allow_executable_attachments": "スクリプトや実行ファイル（.sh、.ps1、.bat、.exe、.pyなど）をノートに添付できるようにします。このインスタンスのすべてのアカウントが対象です。Poznoteはこれらを実行せず、保存して配信するだけです。.phpなど、Webサーバーが実行できる種類のファイルは引き続きブロックされます。",
@@ -215,7 +216,10 @@
       "custom_logo": "Poznoteのロゴを、すべてのユーザーに対して独自のものに置き換えます。ブラウザーのタブ、ログインページ、アイコンサイドバー、インストールしたアプリのアイコンに使われます。",
       "two_factor_required": "パスワードでサインインするすべてのアカウントに2要素認証が必要になります。未設定のアカウントは次回のサインイン時に設定し、2要素認証なしで開かれたセッションは終了します。アカウントのパスワードは API では使えなくなるため、アプリにはアプリパスワードを使用します。SSO によるサインインは対象外で、2 つ目の要素は ID プロバイダーが管理します。",
       "tab_follows_note": "ブラウザーのタブに、このインスタンスの名前とアイコンではなく、そこで開いているノートのタイトルとアイコンを表示します。複数のノートを開いた複数のタブを見分けられます。",
-      "update_badge_level": "どのリリースで設定の項目に赤いドットを付けるかを選びます。どれを選んでも新しいバージョンはこのページで告知されるので、何も隠れません。"
+      "update_badge_level": "どのリリースで設定の項目に赤いドットを付けるかを選びます。どれを選んでも新しいバージョンはこのページで告知されるので、何も隠れません。",
+      "update_check_interval": "新しいバージョンがあるかを Poznote がバックグラウンドで確認する間隔です。ドットは確認のあとにしか出ないので、間隔が長いほど表示は遅くなります。上の「バージョン」カードはクリックすればいつでもすぐ確認します。",
+      "sessions": "いまアカウントにログインしているブラウザーとデバイスを確認し、使わなくなったものをログアウトできます。",
+      "session_lifetime": "操作がないままログイン状態が続く期間です。.env ファイルの POZNOTE_SESSION_LIFETIME_DAYS で設定するため、ここでは表示のみで、このページからは変更できません。「ログインしたままにする」でのログインはより長く続き、SSO でのログインは続きません。"
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "モバイルでは、この設定に関係なく、キーボードの上のツールバーにある「+」ボタンから同じメニューを開けます。"
@@ -285,7 +289,7 @@
       "support": "Poznoteを支援",
       "buy_me_a_coffee": "Buy me a coffee",
       "install_extension": "拡張機能をインストール",
-      "install_app": "アプリをインストール",
+      "install_app": "アプリをインストール（PWA）",
       "custom_css": "カスタムCSS",
       "theme_list": "テーマ一覧",
       "release_notes": "リリースノート",
@@ -321,7 +325,9 @@
       "outbound_hosts": "ローカルネットワークへのアクセス",
       "connected_apps": "接続中のアプリ",
       "custom_logo": "ロゴ",
-      "two_factor_required": "2要素認証を必須にする"
+      "two_factor_required": "2要素認証を必須にする",
+      "sessions": "接続中のデバイス",
+      "session_lifetime": "セッションの有効期間"
     },
     "default_credentials": {
       "both": "このアカウントのユーザー名とパスワードはインストール時のままです。このインスタンスにアクセスできる人なら誰でもログインできます。",
@@ -555,6 +561,7 @@
       "markdown_colored": "Markdownの色付け",
       "code_block_word_wrap": "コードブロックの折り返し",
       "code_block_line_numbers": "コードブロックの行番号",
+      "code_block_collapsed_lines": "折りたたんだコードブロック",
       "attachment_previews_in_note": "添付ファイルのプレビュー",
       "attachments_at_bottom": "添付ファイルを下部に表示",
       "backlinks_at_bottom": "バックリンクを下部に表示",
@@ -572,7 +579,8 @@
       "diary_template": "日記のエントリのテンプレート",
       "markdown_view_cycle": "表示メニュー",
       "tab_follows_note": "タブが開いているノートに追従",
-      "update_badge_level": "更新ドット"
+      "update_badge_level": "更新ドット",
+      "update_check_interval": "更新の確認"
     },
     "badges": {
       "font_size_default": "既定（{{size}}px）",
@@ -730,7 +738,7 @@
     },
     "source": {
       "app": "Poznote（パソコン）",
-      "app_mobile": "Poznote（スマートフォンまたはタブレット）",
+      "app_mobile": "Poznote（モバイル）",
       "api": "REST API",
       "mcp": "MCP で接続されたアプリ",
       "extension": "ブラウザー拡張機能",
@@ -1529,10 +1537,22 @@
     },
     "update_badge_level": {
       "options": {
-        "all": "すべてのリリース",
-        "minor": "マイナーリリースとメジャーリリース",
-        "major": "メジャーリリースのみ"
+        "all": "メジャー、マイナー、パッチのすべて",
+        "minor": "メジャーとマイナーのみ"
       }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "毎日",
+        "2": "2日ごと",
+        "3": "3日ごと",
+        "7": "7日ごと",
+        "14": "14日ごと",
+        "30": "30日ごと"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "行"
     }
   },
   "notes_list": {
@@ -3686,7 +3706,8 @@
       "two_factor_recovery_used": "リカバリーコードでのログイン",
       "two_factor_recovery_regenerated": "リカバリーコードの再生成",
       "oauth_app_authorized": "アプリの接続（MCP）",
-      "oauth_app_revoked": "アプリの接続の解除（MCP）"
+      "oauth_app_revoked": "アプリの接続の解除（MCP）",
+      "session_revoked": "デバイスをログアウト"
     },
     "filters": {
       "all_actions": "すべての操作",
@@ -5409,6 +5430,7 @@
     "italic": "斜体",
     "underline": "下線",
     "strikethrough": "取り消し線",
+    "clear_formatting": "選択したテキストの書式をクリア",
     "link": "選択したテキストにリンクを挿入",
     "code_block": "コードブロック",
     "slash_menu": "コマンドメニューを開く",
@@ -5843,6 +5865,48 @@
       "group_rules": "グループの区切り線",
       "size": "タイルサイズのボタン",
       "boards": "スピードダイヤルの一覧"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "埋め込みコンテンツがブロックされました",
+      "detail_admin": "このインスタンスでは {{host}} の埋め込みコンテンツは許可されていません。管理者は設定 > 管理ツール > 埋め込みで再び許可できます。",
+      "detail_public": "このサイトでは {{host}} の埋め込みコンテンツは許可されていません。"
+    },
+    "resize": {
+      "hint": "ドラッグでサイズ変更、ダブルクリックで既定に戻す"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "1 セッション",
+      "count_other": "{{count}} セッション"
+    },
+    "lifetime": {
+      "day_one": "1日",
+      "day_other": "{{count}}日"
+    },
+    "modal": {
+      "title": "接続中のデバイス",
+      "description": "各行はアカウントにログインしているブラウザーです。セッションは操作がないまま {{duration}} 経つと自動的に終了し、パスワードを変更したときにも終了します。",
+      "loading": "読み込み中...",
+      "empty": "開いているセッションはありません。",
+      "unknown_client": "不明なブラウザー",
+      "this_device": "このデバイス",
+      "last_active": "最終操作 {{date}}",
+      "revoke": "ログアウト",
+      "revoke_others": "他のデバイスをログアウト",
+      "confirm": "確認",
+      "close": "閉じる"
+    },
+    "method": {
+      "password": "パスワード",
+      "sso": "SSO",
+      "auto": "ログインなし"
+    },
+    "errors": {
+      "load_failed": "セッションを読み込めませんでした。",
+      "generic": "問題が発生しました。もう一度お試しください。"
     }
   }
 }

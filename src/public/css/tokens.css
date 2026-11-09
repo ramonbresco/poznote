@@ -44,6 +44,15 @@
     --pz-radius-pill: 999px;  /* chips and pills */
     --pz-radius-circle: 50%;
 
+    /* Diagonal resize, for an image handle and for an embed grip alike: the
+       system arrow is a hairline that disappears on a busy picture, this one
+       carries its own white halo. The keyword stays as the fallback. */
+    --pz-cursor-resize-diagonal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg stroke='%23ffffff' stroke-width='4.5'%3E%3Cpath d='M7 7 17 17'/%3E%3Cpath d='M11.5 7H7v4.5'/%3E%3Cpath d='M17 12.5V17h-4.5'/%3E%3C/g%3E%3Cg stroke='%23111111' stroke-width='2'%3E%3Cpath d='M7 7 17 17'/%3E%3Cpath d='M11.5 7H7v4.5'/%3E%3Cpath d='M17 12.5V17h-4.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") 12 12, nwse-resize;
+
+    /* The same arrow as a shape, for the resize handles to wear (used as a
+       mask, so the colour comes from the badge around it). */
+    --pz-icon-resize-diagonal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6 18 18'/%3E%3Cpath d='M11 6H6v5'/%3E%3Cpath d='M18 13v5h-5'/%3E%3C/g%3E%3C/svg%3E");
+
     /* Type weight. The stylesheets used eight spellings, 300 / 400 / 500 / 600 /
        700 / normal / bold / inherit, for what the shipped font renders as two:
        fonts.css declares Inter at 400 and 600 only, so 300 and 500 come out as
@@ -64,6 +73,13 @@
     /* Layout. The resizable sidebar: js/resize-column.js overwrites this on
        :root at runtime, this is the default it starts from. */
     --left-col-width: 370px;
+
+    /* How many lines of its listing a folded code block keeps on screen
+       (css/components/code-block-fold.css). index.php overwrites this on
+       <body> with the account's choice (code_block_collapsed_lines,
+       lib/code-block-fold.php, whose default is this same 5); a page that
+       carries no choice, such as a public share, keeps it. */
+    --pz-code-collapsed-lines: 5;
 
     /* Brand blue: links, active states, primary buttons, focus rings. */
     --pz-accent: #007db8;

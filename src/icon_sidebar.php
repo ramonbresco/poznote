@@ -309,11 +309,36 @@ if (function_exists('getGlobalSetting')) {
         $iconSidebarUpdateBadgeLevel = 'all';
     }
 }
-if (!in_array($iconSidebarUpdateBadgeLevel, ['all', 'minor', 'major'], true)) {
+// 'major' was a third choice offered before the setting was narrowed to two;
+// a value saved then means the dot is wanted for the releases that change the
+// first two numbers, which is what 'minor' says now.
+if ($iconSidebarUpdateBadgeLevel === 'major') {
+    $iconSidebarUpdateBadgeLevel = 'minor';
+}
+if (!in_array($iconSidebarUpdateBadgeLevel, ['all', 'minor'], true)) {
     $iconSidebarUpdateBadgeLevel = 'all';
 }
 echo '<script type="application/json" id="poznote-update-badge-level">'
     . json_encode($iconSidebarUpdateBadgeLevel, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
+    . '</script>' . "\n";
+
+// How many days between two background update checks (js/utils-updates.js).
+// A day is what this always did and stays the shipped default; anything from
+// 1 to 365 is honoured, so a value set through the API and absent from the
+// list in Settings still works.
+$iconSidebarUpdateCheckInterval = 1;
+if (function_exists('getGlobalSetting')) {
+    try {
+        $iconSidebarUpdateCheckIntervalRaw = trim((string)getGlobalSetting('update_check_interval_days', '1'));
+        if ($iconSidebarUpdateCheckIntervalRaw !== '' && ctype_digit($iconSidebarUpdateCheckIntervalRaw)) {
+            $iconSidebarUpdateCheckInterval = max(1, min(365, (int)$iconSidebarUpdateCheckIntervalRaw));
+        }
+    } catch (Throwable $e) {
+        $iconSidebarUpdateCheckInterval = 1;
+    }
+}
+echo '<script type="application/json" id="poznote-update-check-interval">'
+    . json_encode($iconSidebarUpdateCheckInterval)
     . '</script>' . "\n";
 
 require_once __DIR__ . '/lib/default-credentials.php';

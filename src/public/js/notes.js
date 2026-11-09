@@ -1027,6 +1027,43 @@ function stripSearchHighlights(element) {
         codeBlockButtons[b].remove();
     }
 
+    // An embed this instance refuses is hidden and explained by a notice
+    // (js/embeds.js). Both are what the reader sees, never what the note
+    // holds: the frame goes back to the shape it had on disk.
+    var blockedNotices = clonedElement.querySelectorAll('[data-embed-blocked-notice]');
+    for (var n = 0; n < blockedNotices.length; n++) {
+        blockedNotices[n].remove();
+    }
+
+    // Every image of an editable note wears a resize handle, inside a wrapper
+    // that only exists to position it (js/note-image-actions.js).
+    var imageHandles = clonedElement.querySelectorAll('.image-resize-handle, .image-resize-grip');
+    for (var h = 0; h < imageHandles.length; h++) {
+        imageHandles[h].remove();
+    }
+
+    var imageWrappers = clonedElement.querySelectorAll('.image-resize-wrapper');
+    for (var w = 0; w < imageWrappers.length; w++) {
+        var wrapper = imageWrappers[w];
+        var holder = wrapper.parentNode;
+        if (!holder) continue;
+        while (wrapper.firstChild) {
+            holder.insertBefore(wrapper.firstChild, wrapper);
+        }
+        holder.removeChild(wrapper);
+    }
+
+    var resizeGrips = clonedElement.querySelectorAll('[data-embed-resize-grip]');
+    for (var g = 0; g < resizeGrips.length; g++) {
+        resizeGrips[g].remove();
+    }
+
+    var blockedFrames = clonedElement.querySelectorAll('iframe[data-embed-blocked], iframe[data-embed-settled]');
+    for (var f = 0; f < blockedFrames.length; f++) {
+        blockedFrames[f].removeAttribute('data-embed-blocked');
+        blockedFrames[f].removeAttribute('data-embed-settled');
+    }
+
     var codeBlockHosts = clonedElement.querySelectorAll('.code-block-actions-host');
     for (var c = 0; c < codeBlockHosts.length; c++) {
         unwrapCodeBlockActionHost(codeBlockHosts[c]);

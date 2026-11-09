@@ -124,6 +124,7 @@
             'markdown_colored_custom',
             'code_block_word_wrap',
             'code_block_line_numbers',
+            'code_block_collapsed_lines',
             'attachment_previews_in_note',
             'attachments_at_bottom',
             'backlinks_at_bottom',
@@ -484,8 +485,8 @@
                 reflectInlineValue(control);
             });
         });
-        // Enter in a text field saves it the way leaving it does
-        if (control.tagName === 'INPUT' && control.type === 'text') {
+        // Enter in a typed field saves it the way leaving it does
+        if (control.tagName === 'INPUT' && (control.type === 'text' || control.type === 'number')) {
             control.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -647,6 +648,13 @@
             : width + '%';
     }
 
+    // lib/code-block-fold.php holds the same bounds and the same default
+    function codeCollapsedLines(value) {
+        var lines = parseInt(String(value === null || value === undefined ? '' : value).trim(), 10);
+        if (!isFinite(lines)) return 5;
+        return String(Math.max(0, Math.min(100, lines)));
+    }
+
     function initInlineControls() {
         var store = window.__poznoteUserStorage || window.localStorage;
 
@@ -767,9 +775,47 @@
         initInlineControl('update-badge-level-select', {
             load: loadSettingValue('update_badge_level', function (value) {
                 value = String(value === null || value === undefined ? '' : value).trim();
-                return ['all', 'minor', 'major'].indexOf(value) !== -1 ? value : 'all';
+                // 'major' was a third choice before the setting was narrowed
+                // to two, and the option closest to it is now 'minor'.
+                if (value === 'major') {
+                    value = 'minor';
+                }
+                return ['all', 'minor'].indexOf(value) !== -1 ? value : 'all';
             }),
             save: saveSettingValue('update_badge_level')
+        });
+
+        // Days between two background update checks. Any whole number from 1
+        // to 365 is kept (initInlineControl shows a stored value the list does
+        // not offer as an extra entry), anything else means the default day.
+        initInlineControl('update-check-interval-select', {
+            load: loadSettingValue('update_check_interval_days', function (value) {
+                var days = parseInt(String(value === null || value === undefined ? '' : value).trim(), 10);
+                if (!days || isNaN(days) || days < 1) {
+                    return '1';
+                }
+                return String(Math.min(days, 365));
+            }),
+            save: saveSettingValue('update_check_interval_days')
+        });
+
+        // How much of its listing a folded code block keeps on screen, read
+        // by css/components/code-block-fold.css and js/copy-code-on-focus.js
+        // from <body> (index.php). A number typed out of range is brought
+        // back inside it and the field shows what was saved; something that
+        // is not a number at all falls back to 5, not to "hide everything"
+        // (the same reading as poznoteCodeBlockCollapsedLines() in PHP).
+        initInlineControl('code-collapsed-lines-input', {
+            load: loadSettingValue('code_block_collapsed_lines', codeCollapsedLines),
+            save: function (value, done) {
+                var lines = codeCollapsedLines(value);
+                setSetting('code_block_collapsed_lines', lines, function (success) {
+                    if (success) {
+                        document.getElementById('code-collapsed-lines-input').value = lines;
+                    }
+                    done(success);
+                });
+            }
         });
 
         initInlineControl('markdown-default-view-mode-select', {
@@ -799,7 +845,7 @@
         // Read by js/events-text-selection.js on a computer
         initInlineControl('format-toolbar-mode-select', {
             load: loadSettingValue('format_toolbar_mode', function (value) {
-                return value === 'floating' ? 'floating' : 'toolbar';
+                return value === 'toolbar' ? 'toolbar' : 'floating';
             }),
             save: saveSettingValue('format_toolbar_mode')
         });
@@ -1733,7 +1779,7 @@
             event.preventDefault();
         }
 
-        var title = tr('settings.cards.install_app', {}, 'Install application');
+        var title = tr('settings.cards.install_app', {}, 'Install application (PWA)');
 
         if (isStandaloneMode()) {
             var alreadyInstalledMsg = tr('settings.install_app.already_installed', {}, 'The application is already installed on this device.');

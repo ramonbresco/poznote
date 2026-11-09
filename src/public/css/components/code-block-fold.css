@@ -7,21 +7,47 @@
  * a public share has css/syntax-highlight.css, and folding belongs to both.
  */
 
-/* A folded code block (js/copy-code-on-focus.js): the listing is hidden and
-   the block shrinks to its badge, the chevron and the number of lines. A long
-   listing otherwise makes a note long for nothing. data-collapsed sits on the
-   PRE, so an HTML note reopens its blocks folded; a Markdown preview, redrawn
-   from the source, keeps the choice in the browser. */
+/* A folded code block (js/copy-code-on-focus.js) keeps its first lines and
+   clips the rest, so a long listing stops making a note long for nothing
+   while the beginning still says what the block holds. The chevron is only
+   offered to a block that has more lines than this (addCopyButtonToCodeBlocks),
+   since folding a shorter one would change nothing.
+
+   How many lines stay on screen is --pz-code-collapsed-lines (css/tokens.css),
+   which the app writes on <body> from the account's choice
+   (code_block_collapsed_lines); a public share, an exported page and anything
+   else that shows a code block keeps the token's own 5.
+
+   `1lh` is the listing's own line height, so the clip lands on a line
+   boundary whatever the font size; the declaration above it is the fallback a
+   browser without the unit keeps. The clip is on the CODE, the PRE being the
+   element that paints the block and scrolls it sideways.
+
+   data-collapsed sits on the PRE, so an HTML note reopens its blocks folded;
+   a Markdown preview, redrawn from the source, keeps the choice in the
+   browser. */
 pre[data-collapsed="1"] > code {
+    max-height: calc(var(--pz-code-collapsed-lines) * 1.5em);
+    max-height: calc(var(--pz-code-collapsed-lines) * 1lh);
     /* !important because the pages that show code blocks each set their own
-       `display` on `pre code` from a heavier selector (.public-note .content
-       pre code, for one), and folding is a state the reader just asked for,
-       not a default this file is proposing. */
+       `overflow` on `pre code` from a heavier selector, and folding is a
+       state the reader just asked for, not a default this file proposes.
+       Sideways scrolling goes with it while the block is folded: a folded
+       block is a glance at the beginning, unfolding is how it gets read. */
+    overflow: hidden !important;
+}
+
+/* The setting at "Hide the code": a folded block shows none of its listing,
+   which is what folding did before the first lines were kept. */
+body[data-code-collapsed-lines="0"] pre[data-collapsed="1"] > code {
     display: none !important;
 }
 
 pre[data-collapsed="1"] {
     min-height: 0;
+}
+
+body[data-code-collapsed-lines="0"] pre[data-collapsed="1"] {
     padding-bottom: 6px;
 }
 
@@ -62,9 +88,10 @@ pre[data-collapsed="1"] {
     height: 28px;
     display: flex;
     align-items: center;
-    color: var(--pz-text-muted);
+    color: var(--pz-text-subtle);
     font-family: inherit;
-    font-size: 12px;
+    font-size: 11px;
+    opacity: 0.8;
     white-space: nowrap;
     user-select: none;
     -webkit-user-select: none;

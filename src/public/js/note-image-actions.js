@@ -549,25 +549,28 @@ function removeImageLink(img) {
 function enableImageResize(img) {
     if (!img) return;
 
-    // Remove any existing resize handles first
-    const existingHandles = document.querySelectorAll('.image-resize-handle');
-    existingHandles.forEach(handle => {
-        if (typeof handle._cleanupImageResize === 'function') {
-            handle._cleanupImageResize();
-        }
-        handle.remove();
-    });
-    window.isImageResizeInProgress = false;
+    // Every image of an editable note wears one at all times, so this is called
+    // for all of them: the handles of the others stay where they are, and an
+    // image that already has its own is left alone.
+    const wrapperAlready = img.parentElement;
+    if (wrapperAlready
+        && wrapperAlready.classList.contains('image-resize-wrapper')
+        && wrapperAlready.querySelector('.image-resize-handle')) {
+        return;
+    }
 
     // Create resize handle
     const resizeHandle = document.createElement('div');
     resizeHandle.className = 'image-resize-handle';
-    resizeHandle.innerHTML = '⤡';
+    // The arrow is drawn by the stylesheet (--pz-icon-resize-diagonal), the
+    // same one the pointer shows and an embed handle wears: a text glyph came
+    // out differently in every font.
+    resizeHandle.setAttribute('aria-hidden', 'true');
 
-    // Position the image as relative so the handle can be positioned absolutely
-    const originalPosition = img.style.position;
-    img.style.position = 'relative';
-    img.style.display = 'inline-block';
+    // Nothing is written on the picture itself: the handle is laid out by the
+    // line under it, not positioned against it. The inline position and display
+    // this used to set would have been saved into the note, on every image,
+    // now that the handle is there at all times.
 
     // Set a flag to prevent the MutationObserver in main.js from thinking this is a deletion
     // during the wrapping process (which involves moving the image in the DOM)
@@ -594,8 +597,17 @@ function enableImageResize(img) {
         delete img._isResizing;
     }, 100);
 
-    // Add the handle to the wrapper
-    wrapper.appendChild(resizeHandle);
+    // On its own line under the picture, where an embed carries it too: a
+    // badge over the bottom right corner hides a piece of what it is resizing.
+    let grip = wrapper.querySelector(':scope > .image-resize-grip');
+    if (!grip) {
+        grip = document.createElement('div');
+        grip.className = 'image-resize-grip';
+        grip.setAttribute('data-embed-resize-grip', '1');
+        grip.setAttribute('contenteditable', 'false');
+        wrapper.appendChild(grip);
+    }
+    grip.appendChild(resizeHandle);
 
     // Trigger modification indicator immediately
     if (typeof window.markNoteAsModified === 'function') {
@@ -672,6 +684,8 @@ function enableImageResize(img) {
         wrapper.style.width = newWidth + 'px';
     }
 
+    let resizeOverlay = null;
+
     function startImageResize(e) {
         if (e.type === 'mousedown' && e.button !== 0) {
             return;
@@ -691,7 +705,19 @@ function enableImageResize(img) {
         startWidth = img.offsetWidth;
         setImageResizeInProgress(true);
 
-        document.body.style.cursor = 'nwse-resize';
+        // The cursor comes from --pz-cursor-resize-diagonal, the one an embed
+        // grip uses too (css/misc.css): a class, because it has to beat the
+        // cursor every element under the pointer carries of its own.
+        // A picture is draggable: without something over it, the browser starts
+        // its own drag on the first move and the gesture never ends, leaving
+        // the image stuck at whatever width it had reached.
+        if (!resizeOverlay) {
+            resizeOverlay = document.createElement('div');
+            resizeOverlay.className = 'pz-resize-overlay';
+            document.body.appendChild(resizeOverlay);
+        }
+
+        document.body.classList.add('pz-resizing');
         document.body.style.userSelect = 'none';
 
         // Mark as modified on actual resize start too
@@ -726,7 +752,11 @@ function enableImageResize(img) {
         isResizing = false;
         activeTouchId = null;
         resizeHandle._cleanupImageResize();
-        document.body.style.cursor = '';
+        if (resizeOverlay) {
+            resizeOverlay.remove();
+            resizeOverlay = null;
+        }
+        document.body.classList.remove('pz-resizing');
         document.body.style.userSelect = '';
 
         // Save the final width
@@ -735,9 +765,15 @@ function enableImageResize(img) {
         img.style.width = finalWidth + 'px';
         img.removeAttribute('height'); // Let browser calculate height from aspect ratio
 
-        // Clean up: remove the handle
+        // Clean up: remove the handle and the line it rides on
         if (resizeHandle && resizeHandle.parentNode) {
             resizeHandle.remove();
+        }
+        const gripLine = img.parentElement
+            ? img.parentElement.querySelector(':scope > .image-resize-grip')
+            : null;
+        if (gripLine) {
+            gripLine.remove();
         }
 
         // Clean up: remove the wrapper but preserve the image with its new size
@@ -750,15 +786,27 @@ function enableImageResize(img) {
             }
         }
 
-        // Revert style changes made ONLY for positioning the handle
-        img.style.position = (originalPosition === 'static' ? '' : originalPosition);
-        if (img.style.display === 'inline-block' && !img.getAttribute('style').includes('display: inline-block')) {
-            // Only revert display if we added it and it's not in the inline style attribute already
-            // Actually, keeping inline-block is usually safer for resized images.
-        }
+        // The drag took the handle and its wrapper away; the picture is still
+        // the one being resized, so it gets them straight back. A click
+        // somewhere else is what puts them away.
+        setTimeout(function () {
+            enableImageResize(img);
+        }, 0);
 
         if (resizeSourceBackedMarkdownImage(img, finalWidth)) {
             return;
+        }
+
+        // window.noteid is "the note being edited" and stays -1 until the note
+        // is focused. The handle used to be reached through the image menu,
+        // which went through the note first; it is there from the start now, so
+        // a drag can be the first thing that happens and the save went nowhere.
+        const resizedNote = img.closest('.noteentry');
+        const resizedNoteId = resizedNote && resizedNote.id
+            ? parseInt(resizedNote.id.replace('entry', ''), 10)
+            : NaN;
+        if (!isNaN(resizedNoteId) && resizedNoteId > 0) {
+            window.noteid = resizedNoteId;
         }
 
         // Trigger note save and modification indicator
@@ -781,17 +829,67 @@ function enableImageResize(img) {
     document.addEventListener('touchend', finishImageResize, { passive: false });
     document.addEventListener('touchcancel', finishImageResize, { passive: false });
 
-    // Click outside to remove handle
+    // It came from the menu, it goes when the reader looks elsewhere.
     setTimeout(() => {
         document.addEventListener('click', function closeResize(e) {
-            if (!wrapper.contains(e.target) && e.target !== resizeHandle) {
-                resizeHandle.remove();
-                resizeHandle._cleanupImageResize();
-                document.removeEventListener('click', closeResize);
+            if (wrapper.contains(e.target) || e.target === resizeHandle) return;
+            if (isResizing) return;
+
+            const line = wrapper.querySelector(':scope > .image-resize-grip');
+            if (line) line.remove();
+            resizeHandle.remove();
+            resizeHandle._cleanupImageResize();
+
+            // The wrapper only held the handle up.
+            const holder = wrapper.parentNode;
+            if (holder && wrapper.classList.contains('image-resize-wrapper')) {
+                while (wrapper.firstChild) {
+                    holder.insertBefore(wrapper.firstChild, wrapper);
+                }
+                holder.removeChild(wrapper);
             }
+            document.removeEventListener('click', closeResize);
         });
     }, 10);
 }
+
+/**
+ * Put the handle back on the images that are wearing one.
+ *
+ * A picture only has one while its owner asked for it, through Resize in the
+ * image menu, and until they click somewhere else: a badge under every image
+ * of every note was more furniture than help. This is only for the redraws
+ * that would otherwise drop a handle in use (a Markdown preview is thrown
+ * away and drawn again).
+ *
+ * The handle and the wrapper it needs are editor furniture, never part of the
+ * note: stripSearchHighlights() (js/notes.js) takes them out of the copy that
+ * is saved, compared and drafted, so an autosave in the middle of all this
+ * writes the picture exactly as it was.
+ *
+ * @param {Document|HTMLElement} [root]
+ */
+function refreshImageResizeHandles(root) {
+    const scope = (root && typeof root.querySelectorAll === 'function') ? root : document;
+    const images = scope.querySelectorAll('.noteentry .image-resize-wrapper > img');
+
+    for (let i = 0; i < images.length; i++) {
+        const img = images[i];
+        const note = img.closest('.noteentry');
+        if (!note) continue;
+        // Whether the note takes an edit is left to the stylesheet, which hides
+        // the handle otherwise: the editable flag is set after the note is in
+        // the page, so asking for it here would be asking too early, and the
+        // handle would be missing exactly on the first paint.
+        // Not the pictures the editor draws for itself.
+        if (img.closest('.excalidraw-container, .tasklist-embed, .image-uploading-placeholder')) continue;
+        if (img.classList.contains('image-uploading-placeholder')) continue;
+
+        enableImageResize(img);
+    }
+}
+
+window.poznoteRefreshImageResizeHandles = refreshImageResizeHandles;
 
 /**
  * Show toast with image link URL

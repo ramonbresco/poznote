@@ -159,6 +159,7 @@
       "markdown_colored": "마크다운의 각 제목 수준, 인라인 코드, 코드 블록 배경, 인용문, 표 머리글 및 구분선에 사용할 색상을 선택합니다.",
       "code_wrap": "가로로 스크롤하는 대신 긴 줄을 코드 블록으로 묶습니다.",
       "code_line_numbers": "마크다운 미리보기에서 코드 블록의 줄 번호를 표시합니다.",
+      "code_block_collapsed_lines": "코드 블록을 접었을 때 화면에 남는 줄 수입니다(0~100). 0이면 접힌 블록이 코드를 전혀 보여주지 않습니다. 이보다 줄이 많지 않은 블록에는 접기 버튼을 표시하지 않습니다. 접어도 숨길 것이 없기 때문입니다.",
       "attachment_previews": "노트 내부 첨부 파일의 미리보기를 표시합니다.",
       "attachments_at_bottom": "상단 대신 노트 하단에 첨부 파일 섹션을 표시합니다.",
       "allow_executable_attachments": "이 인스턴스의 모든 계정에 대해 스크립트 및 실행 파일(.sh, .ps1, .bat, .exe, .py, ...)이 노트에 연결되도록 허용합니다. Poznote는 절대 실행하지 않으며 저장하고 제공만 합니다. .php 등 웹 서버가 실행할 수 있는 파일 형식은 차단된 상태로 유지됩니다.",
@@ -215,7 +216,10 @@
       "custom_logo": "모든 사용자에게 Poznote 로고 대신 자체 로고를 표시합니다. 브라우저 탭, 로그인 페이지, 아이콘 바, 설치된 앱의 아이콘에 적용됩니다.",
       "two_factor_required": "비밀번호로 로그인하는 모든 계정은 2단계 인증을 사용해야 합니다. 설정하지 않은 계정은 다음 로그인 때 설정하며, 2단계 인증 없이 열린 세션은 종료됩니다. 계정 비밀번호는 API에서 더 이상 사용할 수 없으므로 앱은 앱 비밀번호를 사용합니다. SSO 로그인은 해당되지 않으며, 두 번째 요소는 ID 공급자가 관리합니다.",
       "tab_follows_note": "브라우저 탭에 이 인스턴스의 이름과 아이콘 대신 그 탭에서 열린 노트의 제목과 아이콘을 표시합니다. 여러 노트를 연 여러 탭을 구분할 수 있습니다.",
-      "update_badge_level": "어떤 릴리스에서 설정 항목에 빨간 점을 표시할지 고릅니다. 무엇을 고르든 새 버전은 이 페이지에서 계속 알려 주므로 숨겨지는 것은 없습니다."
+      "update_badge_level": "어떤 릴리스에서 설정 항목에 빨간 점을 표시할지 고릅니다. 무엇을 고르든 새 버전은 이 페이지에서 계속 알려 주므로 숨겨지는 것은 없습니다.",
+      "update_check_interval": "Poznote가 새 버전이 있는지 백그라운드에서 확인하는 주기입니다. 점은 확인한 뒤에만 나타나므로 주기가 길면 그만큼 늦게 표시됩니다. 위의 「버전」 카드는 누를 때마다 바로 확인합니다.",
+      "sessions": "현재 계정에 로그인되어 있는 브라우저와 기기를 확인하고, 더 이상 쓰지 않는 기기를 로그아웃할 수 있습니다.",
+      "session_lifetime": "활동이 없을 때 로그인이 유지되는 기간입니다. .env 파일의 POZNOTE_SESSION_LIFETIME_DAYS로 설정하므로 여기서는 보기만 할 수 있고 이 페이지에서는 변경할 수 없습니다. \"로그인 유지\"로 로그인하면 더 오래 유지되고, SSO 로그인은 그렇지 않습니다."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "모바일에서는 이 설정과 관계없이 키보드 위 도구 모음의 + 버튼으로 같은 메뉴를 열 수 있습니다."
@@ -285,7 +289,7 @@
       "support": "Poznote 후원",
       "buy_me_a_coffee": "커피 한 잔 후원하기",
       "install_extension": "확장 프로그램 설치",
-      "install_app": "애플리케이션 설치",
+      "install_app": "애플리케이션 설치(PWA)",
       "custom_css": "사용자 지정 CSS 경로",
       "theme_list": "테마 목록",
       "release_notes": "릴리스 노트",
@@ -321,7 +325,9 @@
       "outbound_hosts": "로컬 네트워크 접근",
       "connected_apps": "연결된 앱",
       "custom_logo": "로고",
-      "two_factor_required": "2단계 인증 필수"
+      "two_factor_required": "2단계 인증 필수",
+      "sessions": "연결된 기기",
+      "session_lifetime": "세션 유지 기간"
     },
     "default_credentials": {
       "both": "이 계정은 원래 제공된 사용자 이름과 비밀번호를 계속 사용합니다. 이 인스턴스에 접근할 수 있는 사람은 누구나 로그인할 수 있습니다.",
@@ -555,6 +561,7 @@
       "markdown_colored": "마크다운 구문 색상 표시",
       "code_block_word_wrap": "코드 블록 단어 줄 바꿈",
       "code_block_line_numbers": "코드 블록 줄 번호",
+      "code_block_collapsed_lines": "접힌 코드 블록",
       "attachment_previews_in_note": "첨부 파일 미리보기",
       "attachments_at_bottom": "첨부 파일을 하단에 표시",
       "backlinks_at_bottom": "백링크를 하단에 표시",
@@ -572,7 +579,8 @@
       "diary_template": "일기 항목 템플릿",
       "markdown_view_cycle": "보기 메뉴",
       "tab_follows_note": "탭이 열린 노트를 따라감",
-      "update_badge_level": "업데이트 점"
+      "update_badge_level": "업데이트 점",
+      "update_check_interval": "업데이트 확인"
     },
     "badges": {
       "font_size_default": "기본값({{size}}px)",
@@ -730,7 +738,7 @@
     },
     "source": {
       "app": "Poznote, 컴퓨터에서",
-      "app_mobile": "Poznote, 휴대폰 또는 태블릿에서",
+      "app_mobile": "Poznote, 모바일에서",
       "api": "REST API",
       "mcp": "MCP로 연결된 앱",
       "extension": "브라우저 확장 프로그램",
@@ -1529,10 +1537,22 @@
     },
     "update_badge_level": {
       "options": {
-        "all": "모든 릴리스",
-        "minor": "마이너 및 메이저 릴리스",
-        "major": "메이저 릴리스만"
+        "all": "메이저, 마이너, 패치 릴리스",
+        "minor": "메이저와 마이너 릴리스만"
       }
+    },
+    "update_check_interval": {
+      "options": {
+        "1": "매일",
+        "2": "2일마다",
+        "3": "3일마다",
+        "7": "7일마다",
+        "14": "14일마다",
+        "30": "30일마다"
+      }
+    },
+    "code_block_collapsed_lines": {
+      "unit": "줄"
     }
   },
   "notes_list": {
@@ -3686,7 +3706,8 @@
       "two_factor_recovery_used": "복구 코드로 로그인됨",
       "two_factor_recovery_regenerated": "복구 코드가 재생성되었습니다.",
       "oauth_app_authorized": "앱 연결됨 (MCP)",
-      "oauth_app_revoked": "앱 연결 해제됨 (MCP)"
+      "oauth_app_revoked": "앱 연결 해제됨 (MCP)",
+      "session_revoked": "기기 로그아웃됨"
     },
     "filters": {
       "all_actions": "모든 작업",
@@ -5409,6 +5430,7 @@
     "italic": "이탤릭체",
     "underline": "밑줄",
     "strikethrough": "취소선",
+    "clear_formatting": "선택한 텍스트의 서식 지우기",
     "link": "선택한 텍스트에 링크 삽입",
     "code_block": "코드 블록",
     "slash_menu": "명령 메뉴 열기",
@@ -5843,6 +5865,48 @@
       "group_rules": "그룹 구분선",
       "size": "타일 크기 버튼",
       "boards": "빠른 실행 목록"
+    }
+  },
+  "embeds": {
+    "blocked": {
+      "title": "삽입된 콘텐츠가 차단됨",
+      "detail_admin": "이 인스턴스는 {{host}}의 삽입 콘텐츠를 허용하지 않습니다. 관리자가 설정 > 관리자 도구 > 임베드에서 다시 허용할 수 있습니다.",
+      "detail_public": "이 사이트는 {{host}}의 삽입 콘텐츠를 허용하지 않습니다."
+    },
+    "resize": {
+      "hint": "드래그하여 크기를 조절하고, 두 번 클릭하면 기본값으로 돌아갑니다"
+    }
+  },
+  "sessions": {
+    "status": {
+      "count_one": "세션 1개",
+      "count_other": "세션 {{count}}개"
+    },
+    "lifetime": {
+      "day_one": "1일",
+      "day_other": "{{count}}일"
+    },
+    "modal": {
+      "title": "연결된 기기",
+      "description": "각 줄은 계정에 로그인된 브라우저입니다. 세션은 활동이 없으면 {{duration}} 후에 스스로 종료되고, 비밀번호를 바꿀 때마다 종료됩니다.",
+      "loading": "불러오는 중...",
+      "empty": "열려 있는 세션이 없습니다.",
+      "unknown_client": "알 수 없는 브라우저",
+      "this_device": "이 기기",
+      "last_active": "마지막 활동 {{date}}",
+      "revoke": "로그아웃",
+      "revoke_others": "다른 기기 로그아웃",
+      "confirm": "확인",
+      "close": "닫기"
+    },
+    "method": {
+      "password": "비밀번호",
+      "sso": "SSO",
+      "auto": "로그인 없음"
+    },
+    "errors": {
+      "load_failed": "세션을 불러올 수 없습니다.",
+      "generic": "문제가 발생했습니다. 다시 시도하세요."
     }
   }
 }

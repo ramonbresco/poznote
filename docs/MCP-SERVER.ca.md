@@ -172,7 +172,7 @@ El servidor MCP fa servir els valors per defecte del `docker-compose.yml`:
 # El registre de depuració està desactivat (false) per defecte
 ```
 
-El Poznote genera automàticament el testimoni de servei MCP a `data/.mcp_token`. El contenidor `mcp-server` llegeix aquest fitxer a través del volum compartit `./data:/var/www/html/data:ro`, de manera que no cal guardar cap contrasenya al `.env`.
+El Poznote genera automàticament el testimoni de servei MCP a `data/.mcp_token`. El contenidor `mcp-server` llegeix aquest fitxer a través del volum compartit `./data:/var/www/html/data:ro`, de manera que no cal guardar cap contrasenya al `.env`. Mentre el fitxer no hi sigui, es torna a llegir a cada crida, de manera que un servidor MCP que s'hagi engegat abans que el Poznote el creés recupera el testimoni tot sol, sense reiniciar. Un servidor que s'executa fora d'aquesta pila del Compose no veu aquest camí: indiqueu a `POZNOTE_SERVICE_TOKEN_FILE` on és realment `data/.mcp_token` en aquell amfitrió.
 
 Per canviar el port i la depuració per a un sol inici, torneu a crear el contenidor MCP amb variables d'entorn en línia:
 
