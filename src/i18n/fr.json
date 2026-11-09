@@ -4844,7 +4844,14 @@
     "locked_error": "Cette note est verrouillée. Déverrouillez-la depuis la barre d'outils avant de la modifier.",
     "locked_toast": "Note verrouillée",
     "unlocked_toast": "Note déverrouillée",
-    "lock_failed": "Impossible de changer le verrouillage de cette note."
+    "lock_failed": "Impossible de changer le verrouillage de cette note.",
+    "lock_all": "Verrouiller toutes les notes",
+    "unlock_all": "Déverrouiller toutes les notes",
+    "lock_all_confirm": "Verrouiller les {{count}} notes ? Leur texte et leur titre restent tels quels jusqu'à ce que vous les déverrouilliez.",
+    "unlock_all_confirm": "Déverrouiller les {{count}} notes ? Toutes redeviennent modifiables, y compris celles que vous aviez verrouillées une par une.",
+    "locked_all_toast": "Toutes les notes sont verrouillées",
+    "unlocked_all_toast": "Toutes les notes sont déverrouillées",
+    "lock_all_failed": "Impossible de changer le verrouillage des notes."
   },
   "live_refresh": {
     "note_changed": "Cette note a été modifiée en dehors de cet onglet.",

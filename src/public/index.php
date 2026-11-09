@@ -838,6 +838,27 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
         . '<i class="lucide lucide-chevron-down"></i>'
         . '</button>';
 
+    // The padlock of the whole account, left of the view options toggle on the
+    // same rule (notes_list.php). It locks or unlocks every note at once
+    // (PUT /api/v1/notes/locked), the per-note padlock living in the ⋮ menu of
+    // the note itself. Closed and in the accent colour while every note is
+    // locked. A guest of a read-only workspace is not offered it, and neither
+    // is someone looking at another account.
+    $lockAllButton = '';
+    if ($canWriteAccountSettings && (!function_exists('isSharedWorkspaceReadOnly') || !isSharedWorkspaceReadOnly())) {
+        require_once __DIR__ . '/../lib/note-lock.php';
+        $lockAllCounts = poznoteNoteLockCounts($con);
+        $lockAllOn = $lockAllCounts['total'] > 0 && $lockAllCounts['locked'] === $lockAllCounts['total'];
+        $lockAllLabel = $lockAllOn
+            ? t_h('note_lock.unlock_all', [], 'Unlock all notes')
+            : t_h('note_lock.lock_all', [], 'Lock all notes against editing');
+        $lockAllButton = '<button type="button" class="sidebar-folder-toggle sidebar-lock-all' . ($lockAllOn ? ' active' : '') . '" id="sidebarLockAllBtn" data-action="toggle-lock-all-notes"'
+            . ' data-locked="' . ($lockAllOn ? '1' : '0') . '" data-note-count="' . (int)$lockAllCounts['total'] . '"'
+            . ' aria-pressed="' . ($lockAllOn ? 'true' : 'false') . '" title="' . $lockAllLabel . '" aria-label="' . $lockAllLabel . '">'
+            . '<i class="lucide ' . ($lockAllOn ? 'lucide-lock' : 'lucide-lock-open') . '"></i>'
+            . '</button>';
+    }
+
     // View options menu of the tree: one vertical three-dot toggle at the right end of
     // the rule after Favorites (notes_list.php) opens #tree-options-menu, which
     // gathers the sort mode and the offline dots (js/tree-options-menu.js).

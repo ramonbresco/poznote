@@ -4371,7 +4371,14 @@
     "locked_error": "This note is locked. Unlock it from the note toolbar before editing it.",
     "locked_toast": "Note locked",
     "unlocked_toast": "Note unlocked",
-    "lock_failed": "Unable to change the lock of this note."
+    "lock_failed": "Unable to change the lock of this note.",
+    "lock_all": "Lock all notes against editing",
+    "unlock_all": "Unlock all notes",
+    "lock_all_confirm": "Lock all {{count}} notes? Their text and their titles stay as they are until you unlock them.",
+    "unlock_all_confirm": "Unlock all {{count}} notes? Every note becomes editable again, including the ones you locked one by one.",
+    "locked_all_toast": "All notes locked",
+    "unlocked_all_toast": "All notes unlocked",
+    "lock_all_failed": "Unable to change the lock of the notes."
   },
   "live_refresh": {
     "note_changed": "This note was modified outside this tab.",

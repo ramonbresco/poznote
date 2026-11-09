@@ -53,3 +53,38 @@ function poznoteNoteLockedMessage(): string {
         ? t('note_lock.locked_error', [], 'This note is locked. Unlock it from the note toolbar before editing it.')
         : 'This note is locked. Unlock it from the note toolbar before editing it.';
 }
+
+/**
+ * How many notes are locked, and how many there are, for the padlock at the
+ * top of the notes tree (notes_list.php) and for the page that rebuilds it.
+ *
+ * The same set the bulk endpoint writes (PUT /api/v1/notes/locked): every
+ * note of the profile that is not in the trash, narrowed to the one workspace
+ * a confined session may see. Counting them apart from the tree keeps the
+ * padlock honest when the tree shows a search or a single folder.
+ *
+ * A database without the column reads as "nothing locked", as above.
+ *
+ * @return array{total:int,locked:int}
+ */
+function poznoteNoteLockCounts(PDO $con): array {
+    $sql = 'SELECT COUNT(*) AS total, SUM(CASE WHEN locked = 1 THEN 1 ELSE 0 END) AS locked'
+        . ' FROM entries WHERE trash = 0';
+    $params = [];
+    $scopeName = function_exists('getSharedWorkspaceScopeName') ? getSharedWorkspaceScopeName() : null;
+    if ($scopeName !== null) {
+        $sql .= ' AND workspace = ?';
+        $params[] = $scopeName;
+    }
+    try {
+        $stmt = $con->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        return ['total' => 0, 'locked' => 0];
+    }
+    return [
+        'total' => (int)($row['total'] ?? 0),
+        'locked' => (int)($row['locked'] ?? 0),
+    ];
+}

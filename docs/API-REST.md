@@ -524,6 +524,29 @@ curl -X PUT -u 'username:password' -H "X-User-ID: 1" \
 
 `GET /notes/{id}` reports the current state as a `locked` boolean.
 
+### Lock Every Note
+
+```
+PUT /notes/locked
+```
+
+Set the same lock on every note at once, which is what the padlock at the top of the notes tree does. It covers every note of the profile, whatever its workspace, except the ones in the trash, so a note restored later comes back the way it went in. A session confined to a shared workspace only touches the notes of that workspace.
+
+**Request Body (JSON):**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `locked` | boolean | `true` locks every note, `false` unlocks them all |
+
+```bash
+curl -X PUT -u 'username:password' -H "X-User-ID: 1" \
+  -H "Content-Type: application/json" \
+  -d '{"locked": true}' \
+  http://YOUR_SERVER/api/v1/notes/locked
+```
+
+The response carries `updated`, the number of notes this actually changed.
+
 ### Delete Note
 
 ```

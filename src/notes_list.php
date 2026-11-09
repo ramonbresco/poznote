@@ -733,13 +733,14 @@ if ($favoritesFolder && ($favorites_count > 0 || (!empty($favorite_folders) && !
     }
 }
 
-// "Expand all folders" and, to its right, the view options toggle (sort mode,
-// offline dots), built by index.php, at the right end of a thin rule between
+// "Expand all folders", the padlock that locks every note, and the view
+// options toggle (sort mode, offline dots), built by index.php, at the right
+// end of a thin rule between
 // Favorites and the rest of the tree (at the top of the tree when there are no
 // favorites). With account rows the expand button heads the active account's
 // row instead. The menu of the toggle is rendered below, with the other shared
 // menus.
-$notesListActions = (empty($showAccountRows) ? $expandFoldersButton : '') . ($treeOptionsButton ?? '');
+$notesListActions = (empty($showAccountRows) ? $expandFoldersButton : '') . ($lockAllButton ?? '') . ($treeOptionsButton ?? '');
 if ($notesListActions !== '') {
     echo '<div class="notes-list-actions">' . $notesListActions . '</div>';
 }

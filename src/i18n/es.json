@@ -4740,7 +4740,14 @@
     "locked_error": "Esta nota está bloqueada. Desbloquéala desde la barra de herramientas antes de editarla.",
     "locked_toast": "Nota bloqueada",
     "unlocked_toast": "Nota desbloqueada",
-    "lock_failed": "No se ha podido cambiar el bloqueo de esta nota."
+    "lock_failed": "No se ha podido cambiar el bloqueo de esta nota.",
+    "lock_all": "Bloquear todas las notas",
+    "unlock_all": "Desbloquear todas las notas",
+    "lock_all_confirm": "¿Bloquear las {{count}} notas? Su texto y sus títulos se quedan como están hasta que las desbloquees.",
+    "unlock_all_confirm": "¿Desbloquear las {{count}} notas? Todas vuelven a ser editables, incluidas las que habías bloqueado una a una.",
+    "locked_all_toast": "Todas las notas bloqueadas",
+    "unlocked_all_toast": "Todas las notas desbloqueadas",
+    "lock_all_failed": "No se ha podido cambiar el bloqueo de las notas."
   },
   "live_refresh": {
     "note_changed": "Esta nota se modificó fuera de esta pestaña.",

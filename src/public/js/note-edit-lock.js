@@ -476,6 +476,33 @@
     }
 
     /**
+     * The editor's side of the lock, without the request: paints the button
+     * and the menu entry, and switches the note between read-only and
+     * editable. Called after this tab's own PUT, and by the padlock of the
+     * notes tree (js/lock-all-notes.js), which locks every note at once and
+     * then has the open one follow without asking the server again.
+     */
+    function applyManualLockToNote(noteId, locked) {
+        noteId = normalizeNoteId(noteId);
+        if (!noteId || !document.getElementById('note' + noteId)) {
+            return;
+        }
+
+        paintManualLockButton(noteId, locked);
+        if (locked) {
+            stopHeartbeat();
+            stopStatusChecks();
+            releaseCurrentLock();
+            applyManualLockState(noteId);
+        } else {
+            clearNoteLockedState(noteId);
+            if (String(activeNoteId) === noteId) {
+                openNoteLock(noteId);
+            }
+        }
+    }
+
+    /**
      * Flips entries.locked and the editor with it. A note with changes that
      * have not reached the server yet is saved first: locking it would make
      * the server refuse that save.
@@ -502,18 +529,7 @@
                         || t('note_lock.lock_failed', {}, 'Unable to change the lock of this note.'));
                     return;
                 }
-                paintManualLockButton(noteId, locked);
-                if (locked) {
-                    stopHeartbeat();
-                    stopStatusChecks();
-                    releaseCurrentLock();
-                    applyManualLockState(noteId);
-                } else {
-                    clearNoteLockedState(noteId);
-                    if (String(activeNoteId) === noteId) {
-                        openNoteLock(noteId);
-                    }
-                }
+                applyManualLockToNote(noteId, locked);
                 if (typeof window.poznoteShowToast === 'function') {
                     window.poznoteShowToast(locked
                         ? t('note_lock.locked_toast', {}, 'Note locked')
@@ -1234,6 +1250,7 @@
         updateToolbarState(noteCard, true);
     };
     window.setNoteManualLock = setNoteManualLock;
+    window.applyNoteManualLockState = applyManualLockToNote;
     window.isNoteManuallyLocked = isNoteManuallyLocked;
     window.toggleNoteManualLock = function (noteId) {
         setNoteManualLock(noteId, !isNoteManuallyLocked(noteId));

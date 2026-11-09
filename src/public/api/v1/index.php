@@ -520,6 +520,11 @@ $router->put('/notes/title-style', function($params) use ($notesController) {
     $notesController->applyTitleSizeToAll();
 });
 
+// Lock or unlock every note at once (the padlock at the top of the tree)
+$router->put('/notes/locked', function($params) use ($notesController) {
+    $notesController->setLockedForAll();
+});
+
 // Duplicate a note
 $router->post('/notes/{id}/duplicate', function($params) use ($notesController) {
     $notesController->duplicate($params['id']);

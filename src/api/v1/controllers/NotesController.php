@@ -1771,6 +1771,58 @@ class NotesController {
     }
 
     /**
+     * PUT /api/v1/notes/locked
+     * Lock or unlock every note at once, from the padlock at the top of the
+     * notes tree (notes_list.php).
+     * Body: { "locked": true }
+     *
+     * Every note of the profile, whatever its workspace, as "Apply this size
+     * to all notes" does: a session confined to a shared workspace (auth.php)
+     * only touches the notes of that workspace. Notes in the trash are left
+     * alone, like the per-note endpoint above, so a note restored later comes
+     * back the way it went in.
+     *
+     * The lock is not a change to the note: no "updated" date, no version
+     * token, nothing pushed to Git.
+     */
+    public function setLockedForAll(): void {
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($input) || !array_key_exists('locked', $input)) {
+            $this->sendError(400, 'Missing "locked" boolean in request body');
+            return;
+        }
+
+        $locked = filter_var($input['locked'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+
+        try {
+            // IS NOT compares NULL as a value, so a note written before the
+            // column existed is counted as a change too, and the count is the
+            // number of notes this actually changed.
+            $sql = 'UPDATE entries SET locked = ? WHERE trash = 0 AND locked IS NOT ?';
+            $params = [$locked, $locked];
+            $scopeName = function_exists('getSharedWorkspaceScopeName') ? getSharedWorkspaceScopeName() : null;
+            if ($scopeName !== null) {
+                $sql .= ' AND workspace = ?';
+                $params[] = $scopeName;
+            }
+
+            $stmt = $this->con->prepare($sql);
+            if (!$stmt->execute($params)) {
+                $this->sendError(500, 'Database error while locking the notes');
+                return;
+            }
+
+            $this->sendSuccess([
+                'message' => $locked === 1 ? 'All notes locked' : 'All notes unlocked',
+                'locked' => $locked === 1,
+                'updated' => $stmt->rowCount()
+            ]);
+        } catch (PDOException $e) {
+            $this->sendError(500, 'Database error occurred');
+        }
+    }
+
+    /**
      * PUT /api/v1/notes/{id}/icon - Update note icon metadata
      */
     public function updateIcon(string $id): void {

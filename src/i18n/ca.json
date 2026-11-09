@@ -4371,7 +4371,14 @@
     "locked_error": "Aquesta nota està bloquejada. Desbloqueja-la des de la barra d'eines abans d'editar-la.",
     "locked_toast": "Nota bloquejada",
     "unlocked_toast": "Nota desbloquejada",
-    "lock_failed": "No s'ha pogut canviar el bloqueig d'aquesta nota."
+    "lock_failed": "No s'ha pogut canviar el bloqueig d'aquesta nota.",
+    "lock_all": "Bloqueja totes les notes",
+    "unlock_all": "Desbloqueja totes les notes",
+    "lock_all_confirm": "Vols bloquejar les {{count}} notes? El text i els títols es queden tal com són fins que les desbloquegis.",
+    "unlock_all_confirm": "Vols desbloquejar les {{count}} notes? Totes tornen a ser editables, també les que havies bloquejat una per una.",
+    "locked_all_toast": "Totes les notes estan bloquejades",
+    "unlocked_all_toast": "Totes les notes estan desbloquejades",
+    "lock_all_failed": "No s'ha pogut canviar el bloqueig de les notes."
   },
   "live_refresh": {
     "note_changed": "Aquesta nota s'ha modificat fora d'aquesta pestanya.",

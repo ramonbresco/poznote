@@ -4371,7 +4371,14 @@
     "locked_error": "이 노트는 잠겨 있습니다. 편집하기 전에 도구 모음에서 잠금을 해제하세요.",
     "locked_toast": "노트를 잠갔습니다",
     "unlocked_toast": "노트 잠금을 해제했습니다",
-    "lock_failed": "이 노트의 잠금을 변경할 수 없습니다."
+    "lock_failed": "이 노트의 잠금을 변경할 수 없습니다.",
+    "lock_all": "모든 노트를 편집할 수 없게 잠그기",
+    "unlock_all": "모든 노트 잠금 해제",
+    "lock_all_confirm": "노트 {{count}}개를 모두 잠글까요? 잠금을 해제할 때까지 본문과 제목이 그대로 유지됩니다.",
+    "unlock_all_confirm": "노트 {{count}}개의 잠금을 모두 해제할까요? 하나씩 잠가 둔 노트까지 모두 다시 편집할 수 있게 됩니다.",
+    "locked_all_toast": "모든 노트를 잠갔습니다",
+    "unlocked_all_toast": "모든 노트의 잠금을 해제했습니다",
+    "lock_all_failed": "노트의 잠금을 변경할 수 없습니다."
   },
   "live_refresh": {
     "note_changed": "이 노트는 이 탭 외부에서 수정되었습니다.",

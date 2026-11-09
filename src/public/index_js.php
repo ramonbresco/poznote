@@ -81,6 +81,7 @@ function poznoteGetIndexJsGroups(): array {
         'js/notes.js',
         'js/ui.js',
         'js/note-edit-lock.js',
+        'js/lock-all-notes.js',
         'js/live-refresh.js',
         'js/date-time-format.js',
         'js/attachments.js',
