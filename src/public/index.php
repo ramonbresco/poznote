@@ -853,7 +853,7 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
             ? t_h('note_lock.unlock_all', [], 'Unlock all notes')
             : t_h('note_lock.lock_all', [], 'Lock all notes against editing');
         $lockAllButton = '<button type="button" class="sidebar-folder-toggle sidebar-lock-all' . ($lockAllOn ? ' active' : '') . '" id="sidebarLockAllBtn" data-action="toggle-lock-all-notes"'
-            . ' data-locked="' . ($lockAllOn ? '1' : '0') . '" data-note-count="' . (int)$lockAllCounts['total'] . '"'
+            . ' data-locked="' . ($lockAllOn ? '1' : '0') . '"'
             . ' aria-pressed="' . ($lockAllOn ? 'true' : 'false') . '" title="' . $lockAllLabel . '" aria-label="' . $lockAllLabel . '">'
             . '<i class="lucide ' . ($lockAllOn ? 'lucide-lock' : 'lucide-lock-open') . '"></i>'
             . '</button>';

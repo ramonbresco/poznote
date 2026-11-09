@@ -4,9 +4,9 @@
  *
  * The per-note lock lives in the menu of the note itself
  * (js/note-edit-lock.js); this one is the same state set on all of them, for
- * someone who keeps a whole account as a read-only archive. It asks first,
- * since it touches notes that are not on screen, and says how many it
- * changed.
+ * someone who keeps a whole account as a read-only archive. It acts straight
+ * away and says so in a toast: nothing is written and nothing is lost either
+ * way, and the same button undoes it.
  *
  * The button is rendered by index.php and rebuilt on every sidebar refresh,
  * hence the delegated listener rather than one bound to the element.
@@ -34,13 +34,6 @@
         if (typeof window.showNotificationPopup === 'function') {
             window.showNotificationPopup(message, variant || 'success');
         }
-    }
-
-    function confirmAction(message, title) {
-        if (window.modalAlert && typeof window.modalAlert.confirm === 'function') {
-            return window.modalAlert.confirm(message, title);
-        }
-        return Promise.resolve(window.confirm(message));
     }
 
     function paintButton(button, locked) {
@@ -74,50 +67,35 @@
 
     function run(button) {
         var locked = button.dataset.locked !== '1';
-        var count = parseInt(button.dataset.noteCount || '0', 10) || 0;
-        var message = locked
-            ? t('note_lock.lock_all_confirm', { count: count },
-                'Lock all {{count}} notes? Their text and their titles stay as they are until you unlock them.')
-            : t('note_lock.unlock_all_confirm', { count: count },
-                'Unlock all {{count}} notes? Every note becomes editable again, including the ones you locked one by one.');
-        var title = locked
-            ? t('note_lock.lock_all', {}, 'Lock all notes against editing')
-            : t('note_lock.unlock_all', {}, 'Unlock all notes');
 
-        confirmAction(message, title).then(function (confirmed) {
-            if (!confirmed) {
+        button.disabled = true;
+        fetch('/api/v1/notes/locked', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({ locked: locked })
+        }).then(function (response) {
+            return response.json().catch(function () { return null; });
+        }).then(function (data) {
+            button.disabled = false;
+            if (!data || !data.success) {
+                notify((data && data.error)
+                    || t('note_lock.lock_all_failed', {}, 'Unable to change the lock of the notes.'), 'warning');
                 return;
             }
 
-            button.disabled = true;
-            fetch('/api/v1/notes/locked', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify({ locked: locked })
-            }).then(function (response) {
-                return response.json().catch(function () { return null; });
-            }).then(function (data) {
-                button.disabled = false;
-                if (!data || !data.success) {
-                    notify((data && data.error)
-                        || t('note_lock.lock_all_failed', {}, 'Unable to change the lock of the notes.'), 'warning');
-                    return;
-                }
-
-                paintButton(button, locked);
-                paintOpenNote(locked);
-                notify(locked
-                    ? t('note_lock.locked_all_toast', {}, 'All notes locked')
-                    : t('note_lock.unlocked_all_toast', {}, 'All notes unlocked'));
-            }).catch(function () {
-                button.disabled = false;
-                notify(t('note_lock.lock_all_failed', {}, 'Unable to change the lock of the notes.'), 'warning');
-            });
+            paintButton(button, locked);
+            paintOpenNote(locked);
+            notify(locked
+                ? t('note_lock.locked_all_toast', {}, 'All notes locked')
+                : t('note_lock.unlocked_all_toast', {}, 'All notes unlocked'));
+        }).catch(function () {
+            button.disabled = false;
+            notify(t('note_lock.lock_all_failed', {}, 'Unable to change the lock of the notes.'), 'warning');
         });
     }
 

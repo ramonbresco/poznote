@@ -4839,8 +4839,6 @@
     "lock_failed": "无法更改此笔记的锁定状态。",
     "lock_all": "锁定所有笔记，禁止编辑",
     "unlock_all": "解锁所有笔记",
-    "lock_all_confirm": "要锁定全部 {{count}} 条笔记吗？在你解锁之前，它们的正文和标题都保持不变。",
-    "unlock_all_confirm": "要解锁全部 {{count}} 条笔记吗？所有笔记都会重新变为可编辑，包括你逐条锁定的那些。",
     "locked_all_toast": "所有笔记已锁定",
     "unlocked_all_toast": "所有笔记已解锁",
     "lock_all_failed": "无法更改笔记的锁定状态。"

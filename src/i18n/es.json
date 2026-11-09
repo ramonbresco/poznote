@@ -4743,8 +4743,6 @@
     "lock_failed": "No se ha podido cambiar el bloqueo de esta nota.",
     "lock_all": "Bloquear todas las notas",
     "unlock_all": "Desbloquear todas las notas",
-    "lock_all_confirm": "¿Bloquear las {{count}} notas? Su texto y sus títulos se quedan como están hasta que las desbloquees.",
-    "unlock_all_confirm": "¿Desbloquear las {{count}} notas? Todas vuelven a ser editables, incluidas las que habías bloqueado una a una.",
     "locked_all_toast": "Todas las notas bloqueadas",
     "unlocked_all_toast": "Todas las notas desbloqueadas",
     "lock_all_failed": "No se ha podido cambiar el bloqueo de las notas."

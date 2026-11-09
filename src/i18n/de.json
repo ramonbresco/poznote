@@ -4742,8 +4742,6 @@
     "lock_failed": "Die Sperre dieser Notiz konnte nicht geändert werden.",
     "lock_all": "Alle Notizen gegen Bearbeitung sperren",
     "unlock_all": "Alle Notizen entsperren",
-    "lock_all_confirm": "Alle {{count}} Notizen sperren? Ihr Text und ihre Titel bleiben, wie sie sind, bis du sie wieder entsperrst.",
-    "unlock_all_confirm": "Alle {{count}} Notizen entsperren? Jede Notiz lässt sich wieder bearbeiten, auch die, die du einzeln gesperrt hast.",
     "locked_all_toast": "Alle Notizen gesperrt",
     "unlocked_all_toast": "Alle Notizen entsperrt",
     "lock_all_failed": "Die Sperre der Notizen konnte nicht geändert werden."
