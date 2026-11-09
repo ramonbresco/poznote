@@ -3201,6 +3201,19 @@ class NotesController {
             return;
         }
         
+        // Converting rewrites the whole text, so a locked note refuses it
+        // like any other write (lib/note-lock.php)
+        if (is_numeric($id) && poznoteNoteIsLocked($this->con, (int)$id)) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'error' => poznoteNoteLockedMessage(),
+                'code' => POZNOTE_NOTE_LOCKED_CODE,
+                'locked' => true,
+            ], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
         try {
             $stmt = $this->con->prepare('SELECT id, heading, type, attachments, folder_id FROM entries WHERE id = ? AND trash = 0');
             $stmt->execute([$id]);
