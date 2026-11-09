@@ -195,6 +195,16 @@
     font-size: 0.75em !important;
 }
 
+/* The padlock that locks every note is a shackle over a solid body, where the
+   chevron next to it is two thin strokes and the menu three dots: at the size
+   of the row it carries far more ink than either and reads as the big one.
+   Trimmed by a seventh so the three weigh the same. In em, so the icon scale
+   setting still applies. */
+.notes-list-actions #sidebarLockAllBtn i,
+.notes-list-actions #sidebarLockAllBtn [class*="lucide-"] {
+    font-size: 0.65em !important;
+}
+
 /* Same hover background as the toggle */
 .notes-list-actions .sidebar-folder-toggle:hover {
     background: color-mix(in srgb, var(--pz-text-muted) 12%, transparent);
