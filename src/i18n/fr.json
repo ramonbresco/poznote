@@ -1342,7 +1342,9 @@
       "words": "Mots :",
       "lines": "Lignes :",
       "note_id": "ID de la note :",
-      "full_path": "Chemin complet :"
+      "full_path": "Chemin complet :",
+      "last_modified_from": "Dernière modification depuis :",
+      "locked": "Verrouillée :"
     },
     "attachments": {
       "count_singular": "1 fichier",
@@ -1357,6 +1359,15 @@
     },
     "errors": {
       "load_failed": "Impossible de charger les informations de la note."
+    },
+    "source": {
+      "app": "Poznote, sur un ordinateur",
+      "app_mobile": "Poznote, sur un téléphone ou une tablette",
+      "api": "L'API REST",
+      "mcp": "Une application connectée par MCP",
+      "extension": "L'extension de navigateur",
+      "ai": "L'assistant IA",
+      "public": "Un visiteur du partage public"
     }
   },
   "modals": {

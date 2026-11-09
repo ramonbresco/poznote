@@ -191,6 +191,7 @@ function aiReadNote($con, $noteId, $maxLen = 24000, $workspace = '', $offset = 0
  * Null when the write may proceed.
  */
 function aiNoteEditLockError(int $noteId, ?PDO $con = null): ?string {
+    require_once __DIR__ . '/write-source.php';
     // A note its owner locked refuses every change to its text, the
     // assistant's included (lib/note-lock.php). Checked first: unlike the
     // edit lock below, waiting will not clear it. The connection is optional
@@ -578,6 +579,7 @@ function aiSaveTaskSubtasks(PDO $con, array $note, int $index, array $subtasks, 
  * note. JSON error string, or null when written.
  */
 function aiPersistTasks(PDO $con, int $noteId, array $tasks, $actorUserId): ?string {
+    require_once __DIR__ . '/write-source.php';
     $lockError = aiNoteEditLockError($noteId, $con);
     if ($lockError !== null) return $lockError;
     $content = json_encode(array_values($tasks), JSON_UNESCAPED_UNICODE);
@@ -589,8 +591,8 @@ function aiPersistTasks(PDO $con, int $noteId, array $tasks, $actorUserId): ?str
     poznoteCreateSafetySnapshot($con, $noteId, 'ai');
     createDirectoryWithPermissions(dirname($filename));
     if (file_put_contents($filename, $content) === false) return json_encode(['error' => 'Failed to write note file']);
-    $con->prepare('UPDATE entries SET entry = ?, updated = ?, updated_by_user_id = ? WHERE id = ?')
-        ->execute([$content, gmdate('Y-m-d H:i:s'), $actorUserId, $noteId]);
+    $con->prepare('UPDATE entries SET entry = ?, updated = ?, updated_by_user_id = ?, updated_source = ? WHERE id = ?')
+        ->execute([$content, gmdate('Y-m-d H:i:s'), $actorUserId, POZNOTE_SOURCE_AI, $noteId]);
     return null;
 }
 
@@ -1217,8 +1219,8 @@ function aiWriteNoteFromMarkdown($con, array $note, string $content, $actorUserI
     if (file_put_contents($filename, $content) === false) {
         return json_encode(['error' => 'Failed to write note file']);
     }
-    $con->prepare('UPDATE entries SET entry = ?, updated = ?, updated_by_user_id = ? WHERE id = ?')
-        ->execute([$content, gmdate('Y-m-d H:i:s'), $actorUserId, $noteId]);
+    $con->prepare('UPDATE entries SET entry = ?, updated = ?, updated_by_user_id = ?, updated_source = ? WHERE id = ?')
+        ->execute([$content, gmdate('Y-m-d H:i:s'), $actorUserId, POZNOTE_SOURCE_AI, $noteId]);
     $result = ['ok' => true, 'note_id' => $noteId, 'title' => $note['heading']] + $extra;
     if ($snapshotTaken) {
         $result['previous_version'] = 'saved as a revision before this change (Revisions page of the note)';

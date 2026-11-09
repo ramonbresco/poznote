@@ -703,7 +703,9 @@
       "words": "単語数：",
       "lines": "行数：",
       "note_id": "ノートID：",
-      "full_path": "フルパス："
+      "full_path": "フルパス：",
+      "last_modified_from": "最終更新元:",
+      "locked": "ロック:"
     },
     "attachments": {
       "count_singular": "1件",
@@ -718,6 +720,15 @@
     },
     "errors": {
       "load_failed": "ノートの情報を読み込めませんでした。"
+    },
+    "source": {
+      "app": "Poznote（パソコン）",
+      "app_mobile": "Poznote（スマートフォンまたはタブレット）",
+      "api": "REST API",
+      "mcp": "MCP で接続されたアプリ",
+      "extension": "ブラウザー拡張機能",
+      "ai": "AI アシスタント",
+      "public": "公開共有の閲覧者"
     }
   },
   "attachments": {

@@ -8,6 +8,7 @@
 require_once __DIR__ . '/../../../note_loader.php';
 require_once __DIR__ . '/../../../users/db_master.php';
 require_once __DIR__ . '/../../../lib/note-lock.php';
+require_once __DIR__ . '/../../../lib/write-source.php';
 
 class NotesController {
     private PDO $con;
@@ -1615,6 +1616,11 @@ class NotesController {
             
             $updateFields[] = "workspace = ?";
             $updateParams[] = $workspace;
+
+            // Where this change came from, for the Information dialog
+            // (lib/write-source.php)
+            $updateFields[] = "updated_source = ?";
+            $updateParams[] = poznoteDetectWriteSource();
 
             // Locking and unlocking the note (lib/note-lock.php). Only this
             // request can change it; a locked note refused everything above.

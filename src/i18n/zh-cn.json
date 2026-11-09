@@ -1340,7 +1340,9 @@
       "note_id": "笔记 ID:",
       "full_path": "完整路径:",
       "created_by": "创建者：",
-      "last_modified_by": "最后修改者："
+      "last_modified_by": "最后修改者：",
+      "last_modified_from": "最后修改来自：",
+      "locked": "已锁定："
     },
     "attachments": {
       "count_singular": "1 个文件",
@@ -1355,6 +1357,15 @@
     "users": {
       "user_id": "用户 #{{id}}",
       "deleted": "用户 #{{id}}"
+    },
+    "source": {
+      "app": "Poznote，在电脑上",
+      "app_mobile": "Poznote，在手机或平板上",
+      "api": "REST API",
+      "mcp": "通过 MCP 连接的应用",
+      "extension": "浏览器扩展",
+      "ai": "AI 助手",
+      "public": "公开分享页的访客"
     }
   },
   "modals": {

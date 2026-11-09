@@ -161,7 +161,7 @@ try {
     // migrations, indexes, default settings, welcome note, legacy repair)
     // is skipped when the database is already at the current version, leaving
     // a single SELECT on the settings table per request.
-    $CURRENT_SCHEMA_VERSION = 54; // 54: entries.locked (a note its owner locked against editing); 53: shared_notes.password_exempt (per-note exemption from an inherited folder share password); 52: folders.title_color (#1729); 51: the speed dial's rail entry shown again; 50: entries.speed_dial_order
+    $CURRENT_SCHEMA_VERSION = 55; // 55: entries.updated_source (where the last change came from); 54: entries.locked (a note its owner locked against editing); 53: shared_notes.password_exempt (per-note exemption from an inherited folder share password); 52: folders.title_color (#1729); 51: the speed dial's rail entry shown again; 50: entries.speed_dial_order
     $currentVersion = 0;
 
     // Whether this database is being created right now, as opposed to an
@@ -272,7 +272,8 @@ try {
             dashboard_order INTEGER DEFAULT 0,
             speed_dial_order INTEGER DEFAULT 0,
             kanban_order INTEGER DEFAULT 0,
-            locked INTEGER DEFAULT 0
+            locked INTEGER DEFAULT 0,
+            updated_source TEXT
         )');
 
         // Create folders table for empty folders (scoped by workspace)
@@ -854,6 +855,20 @@ try {
             }
         } catch (Exception $e) {
             error_log('Could not add title style columns to entries: ' . $e->getMessage());
+        }
+
+        // Where the last change to the note came from: the editor, the REST
+        // API, the MCP server, the assistant, a visitor of an editable public
+        // share (lib/write-source.php). Shown in the Information dialog; a
+        // note written before this column stays blank there.
+        try {
+            $cols = $con->query("PRAGMA table_info(entries)")->fetchAll(PDO::FETCH_ASSOC);
+            $existingColumns = array_column($cols, 'name');
+            if (!in_array('updated_source', $existingColumns)) {
+                $con->exec("ALTER TABLE entries ADD COLUMN updated_source TEXT");
+            }
+        } catch (Exception $e) {
+            error_log('Could not add updated_source column to entries: ' . $e->getMessage());
         }
 
         // Ensure the lock column exists: a note its owner locked against

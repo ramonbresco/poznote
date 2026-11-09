@@ -78,6 +78,10 @@ class PoznoteClient:
         self._base_headers = {
             "Accept": "application/json",
             "X-User-ID": self.user_id,
+            # Poznote records where a change came from, so the Information
+            # dialog of a note can say "an app connected through MCP" rather
+            # than just "the API" (src/lib/write-source.php).
+            "X-Poznote-Client": "mcp",
         }
 
         if self.service_token:

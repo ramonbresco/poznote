@@ -761,8 +761,11 @@ class PublicController {
         createDirectoryWithPermissions($entriesDir);
         file_put_contents($filename, $content);
         
-        $stmt = $this->con->prepare('UPDATE entries SET entry = ?, updated = datetime("now") WHERE id = ?');
-        $stmt->execute([$content, $noteId]);
+        // A visitor of the share wrote this, which the Information dialog of
+        // the note reports (lib/write-source.php)
+        require_once dirname(__DIR__, 3) . '/lib/write-source.php';
+        $stmt = $this->con->prepare('UPDATE entries SET entry = ?, updated = datetime("now"), updated_source = ? WHERE id = ?');
+        $stmt->execute([$content, POZNOTE_SOURCE_PUBLIC, $noteId]);
     }
     
     private function sendSuccess(array $data): void {

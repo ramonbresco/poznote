@@ -66,7 +66,10 @@ function t(key, substitutions) {
  */
 function getHeaders(config) {
   const headers = {
-    'Authorization': 'Basic ' + btoa(`${config.username}:${config.password}`)
+    'Authorization': 'Basic ' + btoa(`${config.username}:${config.password}`),
+    // Poznote records where a change came from, so the Information dialog of
+    // a note can name the extension rather than just "the API".
+    'X-Poznote-Client': 'extension'
   };
   
   if (config.userId) {

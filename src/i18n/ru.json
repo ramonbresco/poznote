@@ -699,7 +699,9 @@
       "note_id": "ID заметки:",
       "full_path": "Полный путь:",
       "created_by": "Автор:",
-      "last_modified_by": "Последнее изменение:"
+      "last_modified_by": "Последнее изменение:",
+      "last_modified_from": "Последнее изменение из:",
+      "locked": "Заблокирована:"
     },
     "attachments": {
       "count_singular": "1 файл",
@@ -714,6 +716,15 @@
     "users": {
       "user_id": "Пользователь #{{id}}",
       "deleted": "Пользователь #{{id}}"
+    },
+    "source": {
+      "app": "Poznote, на компьютере",
+      "app_mobile": "Poznote, на телефоне или планшете",
+      "api": "REST API",
+      "mcp": "Приложение, подключённое через MCP",
+      "extension": "Расширение браузера",
+      "ai": "ИИ-помощник",
+      "public": "Посетитель публичной ссылки"
     }
   },
   "attachments": {

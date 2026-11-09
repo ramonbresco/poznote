@@ -703,7 +703,9 @@
       "words": "단어 수:",
       "lines": "줄 수:",
       "note_id": "노트 ID:",
-      "full_path": "전체 경로:"
+      "full_path": "전체 경로:",
+      "last_modified_from": "마지막 수정 위치:",
+      "locked": "잠김:"
     },
     "attachments": {
       "count_singular": "파일 1개",
@@ -718,6 +720,15 @@
     },
     "errors": {
       "load_failed": "노트 정보를 로드할 수 없습니다."
+    },
+    "source": {
+      "app": "Poznote, 컴퓨터에서",
+      "app_mobile": "Poznote, 휴대폰 또는 태블릿에서",
+      "api": "REST API",
+      "mcp": "MCP로 연결된 앱",
+      "extension": "브라우저 확장 프로그램",
+      "ai": "AI 어시스턴트",
+      "public": "공개 공유 방문자"
     }
   },
   "attachments": {

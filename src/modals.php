@@ -891,8 +891,13 @@ $pzNoteInfoRows = [
     'created_by' => t_h('info.labels.created_by', [], 'Created by:'),
     'updated' => t_h('info.labels.last_modified', [], 'Last Modified:'),
     'updated_by' => t_h('info.labels.last_modified_by', [], 'Last modified by:'),
+    // Where that change came from: Poznote on a computer or a phone, the
+    // REST API, an app connected through MCP, the assistant, a visitor of
+    // the public share (lib/write-source.php)
+    'updated_source' => t_h('info.labels.last_modified_from', [], 'Last modified from:'),
     'tags' => t_h('info.labels.tags', [], 'Tags:'),
     'favorite' => t_h('info.labels.favorite', [], 'Favorite:'),
+    'locked_text' => t_h('info.labels.locked', [], 'Locked:'),
     'attachments' => t_h('info.labels.attachments', [], 'Attachments:'),
     // Counted in the browser from the note on screen (js/note-stats.js), so
     // they match the line under the note title and include unsaved edits

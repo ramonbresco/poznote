@@ -798,6 +798,16 @@ class TasksController
      * Write the task array back to the entry file and the database.
      * Returns false when the response has already been sent (quota error).
      */
+    /**
+     * Where this change came from, for the Information dialog
+     * (lib/write-source.php).
+     */
+    private function writeSource(): string
+    {
+        require_once dirname(__DIR__, 3) . '/lib/write-source.php';
+        return poznoteDetectWriteSource();
+    }
+
     private function persistTasks(int $noteId, array $tasks): bool
     {
         // The whole task array is rewritten, so a task write from here would
@@ -838,8 +848,8 @@ class TasksController
         }
         file_put_contents($filename, $content);
 
-        $stmt = $this->con->prepare("UPDATE entries SET entry = ?, updated = datetime('now'), updated_by_user_id = " . getWriteActorUserId() . " WHERE id = ?");
-        $stmt->execute([$content, $noteId]);
+        $stmt = $this->con->prepare("UPDATE entries SET entry = ?, updated = datetime('now'), updated_by_user_id = " . getWriteActorUserId() . ", updated_source = ? WHERE id = ?");
+        $stmt->execute([$content, $this->writeSource(), $noteId]);
 
         return true;
     }

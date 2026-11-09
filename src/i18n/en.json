@@ -703,7 +703,9 @@
       "words": "Words:",
       "lines": "Lines:",
       "note_id": "Note ID:",
-      "full_path": "Full Path:"
+      "full_path": "Full Path:",
+      "last_modified_from": "Last modified from:",
+      "locked": "Locked:"
     },
     "attachments": {
       "count_singular": "1 file",
@@ -718,6 +720,15 @@
     },
     "errors": {
       "load_failed": "Could not load the note information."
+    },
+    "source": {
+      "app": "Poznote, on a computer",
+      "app_mobile": "Poznote, on a phone or tablet",
+      "api": "The REST API",
+      "mcp": "An app connected through MCP",
+      "extension": "The browser extension",
+      "ai": "The AI assistant",
+      "public": "A visitor of the public share"
     }
   },
   "attachments": {

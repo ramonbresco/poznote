@@ -1342,7 +1342,9 @@
       "note_id": "Notiz-ID:",
       "full_path": "Vollständiger Pfad:",
       "created_by": "Erstellt von:",
-      "last_modified_by": "Zuletzt geändert von:"
+      "last_modified_by": "Zuletzt geändert von:",
+      "last_modified_from": "Zuletzt geändert von:",
+      "locked": "Gesperrt:"
     },
     "attachments": {
       "count_singular": "1 Datei",
@@ -1357,6 +1359,15 @@
     "users": {
       "user_id": "Benutzer #{{id}}",
       "deleted": "Benutzer #{{id}}"
+    },
+    "source": {
+      "app": "Poznote, auf einem Computer",
+      "app_mobile": "Poznote, auf einem Handy oder Tablet",
+      "api": "Die REST-API",
+      "mcp": "Eine über MCP verbundene App",
+      "extension": "Die Browser-Erweiterung",
+      "ai": "Der KI-Assistent",
+      "public": "Ein Besucher der öffentlichen Freigabe"
     }
   },
   "modals": {

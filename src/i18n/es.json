@@ -1342,7 +1342,9 @@
       "note_id": "ID de la nota:",
       "full_path": "Ruta completa:",
       "created_by": "Creado por:",
-      "last_modified_by": "Última modificación por:"
+      "last_modified_by": "Última modificación por:",
+      "last_modified_from": "Última modificación desde:",
+      "locked": "Bloqueada:"
     },
     "attachments": {
       "count_singular": "1 archivo",
@@ -1357,6 +1359,15 @@
     "users": {
       "user_id": "Usuario #{{id}}",
       "deleted": "Usuario #{{id}}"
+    },
+    "source": {
+      "app": "Poznote, en un ordenador",
+      "app_mobile": "Poznote, en un móvil o una tableta",
+      "api": "La API REST",
+      "mcp": "Una aplicación conectada por MCP",
+      "extension": "La extensión del navegador",
+      "ai": "El asistente de IA",
+      "public": "Un visitante del enlace público"
     }
   },
   "modals": {

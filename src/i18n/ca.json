@@ -703,7 +703,9 @@
       "words": "Paraules:",
       "lines": "Línies:",
       "note_id": "Identificador de la nota:",
-      "full_path": "Camí complet:"
+      "full_path": "Camí complet:",
+      "last_modified_from": "Última modificació des de:",
+      "locked": "Bloquejada:"
     },
     "attachments": {
       "count_singular": "1 fitxer",
@@ -718,6 +720,15 @@
     },
     "errors": {
       "load_failed": "No s'ha pogut carregar la informació de la nota."
+    },
+    "source": {
+      "app": "Poznote, en un ordinador",
+      "app_mobile": "Poznote, en un mòbil o una tauleta",
+      "api": "L'API REST",
+      "mcp": "Una aplicació connectada per MCP",
+      "extension": "L'extensió del navegador",
+      "ai": "L'assistent d'IA",
+      "public": "Un visitant de l'enllaç públic"
     }
   },
   "attachments": {
