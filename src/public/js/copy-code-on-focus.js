@@ -28,6 +28,81 @@
      * override when present, otherwise the global code_block_line_numbers
      * setting carried by the body class.
      */
+    // ---- Folding a code block ------------------------------------------
+    //
+    // A long listing makes a note long for no reason, so each block can be
+    // folded to its badge. data-collapsed lives on the PRE: in an HTML note
+    // it is part of the stored content, so the block opens folded next time
+    // (lib/html-sanitize.php keeps the attribute); a Markdown note's preview
+    // is redrawn from the source, which has nowhere to carry it, so the
+    // choice goes to the same per-note store as the line numbers below.
+    var COLLAPSE_ICON_OPEN = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>';
+    var COLLAPSE_ICON_CLOSED = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+    var MARKDOWN_COLLAPSED_KEY = 'markdown_code_collapsed';
+
+    function isCodeBlockCollapsed(block) {
+        var pre = getPreForBlock(block);
+        return !!(pre && pre.getAttribute('data-collapsed') === '1');
+    }
+
+    function codeBlockLineCount(block) {
+        var pre = getPreForBlock(block);
+        if (!pre) return 0;
+        var code = pre.querySelector('code') || pre;
+        var text = (code.textContent || '').replace(/\n+$/, '');
+        return text === '' ? 0 : text.split('\n').length;
+    }
+
+    // The number of folded lines, shown next to the chevron. Decoration like
+    // the buttons around it: it lives in the action host, which is unwrapped
+    // before the note is stored (stripSearchHighlights in js/notes.js).
+    function paintCollapsedSummary(host, block, collapsed) {
+        if (!host) return;
+        var summary = host.querySelector('.code-block-collapsed-summary');
+        if (!collapsed) {
+            if (summary) summary.remove();
+            return;
+        }
+        if (!summary) {
+            summary = document.createElement('span');
+            summary.className = 'code-block-collapsed-summary';
+            summary.setAttribute('contenteditable', 'false');
+            host.insertBefore(summary, host.firstChild);
+        }
+        var lines = codeBlockLineCount(block);
+        summary.textContent = lines === 1
+            ? tl('editor.code_block_collapse.one_line', '1 line')
+            : tl('editor.code_block_collapse.lines', '{{count}} lines', { count: lines })
+                .replace('{{count}}', String(lines));
+    }
+
+    function setCollapseButtonState(btn, collapsed) {
+        var label = collapsed
+            ? tl('editor.code_block_collapse.expand', 'Expand the code block')
+            : tl('editor.code_block_collapse.collapse', 'Collapse the code block');
+        btn.innerHTML = collapsed ? COLLAPSE_ICON_CLOSED : COLLAPSE_ICON_OPEN;
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
+        btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    }
+
+    function toggleCodeBlockCollapsed(block) {
+        var pre = getPreForBlock(block);
+        if (!pre) return false;
+
+        var next = !isCodeBlockCollapsed(pre);
+        pre.setAttribute('data-collapsed', next ? '1' : '0');
+        storeMarkdownPreviewCollapsed(pre, next);
+
+        var noteentry = pre.closest ? pre.closest('.noteentry') : null;
+        if (noteentry && typeof window.markNoteAsModified === 'function'
+            && !pre.closest('.markdown-preview')) {
+            // HTML notes only: the attribute is part of what is stored
+            window.markNoteAsModified(noteentry.id.replace(/^entry/, ''));
+        }
+        return next;
+    }
+
     function areLineNumbersVisible(block) {
         var pre = getPreForBlock(block);
         if (pre && pre.hasAttribute('data-line-numbers')) {
@@ -94,6 +169,56 @@
             // (private mode, full storage: the choice lasts until the next redraw)
         }
     }
+
+    // The folded state of a Markdown preview's blocks, kept the same way as
+    // the line numbers right above: the preview is redrawn from the source,
+    // which has nowhere to carry it.
+    function readStoredMarkdownCollapsed() {
+        try {
+            var storage = window.__poznoteUserStorage || window.localStorage;
+            var parsed = JSON.parse(storage.getItem(MARKDOWN_COLLAPSED_KEY) || '{}');
+            return parsed && typeof parsed === 'object' ? parsed : {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function storeMarkdownPreviewCollapsed(pre, collapsed) {
+        var preview = pre.closest ? pre.closest('.markdown-preview') : null;
+        if (!preview) return;
+        var noteId = markdownPreviewNoteId(preview);
+        var rank = markdownPreviewBlocks(preview).indexOf(pre);
+        if (!noteId || rank === -1) return;
+        try {
+            var all = readStoredMarkdownCollapsed();
+            var note = all[noteId] && typeof all[noteId] === 'object' ? all[noteId] : {};
+            note[rank] = collapsed ? 1 : 0;
+            delete all[noteId];
+            all[noteId] = note;
+            var ids = Object.keys(all);
+            ids.slice(0, Math.max(0, ids.length - 300)).forEach(function (id) { delete all[id]; });
+            (window.__poznoteUserStorage || window.localStorage).setItem(MARKDOWN_COLLAPSED_KEY, JSON.stringify(all));
+        } catch (e) {
+            // (private mode, full storage: the choice lasts until the next redraw)
+        }
+    }
+
+    window.restoreMarkdownPreviewCollapsed = function (container) {
+        var root = (container && container.querySelectorAll) ? container : document;
+        var previews = Array.prototype.slice.call(root.querySelectorAll('.markdown-preview'));
+        if (root.classList && root.classList.contains('markdown-preview')) previews.push(root);
+        if (!previews.length && root.closest && root.closest('.markdown-preview')) previews.push(root.closest('.markdown-preview'));
+        if (!previews.length) return;
+        var all = readStoredMarkdownCollapsed();
+        previews.forEach(function (preview) {
+            var note = all[markdownPreviewNoteId(preview)];
+            if (!note || typeof note !== 'object') return;
+            markdownPreviewBlocks(preview).forEach(function (pre, rank) {
+                if (note[rank] === undefined || pre.hasAttribute('data-collapsed')) return;
+                pre.setAttribute('data-collapsed', note[rank] ? '1' : '0');
+            });
+        });
+    };
 
     // Called before the gutters are drawn (js/syntax-highlight.js)
     window.restoreMarkdownPreviewLineNumbers = function (container) {
@@ -666,6 +791,31 @@
             var allowLineNumbers = canToggleLineNumbers(block);
             
             // Check if button already exists
+            var existingCollapseBtn = findActionButton(block, actionHost, 'code-block-collapse-btn');
+            var collapseBtn;
+            if (existingCollapseBtn) {
+                collapseBtn = existingCollapseBtn.cloneNode(false);
+                existingCollapseBtn.parentNode.replaceChild(collapseBtn, existingCollapseBtn);
+            } else {
+                collapseBtn = document.createElement('button');
+                collapseBtn.className = 'code-block-collapse-btn';
+                collapseBtn.setAttribute('type', 'button');
+                collapseBtn.setAttribute('contenteditable', 'false');
+            }
+            setCollapseButtonState(collapseBtn, isCodeBlockCollapsed(block));
+            if (collapseBtn.parentNode !== actionHost) {
+                if (collapseBtn.parentNode) collapseBtn.parentNode.removeChild(collapseBtn);
+                actionHost.appendChild(collapseBtn);
+            }
+            paintCollapsedSummary(actionHost, block, isCodeBlockCollapsed(block));
+            collapseBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var collapsed = toggleCodeBlockCollapsed(block);
+                setCollapseButtonState(collapseBtn, collapsed);
+                paintCollapsedSummary(actionHost, block, collapsed);
+            });
+
             var existingBtn = findActionButton(block, actionHost, 'code-block-copy-btn');
             var existingDelBtn = findActionButton(block, actionHost, 'code-block-delete-btn');
             var existingLineBtn = findActionButton(block, actionHost, 'code-block-line-numbers-btn');

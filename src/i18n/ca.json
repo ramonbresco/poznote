@@ -2137,6 +2137,12 @@
       "live_hint": "Editar la nota ja amb format: la sintaxi Markdown apareix al voltant del cursor.",
       "rich_hint": "Editar la nota com en un processador de textos: la sintaxi Markdown no es mostra mai.",
       "split_hint": "Codi Markdown a un costat i previsualització amb format a l'altre, actualitzada mentre escrius."
+    },
+    "code_block_collapse": {
+      "collapse": "Plega el bloc de codi",
+      "expand": "Desplega el bloc de codi",
+      "one_line": "1 línia",
+      "lines": "{{count}} línies"
     }
   },
   "image_menu": {

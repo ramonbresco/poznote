@@ -595,6 +595,9 @@
         if (typeof window.restoreMarkdownPreviewLineNumbers === 'function') {
             window.restoreMarkdownPreviewLineNumbers(root);
         }
+        if (typeof window.restoreMarkdownPreviewCollapsed === 'function') {
+            window.restoreMarkdownPreviewCollapsed(root);
+        }
 
         root.querySelectorAll('.noteentry pre > code').forEach(function(codeEl) {
             if (shouldNumberCodeBlock(codeEl)) {

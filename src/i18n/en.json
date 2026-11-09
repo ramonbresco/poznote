@@ -2137,6 +2137,12 @@
       "live_hint": "Edit the note already formatted: the Markdown syntax shows up around the cursor.",
       "rich_hint": "Edit the note like a word processor: the Markdown syntax is never shown.",
       "split_hint": "Markdown source on one side, formatted preview on the other, updated as you type."
+    },
+    "code_block_collapse": {
+      "collapse": "Collapse the code block",
+      "expand": "Expand the code block",
+      "one_line": "1 line",
+      "lines": "{{count}} lines"
     }
   },
   "image_menu": {

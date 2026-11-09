@@ -39,6 +39,7 @@ function poznoteGetIndexCssGroups(): array {
             'css/components/selection.css',
             'css/components/folder-title.css',
             'css/components/task-priority.css',
+            'css/components/code-block-fold.css',
             'css/utilities.css',
             'css/layout.css',
             'css/icon-sidebar.css',

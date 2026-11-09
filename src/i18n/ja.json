@@ -2137,6 +2137,12 @@
       "live_hint": "整形された状態のまま編集します。カーソル付近にだけ Markdown 記法が表示されます。",
       "rich_hint": "ワープロのように編集します。Markdown 記法は表示されません。",
       "split_hint": "片側に Markdown ソース、もう片側に整形プレビューを表示し、入力に合わせて更新します。"
+    },
+    "code_block_collapse": {
+      "collapse": "コードブロックを折りたたむ",
+      "expand": "コードブロックを展開",
+      "one_line": "1 行",
+      "lines": "{{count}} 行"
     }
   },
   "image_menu": {

@@ -1310,6 +1310,12 @@
       "live_hint": "Die Notiz bereits formatiert bearbeiten: Die Markdown-Syntax erscheint um den Cursor herum.",
       "rich_hint": "Die Notiz wie in einer Textverarbeitung bearbeiten: Die Markdown-Syntax wird nie angezeigt.",
       "split_hint": "Markdown-Quelle auf der einen Seite, formatierte Vorschau auf der anderen, beim Tippen aktualisiert."
+    },
+    "code_block_collapse": {
+      "collapse": "Codeblock einklappen",
+      "expand": "Codeblock ausklappen",
+      "one_line": "1 Zeile",
+      "lines": "{{count}} Zeilen"
     }
   },
   "info": {

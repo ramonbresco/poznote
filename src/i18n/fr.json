@@ -1310,6 +1310,12 @@
       "live_hint": "Éditer la note déjà mise en forme : la syntaxe Markdown apparaît autour du curseur.",
       "rich_hint": "Éditer la note comme dans un traitement de texte : la syntaxe Markdown n'est jamais affichée.",
       "split_hint": "Source Markdown d'un côté, aperçu mis en forme de l'autre, mis à jour pendant la saisie."
+    },
+    "code_block_collapse": {
+      "collapse": "Replier le bloc de code",
+      "expand": "Déplier le bloc de code",
+      "one_line": "1 ligne",
+      "lines": "{{count}} lignes"
     }
   },
   "info": {

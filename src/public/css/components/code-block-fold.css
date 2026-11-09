@@ -1,0 +1,85 @@
+/**
+ * Code block folding.
+ *
+ * The chevron of a code block (js/copy-code-on-focus.js) and what a folded
+ * block looks like. Its own file because the two pages that show code blocks
+ * load different stylesheets for them: the note page has css/code-blocks.css,
+ * a public share has css/syntax-highlight.css, and folding belongs to both.
+ */
+
+/* A folded code block (js/copy-code-on-focus.js): the listing is hidden and
+   the block shrinks to its badge, the chevron and the number of lines. A long
+   listing otherwise makes a note long for nothing. data-collapsed sits on the
+   PRE, so an HTML note reopens its blocks folded; a Markdown preview, redrawn
+   from the source, keeps the choice in the browser. */
+pre[data-collapsed="1"] > code {
+    /* !important because the pages that show code blocks each set their own
+       `display` on `pre code` from a heavier selector (.public-note .content
+       pre code, for one), and folding is a state the reader just asked for,
+       not a default this file is proposing. */
+    display: none !important;
+}
+
+pre[data-collapsed="1"] {
+    min-height: 0;
+    padding-bottom: 6px;
+}
+
+/* The chevron joins the row of controls each page puts in the top-right
+   corner of a code block. The two pages place that row differently (the note
+   page from css/code-blocks.css, a public share from css/public_note.css),
+   so the offset is given once per context rather than guessed. */
+.code-block-collapse-btn {
+    position: absolute;
+    top: 2px;
+    right: 104px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: var(--pz-radius-sm);
+    background: transparent;
+    color: var(--pz-text-secondary);
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+}
+
+.code-block-collapse-btn:hover,
+.code-block-collapse-btn:focus-visible {
+    opacity: 1;
+}
+
+/* The number of folded lines, to the left of the chevron */
+.code-block-collapsed-summary {
+    position: absolute;
+    top: 2px;
+    right: 136px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    color: var(--pz-text-muted);
+    font-family: inherit;
+    font-size: 12px;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    z-index: 10;
+}
+
+/* A public share shows a copy button alone, in the very corner */
+.public-note .content .code-block-collapse-btn,
+.public-folder .code-block-collapse-btn {
+    top: 8px;
+    right: 44px;
+}
+
+.public-note .content .code-block-collapsed-summary,
+.public-folder .code-block-collapsed-summary {
+    top: 8px;
+    right: 76px;
+}
