@@ -1609,6 +1609,11 @@
         const summary = document.createElement('summary');
         summary.className = 'toggle-header';
         summary.textContent = window.t ? window.t('slash_menu.toggle_placeholder', null, 'Toggle') : 'Toggle';
+        // Emptying the header leaves a bare triangle otherwise, and the
+        // content behind it looks lost (css/tasks.css draws the placeholder)
+        summary.setAttribute('data-ph', window.t
+            ? window.t('slash_menu.toggle_placeholder', null, 'Toggle')
+            : 'Toggle');
 
         const toggleContentPlaceholder = window.t
             ? window.t('slash_menu.toggle_content_placeholder', null, 'Write inside the toggle…')

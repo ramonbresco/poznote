@@ -6,6 +6,34 @@
  */
 
 /**
+ * A toggle whose header text was deleted is a bare triangle with the content
+ * hidden behind it, which reads as an empty toggle and is how one loses what
+ * is inside. The placeholder (css/tasks.css) keeps the line legible and
+ * clickable. Written here rather than stored with the note, so the toggles
+ * from before this version get it too.
+ */
+function markToggleHeaders(root) {
+    try {
+        const scope = (root && root.querySelectorAll) ? root : document;
+        const label = window.t
+            ? window.t('slash_menu.toggle_placeholder', null, 'Toggle')
+            : 'Toggle';
+        scope.querySelectorAll('details.toggle-block > summary').forEach(function (summary) {
+            if (!summary.hasAttribute('data-ph')) {
+                summary.setAttribute('data-ph', label);
+            }
+        });
+    } catch (e) {
+        // A note without toggles, or a page that has none: nothing to do
+    }
+}
+
+// A note rendered by the server never goes through reinitializeNoteContent()
+document.addEventListener('DOMContentLoaded', function () {
+    markToggleHeaders();
+});
+
+/**
  * Translate callout titles in HTML content
  * This function finds all callout elements and translates their titles to the current language
  */
@@ -249,6 +277,7 @@ function reinitializeNoteContent(options) {
                 toggle.removeAttribute('open');
             });
         }
+        markToggleHeaders();
     } catch (e) {
         console.error('Error closing toggle blocks:', e);
     }

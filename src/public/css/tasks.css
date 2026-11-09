@@ -1026,6 +1026,23 @@ details.callout:not([open]) .callout-fold-icon {
     /* padding-right: 10px; */
     /* border: 1px solid #e1e4e8; */
     border-radius: var(--pz-radius);
+    /* Lets the height below animate between 0 and auto. Set here rather than
+       on :root so no other `auto` in the app starts interpolating. */
+    interpolate-size: allow-keywords;
+}
+
+/* Opening and closing slide instead of jumping. ::details-content is the
+   box a <details> puts its content in; a browser that does not know the
+   pseudo-element drops these two rules and keeps the instant open it had. */
+.toggle-block::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size 220ms ease, content-visibility 220ms;
+    transition-behavior: allow-discrete;
+}
+
+.toggle-block[open]::details-content {
+    block-size: auto;
 }
 
 /* Ensure caret is visible at the bottom of the open block */
@@ -1101,10 +1118,14 @@ details.callout:not([open]) .callout-fold-icon {
     line-height: 1.6;
 }
 
-/* HTML Mode: Content inside wrapper */
+/* HTML Mode: Content inside wrapper. The left padding lines the content up
+   under the header's text rather than under its triangle, and the guide line
+   shows how far the toggle reaches. */
 .toggle-block>.toggle-content {
-    padding: 8px 10px 0px 0px;
+    padding: 8px 10px 0 16px;
     border-top: none;
+    border-left: 1px solid var(--pz-border);
+    margin-left: 6px;
     /* Removed in favor of summary border */
 }
 
@@ -1113,6 +1134,18 @@ details.callout:not([open]) .callout-fold-icon {
     content: attr(data-ph);
     color: var(--pz-text-subtle);
     font-style: italic;
+    opacity: 0.6;
+}
+
+/* A header whose text was deleted used to leave a bare triangle with the
+   content hidden behind it, which reads as an empty toggle and is how people
+   lose what is inside. The placeholder keeps the line legible and clickable. */
+.toggle-block>summary[data-ph]:empty::after,
+.toggle-block>summary[data-ph]:has(> br:only-child)::after {
+    content: attr(data-ph);
+    color: var(--pz-text-subtle);
+    font-style: italic;
+    font-weight: var(--pz-weight-normal);
     opacity: 0.6;
 }
 
