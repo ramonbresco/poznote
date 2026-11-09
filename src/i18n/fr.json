@@ -544,7 +544,8 @@
       "connected_apps": "Connectez des applications de chat comme ChatGPT ou Claude à vos notes via le serveur MCP, et déconnectez-les à tout moment.",
       "custom_logo": "Remplacer le logo Poznote par le vôtre, pour tous les utilisateurs : dans l'onglet du navigateur, sur la page de connexion, dans la barre d'icônes et comme icône de l'application installée.",
       "two_factor_required": "Chaque compte qui se connecte avec un mot de passe doit utiliser l'authentification à deux facteurs. Un compte qui ne l'a pas la configure à sa prochaine connexion, et les sessions ouvertes sans elle prennent fin. Son mot de passe ne fonctionne plus via l'API : les applications utilisent un mot de passe d'application. Les connexions SSO ne sont pas concernées, le fournisseur d'identité gère leur second facteur.",
-      "tab_follows_note": "Nommer l'onglet du navigateur d'après la note qui y est ouverte, avec l'icône de cette note, au lieu du nom et de l'icône de cette instance. Plusieurs onglets ouverts sur plusieurs notes se distinguent alors."
+      "tab_follows_note": "Nommer l'onglet du navigateur d'après la note qui y est ouverte, avec l'icône de cette note, au lieu du nom et de l'icône de cette instance. Plusieurs onglets ouverts sur plusieurs notes se distinguent alors.",
+      "update_badge_level": "Choisissez quelles versions posent la pastille rouge sur les entrées Réglages. Quel que soit le choix, la nouvelle version reste annoncée sur cette page, rien n'est caché."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "Sur mobile, la barre d'outils au-dessus du clavier a un bouton + qui ouvre le même menu, quel que soit ce réglage."
@@ -930,7 +931,8 @@
       "workspace_activity_emails": "Emails des espaces partagés",
       "diary_template": "Modèle d'entrée de journal",
       "markdown_view_cycle": "Menu des vues",
-      "tab_follows_note": "L'onglet suit la note ouverte"
+      "tab_follows_note": "L'onglet suit la note ouverte",
+      "update_badge_level": "Pastille de mise à jour"
     },
     "badges": {
       "font_size_default": "par défaut ({{size}}px)",
@@ -2024,6 +2026,13 @@
       "reset_confirm": "Revenir au logo Poznote pour tous les utilisateurs ?",
       "invalid": "Cette image ne peut pas être utilisée. Choisissez un fichier PNG, JPEG, WebP, GIF ou SVG de 20 Mo au plus.",
       "failed": "Le logo n'a pas pu être enregistré."
+    },
+    "update_badge_level": {
+      "options": {
+        "all": "Chaque version",
+        "minor": "Versions mineures et majeures",
+        "major": "Versions majeures seulement"
+      }
     }
   },
   "notes_list": {

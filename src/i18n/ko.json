@@ -213,7 +213,8 @@
       "connected_apps": "MCP 서버를 통해 ChatGPT, Claude 같은 채팅 앱을 노트에 연결하고 언제든지 연결을 해제할 수 있습니다.",
       "custom_logo": "모든 사용자에게 Poznote 로고 대신 자체 로고를 표시합니다. 브라우저 탭, 로그인 페이지, 아이콘 바, 설치된 앱의 아이콘에 적용됩니다.",
       "two_factor_required": "비밀번호로 로그인하는 모든 계정은 2단계 인증을 사용해야 합니다. 설정하지 않은 계정은 다음 로그인 때 설정하며, 2단계 인증 없이 열린 세션은 종료됩니다. 계정 비밀번호는 API에서 더 이상 사용할 수 없으므로 앱은 앱 비밀번호를 사용합니다. SSO 로그인은 해당되지 않으며, 두 번째 요소는 ID 공급자가 관리합니다.",
-      "tab_follows_note": "브라우저 탭에 이 인스턴스의 이름과 아이콘 대신 그 탭에서 열린 노트의 제목과 아이콘을 표시합니다. 여러 노트를 연 여러 탭을 구분할 수 있습니다."
+      "tab_follows_note": "브라우저 탭에 이 인스턴스의 이름과 아이콘 대신 그 탭에서 열린 노트의 제목과 아이콘을 표시합니다. 여러 노트를 연 여러 탭을 구분할 수 있습니다.",
+      "update_badge_level": "어떤 릴리스에서 설정 항목에 빨간 점을 표시할지 고릅니다. 무엇을 고르든 새 버전은 이 페이지에서 계속 알려 주므로 숨겨지는 것은 없습니다."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "모바일에서는 이 설정과 관계없이 키보드 위 도구 모음의 + 버튼으로 같은 메뉴를 열 수 있습니다."
@@ -563,7 +564,8 @@
       "workspace_activity_emails": "공유 작업 공간 알림 이메일",
       "diary_template": "일기 항목 템플릿",
       "markdown_view_cycle": "보기 메뉴",
-      "tab_follows_note": "탭이 열린 노트를 따라감"
+      "tab_follows_note": "탭이 열린 노트를 따라감",
+      "update_badge_level": "업데이트 점"
     },
     "badges": {
       "font_size_default": "기본값({{size}}px)",
@@ -1496,6 +1498,13 @@
       "reset_confirm": "모든 사용자에게 Poznote 로고로 되돌릴까요?",
       "invalid": "이 이미지는 사용할 수 없습니다. 20MB 이하의 PNG, JPEG, WebP, GIF 또는 SVG 파일을 선택하세요.",
       "failed": "로고를 저장하지 못했습니다."
+    },
+    "update_badge_level": {
+      "options": {
+        "all": "모든 릴리스",
+        "minor": "마이너 및 메이저 릴리스",
+        "major": "메이저 릴리스만"
+      }
     }
   },
   "notes_list": {

@@ -55,6 +55,42 @@ function checkForUpdates() {
         });
 }
 
+/**
+ * Which releases light the dot up on the settings entries: every one of them
+ * ('all', what this always did), the ones that change the first two numbers
+ * ('minor'), or only a new major version ('major'). Reported by a user for
+ * whom the dot was always on and so meant nothing. The release itself is
+ * announced in Settings > About either way; this only decides the dot.
+ */
+function updateBadgeLevel() {
+    var level = '';
+    try {
+        var el = document.getElementById('poznote-update-badge-level');
+        if (el) {
+            level = JSON.parse(el.textContent || '""');
+        }
+    } catch (e) {
+        level = '';
+    }
+    return ['all', 'minor', 'major'].indexOf(level) !== -1 ? level : 'all';
+}
+
+function updateDeservesBadge(kind) {
+    var level = updateBadgeLevel();
+    if (level === 'all') {
+        return true;
+    }
+    // An unreadable version comes back as 'major', so nothing is hidden by
+    // accident; an answer from an older server carries no kind at all.
+    if (!kind) {
+        return true;
+    }
+    if (level === 'minor') {
+        return kind === 'major' || kind === 'minor';
+    }
+    return kind === 'major';
+}
+
 // Check for updates automatically (silent, once per day)
 function checkForUpdatesAutomatic() {
     // Only check for updates if user is admin
@@ -99,7 +135,7 @@ function checkForUpdatesAutomatic() {
             return response.json();
         })
         .then(function (data) {
-            if (data.has_updates && !data.error) {
+            if (data.has_updates && !data.error && updateDeservesBadge(data.update_kind)) {
                 // Store update availability and version information
                 localStorage.setItem('poznote_update_available', 'true');
                 showUpdateBadge();

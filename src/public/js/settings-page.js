@@ -761,6 +761,14 @@
             save: saveSettingValue('workspace_activity_emails')
         });
 
+        initInlineControl('update-badge-level-select', {
+            load: loadSettingValue('update_badge_level', function (value) {
+                value = String(value === null || value === undefined ? '' : value).trim();
+                return ['all', 'minor', 'major'].indexOf(value) !== -1 ? value : 'all';
+            }),
+            save: saveSettingValue('update_badge_level')
+        });
+
         initInlineControl('markdown-default-view-mode-select', {
             load: loadSettingValue('markdown_default_view_mode', normalizeMarkdownDefaultViewMode),
             save: saveSettingValue('markdown_default_view_mode')

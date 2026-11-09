@@ -545,7 +545,8 @@
       "connected_apps": "Verbinden Sie Chat-Apps wie ChatGPT oder Claude über den MCP-Server mit Ihren Notizen und trennen Sie sie jederzeit.",
       "custom_logo": "Das Poznote-Logo für alle Benutzer durch ein eigenes ersetzen: im Browser-Tab, auf der Anmeldeseite, in der Symbolleiste und als Symbol der installierten App.",
       "two_factor_required": "Jedes Konto, das sich mit einem Passwort anmeldet, muss die Zwei-Faktor-Authentifizierung nutzen. Ein Konto ohne sie richtet sie bei der nächsten Anmeldung ein, und ohne sie geöffnete Sitzungen werden beendet. Das Kontopasswort funktioniert nicht mehr über die API: Apps verwenden stattdessen ein App-Passwort. SSO-Anmeldungen sind nicht betroffen, der Identitätsanbieter verwaltet ihren zweiten Faktor.",
-      "tab_follows_note": "Benennt den Browser-Tab nach der darin geöffneten Notiz, mit deren Symbol, statt nach Name und Symbol dieser Instanz. So lassen sich mehrere Tabs mit mehreren Notizen unterscheiden."
+      "tab_follows_note": "Benennt den Browser-Tab nach der darin geöffneten Notiz, mit deren Symbol, statt nach Name und Symbol dieser Instanz. So lassen sich mehrere Tabs mit mehreren Notizen unterscheiden.",
+      "update_badge_level": "Lege fest, welche Versionen den roten Punkt auf den Einstellungen anzeigen. Was du auch wählst, die neue Version wird auf dieser Seite weiterhin angekündigt, nichts wird verborgen."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "Auf Mobilgeräten hat die Leiste über der Tastatur eine +-Schaltfläche, die unabhängig von dieser Einstellung dasselbe Menü öffnet."
@@ -930,7 +931,8 @@
       "workspace_activity_emails": "E-Mails zu geteilten Arbeitsbereichen",
       "diary_template": "Vorlage für Tagebucheinträge",
       "markdown_view_cycle": "Ansichtsmenü",
-      "tab_follows_note": "Tab folgt der geöffneten Notiz"
+      "tab_follows_note": "Tab folgt der geöffneten Notiz",
+      "update_badge_level": "Update-Punkt"
     },
     "badges": {
       "font_size_default": "Standard ({{size}}px)",
@@ -2018,6 +2020,13 @@
       "reset_confirm": "Für alle Benutzer zum Poznote-Logo zurückkehren?",
       "invalid": "Dieses Bild kann nicht verwendet werden. Wählen Sie eine PNG-, JPEG-, WebP-, GIF- oder SVG-Datei mit höchstens 20 MB.",
       "failed": "Das Logo konnte nicht gespeichert werden."
+    },
+    "update_badge_level": {
+      "options": {
+        "all": "Jede Version",
+        "minor": "Minor- und Major-Versionen",
+        "major": "Nur Major-Versionen"
+      }
     }
   },
   "notes_list": {

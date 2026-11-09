@@ -299,6 +299,23 @@ if (function_exists('poznoteTidyIconSidebarDividers')) {
 // is deliberately not a .update-badge: js/utils-updates.js shows and hides
 // every element of that class on each release check, and would take this one
 // with it.
+// Which releases light the dot up (js/utils-updates.js). Read here because
+// the rail is on every page that can show one, settings.php included.
+$iconSidebarUpdateBadgeLevel = 'all';
+if (function_exists('getGlobalSetting')) {
+    try {
+        $iconSidebarUpdateBadgeLevel = (string)getGlobalSetting('update_badge_level', 'all');
+    } catch (Throwable $e) {
+        $iconSidebarUpdateBadgeLevel = 'all';
+    }
+}
+if (!in_array($iconSidebarUpdateBadgeLevel, ['all', 'minor', 'major'], true)) {
+    $iconSidebarUpdateBadgeLevel = 'all';
+}
+echo '<script type="application/json" id="poznote-update-badge-level">'
+    . json_encode($iconSidebarUpdateBadgeLevel, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
+    . '</script>' . "\n";
+
 require_once __DIR__ . '/lib/default-credentials.php';
 // The signed-in person's own credentials, not the active account's: the two
 // differ while someone is looking at an account shared with them, and a dot

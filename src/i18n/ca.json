@@ -213,7 +213,8 @@
       "connected_apps": "Connecteu aplicacions de xat com ara ChatGPT o Claude a les notes mitjançant el servidor MCP i desconnecteu-les en qualsevol moment.",
       "custom_logo": "Substituïu el logotip del Poznote pel vostre, per a tots els usuaris: a la pestanya del navegador, a la pàgina d'inici de sessió, a la barra lateral d'icones i com a icona de l'aplicació instal·lada.",
       "two_factor_required": "Tots els comptes que inicien la sessió amb contrasenya han de fer servir l'autenticació de dos factors. Un compte que no la té la configura en el proper inici de sessió, i les sessions obertes sense aquesta autenticació es tanquen. La contrasenya del compte deixa de funcionar a través de l'API: les aplicacions han de fer servir una contrasenya d'aplicació. Els inicis de sessió amb SSO no s'hi veuen afectats, ja que el proveïdor d'identitat en gestiona el segon factor.",
-      "tab_follows_note": "Anomena la pestanya del navegador segons la nota que hi ha oberta, amb la icona d'aquella nota, en lloc del nom i la icona d'aquesta instància. Així es distingeixen diverses pestanyes obertes en diverses notes."
+      "tab_follows_note": "Anomena la pestanya del navegador segons la nota que hi ha oberta, amb la icona d'aquella nota, en lloc del nom i la icona d'aquesta instància. Així es distingeixen diverses pestanyes obertes en diverses notes.",
+      "update_badge_level": "Tria quines versions posen el punt vermell a les entrades de Configuració. Triïs el que triïs, la nova versió continua anunciant-se en aquesta pàgina, no s'amaga res."
     },
     "card_notes": {
       "slash_menu_trigger_mobile": "En un mòbil, la barra d'eines de damunt del teclat té un botó + que obre el mateix menú, independentment d'aquest paràmetre."
@@ -563,7 +564,8 @@
       "workspace_activity_emails": "Correus dels espais de treball compartits",
       "diary_template": "Plantilla de les entrades del diari",
       "markdown_view_cycle": "Menú de visualització",
-      "tab_follows_note": "La pestanya segueix la nota oberta"
+      "tab_follows_note": "La pestanya segueix la nota oberta",
+      "update_badge_level": "Punt d'actualització"
     },
     "badges": {
       "font_size_default": "per defecte ({{size}} px)",
@@ -1496,6 +1498,13 @@
       "reset_confirm": "Voleu tornar al logotip del Poznote per a tots els usuaris?",
       "invalid": "Aquesta imatge no es pot fer servir. Trieu un fitxer PNG, JPEG, WebP, GIF o SVG de 20 MB com a màxim.",
       "failed": "No s'ha pogut desar el logotip."
+    },
+    "update_badge_level": {
+      "options": {
+        "all": "Totes les versions",
+        "minor": "Versions menors i majors",
+        "major": "Només versions majors"
+      }
     }
   },
   "notes_list": {

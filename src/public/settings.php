@@ -305,6 +305,7 @@ if ($isAdmin) {
             'tenant_isolation_features',
             'tenant_isolation_applied_ui_keys',
             'outbound_allowed_hosts',
+            'update_badge_level',
         ];
         foreach ($settingsPageGlobalKeys as $settingsPageKey) {
             $settingsPageConfig['settings'][$settingsPageKey] = getGlobalSetting($settingsPageKey, '');
@@ -2077,6 +2078,22 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     <span class="setting-status enabled"><?php echo $app_version_display; ?></span>
                 </div>
             </div>
+
+            <?php if ($isAdmin): ?>
+            <!-- Which releases light the dot up on the Settings entries -->
+            <div class="home-card settings-inline-card settings-card-stacks" id="update-badge-level-card">
+                <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.update_badge_level', [], 'Choose which releases put the red dot on the Settings entries. Whatever you pick, the new version is still announced on this page, so nothing is hidden.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                <div class="home-card-icon"><i class="lucide lucide-bell-dot"></i></div>
+                <div class="home-card-content">
+                    <label class="home-card-title" for="update-badge-level-select"><?php echo t_h('display.cards.update_badge_level', [], 'Update dot'); ?></label>
+                    <select id="update-badge-level-select" class="settings-inline-control settings-inline-select" data-control="update-badge-level-select">
+                        <option value="all"><?php echo t_h('modals.update_badge_level.options.all', [], 'Every release'); ?></option>
+                        <option value="minor"><?php echo t_h('modals.update_badge_level.options.minor', [], 'Minor and major releases'); ?></option>
+                        <option value="major"><?php echo t_h('modals.update_badge_level.options.major', [], 'Major releases only'); ?></option>
+                    </select>
+                </div>
+            </div>
+            <?php endif; ?>
 
             <!-- "What's new" popup after an update (js/whats-new.js) -->
             <!-- settings-card-stacks: on a phone the Show button would leave

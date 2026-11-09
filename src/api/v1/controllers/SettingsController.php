@@ -27,6 +27,9 @@ class SettingsController {
         'tenant_isolation_features',
         'tenant_isolation_applied_ui_keys',
         'outbound_allowed_hosts',
+        // Which releases light the red dot on the Settings entries
+        // ('all', 'minor', 'major'; js/utils-updates.js)
+        'update_badge_level',
         'import_max_individual_files',
         'import_max_zip_files',
         'user_max_notes',
