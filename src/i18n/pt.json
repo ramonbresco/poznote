@@ -1728,6 +1728,10 @@
       "json": {
         "title": "Baixar como JSON",
         "description": "Baixar os dados brutos da lista de tarefas como arquivo JSON"
+      },
+      "html_public": {
+        "title": "Exportar como página publicada",
+        "description": "Descarregar um único ficheiro HTML com o mesmo aspeto da página pública desta nota, imagens incluídas"
       }
     },
     "task_move": {

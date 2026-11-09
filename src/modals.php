@@ -826,6 +826,15 @@ $modalsPasswordDisabledHelp = $modalsPasswordDisabledReason === 'sso_only'
                     </div>
                 </div>
 
+                <!-- The note as its public page shows it, in one file -->
+                <div class="export-option export-option-html-public" data-action="select-export-type" data-type="html_public">
+                    <i class="lucide lucide-globe"></i>
+                    <div>
+                        <span><?php echo t_h('modals.export.html_public.title', [], 'Export as a published page'); ?></span>
+                        <p><?php echo t_h('modals.export.html_public.description', [], 'Download one HTML file that looks exactly like the public page of this note, pictures included'); ?></p>
+                    </div>
+                </div>
+
                 <!-- HTML Embedded export option -->
                 <div class="export-option export-option-html-embedded" data-action="select-export-type" data-type="html_embedded">
                     <i class="lucide lucide-file-image"></i>

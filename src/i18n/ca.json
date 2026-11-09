@@ -1217,6 +1217,10 @@
       "json": {
         "title": "Baixa com a JSON",
         "description": "Baixa les dades sense processar de la llista de tasques com a fitxer JSON"
+      },
+      "html_public": {
+        "title": "Exporta com a pàgina publicada",
+        "description": "Baixa un únic fitxer HTML amb el mateix aspecte que la pàgina pública d'aquesta nota, imatges incloses"
       }
     },
     "task_move": {

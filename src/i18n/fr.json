@@ -1720,6 +1720,10 @@
       "json": {
         "title": "Télécharger en JSON",
         "description": "Télécharger les données brutes de la liste de tâches au format JSON"
+      },
+      "html_public": {
+        "title": "Exporter comme page publiée",
+        "description": "Télécharger un seul fichier HTML qui ressemble exactement à la page publique de cette note, images comprises"
       }
     },
     "task_move": {

@@ -1737,6 +1737,10 @@
       "json": {
         "title": "下载为 JSON",
         "description": "以 JSON 文件形式下载原始任务列表数据"
+      },
+      "html_public": {
+        "title": "导出为发布页面",
+        "description": "下载单个 HTML 文件，外观与这篇笔记的公开页面完全一致，包含图片"
       }
     },
     "folder_tree_highlight": {

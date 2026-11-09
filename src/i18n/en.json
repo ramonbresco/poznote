@@ -1217,6 +1217,10 @@
       "json": {
         "title": "Download as JSON",
         "description": "Download the raw tasklist data as a JSON file"
+      },
+      "html_public": {
+        "title": "Export as a published page",
+        "description": "Download one HTML file that looks exactly like the public page of this note, pictures included"
       }
     },
     "task_move": {

@@ -1728,6 +1728,10 @@
       "json": {
         "title": "Als JSON herunterladen",
         "description": "Die Rohdaten der Aufgabenliste als JSON-Datei herunterladen"
+      },
+      "html_public": {
+        "title": "Als veröffentlichte Seite exportieren",
+        "description": "Eine einzige HTML-Datei herunterladen, die genau wie die öffentliche Seite dieser Notiz aussieht, Bilder inbegriffen"
       }
     },
     "task_move": {

@@ -1217,6 +1217,10 @@
       "json": {
         "title": "JSON으로 다운로드",
         "description": "할 일 목록의 원본 데이터를 JSON 파일로 다운로드"
+      },
+      "html_public": {
+        "title": "게시된 페이지로 내보내기",
+        "description": "이 노트의 공개 페이지와 똑같아 보이는 HTML 파일 하나를 이미지까지 함께 내려받습니다"
       }
     },
     "task_move": {
