@@ -9,7 +9,8 @@
   <a href="README.zh-cn.md">简体中文</a> ·
   <a href="README.ko.md">한국어</a> ·
   <b>日本語</b> ·
-  <a href="README.ca.md">Català</a>
+  <a href="README.ca.md">Català</a> ·
+  <a href="README.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 

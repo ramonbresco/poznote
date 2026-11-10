@@ -9,7 +9,8 @@
   <a href="WEBHOOKS.zh-cn.md">简体中文</a> ·
   <a href="WEBHOOKS.ko.md">한국어</a> ·
   <b>日本語</b> ·
-  <a href="WEBHOOKS.ca.md">Català</a>
+  <a href="WEBHOOKS.ca.md">Català</a> ·
+  <a href="WEBHOOKS.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 
