@@ -400,6 +400,18 @@ html[data-theme='dark'] .nm-folder-option-selected {
     gap: 8px;
 }
 
+/* The note id, just before the tags: small and faint, it is there to be
+   read when needed (and typed in the filter bar), not to compete with the
+   title */
+.nm-note-id {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--pz-text-subtle);
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
 .nm-note-type-icon {
     flex-shrink: 0;
     width: 18px;

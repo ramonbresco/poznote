@@ -1743,7 +1743,7 @@
     "moved": "Moved successfully",
     "root": "Root (no folder)",
     "filter_folders": "Filter folders...",
-    "filter_placeholder": "Filter notes by title or tags...",
+    "filter_placeholder": "Filter notes by title, tags or ID...",
     "filter_type": "Filter by type",
     "type_html": "Rich text",
     "type_markdown": "Markdown",

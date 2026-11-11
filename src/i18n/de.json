@@ -2274,7 +2274,7 @@
     "moved": "Erfolgreich verschoben",
     "root": "Stammverzeichnis (kein Ordner)",
     "filter_folders": "Ordner filtern...",
-    "filter_placeholder": "Notizen nach Titel oder Tags filtern...",
+    "filter_placeholder": "Notizen nach Titel, Tags oder ID filtern...",
     "filter_age": "Nach Alter filtern",
     "age_all": "Alle Notizen",
     "age_recent": "Nur aktuelle",

@@ -2281,7 +2281,7 @@
     "moved": "Déplacé avec succès",
     "root": "Racine (aucun dossier)",
     "filter_folders": "Filtrer les dossiers...",
-    "filter_placeholder": "Filtrer les notes par titre ou tags...",
+    "filter_placeholder": "Filtrer les notes par titre, tags ou ID...",
     "filter_type": "Filtrer par type",
     "type_html": "Texte enrichi",
     "type_markdown": "Markdown",

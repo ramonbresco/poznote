@@ -1743,7 +1743,7 @@
     "moved": "移動しました",
     "root": "ルート（フォルダーなし）",
     "filter_folders": "フォルダーを絞り込み...",
-    "filter_placeholder": "タイトルまたはタグでノートを絞り込み...",
+    "filter_placeholder": "タイトル、タグ、IDでノートを絞り込み...",
     "filter_type": "種類で絞り込み",
     "type_html": "リッチテキスト",
     "type_markdown": "Markdown",

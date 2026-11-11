@@ -73,7 +73,10 @@
         document.querySelectorAll('.nm-note-row[data-note-id]').forEach(function (row) {
             var wrap = row.querySelector('.nm-note-title-wrap');
             if (wrap && notes[row.getAttribute('data-note-id')] && !wrap.querySelector('.offline-mark')) {
-                wrap.appendChild(makeMark(NOTE_TITLE));
+                // Right after the name, before anything that follows it in the title
+                var link = wrap.querySelector('.nm-note-link');
+                if (link) link.insertAdjacentElement('afterend', makeMark(NOTE_TITLE));
+                else wrap.appendChild(makeMark(NOTE_TITLE));
             }
         });
         document.querySelectorAll('.nm-folder-header[data-folder-id]').forEach(function (header) {

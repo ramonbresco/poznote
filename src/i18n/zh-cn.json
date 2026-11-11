@@ -2272,7 +2272,7 @@
     "moved": "成功移动",
     "root": "根目录 (无文件夹)",
     "filter_folders": "筛选文件夹...",
-    "filter_placeholder": "按标题或标签筛选...",
+    "filter_placeholder": "按标题、标签或 ID 筛选...",
     "filter_age": "按时间筛选",
     "age_all": "所有笔记",
     "age_recent": "仅近期",

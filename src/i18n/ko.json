@@ -1743,7 +1743,7 @@
     "moved": "이동 완료",
     "root": "루트(폴더 없음)",
     "filter_folders": "폴더 필터링...",
-    "filter_placeholder": "제목 또는 태그로 노트를 필터링합니다...",
+    "filter_placeholder": "제목, 태그 또는 ID로 노트를 필터링합니다...",
     "filter_type": "유형별로 필터링",
     "type_html": "서식 있는 텍스트",
     "type_markdown": "마크다운",

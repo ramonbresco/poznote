@@ -1743,7 +1743,7 @@
     "moved": "S'ha mogut correctament",
     "root": "Arrel (sense carpeta)",
     "filter_folders": "Filtra les carpetes...",
-    "filter_placeholder": "Filtra les notes pel títol o les etiquetes...",
+    "filter_placeholder": "Filtra les notes pel títol, les etiquetes o l'ID...",
     "filter_type": "Filtra per tipus",
     "type_html": "Text enriquit",
     "type_markdown": "Markdown",

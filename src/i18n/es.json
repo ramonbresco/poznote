@@ -2274,7 +2274,7 @@
     "moved": "Movido con éxito",
     "root": "Raíz (sin carpeta)",
     "filter_folders": "Filtrar carpetas...",
-    "filter_placeholder": "Filtrar notas por título o etiquetas...",
+    "filter_placeholder": "Filtrar notas por título, etiquetas o ID...",
     "filter_age": "Filtrar por antigüedad",
     "age_all": "Todas las notas",
     "age_recent": "Solo recientes",

@@ -75,14 +75,14 @@ $currentLang = getUserLanguage();
 		<!-- Filter bar -->
 		<?php // The filter folds behind a magnifier, first on the row (js/search-toggle.js) ?>
 		<div class="nm-filter-bar pz-search-row">
-			<?php echo poznoteRenderSearchToggle('nmFilterWrapper', t('notes_manager.filter_placeholder', [], 'Filter notes by title or tags...')); ?>
+			<?php echo poznoteRenderSearchToggle('nmFilterWrapper', t('notes_manager.filter_placeholder', [], 'Filter notes by title, tags or ID...')); ?>
 			<div class="filter-input-wrapper pz-search-collapsible is-search-collapsed" id="nmFilterWrapper">
 				<i class="lucide lucide-search nm-filter-icon"></i>
 				<input
 					type="text"
 					id="nmFilterInput"
 					class="filter-input"
-					placeholder="<?php echo t_h('notes_manager.filter_placeholder', [], 'Filter notes by title or tags...'); ?>"
+					placeholder="<?php echo t_h('notes_manager.filter_placeholder', [], 'Filter notes by title, tags or ID...'); ?>"
 					autocomplete="off"
 				/>
 				<button id="nmClearFilter" class="clear-filter-btn initially-hidden" title="<?php echo t_h('search.clear', [], 'Clear'); ?>">
