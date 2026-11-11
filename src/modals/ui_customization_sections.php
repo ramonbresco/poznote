@@ -377,23 +377,43 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
 </div>
 </div>
 
-<!-- Other Section -->
+<!-- Note Section: what the opened note shows around its own text. -->
 <div class="ui-custom-section" data-ui-pages="notes">
-<?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.panels', [], 'Other')); ?>
+<?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.note', [], 'Note')); ?>
 <div class="ui-custom-items">
 <?php echo poznoteUiCustomizationListToggleAll(); ?>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:outline-panel" checked><span><?php echo t_h('common.outline.title', [], 'Outline'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-scrollbar" checked><span><?php echo t_h('modals.ui_customization.note_scrollbar', [], 'Note scrollbar'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-scroll-arrows" checked><span><?php echo t_h('modals.ui_customization.note_scroll_arrows', [], 'Scroll to top and bottom arrows'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-icons" checked><span><?php echo t_h('display.cards.show_note_icons', [], 'Show note icons'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:preview-code-block-delete" checked><span><?php echo t_h('modals.ui_customization.preview_code_block_delete', [], 'Delete button on code blocks, in markdown preview'); ?></span></label>
+</div>
+</div>
+
+<!-- Under the Note Title Section: the line of dates and counts under the title
+     (css/notes/subline.css), in the order of the line, the same items as its
+     own right-click menu (js/note-subline-menu.js). -->
+<div class="ui-custom-section" data-ui-pages="notes">
+<?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.note_subline', [], 'Under the note title')); ?>
+<div class="ui-custom-items">
+<?php echo poznoteUiCustomizationListToggleAll(); ?>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-id" checked><span><?php echo t_h('modals.ui_customization.note_id', [], 'Show the note id'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-created-date" checked><span><?php echo t_h('display.cards.show_note_created', [], 'Show creation date'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-updated-date" checked><span><?php echo t_h('modals.ui_customization.note_updated_date', [], 'Show modification date'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-stats-characters" checked><span><?php echo t_h('modals.ui_customization.note_stats_characters', [], 'Show character count'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-stats-words" checked><span><?php echo t_h('modals.ui_customization.note_stats_words', [], 'Show word count'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-stats-lines" checked><span><?php echo t_h('modals.ui_customization.note_stats_lines', [], 'Show line count'); ?></span></label>
-    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-id" checked><span><?php echo t_h('modals.ui_customization.note_id', [], 'Show the note id'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-info-icon" checked><span><?php echo t_h('modals.ui_customization.note_info_icon', [], 'Show information icon under the note title'); ?></span></label>
-    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-icons" checked><span><?php echo t_h('display.cards.show_note_icons', [], 'Show note icons'); ?></span></label>
+</div>
+</div>
+
+<!-- Floating Buttons Section: the stack of round buttons in the bottom right
+     corner of a page, and the entries of its "..." menu. Each item names the
+     pages that carry its button. -->
+<div class="ui-custom-section" data-ui-pages="notes dashboard settings speed-dial">
+<?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.floating_buttons', [], 'Floating buttons')); ?>
+<div class="ui-custom-items">
+<?php echo poznoteUiCustomizationListToggleAll(); ?>
     <label class="ui-custom-item" data-ui-pages="notes dashboard settings speed-dial"><input type="checkbox" data-ui-key="card:edgeCustomizeBtn" checked><span><?php echo t_h('modals.ui_customization.panel_title', [], 'Element visibility'); ?></span></label>
     <label class="ui-custom-item" data-ui-pages="notes dashboard"><input type="checkbox" data-ui-key="card:edgeAiChatBtn" checked><span><?php echo t_h('ai_chat.toolbar_button', [], 'AI assistant'); ?></span></label>
     <label class="ui-custom-item" data-ui-pages="notes settings"><input type="checkbox" data-ui-key="card:edgeFocusModeBtn" checked><span><?php echo t_h('focus_mode.button', [], 'Focus mode'); ?></span></label>
@@ -402,13 +422,32 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
     <label class="ui-custom-item" data-ui-pages="notes"><input type="checkbox" data-ui-key="card:edgeMenuNoteInfo" checked><span><?php echo t_h('common.information', [], 'Information'); ?></span></label>
     <label class="ui-custom-item" data-ui-pages="notes settings"><input type="checkbox" data-ui-key="card:edgeMenuShortcuts" checked><span><?php echo t_h('keyboard_shortcuts.menu_item', [], 'Keyboard shortcuts'); ?></span></label>
     <label class="ui-custom-item" data-ui-pages="notes settings"><input type="checkbox" data-ui-key="card:edgeMenuMarkdownSyntax" checked><span><?php echo t_h('markdown_syntax.menu_item', [], 'Markdown syntax'); ?></span></label>
+</div>
+</div>
+
+<!-- Sharing Section: controls of the public share settings dialog. -->
+<div class="ui-custom-section" data-ui-pages="notes">
+<?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.sharing', [], 'Sharing')); ?>
+<div class="ui-custom-items">
+<?php echo poznoteUiCustomizationListToggleAll(); ?>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="share:restrict-users" checked><span><?php echo t_h('modals.ui_customization.share_restrict_users', [], 'Share: restrict to specific users'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="share:protocol-toggle" checked><span><?php echo t_h('modals.ui_customization.share_protocol_toggle', [], 'Share: HTTPS toggle'); ?></span></label>
-    <label class="ui-custom-item" data-ui-pages=""><input type="checkbox" data-ui-key="card:directCopyRestoreCard" checked><span><?php echo t_h('modals.ui_customization.direct_copy_restore_section', [], 'Restore page: "Restore by direct copy" section'); ?></span></label>
-    <label class="ui-custom-item" data-ui-pages=""><input type="checkbox" data-ui-key="card:local-user-backup-section" checked><span><?php echo t_h('modals.ui_customization.local_backups_section', [], 'Backup page: "Backup to a folder on the server" section'); ?></span></label>
-    <label class="ui-custom-item" data-ui-pages=""><input type="checkbox" data-ui-key="card:s3-user-backup-section" checked><span><?php echo t_h('modals.ui_customization.s3_backups_section', [], 'Backup page: "Backup to S3" section'); ?></span></label>
-    <label class="ui-custom-item" data-ui-pages=""><input type="checkbox" data-ui-key="card:s3RestoreSection" checked><span><?php echo t_h('modals.ui_customization.s3_restore_section', [], 'Restore page: "Restore from S3" section'); ?></span></label>
-    <label class="ui-custom-item" data-ui-pages=""><input type="checkbox" data-ui-key="card:localRestoreSection" checked><span><?php echo t_h('modals.ui_customization.local_restore_section', [], 'Restore page: "Restore from a folder on the server" section'); ?></span></label>
+</div>
+</div>
+
+<!-- Backup & Restore Section: whole sections of the Backup / Export and
+     Restore / Import pages. data-ui-pages="" on the section: neither page
+     carries the Element visibility panel, so these are only offered in the
+     settings list. -->
+<div class="ui-custom-section" data-ui-pages="">
+<?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.backup_restore', [], 'Backup & restore')); ?>
+<div class="ui-custom-items">
+<?php echo poznoteUiCustomizationListToggleAll(); ?>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:local-user-backup-section" checked><span><?php echo t_h('modals.ui_customization.local_backups_section', [], 'Backup page: "Backup to a folder on the server" section'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:s3-user-backup-section" checked><span><?php echo t_h('modals.ui_customization.s3_backups_section', [], 'Backup page: "Backup to S3" section'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:localRestoreSection" checked><span><?php echo t_h('modals.ui_customization.local_restore_section', [], 'Restore page: "Restore from a folder on the server" section'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:s3RestoreSection" checked><span><?php echo t_h('modals.ui_customization.s3_restore_section', [], 'Restore page: "Restore from S3" section'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:directCopyRestoreCard" checked><span><?php echo t_h('modals.ui_customization.direct_copy_restore_section', [], 'Restore page: "Restore by direct copy" section'); ?></span></label>
 </div>
 </div>
 
