@@ -55,8 +55,13 @@ test('whats new: the <br> a release note puts after a screenshot does not become
     assertSame("Intro.\n\n![image](https://x/y.png)\n\nText after.", poznoteWhatsNewCollapseLineBreaks($md));
 });
 
-test('whats new: a <br> run that is the only break between two lines is kept, as one break', function () {
-    assertSame("Line a\n<br>\nLine b", poznoteWhatsNewCollapseLineBreaks("Line a\n<br /><br>\nLine b"));
+test('whats new: a <br> line between two screenshots becomes one blank line', function () {
+    $md = "![a](https://x/a.png)\n<br><br>\n![b](https://x/b.png)\n<br><br>\n\n- Next item";
+    assertSame("![a](https://x/a.png)\n\n![b](https://x/b.png)\n\n- Next item", poznoteWhatsNewCollapseLineBreaks($md));
+    assertSame("Line a\n\nLine b", poznoteWhatsNewCollapseLineBreaks("Line a\n<br /><br>\nLine b"));
+});
+
+test('whats new: a <br> run inside a line is kept, as one break', function () {
     assertSame('Before<br>after', poznoteWhatsNewCollapseLineBreaks('Before<br><br><br>after'));
 });
 

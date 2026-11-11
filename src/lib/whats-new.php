@@ -135,8 +135,9 @@ function poznoteWhatsNewImagesToMarkdown(string $markdown): string {
  * GitHub release notes put <br><br> after a screenshot, which reads as one
  * blank line there. In the popup the blank line of the Markdown already
  * separates the two paragraphs, so those tags only add a large empty band:
- * a run of <br> is dropped where a blank line already breaks the text, and
- * collapsed to a single break anywhere else.
+ * a line of <br> alone is dropped where a blank line already breaks the text,
+ * and becomes that blank line anywhere else (between two screenshots, for
+ * example). A run of <br> inside a line is collapsed to a single break.
  */
 function poznoteWhatsNewCollapseLineBreaks(string $markdown): string {
     $lines = explode("\n", str_replace("\r\n", "\n", $markdown));
@@ -160,7 +161,7 @@ function poznoteWhatsNewCollapseLineBreaks(string $markdown): string {
             if ($prev === '' || $next === '') {
                 continue;
             }
-            $kept[] = '<br>';
+            $kept[] = '';
             continue;
         }
         $kept[] = preg_replace('/(?:<br\s*\/?>\s*){2,}/i', '<br>', $line);
