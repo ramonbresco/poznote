@@ -444,6 +444,10 @@
         'note-stats-lines': '.note-sub-stat-lines',
         'note-id': '.note-sub-id',
         'note-info-icon': '.note-sub-info',
+        // The icon that copies a link to one section of the note
+        // (js/note-section-link.js): the one on the hovered heading and the
+        // one on each outline row, hidden together.
+        'note-section-link': '.note-section-link-btn, .outline-section-link-btn',
         // Icon before the note title, in the sidebar list and in the note
         // header: renderEditableNoteIcon() always emits .note-icon.
         'note-icons': '.note-icon',

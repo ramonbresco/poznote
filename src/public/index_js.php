@@ -142,6 +142,7 @@ function poznoteGetIndexJsGroups(): array {
         'js/main.js',
         'js/resize-column.js',
         'js/outline-panel.js',
+        'js/note-section-link.js',
         'js/ai-chat.js',
         'js/unified-search.js',
         'js/tag-actions.js',

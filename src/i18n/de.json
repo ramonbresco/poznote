@@ -75,7 +75,9 @@
     "outline": {
       "title": "Gliederung",
       "no_headings": "Keine Überschriften in dieser Notiz",
-      "unavailable_tasklist": "Gliederung ist für Aufgabenlisten nicht verfügbar"
+      "unavailable_tasklist": "Gliederung ist für Aufgabenlisten nicht verfügbar",
+      "copy_section_link": "Link zum Abschnitt kopieren",
+      "section_not_found": "Dieser Abschnitt existiert in dieser Notiz nicht mehr"
     },
     "link_copied": "Link kopiert",
     "ok": "OK",
@@ -299,7 +301,10 @@
       "search_placeholder": "Nach einer Notiz suchen...",
       "recent_notes": "Kürzliche Notizen",
       "create_button": "Erstellen & verlinken",
-      "all_workspaces": "In allen Arbeitsbereichen suchen"
+      "all_workspaces": "In allen Arbeitsbereichen suchen",
+      "link_to_section": "Auf einen Abschnitt verlinken",
+      "no_sections": "Diese Notiz hat keine Überschriften, auf die verlinkt werden kann",
+      "sections_failed": "Diese Notiz konnte nicht gelesen werden"
     },
     "empty": {
       "no_notes_found": "Keine Notizen gefunden",
@@ -1551,6 +1556,7 @@
       "note_info_icon": "Informationssymbol unter dem Notiztitel anzeigen",
       "note_scrollbar": "Bildlaufleiste der Notizen",
       "note_scroll_arrows": "Pfeile zum Anfang und Ende der Notiz",
+      "note_section_link": "Symbol zum Kopieren des Abschnittslinks an Überschriften",
       "tasklist_add_field": "Feld zum Hinzufügen einer Aufgabe",
       "tasklist_frame": "Rahmen um jede Aufgabe",
       "tasklist_delete": "Aufgabe löschen",

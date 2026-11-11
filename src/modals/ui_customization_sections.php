@@ -386,6 +386,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:outline-panel" checked><span><?php echo t_h('common.outline.title', [], 'Outline'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-scrollbar" checked><span><?php echo t_h('modals.ui_customization.note_scrollbar', [], 'Note scrollbar'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-scroll-arrows" checked><span><?php echo t_h('modals.ui_customization.note_scroll_arrows', [], 'Scroll to top and bottom arrows'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-section-link" checked><span><?php echo t_h('modals.ui_customization.note_section_link', [], 'Copy section link icon on headings'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-icons" checked><span><?php echo t_h('display.cards.show_note_icons', [], 'Show note icons'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:preview-code-block-delete" checked><span><?php echo t_h('modals.ui_customization.preview_code_block_delete', [], 'Delete button on code blocks, in markdown preview'); ?></span></label>
 </div>

@@ -53,7 +53,8 @@
       "no_headings": "이 노트에 제목 문단이 없습니다",
       "unavailable_tasklist": "할 일 목록에서는 목차를 사용할 수 없습니다",
       "toggle_panel": "목차 패널 열기/닫기",
-      "copy_section_link": "이 섹션의 링크 복사"
+      "copy_section_link": "이 섹션의 링크 복사",
+      "section_not_found": "이 노트에 해당 섹션이 더 이상 없습니다"
     },
     "link_copied": "링크가 복사되었습니다",
     "print": "인쇄",
@@ -1029,6 +1030,7 @@
       "note_info_icon": "노트 제목 아래에 정보 아이콘 표시",
       "note_scrollbar": "노트 스크롤바",
       "note_scroll_arrows": "노트 맨 위·맨 아래로 이동 화살표",
+      "note_section_link": "제목에 표시되는 섹션 링크 복사 아이콘",
       "tasklist_add_field": "할 일 추가 입력란",
       "tasklist_frame": "각 할 일의 테두리",
       "tasklist_delete": "할 일 삭제",
@@ -4568,7 +4570,10 @@
       "create_button": "만들기 및 연결",
       "recent_notes": "최근 노트",
       "search_placeholder": "노트를 검색하세요...",
-      "all_workspaces": "작업 공간 전체 검색"
+      "all_workspaces": "작업 공간 전체 검색",
+      "link_to_section": "섹션으로 링크",
+      "no_sections": "이 노트에는 링크할 제목이 없습니다",
+      "sections_failed": "이 노트를 읽을 수 없습니다"
     },
     "untitled": "제목 없음",
     "empty": {

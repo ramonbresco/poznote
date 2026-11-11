@@ -76,7 +76,9 @@
     "outline": {
       "title": "大纲",
       "no_headings": "此笔记中没有标题",
-      "unavailable_tasklist": "任务列表不支持大纲"
+      "unavailable_tasklist": "任务列表不支持大纲",
+      "copy_section_link": "复制该章节的链接",
+      "section_not_found": "这条笔记中已经没有该章节"
     },
     "link_copied": "链接已复制",
     "ok": "确定",
@@ -298,7 +300,10 @@
       "search_placeholder": "搜索笔记...",
       "recent_notes": "最近的笔记",
       "create_button": "新建并链接",
-      "all_workspaces": "搜索所有工作区"
+      "all_workspaces": "搜索所有工作区",
+      "link_to_section": "链接到某个章节",
+      "no_sections": "这条笔记没有可链接的标题",
+      "sections_failed": "无法读取这条笔记"
     },
     "empty": {
       "no_notes_found": "未找到笔记",
@@ -1549,6 +1554,7 @@
       "note_info_icon": "在笔记标题下显示信息图标",
       "note_scrollbar": "笔记滚动条",
       "note_scroll_arrows": "跳到笔记顶部和底部的箭头",
+      "note_section_link": "标题上的复制章节链接图标",
       "tasklist_add_field": "添加任务的输入框",
       "tasklist_frame": "每个任务的边框",
       "tasklist_delete": "删除任务",

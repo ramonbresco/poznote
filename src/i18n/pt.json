@@ -74,7 +74,9 @@
     "outline": {
       "title": "Sumário",
       "no_headings": "Sem títulos nesta nota",
-      "unavailable_tasklist": "O sumário não está disponível para listas de tarefas"
+      "unavailable_tasklist": "O sumário não está disponível para listas de tarefas",
+      "copy_section_link": "Copiar o link da seção",
+      "section_not_found": "Essa seção não existe mais nesta nota"
     },
     "link_copied": "Link copiado",
     "ok": "OK",
@@ -299,7 +301,10 @@
       "search_placeholder": "Buscar por uma nota...",
       "recent_notes": "Notas recentes",
       "create_button": "Criar e vincular",
-      "all_workspaces": "Buscar em todos os espaços de trabalho"
+      "all_workspaces": "Buscar em todos os espaços de trabalho",
+      "link_to_section": "Criar link para uma seção",
+      "no_sections": "Esta nota não tem títulos para onde apontar",
+      "sections_failed": "Não foi possível ler esta nota"
     },
     "empty": {
       "no_notes_found": "Nenhuma nota encontrada",
@@ -1551,6 +1556,7 @@
       "note_info_icon": "Mostrar ícone de informação sob o título da nota",
       "note_scrollbar": "Barra de rolagem das notas",
       "note_scroll_arrows": "Setas para ir ao início e ao fim da nota",
+      "note_section_link": "Ícone para copiar o link da seção nos títulos",
       "tasklist_add_field": "Campo para adicionar uma tarefa",
       "tasklist_frame": "Moldura em volta de cada tarefa",
       "tasklist_delete": "Excluir uma tarefa",

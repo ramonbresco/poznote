@@ -53,7 +53,8 @@
       "no_headings": "このノートには見出しがありません",
       "unavailable_tasklist": "タスクリストではアウトラインを使用できません",
       "toggle_panel": "アウトラインパネルの表示を切り替え",
-      "copy_section_link": "セクションへのリンクをコピー"
+      "copy_section_link": "セクションへのリンクをコピー",
+      "section_not_found": "そのセクションはこのノートにはもうありません"
     },
     "link_copied": "リンクをコピーしました",
     "print": "印刷",
@@ -1029,6 +1030,7 @@
       "note_info_icon": "ノートのタイトルの下に情報アイコンを表示",
       "note_scrollbar": "ノートのスクロールバー",
       "note_scroll_arrows": "先頭・末尾へスクロールする矢印",
+      "note_section_link": "見出しのセクションリンクをコピーするアイコン",
       "tasklist_add_field": "タスクを追加する入力欄",
       "tasklist_frame": "各タスクの枠",
       "tasklist_delete": "タスクの削除",
@@ -4568,7 +4570,10 @@
       "create_button": "作成してリンク",
       "recent_notes": "最近のノート",
       "search_placeholder": "ノートを検索...",
-      "all_workspaces": "すべてのワークスペースを検索"
+      "all_workspaces": "すべてのワークスペースを検索",
+      "link_to_section": "セクションにリンク",
+      "no_sections": "このノートにはリンクできる見出しがありません",
+      "sections_failed": "このノートを読み込めませんでした"
     },
     "untitled": "無題",
     "empty": {

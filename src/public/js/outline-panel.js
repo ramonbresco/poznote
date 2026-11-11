@@ -162,6 +162,32 @@ function getMarkdownEditorContent(markdownEditor) {
     return markdownEditor.getAttribute('data-codemirror-value') || markdownEditor.textContent || '';
 }
 
+// A heading written in the source of a Markdown note: a # line, with the
+// up-to-three-spaces indentation CommonMark allows, or a toggle title written
+// as raw HTML with the class that shows it at a heading's size. Returns its
+// level and the text the outline shows, with the inline formatting taken off.
+function markdownHeadingFromLine(line) {
+    const source = (line === undefined || line === null) ? '' : String(line);
+    const toggleMatch = source.match(TOGGLE_HEADING_LINE);
+    const match = toggleMatch || source.match(/^ {0,3}(#{1,6})\s+(.+)$/);
+    if (!match) return null;
+
+    const level = toggleMatch ? Number(match[1]) : match[1].length;
+    const rawText = toggleMatch
+        ? match[2].replace(/<[^>]*>/g, '').trim()
+        : match[2].trim();
+    const text = rawText
+        .replace(/\*\*(.+?)\*\*/g, '$1')          // bold **text**
+        .replace(/__(.+?)__/g, '$1')               // bold __text__
+        .replace(/\*(.+?)\*/g, '$1')               // italic *text*
+        .replace(/_(.+?)_/g, '$1')                 // italic _text_
+        .replace(/~~(.+?)~~/g, '$1')               // strikethrough ~~text~~
+        .replace(/`(.+?)`/g, '$1')                 // inline code `text`
+        .replace(/\[((?!\])[^\[\]]*(?:\[[^\[\]]*\](?!\()[^\[\]]*)*)\]\((?:[^\s()]|\([^\s()]*\)|\s+"[^"]*")*\)/g, '$1'); // links [text](url), brackets in text and parentheses in url balanced
+
+    return text ? { level: level, text: text } : null;
+}
+
 function isMarkdownFence(line) {
     return /^\s*```/.test(line);
 }
@@ -544,6 +570,55 @@ function slugifyHeadingText(text) {
     return (text || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
 }
 
+// Section links (discussion 1758): what goes in the hash of a link to one
+// section of a note. A heading is addressed by its text, never by the id its
+// element happens to carry: an HTML note's ids hold the heading's position in
+// the note (heading-3-setup), so inserting a heading above renames the ones
+// below it, and a Markdown note has no ids at all, its source being text.
+// Accents are folded, so the hash reads as the heading does. The prefix the
+// hash carries belongs to js/note-section-link.js, which builds the address.
+const SECTION_SLUG_MAX_LENGTH = 80;
+
+function poznoteSectionSlug(text) {
+    let plain = String(text || '');
+    try {
+        plain = plain.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    } catch (_error) {
+        // An engine without NFD: the non-alphanumeric pass below still gives
+        // a usable slug, just without the accented letters.
+    }
+    return plain
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, SECTION_SLUG_MAX_LENGTH)
+        .replace(/-+$/, '');
+}
+
+// Two headings of the same name are told apart by their rank, as the second
+// one onwards carries -2, -3 (the shape GitHub gives repeated headings).
+function assignSectionSlugs(headings) {
+    const seen = new Map();
+
+    (headings || []).forEach(function (heading) {
+        const base = poznoteSectionSlug(heading.text);
+        if (!base) {
+            heading.sectionSlug = '';
+            return;
+        }
+        const count = (seen.get(base) || 0) + 1;
+        seen.set(base, count);
+        heading.sectionSlug = count === 1 ? base : base + '-' + count;
+    });
+
+    return headings;
+}
+
+// The headings of the note on screen, each with the slug a link to it uses.
+function poznoteNoteSections(noteElement) {
+    return assignSectionSlugs(extractHeadings(noteElement || getCurrentOutlineNoteElement()));
+}
+
 function getHeadingTextContent(heading) {
     if (!heading) return '';
     return (heading.textContent || '').trim();
@@ -634,26 +709,10 @@ function extractHeadings(noteElement) {
                     return;
                 }
 
-                // Match markdown headings: # Title, ## Title, etc., with the
-                // up-to-three-spaces indentation CommonMark allows.
-                // A toggle title written as raw HTML, with the class that
-                // shows it at a heading's size
-                const toggleMatch = line.match(TOGGLE_HEADING_LINE);
-                const match = toggleMatch || line.match(/^ {0,3}(#{1,6})\s+(.+)$/);
-                if (match) {
-                    const level = toggleMatch ? Number(match[1]) : match[1].length;
-                    const rawText = toggleMatch
-                        ? match[2].replace(/<[^>]*>/g, '').trim()
-                        : match[2].trim();
-                    // Strip inline markdown formatting for display in the outline panel
-                    const text = rawText
-                        .replace(/\*\*(.+?)\*\*/g, '$1')          // bold **text**
-                        .replace(/__(.+?)__/g, '$1')               // bold __text__
-                        .replace(/\*(.+?)\*/g, '$1')               // italic *text*
-                        .replace(/_(.+?)_/g, '$1')                 // italic _text_
-                        .replace(/~~(.+?)~~/g, '$1')               // strikethrough ~~text~~
-                        .replace(/`(.+?)`/g, '$1')                 // inline code `text`
-                        .replace(/\[((?!\])[^\[\]]*(?:\[[^\[\]]*\](?!\()[^\[\]]*)*)\]\((?:[^\s()]|\([^\s()]*\)|\s+"[^"]*")*\)/g, '$1'); // links [text](url), brackets in text and parentheses in url balanced
+                const parsed = markdownHeadingFromLine(line);
+                if (parsed) {
+                    const level = parsed.level;
+                    const text = parsed.text;
                     const id = `md-heading-${lineIndex}-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
                     // Find corresponding element in preview if available.
@@ -772,8 +831,38 @@ function renderOutline(headings) {
         });
 
         li.appendChild(link);
+        appendOutlineSectionLinkButton(li, heading);
         outlineNav.appendChild(li);
     });
+}
+
+// Copy button on an outline row (discussion 1758). The row is the only place
+// a touch screen can reach a section link from, the icon on the heading
+// itself being a hover control. Not on a public page: there, every heading
+// carries its own icon (js/public-note.js).
+function appendOutlineSectionLinkButton(li, heading) {
+    if (isPublicOutlinePage()) return;
+    if (typeof window.poznoteCopySectionLink !== 'function') return;
+
+    const label = typeof window.t === 'function'
+        ? window.t('common.outline.copy_section_link', null, 'Copy section link')
+        : 'Copy section link';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'outline-section-link-btn';
+    button.title = label;
+    button.setAttribute('aria-label', label);
+    const icon = document.createElement('i');
+    icon.className = 'lucide lucide-link';
+    icon.setAttribute('aria-hidden', 'true');
+    button.appendChild(icon);
+    button.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.poznoteCopySectionLink(heading.element || null, heading.text);
+    });
+
+    li.appendChild(button);
 }
 
 /**
@@ -1383,7 +1472,18 @@ window.outlinePanel = {
     },
     extractHeadings: extractHeadings,
     renderOutline: renderOutline,
-    scrollToElement: scrollToElement
+    scrollToElement: scrollToElement,
+    // Section links (js/note-section-link.js) walk the same headings the
+    // panel lists and scroll with the same function its rows use, so a link
+    // lands where an outline click lands in every view of every note type.
+    scrollToHeading: scrollToHeading,
+    sections: poznoteNoteSections,
+    sectionSlug: poznoteSectionSlug,
+    assignSectionSlugs: assignSectionSlugs,
+    markdownHeadingFromLine: markdownHeadingFromLine,
+    isMarkdownFence: isMarkdownFence,
+    headingSelector: HEADING_SELECTOR,
+    headingLevel: outlineHeadingLevel
 };
 
 // Refresh the outline toggle after the asynchronous dictionary has loaded.

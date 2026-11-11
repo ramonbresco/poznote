@@ -216,11 +216,20 @@ function handleInternalNoteLink(href) {
     }
 
     var noteMatch = href.match(/[?&]note=(\d+)/);
-    var workspaceMatch = href.match(/[?&]workspace=([^&]+)/);
+    var workspaceMatch = href.match(/[?&]workspace=([^&#]+)/);
 
     if (!noteMatch || !noteMatch[1]) return false;
 
     var targetNoteId = noteMatch[1];
+
+    // A link to one section of the note (discussion 1758). The request waits
+    // for the note to be on screen, whichever of the loaders below opens it,
+    // and travels in the address when the page is reloaded.
+    var hashIndex = String(href).indexOf('#');
+    var sectionHash = hashIndex >= 0 ? String(href).slice(hashIndex) : '';
+    if (sectionHash && typeof window.poznoteRequestSectionFromHref === 'function') {
+        window.poznoteRequestSectionFromHref(href, targetNoteId);
+    }
 
     // A link without a workspace may target a note of another workspace:
     // navigateToNote (note-reference.js) looks the workspace up before
@@ -240,7 +249,7 @@ function handleInternalNoteLink(href) {
         if (typeof window.saveLastOpenedWorkspace === 'function') {
             window.saveLastOpenedWorkspace(targetWorkspace);
         }
-        var url = 'index.php?workspace=' + encodeURIComponent(targetWorkspace) + '&note=' + targetNoteId;
+        var url = 'index.php?workspace=' + encodeURIComponent(targetWorkspace) + '&note=' + targetNoteId + sectionHash;
         window.location.href = url;
     } else {
         // Same workspace - open in new tab on desktop, load directly on mobile

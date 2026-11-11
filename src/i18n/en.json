@@ -53,7 +53,8 @@
       "no_headings": "No headings in this note",
       "unavailable_tasklist": "Outline is not available for task lists",
       "toggle_panel": "Toggle outline panel",
-      "copy_section_link": "Copy section link"
+      "copy_section_link": "Copy section link",
+      "section_not_found": "That section no longer exists in this note"
     },
     "link_copied": "Link copied",
     "print": "Print",
@@ -1029,6 +1030,7 @@
       "note_info_icon": "Show information icon under the note title",
       "note_scrollbar": "Note scrollbar",
       "note_scroll_arrows": "Scroll to top and bottom arrows",
+      "note_section_link": "Copy section link icon on headings",
       "tasklist_add_field": "Field to add a task",
       "tasklist_frame": "Frame around each task",
       "tasklist_delete": "Delete a task",
@@ -4568,7 +4570,10 @@
       "create_button": "Create & link",
       "recent_notes": "Recent notes",
       "search_placeholder": "Search for a note...",
-      "all_workspaces": "Search all workspaces"
+      "all_workspaces": "Search all workspaces",
+      "link_to_section": "Link to a section",
+      "no_sections": "This note has no headings to link to",
+      "sections_failed": "This note could not be read"
     },
     "untitled": "Untitled",
     "empty": {

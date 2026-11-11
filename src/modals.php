@@ -1349,6 +1349,14 @@ $pzNoteInfoRows = [
             <span><?php echo t_h('note_reference.modal.all_workspaces', [], 'Search all workspaces'); ?></span>
         </label>
         <div class="note-reference-recent-label"><?php echo t_h('note_reference.modal.recent_notes', [], 'Recent notes'); ?></div>
+        <!-- Second step: the sections of the note that was picked
+             (discussion 1758), shown in place of the search for a note -->
+        <div class="note-reference-section-step" id="noteReferenceSectionStep" style="display: none;">
+            <button type="button" class="note-reference-section-back" id="noteReferenceSectionBack">
+                <i class="lucide lucide-arrow-left" aria-hidden="true"></i> <?php echo t_h('common.back', [], 'Back'); ?>
+            </button>
+            <span class="note-reference-section-note" id="noteReferenceSectionNote"></span>
+        </div>
         <div id="noteReferenceList" class="note-reference-list">
             <!-- Notes will be populated here -->
         </div>

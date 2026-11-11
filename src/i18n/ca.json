@@ -53,7 +53,8 @@
       "no_headings": "Aquesta nota no té cap títol",
       "unavailable_tasklist": "L'esquema no està disponible per a les llistes de tasques",
       "toggle_panel": "Commuta el plafó de l'esquema",
-      "copy_section_link": "Copia l'enllaç de la secció"
+      "copy_section_link": "Copia l'enllaç de la secció",
+      "section_not_found": "Aquesta secció ja no existeix en aquesta nota"
     },
     "link_copied": "S'ha copiat l'enllaç",
     "print": "Imprimeix",
@@ -1029,6 +1030,7 @@
       "note_info_icon": "Mostra la icona d'informació sota el títol de la nota",
       "note_scrollbar": "Barra de desplaçament de la nota",
       "note_scroll_arrows": "Fletxes per desplaçar-se a dalt i a baix",
+      "note_section_link": "Icona per copiar l'enllaç de secció als títols",
       "tasklist_add_field": "Camp per afegir una tasca",
       "tasklist_frame": "Marc al voltant de cada tasca",
       "tasklist_delete": "Suprimeix una tasca",
@@ -4568,7 +4570,10 @@
       "create_button": "Crea i enllaça",
       "recent_notes": "Notes recents",
       "search_placeholder": "Cerqueu una nota...",
-      "all_workspaces": "Cerca a tots els espais de treball"
+      "all_workspaces": "Cerca a tots els espais de treball",
+      "link_to_section": "Enllaça a una secció",
+      "no_sections": "Aquesta nota no té cap títol al qual enllaçar",
+      "sections_failed": "No s'ha pogut llegir aquesta nota"
     },
     "untitled": "Sense títol",
     "empty": {

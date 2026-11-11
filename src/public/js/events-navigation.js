@@ -143,6 +143,12 @@ function setupNoteNavigationInterceptor() {
             showSaveInProgressNotification(function () {
                 // Callback when save is complete - proceed with navigation
                 if (typeof window.navigateToNote === 'function') {
+                    // This handler stops the click, so it is the only one to
+                    // see the address: a link to one section of the note
+                    // (discussion 1758) asks for it here or nowhere.
+                    if (typeof window.poznoteRequestSectionFromHref === 'function') {
+                        window.poznoteRequestSectionFromHref(href, targetNoteId);
+                    }
                     window.navigateToNote(targetNoteId);
                 } else {
                     window.location.href = href;

@@ -76,7 +76,9 @@
     "outline": {
       "title": "Esquema",
       "no_headings": "Sin encabezados en esta nota",
-      "unavailable_tasklist": "El esquema no está disponible para listas de tareas"
+      "unavailable_tasklist": "El esquema no está disponible para listas de tareas",
+      "copy_section_link": "Copiar el enlace de la sección",
+      "section_not_found": "Esa sección ya no existe en esta nota"
     },
     "link_copied": "Enlace copiado",
     "ok": "Aceptar",
@@ -299,7 +301,10 @@
       "search_placeholder": "Buscar una nota...",
       "recent_notes": "Notas recientes",
       "create_button": "Crear y enlazar",
-      "all_workspaces": "Buscar en todos los espacios de trabajo"
+      "all_workspaces": "Buscar en todos los espacios de trabajo",
+      "link_to_section": "Enlazar a una sección",
+      "no_sections": "Esta nota no tiene encabezados a los que enlazar",
+      "sections_failed": "No se ha podido leer esta nota"
     },
     "empty": {
       "no_notes_found": "No se encontraron notas",
@@ -1551,6 +1556,7 @@
       "note_info_icon": "Mostrar icono de información bajo el título de la nota",
       "note_scrollbar": "Barra de desplazamiento de las notas",
       "note_scroll_arrows": "Flechas para ir al principio y al final de la nota",
+      "note_section_link": "Icono para copiar el enlace de sección en los encabezados",
       "tasklist_add_field": "Campo para añadir una tarea",
       "tasklist_frame": "Marco alrededor de cada tarea",
       "tasklist_delete": "Eliminar una tarea",

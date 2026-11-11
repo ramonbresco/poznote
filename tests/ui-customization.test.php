@@ -58,3 +58,19 @@ test('a default-hidden key is not also listed as non-hideable', function () {
         }
     }
 });
+
+// The icon that copies a link to a section (discussion #1758) is visible by
+// default too, and it is drawn in two places at once: the heading the pointer
+// is on and the outline rows. One key hides both, so both selectors have to
+// travel together through the two copies of the rule builder.
+test('the section link icon can be hidden from both copies', function () {
+    $rules = poznoteBuildUiCustomizationRules(['panel:note-section-link']);
+    assertContains('.note-section-link-btn, .outline-section-link-btn { display: none !important; }', $rules);
+
+    $js = file_get_contents(dirname(__DIR__) . '/src/public/js/ui-customization.js');
+    assertContains("'note-section-link': '.note-section-link-btn, .outline-section-link-btn'", $js);
+
+    // And the panel offers the box, or the key is hidden with no way back
+    $sections = file_get_contents(dirname(__DIR__) . '/src/modals/ui_customization_sections.php');
+    assertContains('data-ui-key="panel:note-section-link"', $sections);
+});
