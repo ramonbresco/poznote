@@ -3009,6 +3009,8 @@
     },
     "show_offline_dots": "オフライン利用可能マークを表示",
     "hide_offline_dots": "オフライン利用可能マークを非表示",
+    "tree_indent": "ツリーのインデント",
+    "tree_indent_hint": "ノート一覧でフォルダーとノートの各階層をどれだけ字下げするか。",
     "view_options": "表示オプション",
     "customize": "サイドバーをカスタマイズ",
     "customize_hint": "サイドバーに表示する要素を選択します"

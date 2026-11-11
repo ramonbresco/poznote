@@ -321,6 +321,11 @@ html[data-theme='dark'] .note-actions-menu-item:hover i {
     color: var(--pz-text);
 }
 
+/* The tree indentation slider row: its icon as bright as the entries' */
+html[data-theme='dark'] .folder-actions-menu-slider-head > i {
+    color: var(--pz-text);
+}
+
 html[data-theme='dark'] .folder-actions-menu-item.danger,
 html[data-theme='dark'] .note-actions-menu-item.danger {
     color: var(--pz-danger-text);

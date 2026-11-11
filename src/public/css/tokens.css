@@ -95,6 +95,12 @@
        carries no choice, such as a public share, keeps it. */
     --pz-code-collapsed-lines: 5;
 
+    /* Step of one level of the notes tree (css/folders/content.css).
+       index.php overwrites this on :root with the account's choice
+       (sidebar_tree_indent, lib/tree-indent.php, whose default is this
+       same 21px: the 15px the tree always had plus the 6px subfolder nudge). */
+    --pz-tree-indent: 21px;
+
     /* Brand blue: links, active states, primary buttons, focus rings. */
     --pz-accent: #007db8;
     --pz-accent-hover: #005a8a;

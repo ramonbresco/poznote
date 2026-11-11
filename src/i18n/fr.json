@@ -1001,6 +1001,8 @@
     },
     "show_offline_dots": "Afficher les points hors ligne",
     "hide_offline_dots": "Masquer les points hors ligne",
+    "tree_indent": "Indentation de l'arborescence",
+    "tree_indent_hint": "Décalage de chaque niveau de dossiers et de notes dans la liste des notes.",
     "view_options": "Options d'affichage",
     "customize": "Personnaliser la barre latérale",
     "customize_hint": "Choisir les éléments affichés dans la barre latérale"

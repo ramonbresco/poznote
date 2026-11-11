@@ -527,6 +527,15 @@ class SettingsController {
             return (string) $intVal;
         }
 
+        // Step of one level of the notes tree, in px (lib/tree-indent.php)
+        if ($key === 'sidebar_tree_indent') {
+            $intVal = (int) $value;
+            if (!is_numeric($value) || $intVal < POZNOTE_TREE_INDENT_MIN || $intVal > POZNOTE_TREE_INDENT_MAX) {
+                throw new InvalidArgumentException('value must be between ' . POZNOTE_TREE_INDENT_MIN . ' and ' . POZNOTE_TREE_INDENT_MAX, 400);
+            }
+            return (string) $intVal;
+        }
+
         if ($key === 'note_age_filter_days') {
             $intVal = (int) $value;
             if ($intVal < 0 || $intVal > 36500) {

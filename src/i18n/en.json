@@ -3009,6 +3009,8 @@
     },
     "show_offline_dots": "Show offline dots",
     "hide_offline_dots": "Hide offline dots",
+    "tree_indent": "Tree indentation",
+    "tree_indent_hint": "How far each level of folders and notes is indented in the notes list.",
     "view_options": "View options",
     "customize": "Customize sidebar",
     "customize_hint": "Choose which elements of the sidebar are shown"

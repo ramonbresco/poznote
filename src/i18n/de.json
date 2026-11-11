@@ -1001,6 +1001,8 @@
     },
     "show_offline_dots": "Offline-Punkte anzeigen",
     "hide_offline_dots": "Offline-Punkte ausblenden",
+    "tree_indent": "Baumeinrückung",
+    "tree_indent_hint": "Wie weit jede Ebene von Ordnern und Notizen in der Notizliste eingerückt wird.",
     "view_options": "Ansichtsoptionen",
     "customize": "Seitenleiste anpassen",
     "customize_hint": "Auswählen, welche Elemente der Seitenleiste angezeigt werden"

@@ -222,6 +222,75 @@ body.folder-actions-always-visible .folder-toggle .folder-actions i {
     color: var(--pz-text);
 }
 
+/* A slider row of the tree's View options menu (#sidebarTreeIndentSlider,
+   index.php, js/tree-indent-slider.js): the icon, the name, the value and a
+   reset button where an entry has its icon and label, the slider under them.
+   A row, not an entry: no hover ground and no pointer. */
+.folder-actions-menu-slider {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 220px;
+    padding: 7px 14px 9px;
+    font-size: 0.9em;
+    color: var(--pz-text);
+}
+
+.folder-actions-menu-slider-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 22px;
+    white-space: nowrap;
+}
+
+.folder-actions-menu-slider-head > i {
+    font-size: 0.85em;
+    color: var(--pz-text-muted);
+    width: 15px;
+    text-align: center;
+}
+
+.folder-actions-menu-slider-value {
+    margin-left: auto;
+    font-size: 0.9em;
+    font-weight: var(--pz-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    color: var(--pz-text-secondary);
+}
+
+.folder-actions-menu-slider-reset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: var(--pz-radius);
+    background: transparent;
+    color: var(--pz-text-muted);
+    cursor: pointer;
+}
+
+.folder-actions-menu-slider-reset[hidden] {
+    display: none;
+}
+
+.folder-actions-menu-slider-reset:hover,
+.folder-actions-menu-slider-reset:focus-visible {
+    background-color: var(--pz-surface-hover);
+    color: var(--pz-text);
+    outline: none;
+}
+
+.folder-actions-menu-slider-input {
+    width: 100%;
+    margin: 0;
+    accent-color: var(--pz-accent);
+    cursor: pointer;
+}
+
 /* Destructive items */
 .folder-actions-menu-item.danger,
 .note-actions-menu-item.danger {

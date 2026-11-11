@@ -114,7 +114,15 @@ function toggleFolderActionsMenu(folderId) {
     adjustMenuPosition(menu, toggle);
 }
 
-function adjustMenuPosition(menu, toggleButton) {
+/**
+ * Place a menu under (or above) its toggle. By default it stays inside
+ * #left_col, aligned on the toggle's right edge when it would overflow the
+ * column. `options.escapeColumn` lets it open to the right of the toggle over
+ * the note instead (the tree's View options menu, js/tree-options-menu.js,
+ * whose toggle sits at the column's right end); the viewport still bounds it.
+ */
+function adjustMenuPosition(menu, toggleButton, options) {
+    options = options || {};
     // Reset any previous adjustments
     menu.style.bottom = '';
     menu.style.top = '';
@@ -144,7 +152,7 @@ function adjustMenuPosition(menu, toggleButton) {
     var rect = menu.getBoundingClientRect();
 
     // Check horizontal overflow
-    var leftCol = document.getElementById('left_col');
+    var leftCol = options.escapeColumn ? null : document.getElementById('left_col');
     if (leftCol) {
         var leftColRect = leftCol.getBoundingClientRect();
 
@@ -166,7 +174,7 @@ function adjustMenuPosition(menu, toggleButton) {
     }
 
     keepMenuPlaced(menu, function () {
-        if (toggleButton.isConnected) adjustMenuPosition(menu, toggleButton);
+        if (toggleButton.isConnected) adjustMenuPosition(menu, toggleButton, options);
     });
 }
 

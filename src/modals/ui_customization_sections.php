@@ -191,6 +191,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:search-bar-container" checked><span><?php echo t_h('modals.ui_customization.index_search_bar', [], 'Search bar'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:sidebarLockAllBtn" checked><span><?php echo t_h('note_lock.lock_all', [], 'Lock all notes against editing'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:sidebarSortBtn" checked><span><?php echo t_h('sort.header', [], 'Sort by'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:sidebarTreeIndentSlider" checked><span><?php echo t_h('sidebar.tree_indent', [], 'Tree indentation'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:sidebarExpandFoldersBtn" checked><span><?php echo t_h('sidebar.expand_all_folders', [], 'Expand all folders'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:favorites-folder" checked><span><?php echo t_h('notes_list.system_folders.favorites', [], 'Favorites'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:folder-note-count" checked><span><?php echo t_h('display.cards.show_folder_counts', [], 'Show folder counts'); ?></span></label>

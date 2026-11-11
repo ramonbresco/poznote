@@ -176,6 +176,7 @@ function poznoteGetIndexJsGroups(): array {
         'js/favorites-menu.js',
         'js/favorites-scroll.js',
         'js/tree-options-menu.js',
+        'js/tree-indent-slider.js',
         'js/other-accounts.js',
         'js/folder-icon.js',
         'js/folder-tree-highlight.js',

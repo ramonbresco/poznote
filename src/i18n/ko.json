@@ -3009,6 +3009,8 @@
     },
     "show_offline_dots": "오프라인 점 표시",
     "hide_offline_dots": "오프라인 점 숨기기",
+    "tree_indent": "트리 들여쓰기",
+    "tree_indent_hint": "노트 목록에서 폴더와 노트의 각 단계를 들여쓰는 정도입니다.",
     "view_options": "옵션 보기",
     "customize": "사이드바 사용자 지정 설정",
     "customize_hint": "사이드바의 어떤 요소를 표시할지 선택하세요"

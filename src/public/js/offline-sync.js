@@ -392,7 +392,7 @@
         });
         var rootStyle = window.getComputedStyle(document.documentElement);
         var rootVars = {};
-        ['--note-font-size', '--sidebar-font-size', '--note-max-width', '--left-col-width'].forEach(function (name) {
+        ['--note-font-size', '--sidebar-font-size', '--pz-tree-indent', '--note-max-width', '--left-col-width'].forEach(function (name) {
             var value = rootStyle.getPropertyValue(name).trim();
             if (value) {
                 rootVars[name] = value;

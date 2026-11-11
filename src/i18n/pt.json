@@ -1001,6 +1001,8 @@
     },
     "show_offline_dots": "Mostrar os pontos offline",
     "hide_offline_dots": "Ocultar os pontos offline",
+    "tree_indent": "Recuo da árvore",
+    "tree_indent_hint": "Quanto cada nível de pastas e notas é recuado na lista de notas.",
     "view_options": "Opções de exibição",
     "customize": "Personalizar a barra lateral",
     "customize_hint": "Escolher quais elementos da barra lateral são exibidos"

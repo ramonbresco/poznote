@@ -1000,6 +1000,8 @@
     },
     "show_offline_dots": "显示离线圆点",
     "hide_offline_dots": "隐藏离线圆点",
+    "tree_indent": "树形缩进",
+    "tree_indent_hint": "笔记列表中每一级文件夹和笔记的缩进距离。",
     "view_options": "视图选项",
     "customize": "自定义侧边栏",
     "customize_hint": "选择侧边栏中显示的元素"

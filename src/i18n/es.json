@@ -1001,6 +1001,8 @@
     },
     "show_offline_dots": "Mostrar los puntos sin conexión",
     "hide_offline_dots": "Ocultar los puntos sin conexión",
+    "tree_indent": "Sangría del árbol",
+    "tree_indent_hint": "Cuánto se sangra cada nivel de carpetas y notas en la lista de notas.",
     "view_options": "Opciones de vista",
     "customize": "Personalizar la barra lateral",
     "customize_hint": "Elegir qué elementos de la barra lateral se muestran"

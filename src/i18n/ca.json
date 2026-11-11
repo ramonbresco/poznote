@@ -3009,6 +3009,8 @@
     },
     "show_offline_dots": "Mostra els punts de fora de línia",
     "hide_offline_dots": "Amaga els punts de fora de línia",
+    "tree_indent": "Sagnat de l'arbre",
+    "tree_indent_hint": "Quant se sagna cada nivell de carpetes i notes a la llista de notes.",
     "view_options": "Opcions de visualització",
     "customize": "Personalitza la barra lateral",
     "customize_hint": "Trieu quins elements de la barra lateral es mostren"
