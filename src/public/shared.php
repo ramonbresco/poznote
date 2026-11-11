@@ -110,7 +110,7 @@ usort($shared_folders, function($a, $b) {
 	<?php poznoteRenderBrandIcons(); ?>
 	<?php poznoteRenderUiCustomizationBootstrap(); ?>
 </head>
-<body class="shared-page shared-table-page has-icon-sidebar"
+<body class="shared-page shared-table-page shares-list-page has-icon-sidebar"
       data-workspace="<?php echo htmlspecialchars($pageWorkspace, ENT_QUOTES, 'UTF-8'); ?>"
       data-txt-error="<?php echo t_h('common.error', [], 'Error'); ?>"
       data-txt-untitled="<?php echo t_h('common.untitled', [], 'Untitled'); ?>"
