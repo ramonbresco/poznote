@@ -3,7 +3,7 @@
     "message": "Poznote URL Saver"
   },
   "extDescription": {
-    "message": "表示中のページのURLやスクリーンショットを、Poznoteの新しいノートとして、または既存のノートの末尾に保存します。"
+    "message": "表示中のページのURL、スクリーンショット、またはMarkdown形式の本文を、Poznoteの新しいノートとして、または既存のノートの末尾に保存します。"
   },
   "optionsTitle": {
     "message": "Poznote URL Saverの設定"
@@ -70,6 +70,27 @@
   },
   "screenshotTitle": {
     "message": "表示中のページのスクリーンショット付きでリンクを保存"
+  },
+  "savePageText": {
+    "message": "本文を保存"
+  },
+  "savePageTextTitle": {
+    "message": "ページの本文をMarkdownで保存します。一部だけを保存するには、先にテキストを選択してください。"
+  },
+  "saveSelection": {
+    "message": "選択範囲を保存"
+  },
+  "saveSelectionTitle": {
+    "message": "選択したテキストをMarkdownで保存"
+  },
+  "readingPage": {
+    "message": "ページを読み込み中..."
+  },
+  "pageTextFailed": {
+    "message": "このページのテキストは読み取れません。"
+  },
+  "noTextFound": {
+    "message": "このページにテキストが見つかりません。"
   },
   "loadingNotes": {
     "message": "ノートを読み込み中..."

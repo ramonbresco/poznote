@@ -9,7 +9,8 @@
   <a href="CHROME-EXTENSION.zh-cn.md">简体中文</a> ·
   <b>한국어</b> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
-  <a href="CHROME-EXTENSION.ca.md">Català</a>
+  <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 
@@ -48,3 +49,5 @@ Chrome 웹 스토어에서 바로 설치하세요: [확장 프로그램 설치](
 - **Existing note**는 목록에서 고른 노트의 끝에 페이지를 추가합니다. 목록에는 최근 노트가 표시되며 입력하는 대로 검색됩니다. 설정에서 고른 작업 공간의 노트만 표시되며, **All workspaces**를 켜면 모든 작업 공간에서 노트를 고를 수 있습니다. 확장 프로그램이 이 노트를 다음 페이지에도 기억하므로, 하나의 읽기 목록에 링크를 모으는 데 페이지마다 클릭 한 번이면 됩니다. HTML 노트와 Markdown 노트에 페이지를 추가할 수 있습니다.
 
 그런 다음 **Save link**를 클릭하면 페이지 주소가 저장되고, **Screenshot**을 클릭하면 주소 아래에 페이지에서 보이는 부분의 이미지가 저장됩니다. 확인 메시지에 있는 링크로 Poznote에서 노트를 열 수 있습니다.
+
+**Save page text**는 페이지의 텍스트 자체를 Markdown으로 변환해 페이지 주소와 저장 날짜 아래에 저장합니다. 메뉴, 사이드바, 푸터 없이 본문만 저장하며 제목, 목록, 링크, 표, 코드 블록, 이미지(이미지는 사이트로 연결되는 링크로 남음)를 유지합니다. 먼저 텍스트를 선택하면 버튼이 **Save selection**으로 바뀌어 선택한 부분만 저장합니다. 이렇게 만든 새 노트는 Markdown 노트이며, 기존 노트에 추가하면 텍스트가 그 노트의 형식으로 작성됩니다. 텍스트를 브라우저에서 읽기 때문에 로그인이 필요한 페이지에서도 작동하고, 페이지가 사라져도 노트에 남으며, Poznote의 검색, API, MCP 서버가 이 텍스트를 다룰 수 있습니다.

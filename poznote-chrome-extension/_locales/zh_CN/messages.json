@@ -3,7 +3,7 @@
     "message": "Poznote URL Saver"
   },
   "extDescription": {
-    "message": "将当前页面的地址或截图保存到 Poznote，作为新笔记或追加到现有笔记末尾。"
+    "message": "将当前页面的地址、截图或 Markdown 格式的正文保存到 Poznote，作为新笔记或追加到现有笔记末尾。"
   },
   "optionsTitle": {
     "message": "Poznote URL Saver 设置"
@@ -70,6 +70,27 @@
   },
   "screenshotTitle": {
     "message": "保存链接及页面可见部分的截图"
+  },
+  "savePageText": {
+    "message": "保存正文"
+  },
+  "savePageTextTitle": {
+    "message": "将页面正文保存为 Markdown。先选中文本则只保存所选部分。"
+  },
+  "saveSelection": {
+    "message": "保存所选内容"
+  },
+  "saveSelectionTitle": {
+    "message": "将所选文本保存为 Markdown"
+  },
+  "readingPage": {
+    "message": "正在读取页面..."
+  },
+  "pageTextFailed": {
+    "message": "无法读取此页面的文本。"
+  },
+  "noTextFound": {
+    "message": "此页面没有找到文本。"
   },
   "loadingNotes": {
     "message": "正在加载笔记..."

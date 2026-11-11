@@ -1022,7 +1022,12 @@ function stripSearchHighlights(element) {
 
     normalizeCodeBlocksForStorage(clonedElement);
 
-    var codeBlockButtons = clonedElement.querySelectorAll('.code-block-copy-btn, .code-block-delete-btn, .code-block-lang-btn, .code-block-line-numbers-btn');
+    // Every control drawn around a code block (js/copy-code-on-focus.js). The
+    // fold chevron and its line count were missing from this list, so each
+    // save of an HTML note wrote one more of them into its content: they are
+    // taken out wherever they sit, which also cleans the notes that carry
+    // some already.
+    var codeBlockButtons = clonedElement.querySelectorAll('.code-block-copy-btn, .code-block-delete-btn, .code-block-lang-btn, .code-block-line-numbers-btn, .code-block-wrap-btn, .code-block-collapse-btn, .code-block-collapsed-summary');
     for (var b = 0; b < codeBlockButtons.length; b++) {
         codeBlockButtons[b].remove();
     }
@@ -1114,7 +1119,10 @@ function getTextWithCodeLineBreaks(node) {
         node.classList.contains('code-block-copy-btn') ||
         node.classList.contains('code-block-delete-btn') ||
         node.classList.contains('code-block-lang-btn') ||
-        node.classList.contains('code-block-line-numbers-btn')
+        node.classList.contains('code-block-line-numbers-btn') ||
+        node.classList.contains('code-block-wrap-btn') ||
+        node.classList.contains('code-block-collapse-btn') ||
+        node.classList.contains('code-block-collapsed-summary')
     )) {
         return '';
     }

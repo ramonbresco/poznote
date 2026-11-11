@@ -489,6 +489,10 @@ function poznotePanelUiSelectors(): array {
         'note-stats-lines' => '.note-sub-stat-lines',
         'note-id' => '.note-sub-id',
         'note-info-icon' => '.note-sub-info',
+        // The icon that copies a link to one section of the note
+        // (js/note-section-link.js): the one on the hovered heading and the
+        // one on each outline row, hidden together.
+        'note-section-link' => '.note-section-link-btn, .outline-section-link-btn',
         // Icon before the note title, in the sidebar list and in the note
         // header. Both are rendered by renderEditableNoteIcon(), which always
         // emits .note-icon.
@@ -500,6 +504,19 @@ function poznotePanelUiSelectors(): array {
         // legacy hide_folder_counts hover-reveal is gone).
         'folder-note-count' => '.folder-note-count',
         'tasklist-progress' => '.tasklist-progress',
+        // The controls in a code block's corner (js/copy-code-on-focus.js in
+        // a note and its Markdown preview, live-preview.js in the editor
+        // views), one key each. The bin of the Markdown preview keeps its own
+        // key (preview-code-block-delete), hidden by default; the fold
+        // chevron is handled below, hiding it unfolds blocks.
+        'code-block-copy' => '.code-block-copy-btn, .markdown-codemirror-host .cm-live-code-copy',
+        'code-block-line-numbers' => '.code-block-line-numbers-btn, .markdown-codemirror-host .cm-live-code-lines',
+        'code-block-wrap' => '.code-block-wrap-btn, .markdown-codemirror-host .cm-live-code-wrap',
+        'code-block-delete' => '.code-block-delete-btn:not(.markdown-preview *), .markdown-codemirror-host .cm-live-code-delete',
+        // The text around each backlink (discussion #1761, js/backlinks.js):
+        // the passages the row unfolds, and the chevron that unfolds them.
+        // The row of linking notes itself stays.
+        'backlinks-mentions' => '.backlinks-mentions, .backlinks-mentions-toggle',
         // The parts of the speed dial repeated on each tile, and the
         // workspace chip its page shares with others (issue #1714)
         'speed-dial-workspace' => '.speed-dial-container .poznote-page-title-workspace',
@@ -601,12 +618,19 @@ function poznoteBuildUiCustomizationRules(array $hiddenKeys) {
                 // the preview has no other use for and which a misclick next to
                 // the copy button turns into a lost block (issue #1406). Hidden
                 // by default, see poznoteGetDefaultHiddenUiKeys() above. The
-                // three buttons are absolutely positioned at fixed right offsets
-                // 32px apart (css/code-blocks.css), so the ones that stay slide
-                // into the gap rather than leaving it empty.
+                // buttons that stay slide into the gap on their own,
+                // js/copy-code-on-focus.js stacking the visible ones.
                 $rules[] = '.markdown-preview .code-block-delete-btn { display: none !important; }';
-                $rules[] = '.markdown-preview .code-block-copy-btn { right: 8px !important; }';
-                $rules[] = '.markdown-preview .code-block-line-numbers-btn { right: 40px !important; }';
+            } elseif ($id === 'code-block-collapse') {
+                // The fold chevron of a code block and its line count. Gone,
+                // nothing could unfold a folded block again, so folded blocks
+                // are shown whole while it is hidden (the choice stays
+                // stored): in a note and its preview, and in the editor views,
+                // whose side borders come back where the lines wrap.
+                $rules[] = '.code-block-collapse-btn, .code-block-collapsed-summary, .markdown-codemirror-host .cm-live-code-collapse, .markdown-codemirror-host .cm-live-code-lines-count { display: none !important; }';
+                $rules[] = '.noteentry pre[data-collapsed="1"] > code { max-height: none !important; overflow: visible !important; display: block !important; }';
+                $rules[] = '.markdown-codemirror-host .cm-live-preview .cm-line.cm-live-code-folded { height: auto !important; overflow: visible !important; }';
+                $rules[] = 'body:not(.code-block-no-wrap) .markdown-codemirror-host .cm-live-preview .cm-live-code-block:not(.cm-live-code-block-nowrap) > .cm-line.cm-live-code-folded, .markdown-codemirror-host .cm-live-preview .cm-live-code-block.cm-live-code-block-wrap > .cm-line.cm-live-code-folded { border-width: 0 1px !important; }';
             }
         } elseif ($type === 'share') {
             // Share dialog blocks are built in JS. The CSS rule covers pages that

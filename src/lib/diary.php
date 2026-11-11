@@ -581,8 +581,12 @@ function getDiaryFolderIds(PDO $con, string $workspace, ?int $rootId = null): ar
  * through the public-page sanitizer. The journal renders many notes at once
  * outside the editor, so none of their markup gets to run anything there.
  * Needs markdown_parser.php and public_helpers.php loaded.
+ *
+ * $tagsResolver is handed to the audio player, which uses it to find out
+ * what the file's tags say (lib/audio-player.php); without one, a recording
+ * gets the plain waveform player.
  */
-function renderDiaryJournalContent(string $content, string $type): string {
+function renderDiaryJournalContent(string $content, string $type, ?callable $tagsResolver = null): string {
     if (trim($content) === '') {
         return '';
     }
@@ -621,7 +625,7 @@ function renderDiaryJournalContent(string $content, string $type): string {
     } else {
         // Audio embeds are iframes on a player page the sanitizer would drop,
         // and older notes saved media tags escaped: same fixes as public_note.php.
-        $html = unescapeMediaInHtml(replacePublicAudioEmbedIframes($content));
+        $html = unescapeMediaInHtml(replacePublicAudioEmbedIframes($content, $tagsResolver));
     }
 
     return sanitizePublicNoteHtml((string)$html);

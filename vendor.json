@@ -106,7 +106,7 @@
         "src/public/index.php",
         "src/public/public_note.php"
       ],
-      "notes": "Common-languages bundle plus the separate PowerShell grammar, which the common bundle does not include. Both files must stay on the same version."
+      "notes": "Common-languages bundle plus the separate PowerShell grammar, which the common bundle does not include. Both files must stay on the same version. The TOML and Terraform grammars (discussion #1763) are Poznote code, not vendored: src/public/js/hljs-config-languages.js, loaded right after these two."
     },
     {
       "id": "sortablejs",
@@ -158,16 +158,16 @@
         {
           "path": "src/public/css/devicon.css",
           "url": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/<name>/<name>-plain.svg",
-          "sha256": "604d75cd727264fd4a9fa5d6d46e8fa27a48436fe0ade81cfe86e291f5a34330"
+          "sha256": "dc2ed4cd128465f9f41eb25be2217bf9b6907ef28cef851d3141d4c1d1a0e455"
         }
       ],
       "vendored": "2026-09-20",
-      "updated": "2026-09-20",
-      "verified": "2026-09-20",
+      "updated": "2026-11-11",
+      "verified": "2026-11-11",
       "loaded_by": [
         "src/public/index_css.php (the ?group=core bundle of index.php)"
       ],
-      "notes": "Generated, not downloaded, like lucide.css: tools/generate-devicon-icons.py fetches one SVG per language from the tag above and emits a CSS mask rule, dropping the brand colours a mask cannot carry anyway (issue #1444). DEVICON_VERSION in that script must match the version here, and its ICONS table is the list of marks vendored: 17 of the 19 languages in the code submenu, a single variant each (-original for markdown and rust), not the ~200 icons devicon ships. SQL and XML are not here, they keep a Lucide icon."
+      "notes": "Generated, not downloaded, like lucide.css: tools/generate-devicon-icons.py fetches one SVG per language from the tag above and emits a CSS mask rule, dropping the brand colours a mask cannot carry anyway (issue #1444). DEVICON_VERSION in that script must match the version here, and its ICONS table is the list of marks vendored: 18 of the 21 languages in the code submenu, a single variant each (-original for markdown and rust), not the ~200 icons devicon ships. SQL, TOML and XML are not here, they keep a Lucide icon (devicon has no TOML mark)."
     },
     {
       "id": "inter",
@@ -340,6 +340,81 @@
         "src/public/js/two-factor.js (injected on demand, when the two-factor setup shows its QR code)"
       ],
       "notes": "Browser build exposing window.qrcode. Draws the otpauth:// QR code of the two-factor setup in the browser, so the shared secret is never sent to a third-party QR service. Unminified upstream file: no .min.js is published."
+    },
+    {
+      "id": "@mozilla/readability",
+      "version": "0.6.0",
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/mozilla/readability",
+      "files": [
+        {
+          "path": "poznote-chrome-extension/vendor/Readability.js",
+          "url": "https://unpkg.com/@mozilla/readability@0.6.0/Readability.js",
+          "sha256": "34dcab3d0832d0019f02990eed6b6124e029e8c32b9f0c6f2550544ff8dff174"
+        },
+        {
+          "path": "poznote-chrome-extension/vendor/Readability.LICENSE.md",
+          "url": null,
+          "sha256": "a5b1e8181751ce05b85b7bfaa832b785e87086250a5148e679d17ca9bdcfa958"
+        }
+      ],
+      "vendored": "2026-11-11",
+      "updated": "2026-11-11",
+      "verified": "2026-11-11",
+      "loaded_by": [
+        "poznote-chrome-extension/popup.js (injected into the active tab with clip.js, on 'Save page text')"
+      ],
+      "notes": "Finds the main content of a page for the browser extension's 'Save page text' (discussion #1760). Plain script defining a global Readability function. The license file is LICENSE.md of the same npm tarball."
+    },
+    {
+      "id": "turndown",
+      "version": "7.2.4",
+      "license": "MIT",
+      "homepage": "https://github.com/mixmark-io/turndown",
+      "files": [
+        {
+          "path": "poznote-chrome-extension/vendor/turndown.js",
+          "url": "https://unpkg.com/turndown@7.2.4/dist/turndown.js",
+          "sha256": "c97187f436d41638bf7acf346a39d9d42f2f2c02af18245a297c09e796f8e46f"
+        },
+        {
+          "path": "poznote-chrome-extension/vendor/turndown.LICENSE",
+          "url": null,
+          "sha256": "a055e3a15db4b4cbb5af381230eba085603126d7d5d8c4dae45ee85b877a9729"
+        }
+      ],
+      "vendored": "2026-11-11",
+      "updated": "2026-11-11",
+      "verified": "2026-11-11",
+      "loaded_by": [
+        "poznote-chrome-extension/popup.js (injected into the active tab with clip.js, on 'Save page text')"
+      ],
+      "notes": "HTML to Markdown for the browser extension (discussion #1760). Browser IIFE exposing window.TurndownService. 7.2.5 existed when this was vendored but was a week old, so the previous release was taken. The license file is LICENSE of the same npm tarball."
+    },
+    {
+      "id": "turndown-plugin-gfm",
+      "version": "1.0.2",
+      "license": "MIT",
+      "homepage": "https://github.com/mixmark-io/turndown-plugin-gfm",
+      "files": [
+        {
+          "path": "poznote-chrome-extension/vendor/turndown-plugin-gfm.js",
+          "url": "https://unpkg.com/turndown-plugin-gfm@1.0.2/dist/turndown-plugin-gfm.js",
+          "sha256": "cf744cc1b7580f06d64ce236a4ff2630a53d389eccf2133a09d71ca443511912"
+        },
+        {
+          "path": "poznote-chrome-extension/vendor/turndown-plugin-gfm.LICENSE",
+          "url": null,
+          "sha256": "a055e3a15db4b4cbb5af381230eba085603126d7d5d8c4dae45ee85b877a9729"
+        }
+      ],
+      "vendored": "2026-11-11",
+      "updated": "2026-11-11",
+      "verified": "2026-11-11",
+      "loaded_by": [
+        "poznote-chrome-extension/popup.js (injected into the active tab with clip.js, on 'Save page text')"
+      ],
+      "notes": "GitHub-flavoured tables, strikethrough and task lists for turndown. Browser IIFE exposing window.turndownPluginGfm."
     }
   ]
 }

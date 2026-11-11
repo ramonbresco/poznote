@@ -56,8 +56,8 @@
     // <> for twelve of them. The marks come from devicon and are emitted as CSS
     // masks by tools/generate-devicon-icons.py, so the shape stays recognisable
     // while the colour stays the one every other menu icon uses, in every theme.
-    // Devicon has no SQL mark at all and its XML one is a handwritten word that
-    // is unreadable at 16px, so those two keep a Lucide icon. Kept in
+    // Devicon has no SQL or TOML mark at all and its XML one is a handwritten
+    // word that is unreadable at 16px, so those three keep a Lucide icon. Kept in
     // alphabetical order, which is also the order of the code block language
     // modal (js/code-block-language.js reads the list as it is).
     var CODE_BLOCK_LANGUAGES = [
@@ -77,6 +77,8 @@
         { id: 'code-ruby', icon: 'devicon-ruby', label: 'Ruby', lang: 'ruby' },
         { id: 'code-rust', icon: 'devicon-rust', label: 'Rust', lang: 'rust' },
         { id: 'code-sql', icon: 'lucide-database', label: 'SQL', lang: 'sql' },
+        { id: 'code-terraform', icon: 'devicon-terraform', label: 'Terraform', lang: 'terraform' },
+        { id: 'code-toml', icon: 'lucide-settings-2', label: 'TOML', lang: 'toml' },
         { id: 'code-typescript', icon: 'devicon-typescript', label: 'TypeScript', lang: 'typescript' },
         { id: 'code-xml', icon: 'lucide-file-code', label: 'XML', lang: 'xml' },
         { id: 'code-yaml', icon: 'devicon-yaml', label: 'YAML', lang: 'yaml' }
@@ -2430,9 +2432,11 @@
     }
 
     // The textarea of the "Edit task" dialog (js/tasklist-edit-modal.js), which
-    // also edits subtasks and the tasks of an embedded list
+    // also edits subtasks and the tasks of an embedded list, and the textarea of
+    // the empty "add a task" row of a task list (js/tasklist-render.js)
     function isTaskEditTextarea(el) {
-        return !!(el && el.tagName === 'TEXTAREA' && el.id === 'taskEditTextarea');
+        return !!(el && el.tagName === 'TEXTAREA' && (el.id === 'taskEditTextarea'
+            || (el.classList && el.classList.contains('task-input'))));
     }
 
     // Plain text fields the menu opens in (title, task fields): their caret is
@@ -2450,18 +2454,18 @@
     }
 
     function pauseTaskEditBlurSave(input) {
-        if (input && input.classList && (input.classList.contains('task-edit-input') || input.classList.contains('task-subitem-input')) && typeof window.pauseTaskEditBlurSave === 'function') {
+        if (input && input.classList && (input.classList.contains('task-edit-input') || input.classList.contains('task-subitem-input') || input.classList.contains('task-input')) && typeof window.pauseTaskEditBlurSave === 'function') {
             window.pauseTaskEditBlurSave(input);
         }
     }
 
     function resumeTaskEditBlurSave(input) {
-        if (input && input.classList && (input.classList.contains('task-edit-input') || input.classList.contains('task-subitem-input')) && typeof window.resumeTaskEditBlurSave === 'function') {
+        if (input && input.classList && (input.classList.contains('task-edit-input') || input.classList.contains('task-subitem-input') || input.classList.contains('task-input')) && typeof window.resumeTaskEditBlurSave === 'function') {
             window.resumeTaskEditBlurSave(input);
         }
     }
 
-    function openEmojiForInput(input) {
+    function openEmojiForInput(input, kind) {
         if (!isTextFieldElement(input)) return;
 
         input.focus();
@@ -2473,10 +2477,11 @@
 
         pauseTaskEditBlurSave(input);
 
-        if (typeof window.toggleEmojiPicker === 'function') {
-            setTimeout(() => window.toggleEmojiPicker(), 0);
+        const open = (kind === 'symbols') ? window.toggleSymbolPicker : window.toggleEmojiPicker;
+        if (typeof open === 'function') {
+            setTimeout(() => open(), 0);
         } else {
-            // Emoji picker unavailable — release the blur-save lock immediately.
+            // Picker unavailable — release the blur-save lock immediately.
             resumeTaskEditBlurSave(input);
         }
     }
@@ -2597,6 +2602,14 @@
                     openEmojiForInput(savedEditableElement);
                 }
             },
+            {
+                id: 'symbols',
+                icon: 'lucide-sigma',
+                label: t('slash_menu.symbols', null, 'Symbols'),
+                action: function () {
+                    openEmojiForInput(savedEditableElement, 'symbols');
+                }
+            },
             buildDateSection(t, function (request) {
                 openDateForInput(savedEditableElement, request);
             }, false)
@@ -2614,6 +2627,14 @@
                 label: t('slash_menu.emoji', null, 'Emoji'),
                 action: function () {
                     openEmojiForInput(savedEditableElement);
+                }
+            },
+            {
+                id: 'symbols',
+                icon: 'lucide-sigma',
+                label: t('slash_menu.symbols', null, 'Symbols'),
+                action: function () {
+                    openEmojiForInput(savedEditableElement, 'symbols');
                 }
             },
             buildDateSection(t, function (request) {
@@ -2953,6 +2974,21 @@
                     }
                 }
             },
+            // Scientific and technical characters (m², μ, ±, →). Offered on
+            // mobile too, unlike the emoji grid above: a phone keyboard has
+            // emoji of its own, but none of these.
+            symbols: {
+                id: 'symbols',
+                icon: 'lucide-sigma',
+                label: t('slash_menu.symbols', null, 'Symbols'),
+                action: function () {
+                    if (typeof window.toggleSymbolPicker === 'function') {
+                        // Let the focus and the selection settle after the slash
+                        // deletion, as the emoji entry above does.
+                        setTimeout(() => window.toggleSymbolPicker(), 10);
+                    }
+                }
+            },
             noteReference: {
                 id: 'note-reference',
                 icon: 'lucide lucide-at',
@@ -3181,6 +3217,7 @@
                     },
                     common.recordAudio,
                     common.emoji,
+                    common.symbols,
                     {
                         id: 'table',
                         icon: 'lucide-table',
@@ -3558,6 +3595,7 @@
                     },
                     common.recordAudio,
                     common.emoji,
+                    common.symbols,
                     {
                         id: 'table',
                         icon: 'lucide-table',
@@ -6305,6 +6343,9 @@
     // Desktop only, a long press on a phone selects a word and shows the native
     // selection toolbar. The attachment menu runs first and takes the event when
     // it opens; the table menu is left the cells it owns.
+    const CODE_BLOCK_CONTROLS_SELECTOR = '.code-block-copy-btn, .code-block-delete-btn, .code-block-line-numbers-btn, ' +
+        '.code-block-wrap-btn, .code-block-collapse-btn, .code-block-collapsed-summary, .cm-live-code-actions';
+
     function handleSelectionContextMenu(e) {
         if (e.defaultPrevented || slashMenuElement) return;
         // Shift + right click keeps the browser's menu, the only place its
@@ -6312,6 +6353,10 @@
         // it on its own, Chromium needs the event left alone
         if (e.shiftKey) return;
         if (window.matchMedia && window.matchMedia('(max-width: 800px)').matches) return;
+        // The controls in a code block's corner are the app's, not the note's
+        // text: a right-click on one belongs to the Hide menu of Element
+        // visibility (js/hide-element-menu.js), not to the commands of the note
+        if (e.target && e.target.closest && e.target.closest(CODE_BLOCK_CONTROLS_SELECTOR)) return;
 
         const pointer = { left: e.clientX, right: e.clientX, top: e.clientY, bottom: e.clientY, width: 0, height: 0 };
         if (showSlashMenuForSelection(e.target, pointer)) {

@@ -24,6 +24,9 @@
     let savedRange = null;
     let savedEditableElement = null;
     let currentNoteId = null;
+    // The note whose sections the modal is showing, while it is on its second
+    // step (discussion 1758)
+    let sectionPickerNote = null;
 
     // ============================================================================
     // HELPER FUNCTIONS
@@ -32,7 +35,11 @@
     /**
      * Translation helper function (alias for window.t from globals.js)
      */
-    const tr = window.t || function(key, vars, fallback) {
+    // Looked up at call time, not captured: this file is in the head bundle
+    // and window.t comes with js/globals.js, in the one that runs after it,
+    // so the reference taken here used to be the English fallback for good.
+    const tr = function(key, vars, fallback) {
+        if (typeof window.t === 'function') return window.t(key, vars, fallback);
         return fallback || key;
     };
 
@@ -209,7 +216,7 @@
         if (
             savedEditableElement &&
             savedEditableElement.classList &&
-            (savedEditableElement.classList.contains('task-edit-input') || savedEditableElement.classList.contains('task-subitem-input')) &&
+            (savedEditableElement.classList.contains('task-edit-input') || savedEditableElement.classList.contains('task-subitem-input') || savedEditableElement.classList.contains('task-input')) &&
             typeof window.resumeTaskEditBlurSave === 'function'
         ) {
             window.resumeTaskEditBlurSave(savedEditableElement);
@@ -252,6 +259,7 @@
         }
         
         // Load recent notes and all notes
+        showSectionStep(false);
         loadNotesList();
     };
 
@@ -263,6 +271,7 @@
         if (modal) {
             modal.style.display = 'none';
         }
+        showSectionStep(false);
         // Restore selection to the note editor
         restoreSelection();
         resumeTaskEditBlurSaveIfNeeded();
@@ -333,8 +342,170 @@
             e.stopPropagation();
             insertNoteReference(note.id, heading);
         });
-        
+
+        // Link to one section of that note rather than to the note
+        // (discussion 1758). Not offered when the cursor is in a text field
+        // (a task, a title): what goes there is the [[Title]] form, which
+        // addresses a note and has no way to name a part of one.
+        if (canPickSections()) {
+            const sectionsBtn = document.createElement('button');
+            sectionsBtn.type = 'button';
+            sectionsBtn.className = 'note-reference-item-sections';
+            const sectionsLabel = tr('note_reference.modal.link_to_section', {}, 'Link to a section');
+            sectionsBtn.title = sectionsLabel;
+            sectionsBtn.setAttribute('aria-label', sectionsLabel);
+            sectionsBtn.innerHTML = '<i class="lucide lucide-hash" aria-hidden="true"></i>';
+            sectionsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openSectionPicker(note, heading);
+            });
+            item.appendChild(sectionsBtn);
+        }
+
         return item;
+    }
+
+    // ============================================================================
+    // SECTION PICKER (second step of the modal)
+    // ============================================================================
+
+    function canPickSections() {
+        return !isTextField(savedEditableElement) &&
+            !!(window.outlinePanel && typeof window.outlinePanel.assignSectionSlugs === 'function');
+    }
+
+    /**
+     * Swap the modal between its note list and its section list. The search
+     * box, the workspace checkbox and the create button belong to the search
+     * for a note, so they go away while a note's sections are on screen.
+     */
+    function showSectionStep(active) {
+        const content = document.querySelector('#noteReferenceModal .note-reference-modal-content');
+        if (content) content.classList.toggle('is-section-step', !!active);
+
+        const step = document.getElementById('noteReferenceSectionStep');
+        if (step) step.style.display = active ? 'flex' : 'none';
+
+        if (!active) sectionPickerNote = null;
+    }
+
+    async function openSectionPicker(note, heading) {
+        sectionPickerNote = {
+            id: note.id,
+            title: heading,
+            workspace: note.workspace || getCurrentWorkspace()
+        };
+
+        showSectionStep(true);
+
+        const nameElement = document.getElementById('noteReferenceSectionNote');
+        if (nameElement) nameElement.textContent = heading;
+
+        const list = document.getElementById('noteReferenceList');
+        if (list) {
+            list.innerHTML = `<div class="note-reference-loading"><i class="lucide lucide-loader-2 lucide-spin"></i> ${escapeHtml(tr('common.loading', {}, 'Loading...'))}</div>`;
+        }
+
+        const sections = await loadNoteSections(sectionPickerNote.id, sectionPickerNote.workspace);
+
+        // The reader went back, or picked another note, while this was in
+        // flight
+        if (!sectionPickerNote || String(sectionPickerNote.id) !== String(note.id)) return;
+
+        renderSectionList(sections);
+    }
+
+    /**
+     * The headings of a note the modal does not have on screen: its content
+     * is read through the API and walked with the rules of the outline panel,
+     * so a section is named the same way wherever the link is made.
+     */
+    async function loadNoteSections(noteId, workspace) {
+        try {
+            const query = workspace ? `?workspace=${encodeURIComponent(workspace)}` : '';
+            const response = await fetch(`/api/v1/notes/${encodeURIComponent(noteId)}${query}`);
+            if (!response.ok) return null;
+
+            const data = await response.json();
+            const note = data && data.note;
+            if (!note || typeof note.content !== 'string') return null;
+
+            return extractContentSections(note.content, note.type || '');
+        } catch (e) {
+            console.debug('note-reference: loadNoteSections() failed:', e);
+            return null;
+        }
+    }
+
+    function extractContentSections(content, type) {
+        const panel = window.outlinePanel;
+        const headings = [];
+
+        if (String(type).toLowerCase() === 'markdown') {
+            let inCodeBlock = false;
+            String(content).split('\n').forEach((line) => {
+                if (panel.isMarkdownFence(line)) {
+                    inCodeBlock = !inCodeBlock;
+                    return;
+                }
+                if (inCodeBlock) return;
+
+                const parsed = panel.markdownHeadingFromLine(line);
+                if (parsed) headings.push({ level: parsed.level, text: parsed.text });
+            });
+        } else {
+            // Parsed without a browsing context, so nothing in the note runs
+            // or is fetched here.
+            const parsed = new DOMParser().parseFromString('<div>' + content + '</div>', 'text/html');
+            parsed.querySelectorAll(panel.headingSelector).forEach((element) => {
+                const text = (element.textContent || '').trim();
+                const level = panel.headingLevel(element);
+                if (text && level) headings.push({ level: level, text: text });
+            });
+        }
+
+        return panel.assignSectionSlugs(headings);
+    }
+
+    function renderSectionList(sections) {
+        const list = document.getElementById('noteReferenceList');
+        if (!list) return;
+
+        if (!sections) {
+            list.innerHTML = `<div class="note-reference-empty">${escapeHtml(tr('note_reference.modal.sections_failed', {}, 'This note could not be read'))}</div>`;
+            return;
+        }
+
+        const usable = sections.filter((section) => section.sectionSlug);
+        if (usable.length === 0) {
+            list.innerHTML = `<div class="note-reference-empty">${escapeHtml(tr('note_reference.modal.no_sections', {}, 'This note has no headings to link to'))}</div>`;
+            return;
+        }
+
+        list.innerHTML = '';
+        usable.forEach((section) => {
+            const item = document.createElement('div');
+            item.className = 'note-reference-item note-reference-section-item';
+            item.setAttribute('data-level', String(section.level));
+
+            const title = document.createElement('span');
+            title.className = 'note-reference-item-title';
+            title.textContent = section.text;
+            item.appendChild(title);
+
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!sectionPickerNote) return;
+                insertNoteReference(sectionPickerNote.id, sectionPickerNote.title, {
+                    slug: section.sectionSlug,
+                    text: section.text
+                });
+            });
+
+            list.appendChild(item);
+        });
     }
 
     /**
@@ -425,8 +596,8 @@
     /**
      * Insert a note reference in markdown format
      */
-    function insertMarkdownReference(heading, noteId) {
-        const referenceText = `[${heading}](index.php?note=${noteId})`;
+    function insertMarkdownReference(heading, noteId, sectionHash) {
+        const referenceText = `[${heading}](index.php?note=${noteId}${sectionHash || ''})`;
 
         // The CodeMirror editor is written to through its own API: a text
         // node put into its DOM is read back as typed text, which the rich
@@ -475,18 +646,23 @@
     /**
      * Insert a note reference in HTML format
      */
-    function insertHtmlReference(heading, noteId) {
+    function insertHtmlReference(heading, noteId, sectionHash, tooltip) {
         const link = document.createElement('a');
-        link.href = `index.php?note=${noteId}`;
+        link.href = `index.php?note=${noteId}${sectionHash || ''}`;
         link.className = 'note-internal-link';
         link.setAttribute('data-note-id', noteId);
         link.setAttribute('data-note-reference', 'true');
         link.textContent = heading;
-        link.title = `Go to: ${heading}`;
+        link.title = `Go to: ${tooltip || heading}`;
         
         // Prevent default navigation, handle via JavaScript
         link.onclick = function(e) {
             e.preventDefault();
+            // This handler runs before the editor's own, which is the one
+            // that reads the section out of the address.
+            if (sectionHash && typeof window.poznoteRequestNoteSection === 'function') {
+                window.poznoteRequestNoteSection(noteId, sectionHash);
+            }
             navigateToNote(noteId);
             return false;
         };
@@ -511,7 +687,7 @@
     /**
      * Insert a note reference at the cursor position
      */
-    function insertNoteReference(noteId, heading) {
+    function insertNoteReference(noteId, heading, section) {
         closeNoteReferenceModal();
         
         // Restore selection first
@@ -526,12 +702,20 @@
             return;
         }
 
+        // A link to one section carries the heading's name as its text, the
+        // note's own title being in the tooltip: the reader picked a section,
+        // and that is what the sentence around the link is about.
+        const prefix = window.poznoteSectionHashPrefix || 'section-';
+        const sectionHash = section && section.slug ? '#' + prefix + section.slug : '';
+        const label = section && section.text ? section.text : heading;
+        const tooltip = section && section.text ? `${heading} › ${section.text}` : heading;
+
         const isMarkdown = noteEntry && noteEntry.closest('.innernote[data-markdown-note="true"]');
         
         if (isMarkdown) {
-            insertMarkdownReference(heading, noteId);
+            insertMarkdownReference(label, noteId, sectionHash);
         } else {
-            insertHtmlReference(heading, noteId);
+            insertHtmlReference(label, noteId, sectionHash, tooltip);
         }
     }
 
@@ -664,9 +848,16 @@
         } finally {
             pendingNavigationNoteId = null;
         }
+        // A link to one section carries its hash over the reload; in the
+        // paths below the note stays in this page and js/note-section-link.js
+        // scrolls to the section once it is on screen.
+        const sectionHash = typeof window.poznotePendingSectionHash === 'function'
+            ? window.poznotePendingSectionHash(noteId)
+            : '';
+
         if (targetWorkspace && targetWorkspace !== workspace) {
             const tabParam = isMobile ? '&scroll=1' : '&newtab=1';
-            window.location.href = `index.php?workspace=${encodeURIComponent(targetWorkspace)}&note=${encodeURIComponent(noteId)}${tabParam}`;
+            window.location.href = `index.php?workspace=${encodeURIComponent(targetWorkspace)}&note=${encodeURIComponent(noteId)}${tabParam}${sectionHash ? '#' + sectionHash : ''}`;
             return;
         }
 
@@ -691,7 +882,7 @@
 
         // Fallback to full page reload
         const scrollParam = isMobile ? '&scroll=1' : '';
-        window.location.href = `index.php?note=${noteId}&workspace=${encodeURIComponent(workspace)}${scrollParam}`;
+        window.location.href = `index.php?note=${noteId}&workspace=${encodeURIComponent(workspace)}${scrollParam}${sectionHash ? '#' + sectionHash : ''}`;
     };
 
     // ============================================================================
@@ -787,12 +978,25 @@
     /**
      * Initialize all event listeners
      */
+    function initSectionBackButton() {
+        const back = document.getElementById('noteReferenceSectionBack');
+        if (!back) return;
+
+        back.addEventListener('click', function (e) {
+            e.preventDefault();
+            showSectionStep(false);
+            const searchInput = document.getElementById('noteReferenceSearch');
+            loadNotesList(searchInput ? searchInput.value : '');
+        });
+    }
+
     function init() {
         document.addEventListener('DOMContentLoaded', function() {
             initSearchInput();
             initModalBackdrop();
             initCreateButton();
             initAllWorkspacesToggle();
+            initSectionBackButton();
         });
     }
 
@@ -1279,12 +1483,23 @@
         }
     }, true);
 
+    // A link to one section of a note (discussion 1758): its hash is asked
+    // for before any loader opens the note, js/note-section-link.js scrolling
+    // to the section once it is on screen. Done here as well as in the
+    // editor's own link handler (js/events-rte-fields.js), which stands aside
+    // when the reader has text selected, while this one still navigates.
+    function requestLinkSection(link, noteId) {
+        if (typeof window.poznoteRequestSectionFromHref !== 'function') return;
+        window.poznoteRequestSectionFromHref(link.getAttribute('href') || '', noteId);
+    }
+
     document.addEventListener('click', function(e) {
         const link = e.target.closest('a.note-internal-link, a[data-note-reference="true"]');
         if (link) {
             e.preventDefault();
             const noteId = link.getAttribute('data-note-id');
             if (noteId) {
+                requestLinkSection(link, noteId);
                 navigateToNote(noteId);
             }
         }

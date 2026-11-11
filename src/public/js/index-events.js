@@ -1246,8 +1246,8 @@
 
         // A Markdown editor is CodeMirror: it owns its selection, and focusing
         // its host div would place no caret at all (issue #1752)
-        var codeMirror = window.PoznoteMarkdownCodeMirror;
-        if (codeMirror && typeof codeMirror.isCodeMirrorEditor === 'function' && codeMirror.isCodeMirrorEditor(el)) {
+        var codeMirror = noteCodeMirrorApi(el);
+        if (codeMirror) {
             var end = typeof codeMirror.getLength === 'function' ? codeMirror.getLength(el) : 0;
             if (typeof codeMirror.setSelection === 'function') {
                 codeMirror.setSelection(el, end, end);
@@ -1267,44 +1267,287 @@
             el.focus();
         }
         if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
-            var range = document.createRange();
-            var lastLine = getLastTextLine(el);
-            if (lastLine && lastLine.lastChild && lastLine.lastChild.nodeName === 'BR') {
-                range.setStartBefore(lastLine.lastChild);
-            } else {
-                range.selectNodeContents(lastLine || el);
-            }
-            range.collapse(false);
             var sel = window.getSelection();
             sel.removeAllRanges();
-            sel.addRange(range);
+            sel.addRange(noteEndRange(el));
         }
+    }
+
+    /**
+     * Collapsed range at the end of a rich-text note: inside its last line
+     * when that line is a plain block, at the end of the note otherwise.
+     * @param {HTMLElement} el
+     */
+    function noteEndRange(el) {
+        var range = document.createRange();
+        var lastLine = getLastTextLine(el);
+        if (lastLine && lastLine.lastChild && lastLine.lastChild.nodeName === 'BR') {
+            range.setStartBefore(lastLine.lastChild);
+        } else {
+            range.selectNodeContents(lastLine || el);
+        }
+        range.collapse(false);
+        return range;
+    }
+
+    /**
+     * The CodeMirror API when el hosts a Markdown editor, null otherwise.
+     * @param {HTMLElement} el
+     */
+    function noteCodeMirrorApi(el) {
+        var codeMirror = window.PoznoteMarkdownCodeMirror;
+        if (!codeMirror || typeof codeMirror.isCodeMirrorEditor !== 'function') return null;
+        return codeMirror.isCodeMirrorEditor(el) ? codeMirror : null;
+    }
+
+    // Parts of the note column that belong to a control rather than to the
+    // background around the text
+    var NOTE_BACKGROUND_SKIP = 'button, a, input, textarea, select, [contenteditable="true"], .search-replace-bar, .mobile-toolbar-menu, .note-edit-toolbar, .note-tags-row, .note-subline, summary, details';
+
+    /**
+     * Is this mouse event on the background around the note's text, rather
+     * than on something that handles it itself?
+     * @param {MouseEvent} e
+     */
+    function isNoteBackgroundEvent(e) {
+        // Keep out of the sidebar and the notes list
+        if (!e.target.closest('#right_col')) return false;
+        if (e.target.closest(NOTE_BACKGROUND_SKIP)) return false;
+        // A toggle block opens and closes on its own header
+        if (e.target.tagName === 'SUMMARY' || e.target.tagName === 'DETAILS' || e.target.closest('.toggle-block')) return false;
+        if (e.target.tagName === 'I' || e.target.tagName === 'SVG' || e.target.tagName === 'PATH') {
+            if (e.target.closest('button, a, .cursor-pointer, .note-tags-row')) return false;
+        }
+        return true;
+    }
+
+    /**
+     * The note on screen and what takes the caret inside it: the entry itself
+     * for a rich-text note, the Markdown editor host for a Markdown one.
+     */
+    function visibleNoteCaretTarget() {
+        var noteEntry = document.querySelector('#right_col .noteentry');
+        if (!noteEntry || noteEntry.offsetParent === null) return null;
+
+        var target = noteEntry;
+        var markdownEditor = noteEntry.querySelector('.markdown-editor');
+        if (markdownEditor && markdownEditor.offsetParent !== null) {
+            target = markdownEditor;
+        }
+        return { entry: noteEntry, target: target };
+    }
+
+    /**
+     * Is the pointer in the empty room under the note, rather than beside it?
+     * Only the room below stands in for the end of the text. The side gutters
+     * a narrowed note leaves (the "Note width" setting, or "center note
+     * content") are background next to a line, and a click there used to send
+     * the caret to the end of the note (issue #1752).
+     * @param {MouseEvent} e
+     * @param {HTMLElement} noteEntry
+     */
+    function isBelowNote(e, noteEntry) {
+        if (e.target.classList && e.target.classList.contains('note-bottom-space')) return true;
+        return e.clientY > noteEntry.getBoundingClientRect().bottom;
+    }
+
+    /* Selecting with the mouse from the room below the note (issue #1752).
+       That room is a div of its own next to the editor, not part of it, so the
+       browser has no text there to anchor a selection in and a drag starting
+       below the note selected nothing at all, while a text editor selects the
+       end of the text. The selection is therefore extended by hand, from the
+       end of the note to the line under the pointer.
+       Nothing is cancelled on the way: the browser's own drag out of an empty
+       div produces no selection to compete with this one (measured), and its
+       mousedown still collapses a selection left over from before. */
+    var noteSpaceDrag = null;
+    var noteSpaceDragDidSelect = false;
+    // Below this, the pointer was held still and it is a plain click
+    var NOTE_SPACE_DRAG_SLOP = 4;
+    // Pixels per frame once the pointer is dragged out of the column
+    var NOTE_SPACE_DRAG_STEP = 14;
+
+    /**
+     * Collapsed range at viewport coordinates, when it lands inside el.
+     * @param {HTMLElement} el
+     */
+    function caretRangeInside(el, x, y) {
+        var range = null;
+        try {
+            if (document.caretRangeFromPoint) {
+                range = document.caretRangeFromPoint(x, y);
+            } else if (document.caretPositionFromPoint) {
+                var position = document.caretPositionFromPoint(x, y);
+                if (position && position.offsetNode) {
+                    range = document.createRange();
+                    range.setStart(position.offsetNode, position.offset);
+                }
+            }
+        } catch (e) {
+            console.debug('index-events: caretRangeInside() failed:', e);
+            return null;
+        }
+        if (!range || !el.contains(range.startContainer)) return null;
+        return range;
+    }
+
+    /**
+     * The pointer brought inside the part of the note that is on screen: it
+     * is under the text, and in a narrowed note often beside it as well.
+     * @param {HTMLElement} el
+     */
+    function noteSpacePoint(el, x, y) {
+        var rect = el.getBoundingClientRect();
+        var column = document.getElementById('right_col');
+        var view = column ? column.getBoundingClientRect() : { top: 0, bottom: window.innerHeight };
+        var top = Math.max(rect.top, view.top) + 1;
+        var bottom = Math.min(rect.bottom, view.bottom) - 1;
+        if (bottom < top) return null;
+
+        return {
+            x: Math.min(Math.max(x, rect.left + 1), rect.right - 1),
+            y: Math.min(Math.max(y, top), bottom)
+        };
+    }
+
+    function extendNoteSpaceSelection(state, x, y) {
+        var point = noteSpacePoint(state.target, x, y);
+        if (!point) return;
+
+        if (state.codeMirror) {
+            var position = state.codeMirror.getPosAtCoords(state.target, point.x, point.y);
+            if (typeof position !== 'number') return;
+            state.codeMirror.setSelection(state.target, state.anchorPosition, position);
+            return;
+        }
+
+        var range = caretRangeInside(state.target, point.x, point.y);
+        var selection = window.getSelection();
+        if (!range || !selection || !state.anchorNode) return;
+        selection.setBaseAndExtent(state.anchorNode, state.anchorOffset, range.startContainer, range.startOffset);
+    }
+
+    function beginNoteSpaceSelection(state) {
+        state.selecting = true;
+
+        if (state.codeMirror) {
+            state.anchorPosition = state.codeMirror.getLength(state.target);
+            return;
+        }
+
+        var end = noteEndRange(state.target);
+        try {
+            state.target.focus({ preventScroll: true });
+        } catch (e) {
+            state.target.focus();
+        }
+        state.anchorNode = end.startContainer;
+        state.anchorOffset = end.startOffset;
+    }
+
+    /* Dragged out of the column, the selection keeps growing the way a native
+       one does: the pointer has stopped moving, so the scrolling is driven by
+       frames and the selection extended again from where the pointer was left.
+       Only beyond the edge, never inside: the drag starts in the room below
+       the note, often near the bottom of the column, and a margin there would
+       scroll the note away under the pointer. */
+    function scheduleNoteSpaceAutoScroll(state) {
+        if (state.frame) return;
+
+        var column = document.getElementById('right_col');
+        if (!column) return;
+
+        state.frame = window.requestAnimationFrame(function () {
+            state.frame = 0;
+            if (noteSpaceDrag !== state || !state.selecting) return;
+
+            var view = column.getBoundingClientRect();
+            var step = 0;
+            if (state.pointerY < view.top) step = -NOTE_SPACE_DRAG_STEP;
+            else if (state.pointerY > view.bottom) step = NOTE_SPACE_DRAG_STEP;
+            if (!step) return;
+
+            var before = column.scrollTop;
+            column.scrollTop = before + step;
+            if (column.scrollTop === before) return;
+
+            extendNoteSpaceSelection(state, state.pointerX, state.pointerY);
+            scheduleNoteSpaceAutoScroll(state);
+        });
+    }
+
+    function handleNoteSpaceMouseDown(e) {
+        if (e.button !== 0 || e.detail > 1) return;
+        if (!isNoteBackgroundEvent(e)) return;
+
+        var caret = visibleNoteCaretTarget();
+        if (!caret || !isBelowNote(e, caret.entry)) return;
+
+        // A note that takes no caret takes no selection either
+        var codeMirror = noteCodeMirrorApi(caret.target);
+        if (!codeMirror && !caret.target.isContentEditable) return;
+
+        noteSpaceDrag = {
+            target: caret.target,
+            codeMirror: codeMirror,
+            startX: e.clientX,
+            startY: e.clientY,
+            pointerX: e.clientX,
+            pointerY: e.clientY,
+            selecting: false,
+            frame: 0
+        };
+        document.addEventListener('mousemove', handleNoteSpaceMouseMove, true);
+        document.addEventListener('mouseup', endNoteSpaceDrag, true);
+    }
+
+    function handleNoteSpaceMouseMove(e) {
+        var state = noteSpaceDrag;
+        if (!state) return;
+
+        // The button was released where no mouseup could be heard (another
+        // window, a drag out of the browser): nothing is being dragged
+        if (e.buttons === 0) {
+            endNoteSpaceDrag();
+            return;
+        }
+
+        state.pointerX = e.clientX;
+        state.pointerY = e.clientY;
+
+        if (!state.selecting) {
+            if (Math.abs(e.clientX - state.startX) < NOTE_SPACE_DRAG_SLOP
+                && Math.abs(e.clientY - state.startY) < NOTE_SPACE_DRAG_SLOP) return;
+            beginNoteSpaceSelection(state);
+        }
+
+        extendNoteSpaceSelection(state, e.clientX, e.clientY);
+        scheduleNoteSpaceAutoScroll(state);
+    }
+
+    function endNoteSpaceDrag() {
+        var state = noteSpaceDrag;
+        noteSpaceDrag = null;
+        document.removeEventListener('mousemove', handleNoteSpaceMouseMove, true);
+        document.removeEventListener('mouseup', endNoteSpaceDrag, true);
+        if (!state) return;
+
+        if (state.frame) window.cancelAnimationFrame(state.frame);
+        // The click that closes the drag must leave the selection alone
+        noteSpaceDragDidSelect = state.selecting;
     }
 
     /**
      * Handle clicks on note background to focus the editor at the end
      */
     function handleNoteBackgroundClick(e) {
-        // Ensure the click is within the right column (editor area)
-        // This prevents triggering focus when clicking on the sidebar/note list
-        if (!e.target.closest('#right_col')) {
-            return;
-        }
+        // The click that ends a drag through the room below the note: the
+        // selection it just made is the point, do not collapse it
+        var afterDrag = noteSpaceDragDidSelect;
+        noteSpaceDragDidSelect = false;
+        if (afterDrag) return;
 
-        // If the click is on an interactive element, ignore
-        if (e.target.closest('button, a, input, textarea, select, [contenteditable="true"], .search-replace-bar, .mobile-toolbar-menu, .note-edit-toolbar, .note-tags-row, .note-subline, summary, details')) {
-            return;
-        }
-
-        // Also ignore if clicking on a toggle block (details/summary elements)
-        if (e.target.tagName === 'SUMMARY' || e.target.tagName === 'DETAILS' || e.target.closest('.toggle-block')) {
-            return;
-        }
-
-        // Also ignore if clicking on specific icons that are meant to be interactive
-        if (e.target.tagName === 'I' || e.target.tagName === 'SVG' || e.target.tagName === 'PATH') {
-            if (e.target.closest('button, a, .cursor-pointer, .note-tags-row')) return;
-        }
+        if (!isNoteBackgroundEvent(e)) return;
 
         // Check if text is being selected - don't focus if user is selecting text
         const selection = window.getSelection();
@@ -1312,32 +1555,11 @@
             return;
         }
 
-        // Find the visible (active) note entry inside the right column
-        const noteEntry = document.querySelector('#right_col .noteentry');
-        if (!noteEntry || noteEntry.offsetParent === null) return;
+        const caret = visibleNoteCaretTarget();
+        if (!caret) return;
 
-        // Determine the actual target element for focusing
-        // For HTML notes, it's the noteEntry. For Markdown notes, it's the .markdown-editor child.
-        let targetEl = noteEntry;
-        const markdownEditor = noteEntry.querySelector('.markdown-editor');
-        if (markdownEditor && markdownEditor.offsetParent !== null) {
-            targetEl = markdownEditor;
-        }
-
-        // If clicking specifically on the bottom space padding div
-        if (e.target.classList.contains('note-bottom-space')) {
-            focusAtEnd(targetEl);
-            e.preventDefault();
-            return;
-        }
-
-        const rect = noteEntry.getBoundingClientRect();
-
-        // If the click is anywhere in the right column background (below the note or around it)
-        // Since we already checked for #right_col target and excluded interactive elements,
-        // we can focus the end of the note.
-        if (e.clientY > rect.bottom || e.target.closest('#right_col')) {
-            focusAtEnd(targetEl);
+        if (isBelowNote(e, caret.entry)) {
+            focusAtEnd(caret.target);
             e.preventDefault();
         }
     }
@@ -1356,6 +1578,7 @@
             }
         });
         document.addEventListener('click', handleNoteBackgroundClick);
+        document.addEventListener('mousedown', handleNoteSpaceMouseDown, true);
         document.addEventListener('focusin', handleIndexFocus);
 
         // Initialize page configuration first

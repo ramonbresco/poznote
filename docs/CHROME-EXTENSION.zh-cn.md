@@ -9,7 +9,8 @@
   <b>简体中文</b> ·
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
-  <a href="CHROME-EXTENSION.ca.md">Català</a>
+  <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 
@@ -48,3 +49,5 @@
 - **Existing note** 把页面追加到您在列表中选择的笔记末尾。列表显示您最近的笔记，并会随输入实时搜索。列表只包含设置中所选工作区的笔记；打开 **All workspaces** 即可选择任意工作区中的笔记。扩展会记住这条笔记供下一个页面使用，因此把链接收集到同一个阅读清单里，每个页面只需点击一次。HTML 和 Markdown 笔记都可以接收页面。
 
 然后点击 **Save link** 保存页面地址，或者点击 **Screenshot** 保存地址及其下方页面可见部分的截图。确认信息中有一个链接，可在 Poznote 中打开该笔记。
+
+**Save page text** 会把页面本身的文字转换为 Markdown，保存在页面地址和保存日期下方：只保存正文，不含菜单、侧边栏和页脚，保留标题、列表、链接、表格、代码块和图片（图片仍是指向网站的链接）。先选中文本，按钮会变成 **Save selection**，只保存所选部分。用这种方式新建的笔记是 Markdown 笔记；追加到现有笔记时，文字会按该笔记的格式写入。由于文字是在浏览器中读取的，需要登录的页面也能保存，页面消失后文字仍留在笔记中，Poznote 的搜索、API 和 MCP 服务器都可以处理这些文字。

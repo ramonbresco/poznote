@@ -2134,10 +2134,41 @@ Get all notes that link to this note. Supports HTML links, URL parameters, and w
 |-----------|------|-------------|
 | `workspace` | string | Workspace of the note, also limits the linking notes to that workspace |
 | `all_workspaces` | string | `1` to collect linking notes from every workspace while `workspace` still scopes the note itself |
+| `context` | string | `1` to add a `mentions` array to each backlink: the text around every link that note writes. `check` instead adds only `has_mentions`, a boolean saying whether that note has any such text, which costs one match per note rather than all of them |
 
 ```bash
 curl -u 'username:password' -H "X-User-ID: 1" \
   http://YOUR_SERVER/api/v1/notes/123/backlinks
+```
+
+With `context=1`, each backlink carries one entry per link written, in the order they appear in the linking note. Each entry holds the text around the link (`text`), a one-line form of it with the link near its start (`preview`, identical to `text` when the passage is already short enough), and the text of the link itself (`label`, empty when the link has none to show). The passage is the source line in a Markdown note, the nearest block in a rich-text note, and the task in a task list; it is plain text, cut at 400 characters for `text` and 160 for `preview`, and at most 10 entries come back per linking note.
+
+A link can have nothing quotable around it, either because its block holds no text at all (an image alone in its paragraph) or because that block is only the link itself, as in a page of bare links: quoting it back would just repeat the note's title. Such a link yields no entry, so a backlink that writes only those comes back with an empty `mentions` array, and with `has_mentions` false under `context=check`.
+
+```bash
+curl -u 'username:password' -H "X-User-ID: 1" \
+  "http://YOUR_SERVER/api/v1/notes/123/backlinks?context=1"
+```
+
+```json
+{
+  "success": true,
+  "backlinks": [
+    {
+      "id": 45,
+      "heading": "Weekly review",
+      "workspace": "Poznote",
+      "mentions": [
+        {
+          "text": "The design of Alpha is settled, and the rest follows next week.",
+          "preview": "The design of Alpha is settled, and the rest follows next week.",
+          "label": "Alpha"
+        }
+      ]
+    }
+  ],
+  "count": 1
+}
 ```
 
 ### Get Note Graph

@@ -53,7 +53,8 @@
       "no_headings": "このノートには見出しがありません",
       "unavailable_tasklist": "タスクリストではアウトラインを使用できません",
       "toggle_panel": "アウトラインパネルの表示を切り替え",
-      "copy_section_link": "セクションへのリンクをコピー"
+      "copy_section_link": "セクションへのリンクをコピー",
+      "section_not_found": "そのセクションはこのノートにはもうありません"
     },
     "link_copied": "リンクをコピーしました",
     "print": "印刷",
@@ -611,6 +612,9 @@
   "tasklist": {
     "open_tasks_page": "すべてのタスクを表示",
     "input_placeholder": "新しいタスクを入力し、Enterで追加...",
+    "add_row_placeholder": "タスクを追加",
+    "completed_section_one": "完了したタスク 1 件",
+    "completed_section_other": "完了したタスク {{count}} 件",
     "drag_to_reorder": "ドラッグして並べ替え",
     "add_to_top": "新しいタスクを先頭に追加",
     "add_to_bottom": "新しいタスクを末尾に追加",
@@ -964,6 +968,11 @@
       "index_search_bar": "検索バー",
       "tasklist_progress_bar": "タスクリストの進捗バー",
       "preview_code_block_delete": "Markdownプレビューのコードブロックの削除ボタン",
+      "code_block_collapse": "コードブロックの折りたたみボタン",
+      "code_block_wrap": "コードブロックの折り返しボタン",
+      "code_block_line_numbers": "コードブロックの行番号ボタン",
+      "code_block_copy": "コードブロックのコピーボタン",
+      "code_block_delete": "コードブロックの削除ボタン",
       "share_restrict_users": "共有：特定のユーザーに限定",
       "share_protocol_toggle": "共有：HTTPSの切り替え",
       "share_shared_with_me": "共有：「共有されたワークスペース」",
@@ -977,7 +986,11 @@
         "settings_cards": "設定のカード",
         "toolbar": "ツールバー",
         "slash_menu": "スラッシュメニュー",
-        "panels": "その他",
+        "note": "ノート",
+        "note_subline": "ノートタイトルの下",
+        "floating_buttons": "フローティングボタン",
+        "sharing": "共有",
+        "backup_restore": "バックアップと復元",
         "dashboard_toolbar": "ダッシュボード",
         "icon_sidebar": "アイコンサイドバー",
         "folder_actions": "フォルダーの操作",
@@ -985,7 +998,8 @@
         "note_actions": "ノートの操作",
         "mobile_editor_bar": "モバイルのエディターバー",
         "sidebar": "サイドバー",
-        "task_lists": "タスクリスト"
+        "task_lists": "タスクリスト",
+        "code_blocks": "コードブロック"
       },
       "badge_all_visible": "すべて表示",
       "badge_hidden_count_admin": "{{count}}件を非表示（うち管理者による非表示{{admin}}件）",
@@ -1025,12 +1039,14 @@
       "note_info_icon": "ノートのタイトルの下に情報アイコンを表示",
       "note_scrollbar": "ノートのスクロールバー",
       "note_scroll_arrows": "先頭・末尾へスクロールする矢印",
+      "note_section_link": "見出しのセクションリンクをコピーするアイコン",
       "tasklist_add_field": "タスクを追加する入力欄",
       "tasklist_frame": "各タスクの枠",
       "tasklist_delete": "タスクの削除",
       "tasklist_menu": "タスクのオプションメニュー（モバイル）",
       "tasklist_frame_color": "タスクの枠の優先度の色",
-      "note_id": "ノート ID を表示"
+      "note_id": "ノート ID を表示",
+      "backlinks_mentions": "各バックリンクの前後のテキスト"
     },
     "icon_sidebar_order": {
       "title": "アイコンサイドバーのレイアウト",
@@ -1730,7 +1746,7 @@
     "moved": "移動しました",
     "root": "ルート（フォルダーなし）",
     "filter_folders": "フォルダーを絞り込み...",
-    "filter_placeholder": "タイトルまたはタグでノートを絞り込み...",
+    "filter_placeholder": "タイトル、タグ、IDでノートを絞り込み...",
     "filter_type": "種類で絞り込み",
     "type_html": "リッチテキスト",
     "type_markdown": "Markdown",
@@ -1802,6 +1818,14 @@
     "mermaid_quadrant": "4象限チャート",
     "mermaid_xy": "棒グラフと折れ線グラフ",
     "emoji": "絵文字",
+    "symbols": "記号",
+    "symbols_recent": "最近使用",
+    "symbols_math": "数学",
+    "symbols_greek": "ギリシャ文字",
+    "symbols_superscript": "上付き",
+    "symbols_subscript": "下付き",
+    "symbols_units": "単位",
+    "symbols_arrows": "矢印",
     "table": "表",
     "separator": "区切り線",
     "link_to_note": "ノートへのリンク",
@@ -2119,6 +2143,10 @@
     "code_block_line_numbers": {
       "show": "行番号を表示",
       "hide": "行番号を非表示"
+    },
+    "code_block_wrap": {
+      "enable": "長い行を折り返す",
+      "disable": "長い行を折り返さない"
     },
     "colors": {
       "none": "なし"
@@ -2984,6 +3012,8 @@
     },
     "show_offline_dots": "オフライン利用可能マークを表示",
     "hide_offline_dots": "オフライン利用可能マークを非表示",
+    "tree_indent": "ツリーのインデント",
+    "tree_indent_hint": "ノート一覧でフォルダーとノートの各階層をどれだけ字下げするか。",
     "view_options": "表示オプション",
     "customize": "サイドバーをカスタマイズ",
     "customize_hint": "サイドバーに表示する要素を選択します"
@@ -3790,7 +3820,13 @@
     }
   },
   "backlinks": {
-    "title": "バックリンク"
+    "title": "バックリンク",
+    "mentions": {
+      "show": "各リンクの前後のテキストを表示",
+      "hide": "各リンクの前後のテキストを非表示",
+      "no_context": "これらのリンクの周囲に表示できるテキストがありません。",
+      "failed": "コンテキストを読み込めませんでした。"
+    }
   },
   "multiuser": {
     "acting_as": "{{user}}として操作中",
@@ -4556,7 +4592,10 @@
       "create_button": "作成してリンク",
       "recent_notes": "最近のノート",
       "search_placeholder": "ノートを検索...",
-      "all_workspaces": "すべてのワークスペースを検索"
+      "all_workspaces": "すべてのワークスペースを検索",
+      "link_to_section": "セクションにリンク",
+      "no_sections": "このノートにはリンクできる見出しがありません",
+      "sections_failed": "このノートを読み込めませんでした"
     },
     "untitled": "無題",
     "empty": {
@@ -4870,6 +4909,17 @@
     "upload_failed": "録音を保存できませんでした：{{error}}",
     "download": "録音をダウンロード",
     "no_note": "先にノートを開いてください。録音はそのノートの添付ファイルとして保存されます。"
+  },
+  "audio_player": {
+    "play": "再生",
+    "pause": "一時停止",
+    "seek": "シーク",
+    "speed": "再生速度",
+    "unsupported": "このオーディオ形式はブラウザーで再生できません",
+    "load_error": "この録音を読み込めませんでした",
+    "volume": "音量",
+    "mute": "ミュート",
+    "unmute": "ミュート解除"
   },
   "diary": {
     "title": "日記",

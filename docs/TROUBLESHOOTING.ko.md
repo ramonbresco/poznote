@@ -9,7 +9,8 @@
   <a href="TROUBLESHOOTING.zh-cn.md">简体中文</a> ·
   <b>한국어</b> ·
   <a href="TROUBLESHOOTING.ja.md">日本語</a> ·
-  <a href="TROUBLESHOOTING.ca.md">Català</a>
+  <a href="TROUBLESHOOTING.ca.md">Català</a> ·
+  <a href="TROUBLESHOOTING.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 

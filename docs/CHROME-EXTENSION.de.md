@@ -9,7 +9,8 @@
   <a href="CHROME-EXTENSION.zh-cn.md">简体中文</a> ·
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
-  <a href="CHROME-EXTENSION.ca.md">Català</a>
+  <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 
@@ -48,3 +49,5 @@ Klicken Sie auf der Seite, die Sie behalten möchten, auf das Symbol der Erweite
 - **Existing note** fügt die Seite am Ende einer Notiz ein, die Sie in der Liste auswählen. Die Liste zeigt Ihre neuesten Notizen und durchsucht sie während der Eingabe. Sie enthält die Notizen des in den Einstellungen gewählten Arbeitsbereichs; aktivieren Sie **All workspaces**, um eine Notiz aus jedem Arbeitsbereich zu wählen. Die Erweiterung merkt sich diese Notiz für die nächste Seite, sodass das Sammeln von Links in einer Leseliste nur einen Klick pro Seite braucht. HTML- und Markdown-Notizen können Seiten aufnehmen.
 
 Klicken Sie dann auf **Save link**, um die Adresse der Seite zu speichern, oder auf **Screenshot**, um die Adresse gefolgt von einem Bild des sichtbaren Seitenbereichs zu speichern. Die Bestätigung enthält einen Link, der die Notiz in Poznote öffnet.
+
+**Save page text** speichert den Text der Seite selbst, in Markdown umgewandelt, unter ihrer Adresse und dem Speicherdatum: nur den Hauptinhalt, ohne Menüs, Seitenleisten oder Fußzeilen, mit Überschriften, Listen, Links, Tabellen, Codeblöcken und Bildern (Bilder bleiben Links zur Website). Markieren Sie zuerst Text, wird der Knopf zu **Save selection** und speichert nur diesen Teil. Eine so erstellte neue Notiz ist eine Markdown-Notiz; an eine bestehende Notiz angehängt, wird der Text im Format dieser Notiz geschrieben. Da der Text in Ihrem Browser gelesen wird, funktioniert das auch für Seiten hinter einer Anmeldung, der Text bleibt in der Notiz, wenn die Seite verschwindet, und die Suche von Poznote, die API und der MCP-Server können damit arbeiten.

@@ -246,7 +246,10 @@ function toggleCodeBlock() {
       (node.classList.contains('code-block-copy-btn') ||
        node.classList.contains('code-block-delete-btn') ||
        node.classList.contains('code-block-lang-btn') ||
-       node.classList.contains('code-block-line-numbers-btn')));
+       node.classList.contains('code-block-line-numbers-btn') ||
+       node.classList.contains('code-block-wrap-btn') ||
+       node.classList.contains('code-block-collapse-btn') ||
+       node.classList.contains('code-block-collapsed-summary')));
     const hostIsDedicated = !!(host && host.classList && host.classList.contains('code-block-actions-host') &&
       Array.from(host.childNodes).every(node =>
         node === existingPre || isActionButton(node) || (node.nodeType === 3 && !node.textContent.trim())));

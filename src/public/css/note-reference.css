@@ -349,3 +349,95 @@ html[data-theme='dark'] .note-internal-link.note-link-broken {
         padding: 14px 12px;
     }
 }
+
+/* Section picker, the modal's second step (discussion 1758) */
+
+/* !important because the list step shows and hides the label and the
+   workspace checkbox from JS, as inline styles. */
+.note-reference-modal-content.is-section-step .note-reference-search,
+.note-reference-modal-content.is-section-step .note-reference-all-workspaces,
+.note-reference-modal-content.is-section-step .note-reference-recent-label,
+.note-reference-modal-content.is-section-step #noteReferenceCreateBtn {
+    display: none !important;
+}
+
+.note-reference-section-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    min-width: 0;
+}
+
+.note-reference-section-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--pz-text-secondary);
+    background: var(--pz-bg);
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-sm);
+    cursor: pointer;
+}
+
+.note-reference-section-back:hover {
+    color: var(--pz-accent-text);
+    border-color: var(--pz-accent-text);
+}
+
+.note-reference-section-note {
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: var(--pz-weight-medium);
+    color: var(--pz-text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The heading's own level is its indentation, as in the outline panel */
+.note-reference-section-item[data-level="2"] { padding-left: 32px; }
+.note-reference-section-item[data-level="3"] { padding-left: 48px; }
+.note-reference-section-item[data-level="4"] { padding-left: 64px; }
+.note-reference-section-item[data-level="5"] { padding-left: 80px; }
+.note-reference-section-item[data-level="6"] { padding-left: 96px; }
+
+.note-reference-section-item:hover {
+    padding-left: 20px;
+}
+
+.note-reference-section-item[data-level="2"]:hover { padding-left: 36px; }
+.note-reference-section-item[data-level="3"]:hover { padding-left: 52px; }
+.note-reference-section-item[data-level="4"]:hover { padding-left: 68px; }
+.note-reference-section-item[data-level="5"]:hover { padding-left: 84px; }
+.note-reference-section-item[data-level="6"]:hover { padding-left: 100px; }
+
+/* The button that opens a note's sections, on each row of the note list */
+.note-reference-item-sections {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    font-size: 14px;
+    color: var(--pz-text-subtle);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--pz-radius-sm);
+    cursor: pointer;
+}
+
+.note-reference-item:hover .note-reference-item-sections {
+    border-color: var(--pz-border);
+}
+
+.note-reference-item-sections:hover,
+.note-reference-item-sections:focus-visible {
+    color: var(--pz-accent-text);
+    border-color: var(--pz-accent-text);
+}

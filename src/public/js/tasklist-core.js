@@ -25,9 +25,10 @@ function isTaskEditBlurSavePaused(input) {
     return !!(input && input.dataset && input.dataset.taskEditBlurSavePaused === 'true');
 }
 
-// Also holds the "add a subtask" field open while a picker of its slash menu has the focus
+// Also holds the "add a subtask" field open, and keeps the empty "add a task" row
+// from committing its text, while a picker of its slash menu has the focus
 function pauseTaskEditBlurSave(input) {
-    if (input && input.classList && (input.classList.contains('task-edit-input') || input.classList.contains('task-subitem-input'))) {
+    if (input && input.classList && (input.classList.contains('task-edit-input') || input.classList.contains('task-subitem-input') || input.classList.contains('task-input'))) {
         input.dataset.taskEditBlurSavePaused = 'true';
     }
 }
@@ -49,7 +50,7 @@ function saveAndRenderTasks(noteId, tasks) {
     }
     const tasksList = document.getElementById('tasks-list-' + noteId);
     if (tasksList) {
-        tasksList.innerHTML = renderTasks(tasks, noteId);
+        renderTasksInto(tasksList, tasks, noteId);
 
         // Process references [[Note Title]] in the newly rendered HTML
         if (typeof window.processNoteReferences === 'function') {

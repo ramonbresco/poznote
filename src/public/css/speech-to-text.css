@@ -138,14 +138,22 @@
     .dictate-panel { min-height: 112px; }
 }
 
+/* The rest of the dialog is a column down the middle (level bar, timer, hint,
+   language), so the button row is centred too: flush right it read as a
+   second, off-centre block. The phone stacks the buttons full width
+   (modals/responsive.css), so this only ever applies on a desktop. */
+#dictateModal .modal-buttons {
+    justify-content: center;
+}
+
 /* "Transcribe*" and its footnote under the buttons: the review step that
-   follows also offers to attach the audio. Right-aligned under the button
-   row on a desktop; the phone stacks the buttons full width. */
+   follows also offers to attach the audio. Centred under the button row it
+   explains; the phone stacks the buttons full width. */
 .dictate-footnote {
     margin: 10px 0 0;
     font-size: 0.8rem;
     color: var(--pz-text-muted);
-    text-align: right;
+    text-align: center;
 }
 
 .dictate-footnote-mark {

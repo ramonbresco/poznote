@@ -9,9 +9,17 @@
     var DELETE_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>';
 
     // Gutter toggle: a "list with numbers" glyph, shown struck through when the
-    // block currently hides its line numbers.
-    var LINE_NUMBERS_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path></svg>';
-    var LINE_NUMBERS_OFF_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path><line x1="2" y1="22" x2="22" y2="2"></line></svg>';
+    // block currently hides its line numbers. The glyphs of the buttons in a
+    // block's corner are all drawn across the same 18 to 20 units of their
+    // 24-unit box as the copy and bin icons, so the row reads as one size
+    // (Lucide's list-ordered and chevrons only fill 12 to 17 of them).
+    var LINE_NUMBERS_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="4" x2="21" y2="4"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="20" x2="21" y2="20"></line><path d="M4 4h1v6"></path><path d="M4 10h2"></path><path d="M6.5 20H3.5c0-1.4 3-2.4 3-4s-1.6-2-3-1.2"></path></svg>';
+    var LINE_NUMBERS_OFF_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="4" x2="21" y2="4"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="20" x2="21" y2="20"></line><path d="M4 4h1v6"></path><path d="M4 10h2"></path><path d="M6.5 20H3.5c0-1.4 3-2.4 3-4s-1.6-2-3-1.2"></path><line x1="2" y1="22" x2="22" y2="2"></line></svg>';
+
+    // Wrap toggle: lines of text with a return arrow, struck through when the
+    // block currently lets its long lines run off to the side.
+    var WRAP_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="4" x2="21" y2="4"></line><path d="M3 11.5h14.5a4.25 4.25 0 0 1 0 8.5H13"></path><polyline points="15.5 17.5 13 20 15.5 22.5"></polyline><line x1="3" y1="20" x2="9" y2="20"></line></svg>';
+    var WRAP_OFF_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="4" x2="21" y2="4"></line><path d="M3 11.5h14.5a4.25 4.25 0 0 1 0 8.5H13"></path><polyline points="15.5 17.5 13 20 15.5 22.5"></polyline><line x1="3" y1="20" x2="9" y2="20"></line><line x1="2" y1="22" x2="22" y2="2"></line></svg>';
 
     function tl(key, fallback) {
         return window.t ? window.t(key, {}, fallback) : fallback;
@@ -36,8 +44,8 @@
     // (lib/html-sanitize.php keeps the attribute); a Markdown note's preview
     // is redrawn from the source, which has nowhere to carry it, so the
     // choice goes to the same per-note store as the line numbers below.
-    var COLLAPSE_ICON_OPEN = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>';
-    var COLLAPSE_ICON_CLOSED = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+    var COLLAPSE_ICON_OPEN = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 16 8-8 8 8"/></svg>';
+    var COLLAPSE_ICON_CLOSED = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 8 8 8 8-8"/></svg>';
     var MARKDOWN_COLLAPSED_KEY = 'markdown_code_collapsed';
 
     // How many lines a folded block keeps on screen: the account's choice
@@ -80,6 +88,7 @@
         var summary = host.querySelector('.code-block-collapsed-summary');
         if (!collapsed) {
             if (summary) summary.remove();
+            layoutCodeBlockActions(host);
             return;
         }
         if (!summary) {
@@ -89,6 +98,7 @@
             host.insertBefore(summary, host.firstChild);
         }
         var lines = codeBlockLineCount(block);
+        layoutCodeBlockActions(host);
         summary.textContent = lines === 1
             ? tl('editor.code_block_collapse.one_line', '1 line')
             : tl('editor.code_block_collapse.lines', '{{count}} lines', { count: lines })
@@ -204,34 +214,52 @@
     // kept for every kind of note, not only a Markdown preview: an HTML note
     // writes data-collapsed in its content too, but only a save sends that to
     // the server, and nothing is saved for a fold.
-    function readStoredCollapsedChoices() {
+    function readStoredBlockChoices(key) {
         try {
             var storage = window.__poznoteUserStorage || window.localStorage;
-            var parsed = JSON.parse(storage.getItem(MARKDOWN_COLLAPSED_KEY) || '{}');
+            var parsed = JSON.parse(storage.getItem(key) || '{}');
             return parsed && typeof parsed === 'object' ? parsed : {};
         } catch (e) {
             return {};
         }
     }
 
-    function storeCollapsedChoice(pre, collapsed) {
+    function storeBlockChoice(key, pre, on) {
         var root = codeBlockStoreRoot(pre);
         if (!root) return;
         var noteId = codeBlockStoreNoteId(root);
         var rank = codeBlockStoreBlocks(root).indexOf(pre);
         if (!noteId || rank === -1) return;
         try {
-            var all = readStoredCollapsedChoices();
+            var all = readStoredBlockChoices(key);
             var note = all[noteId] && typeof all[noteId] === 'object' ? all[noteId] : {};
-            note[rank] = collapsed ? 1 : 0;
+            note[rank] = on ? 1 : 0;
             delete all[noteId];
             all[noteId] = note;
             var ids = Object.keys(all);
             ids.slice(0, Math.max(0, ids.length - 300)).forEach(function (id) { delete all[id]; });
-            (window.__poznoteUserStorage || window.localStorage).setItem(MARKDOWN_COLLAPSED_KEY, JSON.stringify(all));
+            (window.__poznoteUserStorage || window.localStorage).setItem(key, JSON.stringify(all));
         } catch (e) {
             // (private mode, full storage: the choice lasts until the next redraw)
         }
+    }
+
+    // What this browser last chose for a block: true, false, or null when
+    // nothing was ever chosen for it
+    function storedBlockChoice(key, pre) {
+        var root = codeBlockStoreRoot(pre);
+        if (!root) return null;
+        var noteId = codeBlockStoreNoteId(root);
+        if (!noteId) return null;
+        var note = readStoredBlockChoices(key)[noteId];
+        if (!note || typeof note !== 'object') return null;
+        var rank = codeBlockStoreBlocks(root).indexOf(pre);
+        if (rank === -1 || note[rank] === undefined) return null;
+        return !!note[rank];
+    }
+
+    function storeCollapsedChoice(pre, collapsed) {
+        storeBlockChoice(MARKDOWN_COLLAPSED_KEY, pre, collapsed);
     }
 
     /**
@@ -241,15 +269,71 @@
      * folded block) opens on it, and what was done here afterwards wins.
      */
     function applyStoredCollapsed(pre) {
-        var root = codeBlockStoreRoot(pre);
-        if (!root) return;
-        var noteId = codeBlockStoreNoteId(root);
-        if (!noteId) return;
-        var note = readStoredCollapsedChoices()[noteId];
-        if (!note || typeof note !== 'object') return;
-        var rank = codeBlockStoreBlocks(root).indexOf(pre);
-        if (rank === -1 || note[rank] === undefined) return;
-        pre.setAttribute('data-collapsed', note[rank] ? '1' : '0');
+        var stored = storedBlockChoice(MARKDOWN_COLLAPSED_KEY, pre);
+        if (stored === null) return;
+        pre.setAttribute('data-collapsed', stored ? '1' : '0');
+    }
+
+    // ---- Wrapping the long lines of one block ---------------------------
+    //
+    // The account's "Code block word wrap" setting (<body
+    // class="code-block-no-wrap"> when off) is the default of every block,
+    // and the button in a block's corner switches that one block (discussion
+    // 1764). Like folding, it is a reading gesture: the choice is kept in
+    // this browser, per note and per rank of the block, and never in the
+    // note. That is also why the mark sits on the action host and not on the
+    // PRE: the host is dropped before a note is stored
+    // (stripSearchHighlights in js/notes.js), so nothing of it can ride
+    // along with the next save. Same store as the editor's own views of a
+    // Markdown note (build/markdown-editor/src/live-preview.js).
+    var CODE_WRAP_KEY = 'markdown_code_wrap';
+
+    function codeWrapHost(block) {
+        var pre = getCodeBlockElement(block);
+        var host = pre ? pre.parentElement : null;
+        return host && host.classList && host.classList.contains('code-block-actions-host') ? host : null;
+    }
+
+    function isCodeBlockWrapped(block) {
+        var host = codeWrapHost(block);
+        var choice = host ? host.getAttribute('data-code-wrap') : null;
+        if (choice === '1') return true;
+        if (choice === '0') return false;
+        return !(document.body && document.body.classList.contains('code-block-no-wrap'));
+    }
+
+    function setWrapButtonState(btn, wrapped) {
+        var label = wrapped
+            ? tl('editor.code_block_wrap.disable', 'Do not wrap long lines')
+            : tl('editor.code_block_wrap.enable', 'Wrap long lines');
+        btn.innerHTML = wrapped ? WRAP_ICON_SVG : WRAP_OFF_ICON_SVG;
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
+        btn.setAttribute('aria-pressed', wrapped ? 'true' : 'false');
+    }
+
+    function applyStoredWrap(block) {
+        var host = codeWrapHost(block);
+        if (!host) return;
+        var stored = storedBlockChoice(CODE_WRAP_KEY, getCodeBlockElement(block));
+        if (stored === null) return;
+        host.setAttribute('data-code-wrap', stored ? '1' : '0');
+    }
+
+    /**
+     * Always written explicitly, never removed: a block the reader switched
+     * keeps what they chose when the account's setting changes under it.
+     */
+    function toggleCodeBlockWrap(block) {
+        var host = codeWrapHost(block);
+        if (!host) return isCodeBlockWrapped(block);
+
+        var next = !isCodeBlockWrapped(block);
+        host.setAttribute('data-code-wrap', next ? '1' : '0');
+        storeBlockChoice(CODE_WRAP_KEY, getCodeBlockElement(block), next);
+        // (the block gains or loses its sideways scroll)
+        updateCodeBlockOverflow([getCodeBlockElement(block)]);
+        return next;
     }
 
     // Called before the gutters are drawn (js/syntax-highlight.js), and for
@@ -320,6 +404,14 @@
     window.poznoteCodeBlockCollapseIcons = {
         open: COLLAPSE_ICON_OPEN,
         closed: COLLAPSE_ICON_CLOSED
+    };
+    window.poznoteCodeBlockWrapIcons = {
+        on: WRAP_ICON_SVG,
+        off: WRAP_OFF_ICON_SVG
+    };
+    window.poznoteCodeBlockCopyIcons = {
+        copy: COPY_ICON_SVG,
+        check: CHECK_ICON_SVG
     };
 
     function setCopyIcon(btn) {
@@ -544,7 +636,10 @@
             (node.classList.contains('code-block-copy-btn') ||
              node.classList.contains('code-block-delete-btn') ||
              node.classList.contains('code-block-lang-btn') ||
-             node.classList.contains('code-block-line-numbers-btn')));
+             node.classList.contains('code-block-line-numbers-btn') ||
+             node.classList.contains('code-block-wrap-btn') ||
+             node.classList.contains('code-block-collapse-btn') ||
+             node.classList.contains('code-block-collapsed-summary')));
     }
 
     function isDisposableActionHost(host) {
@@ -588,6 +683,9 @@
         removeNode(deleteButton || findActionButton(targetBlock, actionHost, 'code-block-delete-btn'));
         removeNode(findActionButton(targetBlock, actionHost, 'code-block-lang-btn'));
         removeNode(findActionButton(targetBlock, actionHost, 'code-block-line-numbers-btn'));
+        removeNode(findActionButton(targetBlock, actionHost, 'code-block-wrap-btn'));
+        removeNode(findActionButton(targetBlock, actionHost, 'code-block-collapse-btn'));
+        removeNode(findActionButton(targetBlock, actionHost, 'code-block-collapsed-summary'));
 
         var position = { block: targetBlock, parent: targetBlock.parentNode, next: targetBlock.nextSibling };
         removeNode(targetBlock);
@@ -823,6 +921,12 @@
         return !!(block && block.closest('.noteentry'));
     }
 
+    // Same reach as the gutter toggle: the rules that wrap or unwrap one
+    // block (css/code-blocks.css) only match inside .noteentry.
+    function canToggleWrap(block) {
+        return !!(block && block.closest('.noteentry'));
+    }
+
     /**
      * The chevron of a block and the number of lines next to it. Separate from
      * the buttons around it because it comes and goes with what the block
@@ -884,9 +988,76 @@
         });
     }
 
+    // The controls of a block, from the corner inwards. Each one can be hidden
+    // from Element visibility (and its right-click menu), so they are not left
+    // at fixed offsets, which would leave a hole where a hidden one was: the
+    // visible ones are stacked from the right, 32px apart (a 28px button and
+    // 4px of air). Only inside a note: a public share places its own copy
+    // button and chevron (css/public_note.css, css/components/code-block-fold.css).
+    var ACTION_ORDER = [
+        'code-block-delete-btn',
+        'code-block-copy-btn',
+        'code-block-line-numbers-btn',
+        'code-block-wrap-btn',
+        'code-block-collapse-btn',
+        'code-block-collapsed-summary'
+    ];
+    var ACTION_EDGE = 8;
+    var ACTION_STEP = 32;
+
+    function layoutCodeBlockActions(host) {
+        if (!host || !host.children || !host.closest || !host.closest('.noteentry')) return;
+        var right = ACTION_EDGE;
+        ACTION_ORDER.forEach(function (className) {
+            for (var i = 0; i < host.children.length; i++) {
+                var child = host.children[i];
+                if (!child.classList.contains(className)) continue;
+                if (getComputedStyle(child).display === 'none') continue;
+                child.style.right = right + 'px';
+                right += ACTION_STEP;
+                return;
+            }
+        });
+    }
+
+    function layoutAllCodeBlockActions() {
+        Array.prototype.forEach.call(document.querySelectorAll('.noteentry .code-block-actions-host'), layoutCodeBlockActions);
+    }
+
+    // A control hidden or shown again from Element visibility. The event is
+    // sent before the new rules are written (applyHiddenKeys in
+    // js/ui-customization.js), so the stack is measured a frame later.
+    document.addEventListener('poznote-ui-customization-updated', function () {
+        requestAnimationFrame(layoutAllCodeBlockActions);
+    });
+
+    var STRAY_CONTROLS_SELECTOR = '.code-block-copy-btn, .code-block-delete-btn, .code-block-lang-btn, ' +
+        '.code-block-line-numbers-btn, .code-block-wrap-btn, .code-block-collapse-btn, .code-block-collapsed-summary';
+
+    /**
+     * Controls that were saved into a note. Version 6.146.0 left the fold
+     * chevron and its line count out of the list the editor strips before it
+     * saves (stripSearchHighlights in js/notes.js), so each save of an HTML
+     * note wrote one more of each next to its code blocks. A control belongs
+     * to an action host (or, for the oldest ones, sits inside its block):
+     * anywhere else in a note it is one of those leftovers, and it goes. The
+     * note is not marked as modified for it, its next save stores it clean.
+     */
+    function removeStrayCodeBlockControls(noteentry) {
+        if (!noteentry || !noteentry.querySelectorAll) return;
+        Array.prototype.forEach.call(noteentry.querySelectorAll(STRAY_CONTROLS_SELECTOR), function (control) {
+            var parent = control.parentElement;
+            if (!parent) return;
+            if (parent.classList.contains('code-block-actions-host')) return;
+            if (control.closest('pre, .code-block')) return;
+            control.remove();
+        });
+    }
+
     // Add copy button to code blocks: the given ones, or every block of the page
     function addCopyButtonToCodeBlocks(blocks) {
         var codeBlocks = Array.isArray(blocks) ? blocks : getCodeBlockElements(document);
+        var cleanedNotes = [];
         
         codeBlocks.forEach(function(block) {
             // Skip inline code elements
@@ -894,19 +1065,29 @@
                 return;
             }
 
+            var ownerNote = block.closest ? block.closest('.noteentry') : null;
+            if (ownerNote && cleanedNotes.indexOf(ownerNote) === -1) {
+                cleanedNotes.push(ownerNote);
+                removeStrayCodeBlockControls(ownerNote);
+            }
+
             applyStoredCollapsed(block);
 
             var actionHost = ensureCodeBlockActionHost(block);
             var allowDelete = canDeleteCodeBlock(block);
             var allowLineNumbers = canToggleLineNumbers(block);
+            var allowWrap = canToggleWrap(block);
+            if (allowWrap) applyStoredWrap(block);
             syncCollapseButton(block, actionHost, true);
 
             var existingBtn = findActionButton(block, actionHost, 'code-block-copy-btn');
             var existingDelBtn = findActionButton(block, actionHost, 'code-block-delete-btn');
             var existingLineBtn = findActionButton(block, actionHost, 'code-block-line-numbers-btn');
+            var existingWrapBtn = findActionButton(block, actionHost, 'code-block-wrap-btn');
             var btn;
             var delBtn;
             var lineBtn;
+            var wrapBtn;
             
             if (existingBtn) {
                 btn = existingBtn;
@@ -922,6 +1103,9 @@
                 btn = document.createElement('button');
                 btn.className = 'code-block-copy-btn';
                 btn.setAttribute('type', 'button');
+                // (not part of the text: the right-click Hide menu,
+                // js/hide-element-menu.js, takes editable ground for words)
+                btn.setAttribute('contenteditable', 'false');
                 btn.setAttribute('aria-label', 'Copy code to clipboard');
                 btn.setAttribute('title', 'Copy code');
                 
@@ -970,6 +1154,37 @@
                 });
             }
 
+            // Word-wrap toggle, sitting left of the line numbers
+            if (!allowWrap) {
+                if (existingWrapBtn && existingWrapBtn.parentNode) {
+                    existingWrapBtn.parentNode.removeChild(existingWrapBtn);
+                }
+            } else {
+                if (existingWrapBtn) {
+                    wrapBtn = existingWrapBtn.cloneNode(false);
+                    existingWrapBtn.parentNode.replaceChild(wrapBtn, existingWrapBtn);
+                } else {
+                    wrapBtn = document.createElement('button');
+                    wrapBtn.className = 'code-block-wrap-btn';
+                    wrapBtn.setAttribute('type', 'button');
+                    wrapBtn.setAttribute('contenteditable', 'false');
+                }
+                setWrapButtonState(wrapBtn, isCodeBlockWrapped(block));
+
+                if (wrapBtn.parentNode !== actionHost) {
+                    if (wrapBtn.parentNode) {
+                        wrapBtn.parentNode.removeChild(wrapBtn);
+                    }
+                    actionHost.appendChild(wrapBtn);
+                }
+
+                wrapBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setWrapButtonState(wrapBtn, toggleCodeBlockWrap(block));
+                });
+            }
+
             if (!allowDelete) {
                 if (existingDelBtn && existingDelBtn.parentNode) {
                     existingDelBtn.parentNode.removeChild(existingDelBtn);
@@ -989,6 +1204,7 @@
                     delBtn = document.createElement('button');
                     delBtn.className = 'code-block-delete-btn';
                     delBtn.setAttribute('type', 'button');
+                    delBtn.setAttribute('contenteditable', 'false');
                     delBtn.setAttribute('aria-label', deleteBtnLabel);
                     delBtn.setAttribute('title', deleteBtnLabel);
                     delBtn.innerHTML = DELETE_ICON_SVG;
@@ -1002,6 +1218,8 @@
                 }
             }
             
+            layoutCodeBlockActions(actionHost);
+
             // Add/re-attach click handler for copy
             btn.addEventListener('click', function(e) {
                 e.preventDefault();

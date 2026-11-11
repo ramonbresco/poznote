@@ -78,7 +78,8 @@ function initTextSelectionHandlers() {
             'python-repl': true, pycon: true, r: true, ruby: true, rb: true, rust: true, rs: true,
             scss: true, shell: true, console: true, shellsession: true, sql: true, swift: true,
             typescript: true, ts: true, tsx: true, mts: true, cts: true, vbnet: true, wasm: true,
-            xml: true, html: true, xhtml: true, svg: true, yaml: true, yml: true
+            xml: true, html: true, xhtml: true, svg: true, yaml: true, yml: true,
+            toml: true, terraform: true, hcl: true, tf: true, tfvars: true, hcl2: true
         };
 
         return !!fallbackLanguages[normalizedLanguage];

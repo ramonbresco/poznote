@@ -96,6 +96,33 @@ const codeCollapsedField = StateField.define({
   }
 })
 
+// Word wrap of one code block (discussion 1764): the account's "Code block
+// word wrap" setting (<body class="code-block-no-wrap"> when off) is the
+// default of every block, and the button in a block's corner switches that
+// one block. No choice means the block follows the setting. Kept like the two
+// above, at the block's first character and in the browser per note, in the
+// store the preview reads too (js/copy-code-on-focus.js).
+const setCodeWrapEffect = StateEffect.define()
+
+const codeWrapField = StateField.define({
+  create() {
+    return RangeSet.empty
+  },
+  update(value, transaction) {
+    value = value.map(transaction.changes)
+    for (const effect of transaction.effects) {
+      if (effect.is(setCodeWrapEffect)) {
+        const { pos, on } = effect.value
+        value = value.update({
+          filter: from => from !== pos,
+          add: [new CodeCollapsedChoice(on).range(pos)]
+        })
+      }
+    }
+    return value
+  }
+})
+
 // Toggles (<details> blocks, as the slash menu writes them): open or closed
 // is read from the tag's "open" attribute, and a click on the title folds or
 // unfolds the block for as long as the note stays open, without touching the
@@ -365,6 +392,7 @@ function isOpenToggleBodyLine(state, doc, lineFrom) {
 // (js/copy-code-on-focus.js), so the views of a note agree.
 const CODE_LINE_NUMBERS_KEY = 'markdown_code_line_numbers'
 const CODE_COLLAPSED_KEY = 'markdown_code_collapsed'
+const CODE_WRAP_KEY = 'markdown_code_wrap'
 
 function codeFenceStarts(doc) {
   const starts = []
@@ -436,6 +464,7 @@ function restoreCodeChoices(view) {
   }
   collect(CODE_LINE_NUMBERS_KEY, setCodeLineNumbersEffect)
   collect(CODE_COLLAPSED_KEY, setCodeCollapsedEffect)
+  collect(CODE_WRAP_KEY, setCodeWrapEffect)
   if (effects.length) view.dispatch({ effects })
 }
 
@@ -446,6 +475,22 @@ function areCodeLineNumbersOn(state, blockFrom, language) {
   })
   if (choice !== null) return choice
   return !!language && !!document.body && document.body.classList.contains('code-block-line-numbers')
+}
+
+// What was chosen for this block with its wrap button: true, false, or null
+// when the block follows the account's setting
+function codeWrapChoice(state, blockFrom) {
+  let choice = null
+  state.field(codeWrapField).between(blockFrom, blockFrom, (from, to, value) => {
+    if (from === blockFrom) choice = value.on
+  })
+  return choice
+}
+
+function isCodeWrapOn(state, blockFrom) {
+  const choice = codeWrapChoice(state, blockFrom)
+  if (choice !== null) return choice
+  return !(document.body && document.body.classList.contains('code-block-no-wrap'))
 }
 
 // How many lines a folded code block keeps on screen: the account's choice,
@@ -600,6 +645,10 @@ const calloutTitleDecoration = Decoration.mark({ class: 'cm-live-callout-title' 
 // the block scrolls sideways on its own, as the preview's <pre> does
 // (css/markdown.css), instead of its lines wrapping.
 const codeBlockWrapper = BlockWrapper.create({ tagName: 'div', attributes: { class: 'cm-live-code-block' } })
+// A block switched with its own wrap button says so on its element, and the
+// stylesheet lets that win over the setting, in either direction
+const codeBlockWrapperWrap = BlockWrapper.create({ tagName: 'div', attributes: { class: 'cm-live-code-block cm-live-code-block-wrap' } })
+const codeBlockWrapperNoWrap = BlockWrapper.create({ tagName: 'div', attributes: { class: 'cm-live-code-block cm-live-code-block-nowrap' } })
 
 // The block's own sideways scroll is not one CodeMirror knows about.
 // - Bringing the caret into view: CodeMirror only scrolls the editor and the
@@ -626,9 +675,12 @@ function codeLineElementAt(view, pos) {
 
 // The block that scrolls sideways (lines not wrapped) the caret is in, or null
 function scrollingCodeBlockAt(view, pos) {
-  if (!document.body || !document.body.classList.contains('code-block-no-wrap')) return null
   const line = codeLineElementAt(view, pos)
-  return line ? line.closest('.cm-live-code-block') : null
+  const block = line ? line.closest('.cm-live-code-block') : null
+  if (!block) return null
+  if (block.classList.contains('cm-live-code-block-nowrap')) return block
+  if (block.classList.contains('cm-live-code-block-wrap')) return null
+  return document.body && document.body.classList.contains('code-block-no-wrap') ? block : null
 }
 
 function isInScrollingCodeBlock(view, pos) {
@@ -796,12 +848,13 @@ class CodeLanguageWidget extends WidgetType {
   }
 }
 
-// The buttons in the corner of a block: fold, line numbers, copy, delete,
+// The buttons in the corner of a block: fold, word wrap, line numbers, copy, delete,
 // in the order the rendered preview puts them in, with the number of lines of
 // a folded block ahead of them all
 class CodeActionsWidget extends WidgetType {
-  constructor(numbered, collapsible, collapsed, codeLines) {
+  constructor(numbered, collapsible, collapsed, codeLines, wrapped) {
     super()
+    this.wrapped = wrapped
     this.numbered = numbered
     this.collapsible = collapsible
     this.collapsed = collapsed
@@ -810,6 +863,7 @@ class CodeActionsWidget extends WidgetType {
 
   eq(other) {
     return other.numbered === this.numbered
+      && other.wrapped === this.wrapped
       && other.collapsible === this.collapsible
       && other.collapsed === this.collapsed
       && other.codeLines === this.codeLines
@@ -852,6 +906,28 @@ class CodeActionsWidget extends WidgetType {
       actions.appendChild(collapse)
     }
 
+    // (hidden by the stylesheet in an editor that does not wrap its own
+    // lines, where there is nothing for it to switch: css/markdown.css)
+    const wrapIcons = window.poznoteCodeBlockWrapIcons
+    const wrap = document.createElement('button')
+    const wrapLabel = this.wrapped
+      ? translate('editor.code_block_wrap.disable', 'Do not wrap long lines')
+      : translate('editor.code_block_wrap.enable', 'Wrap long lines')
+    wrap.type = 'button'
+    wrap.className = 'cm-live-code-wrap'
+    wrap.tabIndex = -1
+    wrap.title = wrapLabel
+    wrap.setAttribute('aria-label', wrapLabel)
+    wrap.setAttribute('aria-pressed', this.wrapped ? 'true' : 'false')
+    if (wrapIcons) {
+      wrap.innerHTML = this.wrapped ? wrapIcons.on : wrapIcons.off
+    } else {
+      const fallbackIcon = document.createElement('i')
+      fallbackIcon.className = 'lucide lucide-wrap-text'
+      wrap.appendChild(fallbackIcon)
+    }
+    actions.appendChild(wrap)
+
     const icons = window.poznoteCodeBlockLineNumberIcons
     const lines = document.createElement('button')
     const linesLabel = this.numbered
@@ -878,9 +954,16 @@ class CodeActionsWidget extends WidgetType {
     button.setAttribute('aria-label', 'Copy code to clipboard')
     button.title = 'Copy code'
     button.tabIndex = -1
-    const icon = document.createElement('i')
-    icon.className = 'lucide lucide-copy'
-    button.appendChild(icon)
+    // The SVG the preview's copy button draws (js/copy-code-on-focus.js), 14px
+    // like its neighbours: the Lucide font icon came out a pixel larger
+    const copyIcons = window.poznoteCodeBlockCopyIcons
+    if (copyIcons) {
+      button.innerHTML = copyIcons.copy
+    } else {
+      const icon = document.createElement('i')
+      icon.className = 'lucide lucide-copy'
+      button.appendChild(icon)
+    }
     actions.appendChild(button)
 
     // Then the bin, as on the code blocks of an HTML note (Ctrl+Z brings the
@@ -1259,9 +1342,11 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
     decorations.push(codeCloseLineDecoration.range(lastLine.from))
     // (a wrapper takes the lines that start in its range, both ends included:
     // up to the end of the last line, or the line after it is taken too)
-    codeBlocks.push(codeBlockWrapper.range(firstLine.from, lastLine.to))
+    const wrapChoice = codeWrapChoice(state, node.from)
+    const blockWrapper = wrapChoice === null ? codeBlockWrapper : (wrapChoice ? codeBlockWrapperWrap : codeBlockWrapperNoWrap)
+    codeBlocks.push(blockWrapper.range(firstLine.from, lastLine.to))
     decorations.push(Decoration.widget({
-      widget: new CodeActionsWidget(numbered, collapsible, collapsed, codeLines),
+      widget: new CodeActionsWidget(numbered, collapsible, collapsed, codeLines, isCodeWrapOn(state, node.from)),
       side: 1
     }).range(firstLine.to))
 
@@ -3806,6 +3891,55 @@ const protectMarkersFilter = EditorState.transactionFilter.of(transaction => {
   }
 })
 
+// Typing at either edge of a link's text, where its syntax is squeezed out of
+// sight: the caret is drawn outside the link, so what is typed has to land
+// outside it too. Without this, a word written after a link joined its label
+// and became part of the link (reported 2026-11-11: a note ended up holding
+// "[Code examples Here is a simple inline equation.](index.php?note=20)").
+// Only while the syntax is hidden: with it revealed the writer sees the
+// brackets and the caret inside them, and extending the label is the point.
+function linkEdgeInsertPos(state, pos) {
+  for (const side of [-1, 1]) {
+    for (let node = syntaxTree(state).resolveInner(pos, side); node; node = node.parent) {
+      if (node.name !== 'Link') continue
+      const marks = node.getChildren('LinkMark')
+      // The same shape decorateLink() asks for before hiding anything: a
+      // link it leaves alone is one the caret sits in plainly.
+      if (marks.length < 4 || !node.getChild('URL')) return null
+      const textFrom = marks[0].to
+      const textTo = marks[1].from
+      if (textTo <= textFrom || !state.doc.sliceString(textFrom, textTo).trim()) return null
+      if (pos === textTo) return node.to
+      if (pos === textFrom) return node.from
+      return null
+    }
+  }
+  return null
+}
+
+const typeOutsideLinkFilter = EditorState.transactionFilter.of(transaction => {
+  if (!transaction.docChanged || isSyntaxRevealed()) return transaction
+  if (!transaction.isUserEvent('input.type')) return transaction
+
+  let change = null
+  let count = 0
+  transaction.changes.iterChanges((fromA, toA, fromB, toB, inserted) => {
+    count++
+    change = { from: fromA, to: toA, text: inserted.toString() }
+  })
+  if (count !== 1 || !change || change.from !== change.to || !change.text) return transaction
+
+  const moved = linkEdgeInsertPos(transaction.startState, change.from)
+  if (moved === null) return transaction
+
+  return {
+    changes: { from: moved, insert: change.text },
+    selection: { anchor: moved + change.text.length },
+    userEvent: 'input.type',
+    scrollIntoView: true
+  }
+})
+
 function deleteSelectionSafely(view) {
   if (isSyntaxRevealed() || view.state.readOnly) return false
   const selection = view.state.selection
@@ -4832,7 +4966,7 @@ const livePreviewPlugin = ViewPlugin.fromClass(class {
     const treeChanged = syntaxTree(update.startState) !== syntaxTree(update.state)
     const refreshed = update.transactions.some(transaction =>
       transaction.effects.some(effect => effect.is(refreshLivePreviewEffect) || effect.is(setCodeLineNumbersEffect)
-        || effect.is(setCodeCollapsedEffect) || effect.is(setToggleOpenEffect))
+        || effect.is(setCodeCollapsedEffect) || effect.is(setCodeWrapEffect) || effect.is(setToggleOpenEffect))
     )
 
     if (update.docChanged || update.viewportChanged || treeChanged || refreshed) {
@@ -4940,6 +5074,19 @@ const livePreviewPlugin = ViewPlugin.fromClass(class {
         return true
       }
 
+      // Word wrap of a code block, on or off
+      const wrap = target.closest('.cm-live-code-wrap')
+      if (wrap) {
+        const block = findFencedCodeAt(view.state, view.posAtDOM(wrap))
+        if (block) {
+          const wrapped = !isCodeWrapOn(view.state, block.from)
+          view.dispatch({ effects: setCodeWrapEffect.of({ pos: block.from, on: wrapped }) })
+          storeCodeChoice(CODE_WRAP_KEY, view, block.from, wrapped)
+        }
+        event.preventDefault()
+        return true
+      }
+
       // Line numbers of a code block, on or off
       const lines = target.closest('.cm-live-code-lines')
       if (lines) {
@@ -4985,6 +5132,12 @@ const livePreviewPlugin = ViewPlugin.fromClass(class {
         const code = text ? view.state.doc.sliceString(text.from, text.to) : ''
         if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
           navigator.clipboard.writeText(code).then(() => {
+            const copyIcons = window.poznoteCodeBlockCopyIcons
+            if (copyIcons) {
+              copy.innerHTML = copyIcons.check
+              setTimeout(() => { copy.innerHTML = copyIcons.copy }, 1200)
+              return
+            }
             const icon = copy.querySelector('i')
             if (!icon) return
             icon.className = 'lucide lucide-check'
@@ -5068,12 +5221,14 @@ const livePreviewPlugin = ViewPlugin.fromClass(class {
 export const livePreview = [
   codeLineNumbersField,
   codeCollapsedField,
+  codeWrapField,
   toggleOpenField,
   renderedBlocksField,
   literalTypingInput,
   richTextKeymap,
   alignedCaretFilter,
   protectMarkersFilter,
+  typeOutsideLinkFilter,
   livePreviewPlugin,
   EditorView.atomicRanges.of(view => {
     const plugin = view.plugin(livePreviewPlugin)

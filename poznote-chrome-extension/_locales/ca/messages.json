@@ -3,7 +3,7 @@
     "message": "Poznote URL Saver"
   },
   "extDescription": {
-    "message": "Desa l'URL o una captura de pantalla de la pàgina actual al Poznote, com a nota nova o al final d'una nota existent."
+    "message": "Desa la pàgina al Poznote com a enllaç, captura o text Markdown, en una nota nova o al final d'una nota existent."
   },
   "optionsTitle": {
     "message": "Paràmetres del Poznote URL Saver"
@@ -70,6 +70,27 @@
   },
   "screenshotTitle": {
     "message": "Desa l'enllaç amb una captura de pantalla de la part visible de la pàgina"
+  },
+  "savePageText": {
+    "message": "Desa el text"
+  },
+  "savePageTextTitle": {
+    "message": "Desa el text principal de la pàgina en Markdown. Selecciona abans un text per desar només aquesta part."
+  },
+  "saveSelection": {
+    "message": "Desa la selecció"
+  },
+  "saveSelectionTitle": {
+    "message": "Desa el text seleccionat en Markdown"
+  },
+  "readingPage": {
+    "message": "S'està llegint la pàgina..."
+  },
+  "pageTextFailed": {
+    "message": "No es pot llegir el text d'aquesta pàgina."
+  },
+  "noTextFound": {
+    "message": "No s'ha trobat cap text en aquesta pàgina."
   },
   "loadingNotes": {
     "message": "S'estan carregant les notes..."

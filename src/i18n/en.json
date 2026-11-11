@@ -53,7 +53,8 @@
       "no_headings": "No headings in this note",
       "unavailable_tasklist": "Outline is not available for task lists",
       "toggle_panel": "Toggle outline panel",
-      "copy_section_link": "Copy section link"
+      "copy_section_link": "Copy section link",
+      "section_not_found": "That section no longer exists in this note"
     },
     "link_copied": "Link copied",
     "print": "Print",
@@ -611,6 +612,9 @@
   "tasklist": {
     "open_tasks_page": "View all tasks",
     "input_placeholder": "Write a new task and press Enter to add to list...",
+    "add_row_placeholder": "Add a task",
+    "completed_section_one": "1 completed task",
+    "completed_section_other": "{{count}} completed tasks",
     "drag_to_reorder": "Drag to reorder",
     "add_to_top": "Add new tasks to top",
     "add_to_bottom": "Add new tasks to bottom",
@@ -964,6 +968,11 @@
       "index_search_bar": "Search bar",
       "tasklist_progress_bar": "Task list progress bar",
       "preview_code_block_delete": "Delete button on code blocks, in markdown preview",
+      "code_block_collapse": "Code block fold button",
+      "code_block_wrap": "Code block word wrap button",
+      "code_block_line_numbers": "Code block line numbers button",
+      "code_block_copy": "Code block copy button",
+      "code_block_delete": "Code block delete button",
       "share_restrict_users": "Share: restrict to specific users",
       "share_protocol_toggle": "Share: HTTPS toggle",
       "share_shared_with_me": "Share: \"Shared with me\"",
@@ -977,7 +986,11 @@
         "settings_cards": "Settings Cards",
         "toolbar": "Toolbar",
         "slash_menu": "Slash Menu",
-        "panels": "Other",
+        "note": "Note",
+        "note_subline": "Under the note title",
+        "floating_buttons": "Floating buttons",
+        "sharing": "Sharing",
+        "backup_restore": "Backup & restore",
         "dashboard_toolbar": "Dashboard",
         "icon_sidebar": "Icon rail",
         "folder_actions": "Folder Actions",
@@ -985,7 +998,8 @@
         "note_actions": "Note Actions",
         "mobile_editor_bar": "Mobile editor bar",
         "sidebar": "Sidebar",
-        "task_lists": "Task lists"
+        "task_lists": "Task lists",
+        "code_blocks": "Code blocks"
       },
       "badge_all_visible": "All visible",
       "badge_hidden_count_admin": "{{count}} hidden ({{admin}} by the administrator)",
@@ -1025,12 +1039,14 @@
       "note_info_icon": "Show information icon under the note title",
       "note_scrollbar": "Note scrollbar",
       "note_scroll_arrows": "Scroll to top and bottom arrows",
+      "note_section_link": "Copy section link icon on headings",
       "tasklist_add_field": "Field to add a task",
       "tasklist_frame": "Frame around each task",
       "tasklist_delete": "Delete a task",
       "tasklist_menu": "Task options menu (mobile)",
       "tasklist_frame_color": "Priority colour of the task frame",
-      "note_id": "Show the note id"
+      "note_id": "Show the note id",
+      "backlinks_mentions": "Text around each backlink"
     },
     "icon_sidebar_order": {
       "title": "Icon sidebar layout",
@@ -1730,7 +1746,7 @@
     "moved": "Moved successfully",
     "root": "Root (no folder)",
     "filter_folders": "Filter folders...",
-    "filter_placeholder": "Filter notes by title or tags...",
+    "filter_placeholder": "Filter notes by title, tags or ID...",
     "filter_type": "Filter by type",
     "type_html": "Rich text",
     "type_markdown": "Markdown",
@@ -1802,6 +1818,14 @@
     "mermaid_quadrant": "Quadrant chart",
     "mermaid_xy": "Bar and line chart",
     "emoji": "Emoji",
+    "symbols": "Symbols",
+    "symbols_recent": "Recent",
+    "symbols_math": "Maths",
+    "symbols_greek": "Greek",
+    "symbols_superscript": "Superscript",
+    "symbols_subscript": "Subscript",
+    "symbols_units": "Units",
+    "symbols_arrows": "Arrows",
     "table": "Table",
     "separator": "Separator",
     "link_to_note": "Link to note",
@@ -2119,6 +2143,10 @@
     "code_block_line_numbers": {
       "show": "Show line numbers",
       "hide": "Hide line numbers"
+    },
+    "code_block_wrap": {
+      "enable": "Wrap long lines",
+      "disable": "Do not wrap long lines"
     },
     "colors": {
       "none": "None"
@@ -2984,6 +3012,8 @@
     },
     "show_offline_dots": "Show offline dots",
     "hide_offline_dots": "Hide offline dots",
+    "tree_indent": "Tree indentation",
+    "tree_indent_hint": "How far each level of folders and notes is indented in the notes list.",
     "view_options": "View options",
     "customize": "Customize sidebar",
     "customize_hint": "Choose which elements of the sidebar are shown"
@@ -3790,7 +3820,13 @@
     }
   },
   "backlinks": {
-    "title": "Backlinks"
+    "title": "Backlinks",
+    "mentions": {
+      "show": "Show the text around each link",
+      "hide": "Hide the text around each link",
+      "no_context": "No text to show around these links.",
+      "failed": "Could not load the context."
+    }
   },
   "multiuser": {
     "acting_as": "acting as {{user}}",
@@ -4556,7 +4592,10 @@
       "create_button": "Create & link",
       "recent_notes": "Recent notes",
       "search_placeholder": "Search for a note...",
-      "all_workspaces": "Search all workspaces"
+      "all_workspaces": "Search all workspaces",
+      "link_to_section": "Link to a section",
+      "no_sections": "This note has no headings to link to",
+      "sections_failed": "This note could not be read"
     },
     "untitled": "Untitled",
     "empty": {
@@ -4870,6 +4909,17 @@
     "upload_failed": "The recording could not be saved: {{error}}",
     "download": "Download the recording",
     "no_note": "Open a note first: the recording is saved as an attachment of that note."
+  },
+  "audio_player": {
+    "play": "Play",
+    "pause": "Pause",
+    "seek": "Seek",
+    "speed": "Playback speed",
+    "unsupported": "Your browser cannot play this audio format",
+    "load_error": "This recording could not be loaded",
+    "volume": "Volume",
+    "mute": "Mute",
+    "unmute": "Unmute"
   },
   "diary": {
     "title": "Diary",

@@ -3,12 +3,14 @@
 // ============================================================================
 // The three-dot toggle at the right end of the rule after Favorites
 // (#sidebarTreeOptionsBtn, notes_list.php) opens #tree-options-menu, rendered
-// by index.php: the sort mode and the offline dots.
+// by index.php: the sort mode, the tree indentation and the offline dots.
 //
 // This file only opens, places and closes the menu. Each item keeps the
 // data-action its former button had, handled where it was:
 //   set-note-sort       js/note-sort-cycle.js
 //   toggle-offline-dots js/offline-marks.js
+// The indentation slider has no data-action, so using it keeps the menu
+// open; js/tree-indent-slider.js handles it.
 //
 // Both the toggle and the menu are rendered inside #left_col, so a sidebar
 // refresh replaces them: they are looked up on every use.
@@ -56,7 +58,9 @@
         if (typeof syncActionsMenuSeparators === 'function') syncActionsMenuSeparators(menu);
         menu.classList.add('show');
         markToggle(true);
-        adjustMenuPosition(menu, toggle);
+        // To the right of the toggle, over the note: the toggle is at the
+        // column's right end, aligned inside it the menu covered the tree
+        adjustMenuPosition(menu, toggle, { escapeColumn: true });
     }
 
     document.addEventListener('click', function (event) {

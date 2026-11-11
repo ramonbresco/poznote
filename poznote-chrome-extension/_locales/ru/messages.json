@@ -3,7 +3,7 @@
     "message": "Poznote URL Saver"
   },
   "extDescription": {
-    "message": "Сохраняет адрес или снимок текущей страницы в Poznote: новой заметкой или в конец существующей."
+    "message": "Сохраняет текущую страницу в Poznote: адрес, снимок или текст в Markdown, новой заметкой или в конец существующей."
   },
   "optionsTitle": {
     "message": "Настройки Poznote URL Saver"
@@ -70,6 +70,27 @@
   },
   "screenshotTitle": {
     "message": "Сохранить ссылку со снимком видимой части страницы"
+  },
+  "savePageText": {
+    "message": "Сохранить текст"
+  },
+  "savePageTextTitle": {
+    "message": "Сохранить основной текст страницы в Markdown. Выделите часть текста, чтобы сохранить только её."
+  },
+  "saveSelection": {
+    "message": "Сохранить выделенное"
+  },
+  "saveSelectionTitle": {
+    "message": "Сохранить выделенный текст в Markdown"
+  },
+  "readingPage": {
+    "message": "Чтение страницы..."
+  },
+  "pageTextFailed": {
+    "message": "Не удаётся прочитать текст этой страницы."
+  },
+  "noTextFound": {
+    "message": "На этой странице нет текста."
   },
   "loadingNotes": {
     "message": "Загрузка заметок..."

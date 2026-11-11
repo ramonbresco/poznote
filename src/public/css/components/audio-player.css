@@ -1,0 +1,529 @@
+/* The audio player of a note (lib/audio-player.php, js/audio-player.js).
+   Loaded by every page that can draw a note's audio: the player frame of the
+   editor, a public share, the journal.
+
+   The element is its own container: the same markup is drawn in a 150px
+   attachment tile and in a 420px note, so what it shows at a given width is
+   decided by @container rules and never by the page around it. */
+
+.pz-audio {
+    container-type: inline-size;
+    container-name: pz-audio;
+    --pz-audio-progress: 0%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    /* The same box wherever a recording is read. On a page that renders the
+       player inline (a public share, the journal) this is what keeps it from
+       stretching across the column; in the editor's frame the frame is
+       already this wide. */
+    max-width: var(--pz-audio-player-width);
+    height: var(--pz-audio-player-height);
+    margin: 8px 0;
+    padding: 0 10px;
+    border: 1px solid var(--pz-border-light);
+    border-radius: var(--pz-radius-lg);
+    background: var(--pz-surface);
+    color: var(--pz-text);
+    font-family: inherit;
+    overflow: hidden;
+}
+
+.pz-audio * {
+    box-sizing: border-box;
+}
+
+/* The element that actually plays. It is never the one on screen: a browser
+   draws its own controls for it, and inside a contenteditable Chrome draws
+   none at all, which is the whole reason the editor frames this page. */
+.pz-audio .pz-audio-el {
+    display: none;
+}
+
+/* --- Play / pause --------------------------------------------------------- */
+
+/* Square, not round: a round button is Telegram's, and everything else in
+   Poznote is a rounded square. It is also what lets the cover art stand in
+   for it, the two being the same box. */
+.pz-audio .pz-audio-play {
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--pz-radius-sm);
+    background: var(--pz-accent);
+    color: var(--pz-text-inverse);
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+}
+
+.pz-audio .pz-audio-play:hover,
+.pz-audio .pz-audio-play:focus-visible {
+    background: var(--pz-accent-hover);
+}
+
+.pz-audio.is-error .pz-audio-play,
+.pz-audio .pz-audio-play[disabled] {
+    background: var(--pz-disabled);
+    cursor: default;
+}
+
+/* A triangle and a pair of bars, drawn rather than loaded: css/lucide.css is
+   870 KB of icon data and this player is framed once per recording. */
+.pz-audio .pz-audio-play-icon {
+    display: block;
+    width: 0;
+    height: 0;
+    margin-left: 3px;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-left: 12px solid currentColor;
+}
+
+.pz-audio.is-playing .pz-audio-play-icon {
+    width: 12px;
+    height: 14px;
+    margin-left: 0;
+    border: 0;
+    background:
+        linear-gradient(currentColor, currentColor) left / 4px 100% no-repeat,
+        linear-gradient(currentColor, currentColor) right / 4px 100% no-repeat;
+}
+
+/* --- Cover art ------------------------------------------------------------ */
+
+/* The cover fills the button. At rest that is all there is to see; the glyph
+   and its scrim come up under the pointer, and stay up while the recording
+   plays so pause is never hidden. A screen without hover shows them always:
+   there is no second place to tap. */
+.pz-audio .pz-audio-cover {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: var(--pz-surface-hover);
+}
+
+.pz-audio-has-cover .pz-audio-play {
+    background: var(--pz-surface-hover);
+}
+
+.pz-audio-has-cover .pz-audio-play:hover,
+.pz-audio-has-cover .pz-audio-play:focus-visible {
+    background: var(--pz-surface-hover);
+}
+
+/* Under the glyph, never over it: ::before paints before the button's own
+   children, ::after would paint on top of them. */
+.pz-audio-has-cover .pz-audio-play::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(var(--pz-shadow-rgb), 0.45);
+    opacity: 0;
+    transition: opacity 0.12s ease;
+}
+
+.pz-audio-has-cover .pz-audio-play-icon {
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+}
+
+.pz-audio-has-cover .pz-audio-play:hover::before,
+.pz-audio-has-cover .pz-audio-play:focus-visible::before,
+.pz-audio-has-cover.is-playing .pz-audio-play::before,
+.pz-audio-has-cover .pz-audio-play:hover .pz-audio-play-icon,
+.pz-audio-has-cover .pz-audio-play:focus-visible .pz-audio-play-icon,
+.pz-audio-has-cover.is-playing .pz-audio-play-icon {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .pz-audio-has-cover .pz-audio-play::before,
+    .pz-audio-has-cover .pz-audio-play-icon {
+        opacity: 1;
+    }
+}
+
+/* A file the browser refused keeps its cover, dimmed: the square is no longer
+   a button, and it should not look like one. */
+.pz-audio-has-cover.is-error .pz-audio-cover {
+    opacity: 0.45;
+}
+
+.pz-audio-has-cover.is-error .pz-audio-play::before,
+.pz-audio-has-cover.is-error .pz-audio-play-icon {
+    opacity: 0;
+}
+
+/* --- Title, artist, waveform ---------------------------------------------- */
+
+.pz-audio .pz-audio-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    min-width: 0;
+}
+
+.pz-audio .pz-audio-tags {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.25;
+}
+
+.pz-audio .pz-audio-title {
+    overflow: hidden;
+    color: var(--pz-text);
+    font-size: 13px;
+    font-weight: var(--pz-weight-medium, 500);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pz-audio .pz-audio-artist {
+    overflow: hidden;
+    color: var(--pz-text-muted);
+    font-size: 11.5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The file the browser has refused: the track has no samples to show and the
+   clock no time to count, so the reason takes their place inside the same box.
+   Two lines at most, since the box keeps its height. */
+.pz-audio .pz-audio-error {
+    display: none;
+    margin: 0;
+    overflow: hidden;
+    color: var(--pz-text-muted);
+    font-size: 11.5px;
+    line-height: 1.3;
+}
+
+/* Clamped rather than cut: in a narrow tile the sentence needs more lines than
+   the box has, and an ellipsis says so where a line sliced in half does not.
+   The whole sentence stays in the title attribute (js/audio-player.js). */
+.pz-audio.is-error .pz-audio-error {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+}
+
+.pz-audio.is-error .pz-audio-track,
+.pz-audio.is-error .pz-audio-side {
+    display: none;
+}
+
+.pz-audio .pz-audio-track {
+    position: relative;
+    height: 26px;
+    cursor: pointer;
+    touch-action: none;
+}
+
+/* The line of a tagged player: a little taller than it looks, so the click
+   that seeks does not ask for the 4px of the bar itself. */
+.pz-audio-tagged .pz-audio-track {
+    height: 18px;
+}
+
+.pz-audio .pz-audio-track:focus-visible {
+    border-radius: var(--pz-radius-sm);
+    outline: 2px solid var(--pz-accent);
+    outline-offset: 2px;
+}
+
+/* Until the samples have been read, and for a file too large to read, the
+   track is the plain bar a player has always had. */
+.pz-audio .pz-audio-track.is-plain .pz-audio-wave {
+    top: 50%;
+    height: 4px;
+    margin-top: -2px;
+    border-radius: var(--pz-radius-sm);
+    background: var(--pz-border);
+}
+
+.pz-audio .pz-audio-track.is-plain .pz-audio-wave-played {
+    background: var(--pz-accent);
+}
+
+.pz-audio .pz-audio-wave {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* The played half is the same bars in the accent colour, clipped to where the
+   playhead is: one set of bars cannot be two colours at an arbitrary point. */
+.pz-audio .pz-audio-wave-played {
+    clip-path: inset(0 calc(100% - var(--pz-audio-progress)) 0 0);
+}
+
+.pz-audio .pz-audio-bar {
+    flex: 1 1 0;
+    min-width: 2px;
+    max-width: 3px;
+    border-radius: var(--pz-radius-sm);
+    background: var(--pz-border-strong);
+    opacity: 0.55;
+}
+
+.pz-audio .pz-audio-wave-played .pz-audio-bar {
+    background: var(--pz-accent);
+    opacity: 1;
+}
+
+/* --- Time and speed ------------------------------------------------------- */
+
+.pz-audio .pz-audio-side {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pz-audio .pz-audio-time {
+    display: flex;
+    gap: 3px;
+    color: var(--pz-text-muted);
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.pz-audio .pz-audio-total:not(:empty)::before {
+    content: "/";
+    margin-right: 3px;
+    opacity: 0.6;
+}
+
+/* --- Volume ---------------------------------------------------------------
+
+   A desktop control only. A phone has hardware keys for this, and iOS ignores
+   a volume set from script outright, so the speaker would be a button that
+   does nothing there. The slider slides out over the waveform instead of
+   taking a place of its own on the row: the player is framed in an iframe of
+   its own size in the editor, so nothing may be drawn outside its box. */
+.pz-audio .pz-audio-volume {
+    position: relative;
+    display: none;
+    align-items: center;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .pz-audio .pz-audio-volume {
+        display: flex;
+    }
+}
+
+.pz-audio .pz-audio-volume-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--pz-radius-sm);
+    background: transparent;
+    color: var(--pz-text-muted);
+    cursor: pointer;
+}
+
+.pz-audio .pz-audio-volume-btn:hover,
+.pz-audio .pz-audio-volume-btn:focus-visible {
+    color: var(--pz-accent-text, var(--pz-accent));
+}
+
+/* Drawn as a mask so it takes the colour of the row, like the icons elsewhere
+   in the app; css/lucide.css is 870 KB and this frame loads once per file. */
+.pz-audio .pz-audio-volume-icon {
+    width: 16px;
+    height: 16px;
+    background: currentColor;
+    -webkit-mask: var(--pz-icon-volume) center / 16px 16px no-repeat;
+    mask: var(--pz-icon-volume) center / 16px 16px no-repeat;
+}
+
+.pz-audio .pz-audio-volume.is-muted .pz-audio-volume-icon {
+    -webkit-mask-image: var(--pz-icon-volume-off);
+    mask-image: var(--pz-icon-volume-off);
+}
+
+.pz-audio .pz-audio-volume-slider {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    width: 76px;
+    height: 20px;
+    margin: -10px 6px 0 0;
+    padding: 0 8px;
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-pill);
+    background: var(--pz-bg);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.12s ease, visibility 0.12s ease;
+    appearance: none;
+    cursor: pointer;
+}
+
+.pz-audio .pz-audio-volume:hover .pz-audio-volume-slider,
+.pz-audio .pz-audio-volume:focus-within .pz-audio-volume-slider {
+    opacity: 1;
+    visibility: visible;
+}
+
+.pz-audio .pz-audio-volume-slider::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: var(--pz-radius-sm);
+    background: var(--pz-border);
+}
+
+.pz-audio .pz-audio-volume-slider::-moz-range-track {
+    height: 4px;
+    border-radius: var(--pz-radius-sm);
+    background: var(--pz-border);
+}
+
+.pz-audio .pz-audio-volume-slider::-webkit-slider-thumb {
+    width: 10px;
+    height: 10px;
+    margin-top: -3px;
+    border: 0;
+    border-radius: var(--pz-radius-circle);
+    background: var(--pz-accent);
+    appearance: none;
+}
+
+.pz-audio .pz-audio-volume-slider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border: 0;
+    border-radius: var(--pz-radius-circle);
+    background: var(--pz-accent);
+}
+
+.pz-audio .pz-audio-speed {
+    min-width: 30px;
+    height: 20px;
+    padding: 0 5px;
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-pill);
+    background: transparent;
+    color: var(--pz-text-muted);
+    font-family: inherit;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+
+.pz-audio .pz-audio-speed:hover,
+.pz-audio .pz-audio-speed:focus-visible {
+    border-color: var(--pz-accent);
+    color: var(--pz-accent-text, var(--pz-accent));
+}
+
+.pz-audio .pz-audio-speed.is-changed {
+    border-color: var(--pz-accent);
+    color: var(--pz-accent-text, var(--pz-accent));
+}
+
+/* --- Narrow players ------------------------------------------------------- */
+
+/* An attachment tile is 150px wide and a note can be half that on a phone:
+   each piece leaves in the order it can be done without, the waveform last. */
+@container pz-audio (max-width: 340px) {
+    .pz-audio .pz-audio-volume {
+        display: none;
+    }
+}
+
+@container pz-audio (max-width: 300px) {
+    .pz-audio .pz-audio-speed {
+        display: none;
+    }
+}
+
+/* The cover stays: it is the play button, and a square that was going to be
+   drawn anyway costs nothing. Only the words go. */
+@container pz-audio (max-width: 250px) {
+    .pz-audio .pz-audio-tags {
+        display: none;
+    }
+
+    .pz-audio .pz-audio-track {
+        height: 26px;
+    }
+}
+
+@container pz-audio (max-width: 190px) {
+    .pz-audio {
+        gap: 8px;
+        padding: 0 8px;
+    }
+
+    /* Not enough room for "0:07 / 3:48": the length stays, the position goes.
+       The bar already shows where the playhead is, and the length is what a
+       reader wants from a tile before pressing anything. */
+    .pz-audio .pz-audio-elapsed {
+        display: none;
+    }
+
+    /* Same :not(:empty) as the rule it undoes, or that one outweighs this
+       one and the player reads "/ 0:24". */
+    .pz-audio .pz-audio-total:not(:empty)::before {
+        content: none;
+        margin-right: 0;
+    }
+
+    .pz-audio .pz-audio-play {
+        width: 32px;
+        height: 32px;
+    }
+
+    .pz-audio .pz-audio-play-icon {
+        margin-left: 2px;
+        border-top-width: 6px;
+        border-bottom-width: 6px;
+        border-left-width: 10px;
+    }
+
+    .pz-audio.is-playing .pz-audio-play-icon {
+        width: 10px;
+        height: 12px;
+        margin-left: 0;
+    }
+}
+
+@container pz-audio (max-width: 140px) {
+    .pz-audio .pz-audio-time {
+        display: none;
+    }
+}

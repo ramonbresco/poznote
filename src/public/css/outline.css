@@ -481,3 +481,102 @@ html[data-theme='dark'] .toggle-outline-btn[aria-disabled="true"]:hover {
     20%, 75% { opacity: 1; }
     100% { opacity: 0; }
 }
+
+/* Section links (discussion 1758)
+ *
+ * The icon that copies a link to one section of a note. Two places carry it:
+ * a single floating button over the heading the pointer is on, parked on
+ * <body> so nothing of it is ever inside the note, and a button on each
+ * outline row, which is how a touch screen reaches the same link. Both live
+ * here rather than in css/components/: the rows are the panel's own, and a
+ * component owning .outline-nav-link would make every rule of this file that
+ * names it an override of a component base (tools/css-check.php, gate 4).
+ */
+
+.note-section-link-btn {
+    position: fixed;
+    top: -1000px;
+    left: -1000px;
+    z-index: 1200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--pz-text-subtle);
+    /* No frame and no ground: it is an icon beside a heading, not a button
+       sitting on the note. */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.note-section-link-btn.is-visible {
+    display: inline-flex;
+}
+
+.note-section-link-btn:hover,
+.note-section-link-btn:focus-visible {
+    color: var(--pz-accent-text);
+}
+
+/* The outline rows. The button is placed over the row rather than next to
+ * the link, which is one ellipsed block of text. */
+.outline-nav-item {
+    position: relative;
+}
+
+.outline-section-link-btn {
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-top: -1px; /* .outline-nav-link carries 2px below it */
+    padding: 0;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--pz-text-subtle);
+    background: var(--pz-bg);
+    border: none;
+    border-radius: var(--pz-radius-sm);
+    cursor: pointer;
+    /* Faded rather than taken out of the page: display: none cannot be
+     * focused, and the keyboard has no other way to a section link. While it
+     * is invisible it lets a click through to the row underneath. */
+    opacity: 0;
+    pointer-events: none;
+}
+
+.outline-nav-item:hover .outline-section-link-btn,
+.outline-section-link-btn:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.outline-section-link-btn:hover,
+.outline-section-link-btn:focus-visible {
+    color: var(--pz-accent-text);
+}
+
+/* The strip the button covers is always reserved, so a long heading is cut
+ * before it rather than being re-cut the moment the row is hovered. */
+.outline-nav-link {
+    padding-right: 32px;
+}
+
+/* No hover on a touch screen: the row button is the only way in there, so it
+ * is always on show. */
+@media (hover: none) {
+    .outline-section-link-btn {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}

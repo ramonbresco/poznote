@@ -68,16 +68,19 @@ body[data-code-collapsed-lines="0"] pre[data-collapsed="1"] {
     border: none;
     border-radius: var(--pz-radius-sm);
     background: transparent;
-    color: var(--pz-text-secondary);
+    /* (the colour and fade of the copy and line-number buttons next to it,
+       css/code-blocks.css: a darker chevron read as a different control) */
+    color: var(--pz-text-subtle);
     cursor: pointer;
-    opacity: 0.4;
-    transition: opacity 0.2s ease;
+    opacity: 0.55;
+    transition: opacity 0.2s ease, color 0.1s ease;
     z-index: 10;
 }
 
 .code-block-collapse-btn:hover,
 .code-block-collapse-btn:focus-visible {
     opacity: 1;
+    color: var(--pz-text-strong);
 }
 
 /* The number of folded lines, to the left of the chevron */

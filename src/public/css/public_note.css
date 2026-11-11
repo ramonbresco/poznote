@@ -188,8 +188,7 @@ body.public-note-page {
 }
 
 @media screen and (max-width: 768px) {
-    .public-note audio,
-    .public-note .note-audio-embed {
+    .public-note audio {
         max-width: 240px;
     }
 }
@@ -233,9 +232,9 @@ body.public-note-page {
 }
 
 .public-note iframe[data-is-audio] {
-    max-width: 280px;
+    max-width: var(--pz-audio-player-width);
     width: 100%;
-    height: 54px;
+    height: var(--pz-audio-player-height);
     display: block;
     overflow: hidden;
     margin: 8px 0;
@@ -245,25 +244,15 @@ body.public-note-page {
 }
 
 .public-note iframe.note-audio-embed {
-    max-width: 280px;
+    max-width: var(--pz-audio-player-width);
     width: 100%;
-    height: 54px;
+    height: var(--pz-audio-player-height);
     display: block;
     overflow: hidden;
     margin: 8px 0;
     border: none;
     border-radius: var(--pz-radius-lg);
     background: transparent;
-}
-
-@media screen and (max-width: 768px) {
-    .public-note iframe[data-is-audio] {
-        max-width: 240px;
-    }
-
-    .public-note iframe.note-audio-embed {
-        max-width: 240px;
-    }
 }
 
 /* Default table styles for public notes. Keep specificity low so custom CSS can override them. */

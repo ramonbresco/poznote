@@ -1,7 +1,10 @@
 // Task lists: adding and toggling tasks.
 
-// Add a new task
-function addTask(noteId) {
+// Add a new task from the empty row of the list (js/tasklist-render.js).
+// options.keepFocus (default true): leave the caret in the row for the next task;
+// false when the row is committed because it lost the focus.
+function addTask(noteId, options) {
+    const keepFocus = !(options && options.keepFocus === false);
     const input = document.getElementById(`task-input-${noteId}`);
     if (!input) return;
 
@@ -39,11 +42,13 @@ function addTask(noteId) {
 
     saveAndRenderTasks(noteId, tasks);
 
-    // Clear input
+    // Clear input (and shrink the add row back to one line)
     input.value = '';
+    if (typeof autoSizeTaskAddInput === 'function') autoSizeTaskAddInput(input);
 
     // Refocus so the user can keep typing the next task (important on mobile).
-    input.focus();
+    // The row never left the DOM, so this keeps the keyboard open.
+    if (keepFocus) input.focus();
 
     // Mark as modified
     markTaskListAsModified(noteId);

@@ -278,6 +278,7 @@ $using_unified_search = handleUnifiedSearch();
 $settings = [
     'note_font_size' => '15',
     'sidebar_font_size' => '13',
+    'sidebar_tree_indent' => '',
     'center_note_content' => '0',
     'show_note_created' => false,
     'show_note_icons' => '1',
@@ -315,7 +316,7 @@ $settings = [
 ];
 
 try {
-    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'code_block_collapsed_lines', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_at_bottom', 'backlinks_at_bottom', 'note_virtual_space', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color', 'tab_follows_note')");
+    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'sidebar_tree_indent', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'code_block_collapsed_lines', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_at_bottom', 'backlinks_at_bottom', 'note_virtual_space', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color', 'tab_follows_note')");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $settings[$row['key']] = $row['value'];
         if ($row['key'] === 'markdown_new_note_view_mode') {
@@ -330,6 +331,9 @@ try {
 // Extract settings with proper defaults
 $note_font_size = $settings['note_font_size'];
 $sidebar_font_size = ($settings['sidebar_font_size'] !== '' && $settings['sidebar_font_size'] !== null) ? $settings['sidebar_font_size'] : '13';
+// Step of one level of the notes tree, in px (lib/tree-indent.php,
+// css/folders/content.css)
+$sidebar_tree_indent = poznoteTreeIndent($settings['sidebar_tree_indent']);
 
 // Note max width as a CSS length. center_note_content stores a percentage of
 // the note column ('60%'), '0' for full width, or legacy values: '1'/'true'
@@ -478,7 +482,7 @@ if ($center_note_content_enabled && $width_value !== '1' && $width_value !== 'tr
     <!-- Dark-mode stylesheets are served concatenated (same order as the css/dark-mode/ sources) -->
     <link type="text/css" rel="stylesheet" href="dark_mode_css.php?v=<?php echo $v; ?>"/>
     <link type="text/css" rel="stylesheet" href="js/katex/katex.min.css?v=<?php echo $v; ?>"/>
-    <style>:root { --note-font-size: <?php echo htmlspecialchars($note_font_size, ENT_QUOTES); ?>px; --sidebar-font-size: <?php echo htmlspecialchars($sidebar_font_size, ENT_QUOTES); ?>px; --note-max-width: <?php echo htmlspecialchars($note_max_width, ENT_QUOTES); ?>; }</style>
+    <style>:root { --note-font-size: <?php echo htmlspecialchars($note_font_size, ENT_QUOTES); ?>px; --sidebar-font-size: <?php echo htmlspecialchars($sidebar_font_size, ENT_QUOTES); ?>px; --pz-tree-indent: <?php echo (int)$sidebar_tree_indent; ?>px; --note-max-width: <?php echo htmlspecialchars($note_max_width, ENT_QUOTES); ?>; }</style>
     <?php poznoteRenderUiCustomizationBootstrap(); ?>
     <?php poznoteRenderToolbarIconColorsBootstrap(); ?>
     <!-- Editor/toolbar modules served as one concatenated deferred bundle
@@ -491,6 +495,7 @@ if ($center_note_content_enabled && $width_value !== '1' && $width_value !== 'tr
     <link type="text/css" rel="stylesheet" href="css/syntax-highlight.css?v=<?php echo $v; ?>"/>
     <script defer src="js/highlight/highlight.min.js?v=<?php echo $v; ?>"></script>
     <script defer src="js/highlight/powershell.min.js?v=<?php echo $v; ?>"></script>
+    <script defer src="js/hljs-config-languages.js?v=<?php echo $v; ?>"></script>
     <script defer src="js/syntax-highlight.js?v=<?php echo $v; ?>"></script>
 
 </head>
@@ -881,7 +886,8 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
 
     // View options menu of the tree: one vertical three-dot toggle at the right end of
     // the rule after Favorites (notes_list.php) opens #tree-options-menu, which
-    // gathers the sort mode and the offline dots (js/tree-options-menu.js).
+    // gathers the sort mode, the tree indentation and the offline dots
+    // (js/tree-options-menu.js).
     // "Expand all folders" is a button of its own, left of the toggle
     // ($expandFoldersButton above). The menu is rendered with the state of the
     // page, and re-rendered on every sidebar refresh.
@@ -906,6 +912,28 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
                 . '</div>';
         }
         $treeOptionsGroups[] = '<div id="sidebarSortBtn" role="group" data-note-sort-mode="' . htmlspecialchars($note_list_sort_type, ENT_QUOTES) . '">' . $noteSortItems . '</div>';
+    }
+
+    // Tree indentation (sidebar_tree_indent, lib/tree-indent.php): a slider
+    // row, not an entry, so a click on it keeps the menu open (no
+    // data-action). js/tree-indent-slider.js moves the tree as it is dragged
+    // and saves on release; the reset button shows away from the default.
+    // The row carries the card:sidebarTreeIndentSlider id of Element visibility.
+    if ($canWriteAccountSettings) {
+        $treeIndentLabel = t_h('sidebar.tree_indent', [], 'Tree indentation');
+        $treeIndentReset = t_h('page_menu.width_reset', [], 'Reset to default');
+        $treeOptionsGroups[] = '<div id="sidebarTreeIndentSlider" class="folder-actions-menu-slider" role="group" aria-labelledby="sidebarTreeIndentLabel"'
+            . ' data-default="' . POZNOTE_TREE_INDENT_DEFAULT . '" data-min="' . POZNOTE_TREE_INDENT_MIN . '" data-max="' . POZNOTE_TREE_INDENT_MAX . '">'
+            . '<div class="folder-actions-menu-slider-head">'
+            . '<i class="lucide lucide-indent-increase"></i>'
+            . '<span id="sidebarTreeIndentLabel" title="' . t_h('sidebar.tree_indent_hint', [], 'How far each level of folders and notes is indented in the notes list.') . '">' . $treeIndentLabel . '</span>'
+            . '<output class="folder-actions-menu-slider-value" for="sidebarTreeIndentInput">' . (int)$sidebar_tree_indent . ' px</output>'
+            . '<button type="button" class="folder-actions-menu-slider-reset"' . ((int)$sidebar_tree_indent === POZNOTE_TREE_INDENT_DEFAULT ? ' hidden' : '') . ' title="' . $treeIndentReset . '" aria-label="' . $treeIndentReset . '">'
+            . '<i class="lucide lucide-rotate-ccw"></i>'
+            . '</button>'
+            . '</div>'
+            . '<input type="range" id="sidebarTreeIndentInput" class="folder-actions-menu-slider-input" min="' . POZNOTE_TREE_INDENT_MIN . '" max="' . POZNOTE_TREE_INDENT_MAX . '" step="1" value="' . (int)$sidebar_tree_indent . '" aria-labelledby="sidebarTreeIndentLabel">'
+            . '</div>';
     }
 
     // Offline dots of the tree (sidebar_offline_marks, the "Show offline dot"

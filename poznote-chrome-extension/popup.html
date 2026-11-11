@@ -327,6 +327,11 @@
       grid-template-columns: repeat(2, minmax(max-content, 1fr));
       gap: 8px;
     }
+
+    /* Its label follows the page: the selection when there is one, the whole text otherwise */
+    .actions .wide {
+      grid-column: 1 / -1;
+    }
   </style>
 </head>
 
@@ -342,6 +347,8 @@
     <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></symbol>
     <symbol id="i-file-plus" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M9 15h6"/><path d="M12 18v-6"/></symbol>
     <symbol id="i-list-plus" viewBox="0 0 24 24"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></symbol>
+    <symbol id="i-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 13H8"/><path d="M16 13h-3"/><path d="M8 17h8"/></symbol>
+    <symbol id="i-text-select" viewBox="0 0 24 24"><path d="M5 3a2 2 0 0 0-2 2"/><path d="M19 3a2 2 0 0 1 2 2"/><path d="M21 19a2 2 0 0 1-2 2"/><path d="M5 21a2 2 0 0 1-2-2"/><path d="M9 3h1"/><path d="M9 21h1"/><path d="M14 3h1"/><path d="M14 21h1"/><path d="M3 9v1"/><path d="M21 9v1"/><path d="M3 14v1"/><path d="M21 14v1"/><path d="M7 8h8"/><path d="M7 12h10"/><path d="M7 16h6"/></symbol>
     <symbol id="i-folder" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
   </svg>
 
@@ -396,6 +403,9 @@
       </button>
       <button class="btn btn-secondary" id="saveScreenshot" data-i18n-title="screenshotTitle">
         <svg class="icon"><use href="#i-camera"/></svg><span data-i18n="screenshot"></span>
+      </button>
+      <button class="btn btn-secondary wide" id="saveText" data-i18n-title="savePageTextTitle">
+        <svg class="icon"><use id="saveTextIcon" href="#i-text"/></svg><span id="saveTextLabel" data-i18n="savePageText"></span>
       </button>
     </div>
 

@@ -21,6 +21,9 @@
 require_once __DIR__ . '/S3Client.php';
 
 class AttachmentStorage {
+    /** How much of a byte range is held in memory at once while it is sent. */
+    private const RANGE_CHUNK_BYTES = 512 * 1024;
+
     private static $config = null;
     private static $instances = [];
     private static $tempFiles = [];
@@ -332,7 +335,13 @@ class AttachmentStorage {
      * In remote mode a local leftover copy still wins: it serves not-yet
      * migrated files without a network round-trip.
      */
-    public function stream(string $filename): bool {
+    /**
+     * @param array{start: int, end: int, length: int}|null $range
+     *        A byte range to send instead of the whole body. Only honoured
+     *        for a file on disk; a bucket object is sent whole, which is why
+     *        the controller only offers ranges for a local file.
+     */
+    public function stream(string $filename, ?array $range = null): bool {
         // The session lock goes before the bytes do: PHP holds it for the
         // whole request, so a video of a few hundred megabytes used to keep
         // every other tab of the same browser waiting its turn. Nothing after
@@ -351,6 +360,9 @@ class AttachmentStorage {
 
         $localPath = $this->localDir() . '/' . basename($filename);
         if (file_exists($localPath) && is_readable($localPath)) {
+            if ($range !== null) {
+                return $this->streamRange($localPath, $range);
+            }
             readfile($localPath);
             return true;
         }
@@ -367,6 +379,43 @@ class AttachmentStorage {
             error_log('S3 attachment stream failed: ' . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * Send one slice of a local file, in pieces.
+     *
+     * readfile() cannot start at an offset, and reading the slice into a
+     * string first would put a 200 MB range in memory; fread in a loop keeps
+     * the cost to one chunk whatever the size of the slice. The loop stops
+     * when the client hangs up, which a media element does constantly: it
+     * asks for a range, gets what it needs and drops the rest.
+     *
+     * @param array{start: int, end: int, length: int} $range
+     */
+    private function streamRange(string $path, array $range): bool {
+        $handle = @fopen($path, 'rb');
+        if ($handle === false) {
+            return false;
+        }
+
+        $left = max(0, (int)$range['length']);
+        if (fseek($handle, (int)$range['start']) !== 0) {
+            fclose($handle);
+            return false;
+        }
+
+        while ($left > 0 && !feof($handle) && !connection_aborted()) {
+            $chunk = fread($handle, (int)min(self::RANGE_CHUNK_BYTES, $left));
+            if ($chunk === false || $chunk === '') {
+                break;
+            }
+            echo $chunk;
+            flush();
+            $left -= strlen($chunk);
+        }
+
+        fclose($handle);
+        return true;
     }
 
     /**

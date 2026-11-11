@@ -5,8 +5,13 @@
  * close button, and folder list display.
  */
 
+/* The indentation of a level is --pz-tree-indent (css/tokens.css, the
+   account's "Tree indentation" setting, written by index.php): it is the
+   whole step of a subfolder, this margin plus the 6px nudge below, so the
+   margin is what is left once the nudge is taken out. A note sits two pixels
+   further than a subfolder at every value (measured). */
 .folder-content {
-    margin-left: 15px;
+    margin-left: calc(var(--pz-tree-indent, 21px) - 6px);
     margin-bottom: 5px;
 }
 

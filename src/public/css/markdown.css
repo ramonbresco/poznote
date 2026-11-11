@@ -614,10 +614,13 @@ body:not(.markdown-colored) .markdown-codemirror-host .cm-live-preview .poznote-
 }
 
 /* Same in the lines of a code block, whose own size rule (top of this file,
-   span:not(.cm-live-code-lang)) outweighs the one above: without this, the
-   closing ``` of every block stayed in sight in rich text. */
-.markdown-editor .cm-live-preview .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line) :is(.cm-live-empty-pair, .cm-live-squeezed-tail),
-.markdown-editor .cm-live-preview .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line) :is(.cm-live-empty-pair, .cm-live-squeezed-tail) * {
+   span:not(.cm-live-code-lang)...) outweighs the one above: without this, the
+   closing ``` of every block stayed in sight in rich text. The second #id
+   keeps this rule ahead of that one however many :not() it gains: it was
+   tied on ids and one class ahead, and the :not(.cm-live-code-lines-count)
+   of the folded blocks' line count was enough to bring the ``` back. */
+.markdown-editor .cm-live-preview .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line) :is(#poznote-md-live-size-boost, .cm-live-empty-pair, .cm-live-squeezed-tail),
+.markdown-editor .cm-live-preview .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line) :is(#poznote-md-live-size-boost, .cm-live-empty-pair, .cm-live-squeezed-tail) * {
     font-size: 0 !important;
 }
 
@@ -830,7 +833,9 @@ body.pz-toggle-marker-hover .markdown-codemirror-host .cm-live-preview .cm-line.
     border-top-width: 1px;
     border-radius: var(--pz-radius-sm) var(--pz-radius-sm) 0 0;
     padding-top: 4px;
-    padding-bottom: 4px;
+    /* (the 6px more the preview gives its first line of code,
+       css/code-blocks.css) */
+    padding-bottom: 10px;
 }
 
 .markdown-codemirror-host .cm-live-preview .cm-line.cm-live-code-close {
@@ -933,7 +938,8 @@ body.pz-toggle-marker-hover .markdown-codemirror-host .cm-live-preview .cm-line.
    min-width counts in the column's max-content width), so that the ground
    goes all the way. The opening and closing lines stay in place, at the
    visible width, with the badge and the buttons. */
-body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code-block {
+body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code-block:not(.cm-live-code-block-wrap),
+.markdown-codemirror-host .cm-live-preview .cm-live-code-block.cm-live-code-block-nowrap {
     display: grid;
     grid-template-columns: max-content;
     overflow-x: auto;
@@ -942,7 +948,8 @@ body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code
     border-radius: var(--pz-radius-sm);
 }
 
-body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code-block > .cm-line.cm-live-code {
+body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code-block:not(.cm-live-code-block-wrap) > .cm-line.cm-live-code,
+.markdown-codemirror-host .cm-live-preview .cm-live-code-block.cm-live-code-block-nowrap > .cm-line.cm-live-code {
     box-sizing: border-box;
     min-width: 100cqw;
     white-space: pre;
@@ -952,14 +959,15 @@ body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code
     border-radius: 0;
 }
 
-body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code-block > .cm-line:is(.cm-live-code-open, .cm-live-code-close) {
+body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code-block:not(.cm-live-code-block-wrap) > .cm-line:is(.cm-live-code-open, .cm-live-code-close),
+.markdown-codemirror-host .cm-live-preview .cm-live-code-block.cm-live-code-block-nowrap > .cm-line:is(.cm-live-code-open, .cm-live-code-close) {
     position: sticky;
     left: 0;
     width: 100cqw;
     box-sizing: border-box;
 }
 
-.markdown-codemirror-host .cm-live-preview :is(.cm-live-code-copy, .cm-live-code-lines, .cm-live-code-delete, .cm-live-code-collapse) {
+.markdown-codemirror-host .cm-live-preview :is(.cm-live-code-copy, .cm-live-code-lines, .cm-live-code-wrap, .cm-live-code-delete, .cm-live-code-collapse) {
     width: 28px;
     height: 28px;
     padding: 0;
@@ -975,13 +983,20 @@ body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code
     transition: opacity 0.2s ease;
 }
 
-.markdown-codemirror-host .cm-live-preview :is(.cm-live-code-copy, .cm-live-code-lines, .cm-live-code-delete, .cm-live-code-collapse):hover {
+.markdown-codemirror-host .cm-live-preview :is(.cm-live-code-copy, .cm-live-code-lines, .cm-live-code-wrap, .cm-live-code-delete, .cm-live-code-collapse):hover {
     opacity: 1;
     color: var(--pz-text-strong);
 }
 
 .markdown-codemirror-host .cm-live-preview .cm-live-code-copy i {
     color: inherit;
+}
+
+/* The word wrap of one block (discussion 1764) only means something in an
+   editor that wraps its lines: with "Editor word wrap" off, Live preview lets
+   every line run, code or not, so the button would switch nothing. */
+.markdown-codemirror-host.markdown-editor-nowrap .cm-live-preview .cm-live-code-wrap {
+    display: none;
 }
 
 /* The bin, red as on the code blocks of an HTML note (css/code-blocks.css) */
@@ -992,7 +1007,9 @@ body.code-block-no-wrap .markdown-codemirror-host .cm-live-preview .cm-live-code
 
 .markdown-codemirror-host .cm-live-preview .cm-live-code-delete svg,
 .markdown-codemirror-host .cm-live-preview .cm-live-code-collapse svg,
-.markdown-codemirror-host .cm-live-preview .cm-live-code-lines svg {
+.markdown-codemirror-host .cm-live-preview .cm-live-code-lines svg,
+.markdown-codemirror-host .cm-live-preview .cm-live-code-wrap svg,
+.markdown-codemirror-host .cm-live-preview .cm-live-code-copy svg {
     width: 14px;
     height: 14px;
 }
@@ -1409,18 +1426,16 @@ html[data-theme='dark'] .markdown-preview pre.indented-pre {
 @media screen and (max-width: 768px) {
 
     .markdown-preview audio,
-    .markdown-preview .note-audio-embed,
-    .markdown-codemirror-host .cm-live-media audio,
-    .markdown-codemirror-host .cm-live-media .note-audio-embed {
+    .markdown-codemirror-host .cm-live-media audio {
         max-width: 240px;
     }
 }
 
 .markdown-preview iframe[data-is-audio],
 .markdown-codemirror-host .cm-live-media iframe[data-is-audio] {
-    max-width: 280px;
+    max-width: var(--pz-audio-player-width);
     width: 100%;
-    height: 54px;
+    height: var(--pz-audio-player-height);
     display: block;
     overflow: hidden;
     margin: 8px 0;
@@ -1430,26 +1445,15 @@ html[data-theme='dark'] .markdown-preview pre.indented-pre {
 }
 
 .markdown-preview iframe.note-audio-embed {
-    max-width: 280px;
+    max-width: var(--pz-audio-player-width);
     width: 100%;
-    height: 54px;
+    height: var(--pz-audio-player-height);
     display: block;
     overflow: hidden;
     margin: 8px 0;
     border: none;
     border-radius: var(--pz-radius-lg);
     background: transparent;
-}
-
-@media screen and (max-width: 768px) {
-    .markdown-preview iframe[data-is-audio],
-    .markdown-codemirror-host .cm-live-media iframe[data-is-audio] {
-        max-width: 240px;
-    }
-
-    .markdown-preview iframe.note-audio-embed {
-        max-width: 240px;
-    }
 }
 
 .markdown-preview hr {

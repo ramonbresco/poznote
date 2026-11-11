@@ -41,6 +41,7 @@ function poznoteCssGroups(): array
             'css/components/task-priority.css',
             'css/components/code-block-fold.css',
             'css/components/embed-blocked.css',
+            'css/components/audio-player.css',
             'css/components/resize-handle.css',
             'css/components/toggle-block.css',
         ],
@@ -225,6 +226,17 @@ function poznoteCssManifest(): array
             'css/components/search-toggle.css',
             '@icon-sidebar',
             '@theme',
+        ],
+
+        // The frame the editor puts around a recording (audio_player.php).
+        // It is a document of its own, so it carries the theme (it copies the
+        // app's data-theme over the frame boundary) and the app font: without
+        // the latter a title lands in the browser's serif next to a note set
+        // in Inter, which is what graph.php carries css/fonts.css for.
+        'audio_player' => [
+            '@components',
+            '@theme',
+            'css/fonts.css',
         ],
         'backup_export' => [
             'css/lucide.css',

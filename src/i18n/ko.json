@@ -53,7 +53,8 @@
       "no_headings": "이 노트에 제목 문단이 없습니다",
       "unavailable_tasklist": "할 일 목록에서는 목차를 사용할 수 없습니다",
       "toggle_panel": "목차 패널 열기/닫기",
-      "copy_section_link": "이 섹션의 링크 복사"
+      "copy_section_link": "이 섹션의 링크 복사",
+      "section_not_found": "이 노트에 해당 섹션이 더 이상 없습니다"
     },
     "link_copied": "링크가 복사되었습니다",
     "print": "인쇄",
@@ -611,6 +612,9 @@
   "tasklist": {
     "open_tasks_page": "모든 할 일 보기",
     "input_placeholder": "새 할 일을 작성하고 Enter를 눌러 목록에 추가하세요...",
+    "add_row_placeholder": "작업 추가",
+    "completed_section_one": "완료된 작업 1개",
+    "completed_section_other": "완료된 작업 {{count}}개",
     "drag_to_reorder": "드래그하여 재정렬하세요.",
     "add_to_top": "새 할 일을 상단에 추가",
     "add_to_bottom": "새 할 일을 하단에 추가",
@@ -964,6 +968,11 @@
       "index_search_bar": "검색창",
       "tasklist_progress_bar": "할 일 목록 진행 표시줄",
       "preview_code_block_delete": "마크다운 미리보기에서 코드 블록의 삭제 버튼",
+      "code_block_collapse": "코드 블록 접기 버튼",
+      "code_block_wrap": "코드 블록 줄 바꿈 버튼",
+      "code_block_line_numbers": "코드 블록 줄 번호 버튼",
+      "code_block_copy": "코드 블록 복사 버튼",
+      "code_block_delete": "코드 블록 삭제 버튼",
       "share_restrict_users": "공유: 특정 사용자로 제한",
       "share_protocol_toggle": "공유: HTTPS 토글",
       "share_shared_with_me": "공유: \"나와 공유됨\"",
@@ -977,7 +986,11 @@
         "settings_cards": "설정 카드",
         "toolbar": "도구 모음",
         "slash_menu": "슬래시 메뉴",
-        "panels": "기타",
+        "note": "노트",
+        "note_subline": "노트 제목 아래",
+        "floating_buttons": "플로팅 버튼",
+        "sharing": "공유",
+        "backup_restore": "백업 및 복원",
         "dashboard_toolbar": "대시보드",
         "icon_sidebar": "아이콘 레일",
         "folder_actions": "폴더 작업",
@@ -985,7 +998,8 @@
         "note_actions": "노트 작업",
         "mobile_editor_bar": "모바일 편집기 표시줄",
         "sidebar": "사이드바",
-        "task_lists": "할 일 목록"
+        "task_lists": "할 일 목록",
+        "code_blocks": "코드 블록"
       },
       "badge_all_visible": "모두 표시됨",
       "badge_hidden_count_admin": "{{count}}개 숨김(관리자가 숨긴 항목 {{admin}}개)",
@@ -1025,12 +1039,14 @@
       "note_info_icon": "노트 제목 아래에 정보 아이콘 표시",
       "note_scrollbar": "노트 스크롤바",
       "note_scroll_arrows": "노트 맨 위·맨 아래로 이동 화살표",
+      "note_section_link": "제목에 표시되는 섹션 링크 복사 아이콘",
       "tasklist_add_field": "할 일 추가 입력란",
       "tasklist_frame": "각 할 일의 테두리",
       "tasklist_delete": "할 일 삭제",
       "tasklist_menu": "할 일 옵션 메뉴(모바일)",
       "tasklist_frame_color": "할 일 테두리의 우선순위 색상",
-      "note_id": "노트 ID 표시"
+      "note_id": "노트 ID 표시",
+      "backlinks_mentions": "각 백링크 주변 텍스트"
     },
     "icon_sidebar_order": {
       "title": "아이콘 사이드바 레이아웃",
@@ -1730,7 +1746,7 @@
     "moved": "이동 완료",
     "root": "루트(폴더 없음)",
     "filter_folders": "폴더 필터링...",
-    "filter_placeholder": "제목 또는 태그로 노트를 필터링합니다...",
+    "filter_placeholder": "제목, 태그 또는 ID로 노트를 필터링합니다...",
     "filter_type": "유형별로 필터링",
     "type_html": "서식 있는 텍스트",
     "type_markdown": "마크다운",
@@ -1802,6 +1818,14 @@
     "mermaid_quadrant": "사분면 차트",
     "mermaid_xy": "막대 및 선 차트",
     "emoji": "이모티콘",
+    "symbols": "기호",
+    "symbols_recent": "최근 사용",
+    "symbols_math": "수학",
+    "symbols_greek": "그리스 문자",
+    "symbols_superscript": "위 첨자",
+    "symbols_subscript": "아래 첨자",
+    "symbols_units": "단위",
+    "symbols_arrows": "화살표",
     "table": "표",
     "separator": "구분 기호",
     "link_to_note": "노트에 링크",
@@ -2119,6 +2143,10 @@
     "code_block_line_numbers": {
       "show": "줄 번호 표시",
       "hide": "줄 번호 숨기기"
+    },
+    "code_block_wrap": {
+      "enable": "긴 줄 바꿈",
+      "disable": "긴 줄 바꾸지 않기"
     },
     "colors": {
       "none": "없음"
@@ -2984,6 +3012,8 @@
     },
     "show_offline_dots": "오프라인 점 표시",
     "hide_offline_dots": "오프라인 점 숨기기",
+    "tree_indent": "트리 들여쓰기",
+    "tree_indent_hint": "노트 목록에서 폴더와 노트의 각 단계를 들여쓰는 정도입니다.",
     "view_options": "옵션 보기",
     "customize": "사이드바 사용자 지정 설정",
     "customize_hint": "사이드바의 어떤 요소를 표시할지 선택하세요"
@@ -3790,7 +3820,13 @@
     }
   },
   "backlinks": {
-    "title": "백링크"
+    "title": "백링크",
+    "mentions": {
+      "show": "각 링크 주변 텍스트 표시",
+      "hide": "각 링크 주변 텍스트 숨기기",
+      "no_context": "이 링크들 주변에 표시할 텍스트가 없습니다.",
+      "failed": "컨텍스트를 불러올 수 없습니다."
+    }
   },
   "multiuser": {
     "acting_as": "{{user}} 계정으로 사용 중",
@@ -4556,7 +4592,10 @@
       "create_button": "만들기 및 연결",
       "recent_notes": "최근 노트",
       "search_placeholder": "노트를 검색하세요...",
-      "all_workspaces": "작업 공간 전체 검색"
+      "all_workspaces": "작업 공간 전체 검색",
+      "link_to_section": "섹션으로 링크",
+      "no_sections": "이 노트에는 링크할 제목이 없습니다",
+      "sections_failed": "이 노트를 읽을 수 없습니다"
     },
     "untitled": "제목 없음",
     "empty": {
@@ -4870,6 +4909,17 @@
     "upload_failed": "녹음을 저장할 수 없습니다: {{error}}",
     "download": "녹음 다운로드",
     "no_note": "먼저 노트를 엽니다. 녹음은 해당 노트의 첨부 파일로 저장됩니다."
+  },
+  "audio_player": {
+    "play": "재생",
+    "pause": "일시정지",
+    "seek": "탐색",
+    "speed": "재생 속도",
+    "unsupported": "브라우저가 이 오디오 형식을 재생할 수 없습니다",
+    "load_error": "이 녹음을 불러오지 못했습니다",
+    "volume": "음량",
+    "mute": "음소거",
+    "unmute": "음소거 해제"
   },
   "diary": {
     "title": "일기",

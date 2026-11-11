@@ -359,15 +359,220 @@
     }
 }
 
-/* Below 360px the Shares table cannot hold the link beside four buttons and
-   a readable name: the link column goes, the copy button still gives it. */
-@media (max-width: 359px) {
-    body:not(.offline-list-page) #sharedItemsContainer .shared-notes-list {
-        grid-template-columns: minmax(0, 1fr) fit-content(116px);
+/* Shares page on a phone: the table gives way to a list. Three columns left
+   a name a few letters wide beside four buttons; here each share is two
+   lines, its full name (on up to two lines) with its padlock and badges,
+   then its link, and a single "..." button whose menu holds the actions
+   (js/shared-page.js, appendMobileActionsMenu()). The Offline page keeps
+   the compact table above. */
+@media (max-width: 800px) {
+    .shares-list-page #sharedItemsContainer .shared-notes-list {
+        --shared-indent-step: 16px;
+        /* Where the name starts after the type icon: the link lines up under
+           it. A folder row also has its chevron in front. */
+        --shares-text-indent: 28px;
+        display: block;
+        max-width: 100%;
+        padding: 0;
     }
 
-    body:not(.offline-list-page) #sharedItemsContainer .shared-notes-header-token,
-    body:not(.offline-list-page) #sharedItemsContainer .note-token-wrap {
+    .shares-list-page #sharedItemsContainer .shared-notes-header {
+        display: none;
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-note-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "name actions"
+            "token actions";
+        column-gap: 10px;
+        row-gap: 3px;
+        align-items: center;
+        padding: 10px 4px 10px 6px;
+        margin: 0;
+        border-bottom: 1px solid var(--pz-border);
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-note-item:last-child {
+        border-bottom: none;
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-folder-row {
+        --shares-text-indent: 62px;
+    }
+
+    .shares-list-page #sharedItemsContainer .note-name-container {
+        grid-area: name;
+        align-self: end;
+        gap: 8px;
+        padding: 0;
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-hierarchy-item .note-name-container {
+        padding-left: calc(var(--shared-indent-level, 0) * var(--shared-indent-step) + var(--shares-guide-gap, 0px));
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-hierarchy-item::before {
+        background-position: 16px 0;
+    }
+
+    /* Air between the last blue guide line and the icon of a nested row; the
+       line under the name moves with it */
+    .shares-list-page #sharedItemsContainer .shared-hierarchy-item {
+        --shares-guide-gap: 8px;
+    }
+
+    /* The whole name, on two lines at most, rather than three letters */
+    .shares-list-page #sharedItemsContainer .note-name {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        font-size: 15px;
+        line-height: 1.3;
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-type-icon {
+        font-size: 18px;
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-folder-toggle {
+        width: 26px;
+        height: 26px;
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-password-icon {
+        margin-left: 0;
+    }
+
+    .shares-list-page #sharedItemsContainer .note-token-wrap,
+    .shares-list-page #sharedItemsContainer .note-token-wrap.read-only {
+        grid-area: token;
+        align-self: start;
+        justify-content: flex-start;
+        width: auto;
+        min-width: 0;
+        padding: 0 0 0 calc(var(--shared-indent-level, 0) * var(--shared-indent-step) + var(--shares-guide-gap, 0px) + var(--shares-text-indent));
+    }
+
+    .shares-list-page #sharedItemsContainer .note-token {
+        font-size: 12px;
+        text-align: left;
+    }
+
+    /* The link is the line under the name here, not a column of its own: it
+       stays muted in the dark theme too, the name leads */
+    html[data-theme='dark'] .shares-list-page #sharedItemsContainer .note-token {
+        color: var(--pz-text-muted);
+    }
+
+    .shares-list-page #sharedItemsContainer .note-token-placeholder {
+        font-size: 12px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    /* Nothing to say under the name (a share received without a token): the
+       name line stands alone, centred on the row */
+    .shares-list-page #sharedItemsContainer .note-token-wrap:has(> .note-token-placeholder:empty) {
+        display: none;
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-note-item:has(> .note-token-wrap > .note-token-placeholder:empty) .note-name-container {
+        grid-row: 1 / -1;
+        align-self: center;
+    }
+
+    .shares-list-page #sharedItemsContainer .note-actions {
+        grid-area: actions;
+        justify-content: flex-end;
+        width: auto;
+        min-width: 0;
+        padding: 0;
+    }
+
+    /* The buttons are reached through the "..." menu, which stands alone */
+    .shares-list-page #sharedItemsContainer .note-actions:has(> .shared-mobile-actions-toggle) > .btn:not(.shared-mobile-actions-toggle) {
+        display: none;
+    }
+
+    .shares-list-page #sharedItemsContainer .note-actions .btn {
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+        border-radius: var(--pz-radius-lg);
+    }
+
+    /* The "..." button: the outlined look of the filter row's buttons, not a
+       filled grey block repeated down the list */
+    .shares-list-page #sharedItemsContainer .note-actions .btn.shared-mobile-actions-toggle {
+        background: var(--pz-bg);
+        border: 1px solid var(--pz-border);
+        color: var(--pz-icon, var(--pz-text-muted));
+        box-shadow: none;
+    }
+
+    .shares-list-page #sharedItemsContainer .note-actions .btn.shared-mobile-actions-toggle[aria-expanded="true"] {
+        border-color: var(--pz-accent-text);
+        color: var(--pz-accent-text);
+    }
+
+    .shares-list-page #sharedItemsContainer .note-actions .btn i,
+    .shares-list-page #sharedItemsContainer .note-actions .btn .lucide {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+    }
+
+    /* A subfolder served through its parent share has no link and no action
+       of its own: the line under its name says so */
+    .shares-list-page #sharedItemsContainer .shared-via-parent .note-token-wrap {
+        display: none;
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-via-parent .note-actions {
+        grid-area: token;
+        justify-content: flex-start;
+        padding-left: calc(var(--shared-indent-level, 0) * var(--shared-indent-step) + var(--shares-guide-gap, 0px) + var(--shares-text-indent));
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-via-parent .note-actions-placeholder {
+        font-size: 12px;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* A share received from another user: who shared it goes under the name */
+    .shares-list-page #sharedItemsContainer .shared-with-me-row .note-name-container {
+        flex-wrap: wrap;
+        row-gap: 2px;
+    }
+
+    .shares-list-page #sharedItemsContainer .shared-with-me-row .folder-badge {
+        flex: 1 0 100%;
+        margin: 0 !important;
+        padding-left: var(--shares-text-indent);
+        font-size: 12px;
+    }
+}
+
+/* The narrowest phones: a smaller step per level, so a note three folders
+   deep keeps room for its name */
+@media (max-width: 359px) {
+    .shares-list-page #sharedItemsContainer .shared-notes-list {
+        --shared-indent-step: 12px;
+    }
+}
+
+/* Above the phone layout the "..." button does not exist: the row shows its
+   buttons */
+@media (min-width: 801px) {
+    #sharedItemsContainer .btn.shared-mobile-actions-toggle {
         display: none;
     }
 }

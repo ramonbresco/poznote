@@ -76,7 +76,9 @@
     "outline": {
       "title": "Esquema",
       "no_headings": "Sin encabezados en esta nota",
-      "unavailable_tasklist": "El esquema no está disponible para listas de tareas"
+      "unavailable_tasklist": "El esquema no está disponible para listas de tareas",
+      "copy_section_link": "Copiar el enlace de la sección",
+      "section_not_found": "Esa sección ya no existe en esta nota"
     },
     "link_copied": "Enlace copiado",
     "ok": "Aceptar",
@@ -299,7 +301,10 @@
       "search_placeholder": "Buscar una nota...",
       "recent_notes": "Notas recientes",
       "create_button": "Crear y enlazar",
-      "all_workspaces": "Buscar en todos los espacios de trabajo"
+      "all_workspaces": "Buscar en todos los espacios de trabajo",
+      "link_to_section": "Enlazar a una sección",
+      "no_sections": "Esta nota no tiene encabezados a los que enlazar",
+      "sections_failed": "No se ha podido leer esta nota"
     },
     "empty": {
       "no_notes_found": "No se encontraron notas",
@@ -996,6 +1001,8 @@
     },
     "show_offline_dots": "Mostrar los puntos sin conexión",
     "hide_offline_dots": "Ocultar los puntos sin conexión",
+    "tree_indent": "Sangría del árbol",
+    "tree_indent_hint": "Cuánto se sangra cada nivel de carpetas y notas en la lista de notas.",
     "view_options": "Opciones de vista",
     "customize": "Personalizar la barra lateral",
     "customize_hint": "Elegir qué elementos de la barra lateral se muestran"
@@ -1072,6 +1079,9 @@
   "tasklist": {
     "open_tasks_page": "Ver todas las tareas",
     "input_placeholder": "Escribe una nueva tarea y presiona enter para agregarla a la lista...",
+    "add_row_placeholder": "Añadir una tarea",
+    "completed_section_one": "1 tarea completada",
+    "completed_section_other": "{{count}} tareas completadas",
     "drag_to_reorder": "Arrastrar para reordenar",
     "add_to_top": "Agregar nuevas tareas arriba",
     "add_to_bottom": "Agregar nuevas tareas abajo",
@@ -1249,6 +1259,10 @@
     "code_block_line_numbers": {
       "show": "Mostrar números de línea",
       "hide": "Ocultar números de línea"
+    },
+    "code_block_wrap": {
+      "enable": "Ajustar las líneas largas",
+      "disable": "No ajustar las líneas largas"
     },
     "colors": {
       "none": "Ninguno"
@@ -1486,6 +1500,11 @@
       "index_search_bar": "Barra de búsqueda",
       "tasklist_progress_bar": "Barra de progreso de las listas de tareas",
       "preview_code_block_delete": "Botón de eliminar en los bloques de código, en la vista previa de markdown",
+      "code_block_collapse": "Botón de plegado de los bloques de código",
+      "code_block_wrap": "Botón de ajuste de línea de los bloques de código",
+      "code_block_line_numbers": "Botón de números de línea de los bloques de código",
+      "code_block_copy": "Botón de copia de los bloques de código",
+      "code_block_delete": "Botón de eliminación de los bloques de código",
       "share_restrict_users": "Compartir: restringir a usuarios específicos",
       "share_protocol_toggle": "Compartir: interruptor HTTPS",
       "share_shared_with_me": "Compartir: «Compartido conmigo»",
@@ -1499,7 +1518,11 @@
         "settings_cards": "Tarjetas de configuración",
         "toolbar": "Barra de herramientas",
         "slash_menu": "Menú slash",
-        "panels": "Otros",
+        "note": "Nota",
+        "note_subline": "Debajo del título de la nota",
+        "floating_buttons": "Botones flotantes",
+        "sharing": "Compartir",
+        "backup_restore": "Copia de seguridad y restauración",
         "dashboard_toolbar": "Panel",
         "icon_sidebar": "Barra de iconos",
         "folder_actions": "Acciones de carpeta",
@@ -1507,7 +1530,8 @@
         "note_actions": "Acciones de las notas",
         "mobile_editor_bar": "Barra de edición móvil",
         "sidebar": "Barra lateral",
-        "task_lists": "Listas de tareas"
+        "task_lists": "Listas de tareas",
+        "code_blocks": "Bloques de código"
       },
       "check_all": "Marcar todo",
       "uncheck_all": "Desmarcar todo",
@@ -1547,12 +1571,14 @@
       "note_info_icon": "Mostrar icono de información bajo el título de la nota",
       "note_scrollbar": "Barra de desplazamiento de las notas",
       "note_scroll_arrows": "Flechas para ir al principio y al final de la nota",
+      "note_section_link": "Icono para copiar el enlace de sección en los encabezados",
       "tasklist_add_field": "Campo para añadir una tarea",
       "tasklist_frame": "Marco alrededor de cada tarea",
       "tasklist_delete": "Eliminar una tarea",
       "tasklist_menu": "Menú de opciones de la tarea (móvil)",
       "tasklist_frame_color": "Color de prioridad del marco de las tareas",
-      "note_id": "Mostrar el identificador de la nota"
+      "note_id": "Mostrar el identificador de la nota",
+      "backlinks_mentions": "Texto alrededor de cada retroenlace"
     },
     "icon_sidebar_order": {
       "title": "Diseño de la barra de iconos",
@@ -2251,7 +2277,7 @@
     "moved": "Movido con éxito",
     "root": "Raíz (sin carpeta)",
     "filter_folders": "Filtrar carpetas...",
-    "filter_placeholder": "Filtrar notas por título o etiquetas...",
+    "filter_placeholder": "Filtrar notas por título, etiquetas o ID...",
     "filter_age": "Filtrar por antigüedad",
     "age_all": "Todas las notas",
     "age_recent": "Solo recientes",
@@ -2322,6 +2348,14 @@
     "mermaid_quadrant": "Gráfico de cuadrantes",
     "mermaid_xy": "Gráfico de barras y líneas",
     "emoji": "Emoji",
+    "symbols": "Símbolos",
+    "symbols_recent": "Recientes",
+    "symbols_math": "Matemáticas",
+    "symbols_greek": "Griego",
+    "symbols_superscript": "Superíndice",
+    "symbols_subscript": "Subíndice",
+    "symbols_units": "Unidades",
+    "symbols_arrows": "Flechas",
     "table": "Tabla",
     "separator": "Separador",
     "link_to_note": "Enlace a nota",
@@ -4293,7 +4327,13 @@
     }
   },
   "backlinks": {
-    "title": "Backlinks"
+    "title": "Backlinks",
+    "mentions": {
+      "show": "Mostrar el texto alrededor de cada enlace",
+      "hide": "Ocultar el texto alrededor de cada enlace",
+      "no_context": "No hay texto que mostrar alrededor de estos enlaces.",
+      "failed": "No se pudo cargar el contexto."
+    }
   },
   "profile": {
     "card": "Mi perfil",
@@ -5214,6 +5254,17 @@
     "upload_failed": "No se pudo guardar la grabación: {{error}}",
     "download": "Descargar la grabación",
     "no_note": "Abre primero una nota: la grabación se guarda como adjunto de esa nota."
+  },
+  "audio_player": {
+    "play": "Reproducir",
+    "pause": "Pausa",
+    "seek": "Desplazarse por la pista",
+    "speed": "Velocidad de reproducción",
+    "unsupported": "Tu navegador no puede reproducir este formato de audio",
+    "load_error": "No se ha podido cargar esta grabación",
+    "volume": "Volumen",
+    "mute": "Silenciar",
+    "unmute": "Activar el sonido"
   },
   "diary": {
     "title": "Diario",

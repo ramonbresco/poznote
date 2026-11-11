@@ -92,3 +92,104 @@
 .backlink-link:hover .backlink-workspace {
     text-decoration: none;
 }
+
+/* -----------------------------------------------------------------------------
+   Passages around each link (discussion #1761)
+
+   The row above answers "who cites this note"; its chevron unfolds, right
+   under it, the text around every link that was written. The name of the
+   note that wrote a passage is never repeated here: it is on the row, one
+   line up, and repeating it was all the old grouped layout had to show.
+   -------------------------------------------------------------------------- */
+
+/* The chevron, between the link icon and the chips. Two thin strokes against
+   a row of words, so it carries its own weight rather than the muted colour
+   the row's text takes. */
+.backlinks-mentions-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0 10px 0 0;
+    cursor: pointer;
+    color: var(--pz-text-muted);
+    line-height: 1;
+}
+
+.backlinks-mentions-toggle i {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.backlinks-mentions-toggle:hover {
+    color: var(--pz-accent-text);
+}
+
+/* Lines up under the chips: the width of the link icon and its gutter
+   (.lucide-link.icon_backlinks above), plus the chevron and its own. */
+.backlinks-mentions {
+    margin: 2px 0 6px;
+    padding-left: 52px;
+}
+
+/* One passage, on one line. It is a link to the note that wrote it, so a
+   passage worth reading is one click from its context. */
+.backlinks-mention {
+    display: block;
+    margin: 0;
+    padding: 2px 0;
+    color: var(--pz-text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.backlinks-mention:hover,
+.backlinks-mention:hover .backlinks-mention-note,
+.backlinks-mention:hover .backlinks-mention-separator {
+    color: var(--pz-accent-text);
+}
+
+.backlinks-mention:visited {
+    color: var(--pz-text-muted);
+}
+
+/* The note that wrote the passage, in front of it. Stronger than the passage
+   it introduces, so the eye can run down the names, and never the link blue:
+   the blue in this line belongs to the link that was quoted. */
+.backlinks-mention-note {
+    color: var(--pz-text);
+}
+
+.backlinks-mention-separator {
+    color: var(--pz-text-subtle);
+}
+
+/* The text of the link inside the passage, in the colour of a link: that is
+   what it is in the note it was quoted from, and it is what the eye should
+   land on first. Not the search highlight, which marks a hit to step
+   through; and no bold on top, the colour says it on its own. */
+.backlinks-mention-match {
+    background: transparent;
+    color: var(--pz-accent-text);
+    padding: 0;
+}
+
+.backlinks-mention:hover .backlinks-mention-match {
+    color: var(--pz-accent-text-hover);
+}
+
+.backlinks-mention-empty {
+    margin: 0;
+    padding: 2px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    font-style: italic;
+    color: var(--pz-text-muted);
+}

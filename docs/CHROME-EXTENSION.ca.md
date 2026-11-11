@@ -9,7 +9,8 @@
   <a href="CHROME-EXTENSION.zh-cn.md">简体中文</a> ·
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
-  <b>Català</b>
+  <b>Català</b> ·
+  <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 
@@ -48,3 +49,5 @@ Feu clic a la icona de l'extensió a la pàgina que voleu conservar i trieu on v
 - **Nota existent** afegeix la pàgina al final d'una nota que trieu a la llista, que mostra les notes més recents i les cerca a mesura que escriviu. Llista les notes de l'espai de treball triat als paràmetres; activeu **Tots els espais de treball** per triar una nota de qualsevol lloc. L'extensió recorda aquesta nota per a la pàgina següent, de manera que recollir enllaços en una sola llista de lectura costa un clic per pàgina. Les notes HTML i Markdown poden rebre pàgines.
 
 Després, feu clic a **Desa l'enllaç** per desar l'adreça de la pàgina, o a **Captura de pantalla** per desar l'adreça seguida d'una imatge de la part visible de la pàgina. La confirmació inclou un enllaç que obre la nota al Poznote.
+
+**Desa el text** desa el text de la mateixa pàgina, convertit a Markdown, sota la seva adreça i la data en què s'ha desat: només el contingut principal, sense menús, barres laterals ni peus de pàgina, amb els títols, les llistes, els enllaços, les taules, els blocs de codi i les imatges (les imatges continuen sent enllaços al lloc). Si abans seleccioneu un text, el botó passa a ser **Desa la selecció** i desa només aquesta part. Una nota nova creada així és una nota Markdown; afegit a una nota existent, el text s'escriu en el format d'aquesta nota. Com que el text es llegeix al navegador, funciona amb pàgines que demanen iniciar sessió, es queda a la nota encara que la pàgina desaparegui, i la cerca del Poznote, l'API i el servidor MCP hi poden treballar.

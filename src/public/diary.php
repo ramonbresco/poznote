@@ -402,6 +402,7 @@ if (poznoteMarkdownColoredEnabled($markdownColoredTheme)) {
 	<script src="js/modal-alerts.js?v=<?php echo $cache_v; ?>"></script>
 	<script src="<?php echo poznoteAsset('js/shortcut-key.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/date-picker-popup.js'); ?>"></script>
+	<script src="<?php echo poznoteAsset('js/audio-player.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/diary-page.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/search-toggle.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/board-view-menu.js'); ?>"></script>

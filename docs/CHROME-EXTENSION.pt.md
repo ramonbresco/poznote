@@ -9,7 +9,8 @@
   <a href="CHROME-EXTENSION.zh-cn.md">简体中文</a> ·
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
-  <a href="CHROME-EXTENSION.ca.md">Català</a>
+  <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 
@@ -48,3 +49,5 @@ Clique no ícone da extensão na página que você quer guardar e escolha o dest
 - **Existing note** adiciona a página no fim de uma nota escolhida na lista, que mostra as suas notas mais recentes e as pesquisa enquanto você digita. Ela mostra as notas do espaço de trabalho escolhido nas configurações; ative **All workspaces** para escolher uma nota de qualquer espaço. A extensão lembra dessa nota para a próxima página, então juntar links em uma mesma lista de leitura leva um clique por página. Notas HTML e Markdown podem receber páginas.
 
 Depois clique em **Save link** para salvar o endereço da página, ou em **Screenshot** para salvar o endereço seguido de uma imagem da parte visível da página. A confirmação traz um link que abre a nota no Poznote.
+
+**Save page text** salva o texto da própria página, convertido em Markdown, abaixo do endereço e da data em que foi salvo: só o conteúdo principal, sem menus, barras laterais nem rodapés, com títulos, listas, links, tabelas, blocos de código e imagens (as imagens continuam sendo links para o site). Selecione um texto antes e o botão vira **Save selection**, que salva só essa parte. Uma nova nota criada assim é uma nota Markdown; adicionado a uma nota existente, o texto é escrito no formato dessa nota. Como o texto é lido no seu navegador, funciona com páginas que exigem login, continua na nota se a página sumir, e a busca do Poznote, a API e o servidor MCP podem trabalhar com ele.

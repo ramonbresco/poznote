@@ -37,14 +37,28 @@ test('the JS runtime knows every default-hidden key too', function () {
     }
 });
 
-// The bin button of a code block in the markdown preview (issue #1406). Its two
-// neighbours are absolutely positioned at fixed offsets, so hiding it without
-// moving them leaves a 32px hole at the right edge of every code block.
-test('hiding the preview bin button closes the gap it leaves', function () {
+// The bin button of a code block in the markdown preview (issue #1406). Its
+// neighbours close the gap themselves (js/copy-code-on-focus.js stacks the
+// visible controls), so the rule only hides it and pins no offset.
+test('hiding the preview bin button only hides it', function () {
     $rules = poznoteBuildUiCustomizationRules(['panel:preview-code-block-delete']);
     assertContains('.markdown-preview .code-block-delete-btn { display: none !important; }', $rules);
-    assertContains('.markdown-preview .code-block-copy-btn { right: 8px !important; }', $rules);
-    assertContains('.markdown-preview .code-block-line-numbers-btn { right: 40px !important; }', $rules);
+    assertNotContains('right:', $rules);
+});
+
+// Each control of a code block has its own key (discussion 1764). The fold
+// chevron is the one that cannot just go: a folded block would stay folded.
+test('hiding a code block control hides it in every view', function () {
+    $rules = poznoteBuildUiCustomizationRules(['panel:code-block-wrap', 'panel:code-block-delete']);
+    assertContains('.code-block-wrap-btn, .markdown-codemirror-host .cm-live-code-wrap { display: none !important; }', $rules);
+    assertContains('.code-block-delete-btn:not(.markdown-preview *), .markdown-codemirror-host .cm-live-code-delete { display: none !important; }', $rules);
+});
+
+test('hiding the fold chevron unfolds the folded blocks', function () {
+    $rules = poznoteBuildUiCustomizationRules(['panel:code-block-collapse']);
+    assertContains('.code-block-collapse-btn, .code-block-collapsed-summary', $rules);
+    assertContains('.noteentry pre[data-collapsed="1"] > code { max-height: none !important;', $rules);
+    assertContains('.cm-line.cm-live-code-folded { height: auto !important;', $rules);
 });
 
 // The preference stores hidden keys only, so a key that is non-hideable can
@@ -57,4 +71,38 @@ test('a default-hidden key is not also listed as non-hideable', function () {
             fail("'{$key}' is hidden by default and non-hideable at the same time");
         }
     }
+});
+
+// The "Mentions" block under a note (discussion #1761) is visible by default,
+// so the two tests above never reach it; both copies of the rule builder still
+// have to know the key, or the block flashes in and out as the panel saves.
+test('the text around each backlink can be hidden from both copies', function () {
+    // The chevron goes with the passages it unfolds, or it would be left
+    // opening nothing; the row of linking notes is not touched.
+    $rules = poznoteBuildUiCustomizationRules(['panel:backlinks-mentions']);
+    assertContains('.backlinks-mentions, .backlinks-mentions-toggle { display: none !important; }', $rules);
+    assertNotContains('.backlinks-row', $rules);
+
+    $js = file_get_contents(dirname(__DIR__) . '/src/public/js/ui-customization.js');
+    assertContains("'backlinks-mentions': '.backlinks-mentions, .backlinks-mentions-toggle'", $js);
+
+    // And the panel offers the box, or the key is hidden with no way back
+    $sections = file_get_contents(dirname(__DIR__) . '/src/modals/ui_customization_sections.php');
+    assertContains('data-ui-key="panel:backlinks-mentions"', $sections);
+});
+
+// The icon that copies a link to a section (discussion #1758) is visible by
+// default too, and it is drawn in two places at once: the heading the pointer
+// is on and the outline rows. One key hides both, so both selectors have to
+// travel together through the two copies of the rule builder.
+test('the section link icon can be hidden from both copies', function () {
+    $rules = poznoteBuildUiCustomizationRules(['panel:note-section-link']);
+    assertContains('.note-section-link-btn, .outline-section-link-btn { display: none !important; }', $rules);
+
+    $js = file_get_contents(dirname(__DIR__) . '/src/public/js/ui-customization.js');
+    assertContains("'note-section-link': '.note-section-link-btn, .outline-section-link-btn'", $js);
+
+    // And the panel offers the box, or the key is hidden with no way back
+    $sections = file_get_contents(dirname(__DIR__) . '/src/modals/ui_customization_sections.php');
+    assertContains('data-ui-key="panel:note-section-link"', $sections);
 });

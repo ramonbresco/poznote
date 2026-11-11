@@ -1001,3 +1001,82 @@ function poznoteFormatSkippedAttachmentDetails(array $skippedFiles): string {
 
     return implode("\n", $lines);
 }
+
+/**
+ * Read a Range request header against a known body size.
+ *
+ * A browser cannot move the playhead of a recording it has not finished
+ * downloading unless the server can hand it the middle of the file: clicking
+ * at 60% of a track asks for the bytes around 60%, and a server that answers
+ * the whole body from zero leaves the player where it was. The same header is
+ * what makes a half-finished download of a large attachment resumable.
+ *
+ * Only a single `bytes` range is honoured. A multi-range request is answered
+ * with the whole body instead, which RFC 7233 allows and which no media
+ * element asks for; anything malformed is ignored the same way, since the
+ * standard says an unreadable Range must be treated as absent rather than
+ * refused.
+ *
+ * @return array{start: int, end: int, length: int}|null|false
+ *         The range to send, null for "send everything", false for a range
+ *         that cannot be satisfied (the caller answers 416).
+ */
+function poznoteParseRangeHeader(?string $header, int $size) {
+    $header = trim((string)$header);
+    if ($header === '' || $size <= 0) {
+        return null;
+    }
+    if (stripos($header, 'bytes=') !== 0) {
+        return null;
+    }
+
+    $spec = trim(substr($header, 6));
+    if ($spec === '' || strpos($spec, ',') !== false) {
+        return null;
+    }
+
+    $dash = strpos($spec, '-');
+    if ($dash === false) {
+        return null;
+    }
+
+    $fromText = trim(substr($spec, 0, $dash));
+    $toText = trim(substr($spec, $dash + 1));
+
+    if ($fromText === '') {
+        // "bytes=-500": the last 500 bytes.
+        if ($toText === '' || !ctype_digit($toText)) {
+            return null;
+        }
+        $suffix = (int)$toText;
+        if ($suffix <= 0) {
+            return false;
+        }
+        $start = $suffix >= $size ? 0 : $size - $suffix;
+        $end = $size - 1;
+    } else {
+        if (!ctype_digit($fromText)) {
+            return null;
+        }
+        $start = (int)$fromText;
+        if ($start >= $size) {
+            return false;
+        }
+        if ($toText === '') {
+            $end = $size - 1;
+        } else {
+            if (!ctype_digit($toText)) {
+                return null;
+            }
+            $end = (int)$toText;
+            if ($end < $start) {
+                return null;
+            }
+            if ($end >= $size) {
+                $end = $size - 1;
+            }
+        }
+    }
+
+    return ['start' => $start, 'end' => $end, 'length' => $end - $start + 1];
+}

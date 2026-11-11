@@ -1044,7 +1044,7 @@
     // search highlights and the buttons added around code blocks.
     function serializeHtml(entry) {
         var clone = entry.cloneNode(true);
-        clone.querySelectorAll('.code-block-copy-btn, .code-block-delete-btn, .code-block-lang-btn, .code-block-line-numbers-btn').forEach(function (node) {
+        clone.querySelectorAll('.code-block-copy-btn, .code-block-delete-btn, .code-block-lang-btn, .code-block-line-numbers-btn, .code-block-wrap-btn, .code-block-collapse-btn, .code-block-collapsed-summary').forEach(function (node) {
             node.remove();
         });
         clone.querySelectorAll('.search-highlight').forEach(function (mark) {

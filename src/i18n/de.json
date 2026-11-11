@@ -75,7 +75,9 @@
     "outline": {
       "title": "Gliederung",
       "no_headings": "Keine Überschriften in dieser Notiz",
-      "unavailable_tasklist": "Gliederung ist für Aufgabenlisten nicht verfügbar"
+      "unavailable_tasklist": "Gliederung ist für Aufgabenlisten nicht verfügbar",
+      "copy_section_link": "Link zum Abschnitt kopieren",
+      "section_not_found": "Dieser Abschnitt existiert in dieser Notiz nicht mehr"
     },
     "link_copied": "Link kopiert",
     "ok": "OK",
@@ -299,7 +301,10 @@
       "search_placeholder": "Nach einer Notiz suchen...",
       "recent_notes": "Kürzliche Notizen",
       "create_button": "Erstellen & verlinken",
-      "all_workspaces": "In allen Arbeitsbereichen suchen"
+      "all_workspaces": "In allen Arbeitsbereichen suchen",
+      "link_to_section": "Auf einen Abschnitt verlinken",
+      "no_sections": "Diese Notiz hat keine Überschriften, auf die verlinkt werden kann",
+      "sections_failed": "Diese Notiz konnte nicht gelesen werden"
     },
     "empty": {
       "no_notes_found": "Keine Notizen gefunden",
@@ -996,6 +1001,8 @@
     },
     "show_offline_dots": "Offline-Punkte anzeigen",
     "hide_offline_dots": "Offline-Punkte ausblenden",
+    "tree_indent": "Baumeinrückung",
+    "tree_indent_hint": "Wie weit jede Ebene von Ordnern und Notizen in der Notizliste eingerückt wird.",
     "view_options": "Ansichtsoptionen",
     "customize": "Seitenleiste anpassen",
     "customize_hint": "Auswählen, welche Elemente der Seitenleiste angezeigt werden"
@@ -1072,6 +1079,9 @@
   "tasklist": {
     "open_tasks_page": "Alle Aufgaben anzeigen",
     "input_placeholder": "Neue Aufgabe schreiben und Enter drücken, um sie zur Liste hinzuzufügen...",
+    "add_row_placeholder": "Aufgabe hinzufügen",
+    "completed_section_one": "1 erledigte Aufgabe",
+    "completed_section_other": "{{count}} erledigte Aufgaben",
     "drag_to_reorder": "Zum Neuanordnen ziehen",
     "add_to_top": "Neue Aufgaben oben hinzufügen",
     "add_to_bottom": "Neue Aufgaben unten hinzufügen",
@@ -1249,6 +1259,10 @@
     "code_block_line_numbers": {
       "show": "Zeilennummern anzeigen",
       "hide": "Zeilennummern ausblenden"
+    },
+    "code_block_wrap": {
+      "enable": "Lange Zeilen umbrechen",
+      "disable": "Lange Zeilen nicht umbrechen"
     },
     "colors": {
       "none": "Keine"
@@ -1486,6 +1500,11 @@
       "index_search_bar": "Suchleiste",
       "tasklist_progress_bar": "Fortschrittsbalken der Aufgabenlisten",
       "preview_code_block_delete": "Löschen-Schaltfläche an Codeblöcken, in der Markdown-Vorschau",
+      "code_block_collapse": "Einklapp-Schaltfläche der Codeblöcke",
+      "code_block_wrap": "Zeilenumbruch-Schaltfläche der Codeblöcke",
+      "code_block_line_numbers": "Zeilennummern-Schaltfläche der Codeblöcke",
+      "code_block_copy": "Kopier-Schaltfläche der Codeblöcke",
+      "code_block_delete": "Lösch-Schaltfläche der Codeblöcke",
       "share_restrict_users": "Teilen: auf bestimmte Benutzer beschränken",
       "share_protocol_toggle": "Teilen: HTTPS-Schalter",
       "share_shared_with_me": "Teilen: „Mit mir geteilt“",
@@ -1499,7 +1518,11 @@
         "settings_cards": "Einstellungskarten",
         "toolbar": "Symbolleiste",
         "slash_menu": "Slash-Menü",
-        "panels": "Sonstiges",
+        "note": "Notiz",
+        "note_subline": "Unter dem Notiztitel",
+        "floating_buttons": "Schwebende Schaltflächen",
+        "sharing": "Teilen",
+        "backup_restore": "Sicherung und Wiederherstellung",
         "dashboard_toolbar": "Dashboard",
         "icon_sidebar": "Symbolleiste",
         "folder_actions": "Ordneraktionen",
@@ -1507,7 +1530,8 @@
         "note_actions": "Notizaktionen",
         "mobile_editor_bar": "Mobile Editorleiste",
         "sidebar": "Seitenleiste",
-        "task_lists": "Aufgabenlisten"
+        "task_lists": "Aufgabenlisten",
+        "code_blocks": "Codeblöcke"
       },
       "check_all": "Alle auswählen",
       "uncheck_all": "Alle abwählen",
@@ -1547,12 +1571,14 @@
       "note_info_icon": "Informationssymbol unter dem Notiztitel anzeigen",
       "note_scrollbar": "Bildlaufleiste der Notizen",
       "note_scroll_arrows": "Pfeile zum Anfang und Ende der Notiz",
+      "note_section_link": "Symbol zum Kopieren des Abschnittslinks an Überschriften",
       "tasklist_add_field": "Feld zum Hinzufügen einer Aufgabe",
       "tasklist_frame": "Rahmen um jede Aufgabe",
       "tasklist_delete": "Aufgabe löschen",
       "tasklist_menu": "Menü der Aufgabenoptionen (Mobil)",
       "tasklist_frame_color": "Prioritätsfarbe des Aufgabenrahmens",
-      "note_id": "Notiz-ID anzeigen"
+      "note_id": "Notiz-ID anzeigen",
+      "backlinks_mentions": "Text um jeden Backlink"
     },
     "icon_sidebar_order": {
       "title": "Layout der Icon-Seitenleiste",
@@ -2251,7 +2277,7 @@
     "moved": "Erfolgreich verschoben",
     "root": "Stammverzeichnis (kein Ordner)",
     "filter_folders": "Ordner filtern...",
-    "filter_placeholder": "Notizen nach Titel oder Tags filtern...",
+    "filter_placeholder": "Notizen nach Titel, Tags oder ID filtern...",
     "filter_age": "Nach Alter filtern",
     "age_all": "Alle Notizen",
     "age_recent": "Nur aktuelle",
@@ -2323,6 +2349,14 @@
     "mermaid_quadrant": "Quadrantendiagramm",
     "mermaid_xy": "Balken- und Liniendiagramm",
     "emoji": "Emoji",
+    "symbols": "Symbole",
+    "symbols_recent": "Zuletzt verwendet",
+    "symbols_math": "Mathematik",
+    "symbols_greek": "Griechisch",
+    "symbols_superscript": "Hochgestellt",
+    "symbols_subscript": "Tiefgestellt",
+    "symbols_units": "Einheiten",
+    "symbols_arrows": "Pfeile",
     "table": "Tabelle",
     "separator": "Trennlinie",
     "link_to_note": "Link zur Notiz",
@@ -4292,7 +4326,13 @@
     }
   },
   "backlinks": {
-    "title": "Backlinks"
+    "title": "Backlinks",
+    "mentions": {
+      "show": "Text um jeden Link anzeigen",
+      "hide": "Text um jeden Link ausblenden",
+      "no_context": "Kein Text um diese Links vorhanden.",
+      "failed": "Der Kontext konnte nicht geladen werden."
+    }
   },
   "profile": {
     "card": "Mein Profil",
@@ -5213,6 +5253,17 @@
     "upload_failed": "Die Aufnahme konnte nicht gespeichert werden: {{error}}",
     "download": "Aufnahme herunterladen",
     "no_note": "Öffnen Sie zuerst eine Notiz: Die Aufnahme wird als Anhang dieser Notiz gespeichert."
+  },
+  "audio_player": {
+    "play": "Abspielen",
+    "pause": "Pause",
+    "seek": "In der Spur navigieren",
+    "speed": "Wiedergabegeschwindigkeit",
+    "unsupported": "Dein Browser kann dieses Audioformat nicht abspielen",
+    "load_error": "Diese Aufnahme konnte nicht geladen werden",
+    "volume": "Lautstärke",
+    "mute": "Stummschalten",
+    "unmute": "Ton einschalten"
   },
   "diary": {
     "title": "Tagebuch",

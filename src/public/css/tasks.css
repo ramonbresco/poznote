@@ -97,11 +97,132 @@
 
 
 
+/* The empty row to type the next task in (Google Keep style, js/tasklist-render.js):
+   a task-shaped slot inside the list, where the next task will appear. It keeps
+   the class of the old field above the list (.task-input-container, .task-input),
+   so these rules are scoped to .task-add-row and outweigh the generic ones (the
+   public note page still uses those for its own field). */
+.tasks-list > .task-add-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 6px 12px;
+    border: 1px dashed var(--pz-border);
+    border-radius: var(--pz-radius);
+    background: transparent;
+    cursor: text;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.tasks-list > .task-add-row:hover {
+    border-color: var(--pz-border-strong);
+}
+
+.tasks-list > .task-add-row:focus-within {
+    border-style: solid;
+    border-color: var(--pz-accent-text);
+    background: var(--pz-surface);
+}
+
+/* Same box and place as the checkbox of a task row, so the text lines up */
+.task-add-row-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 12px;
+    margin-top: 4px;
+    flex-shrink: 0;
+    color: var(--pz-text-subtle);
+}
+
+.tasks-list > .task-add-row:focus-within .task-add-row-icon {
+    color: var(--pz-accent-text);
+}
+
+.tasks-list > .task-add-row .task-input-form {
+    display: block;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Reads like the text of a task row: no box of its own, the row is the box */
+.tasks-list > .task-add-row .task-input {
+    display: block;
+    width: 100%;
+    min-height: 20px;
+    padding: 2px 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    color: var(--pz-text);
+    font-family: inherit;
+    font-size: var(--note-font-size, 15px);
+    line-height: 1.4;
+    /* A one-line textarea that grows with its lines (autoSizeTaskAddInput()) */
+    resize: none;
+    overflow: hidden;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.tasks-list > .task-add-row .task-input::placeholder {
+    color: var(--pz-text-subtle);
+}
+
 .tasks-list {
     display: flex;
     flex-direction: column;
     gap: 8px !important;
     margin-top: 25px !important;
+}
+
+/* The fold of the completed tasks (Google Keep style, js/tasklist-render.js): a
+   "3 completed tasks" header before the completed run that ends the list. Closed,
+   it hides the completed tasks after it (and only those: one dragged up among the
+   open tasks stays in sight). */
+.tasks-list > .task-completed-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    margin: 6px 0 0;
+    padding: 4px 8px 4px 4px;
+    border: 0;
+    border-radius: var(--pz-radius-sm);
+    background: transparent;
+    color: var(--pz-text-muted);
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.tasks-list > .task-completed-toggle:hover {
+    background: var(--pz-surface-hover);
+    color: var(--pz-text);
+}
+
+/* Same ID-level boost as the progress label: the note-font blanket of
+   noteentry.css forces every element of a note to the note size */
+.noteentry .tasks-list > .task-completed-toggle .task-completed-label:is(#pz-specificity-boost, *) {
+    font-size: 13px !important;
+}
+
+.task-completed-chevron {
+    font-size: 16px;
+    transition: transform 0.15s ease;
+}
+
+.task-completed-toggle.is-collapsed .task-completed-chevron {
+    transform: rotate(-90deg);
+}
+
+.tasks-list > .task-completed-toggle.is-collapsed ~ .task-item {
+    display: none;
+}
+
+/* No field above the list any more: the list starts right under the progress bar */
+.task-list-container > .tasks-list {
+    margin-top: 0 !important;
 }
 
 .task-item {
@@ -382,6 +503,16 @@
 .task-move-btn i,
 .task-subtask-btn i {
     font-size: 16px !important;
+}
+
+/* Lucide draws the arrow in 14 of its 24 units (the trash, flag and calendar
+   next to it take 16 to 18), so at the same box it looked lost in more empty
+   space than its neighbours. Drawn at 20px it inks as wide as them; the -2px
+   margins keep its 16px place in the row, so the buttons do not move. */
+.task-move-btn i.lucide-arrow-right {
+    width: 20px;
+    height: 20px;
+    margin: -2px;
 }
 
 .task-delete-btn i,

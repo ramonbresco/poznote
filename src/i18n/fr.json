@@ -78,7 +78,9 @@
     "outline": {
       "title": "Sommaire",
       "no_headings": "Aucun titre dans cette note",
-      "unavailable_tasklist": "Le sommaire n'est pas disponible pour les listes de tâches"
+      "unavailable_tasklist": "Le sommaire n'est pas disponible pour les listes de tâches",
+      "copy_section_link": "Copier le lien de la section",
+      "section_not_found": "Cette section n'existe plus dans cette note"
     },
     "link_copied": "Lien copié",
     "ok": "OK",
@@ -298,7 +300,10 @@
       "search_placeholder": "Rechercher une note...",
       "recent_notes": "Notes récentes",
       "create_button": "Créer et lier",
-      "all_workspaces": "Chercher dans tous les espaces de travail"
+      "all_workspaces": "Chercher dans tous les espaces de travail",
+      "link_to_section": "Lier une section",
+      "no_sections": "Cette note n'a aucun titre vers lequel pointer",
+      "sections_failed": "Cette note n'a pas pu être lue"
     },
     "empty": {
       "no_notes_found": "Aucune note trouvée",
@@ -996,6 +1001,8 @@
     },
     "show_offline_dots": "Afficher les points hors ligne",
     "hide_offline_dots": "Masquer les points hors ligne",
+    "tree_indent": "Indentation de l'arborescence",
+    "tree_indent_hint": "Décalage de chaque niveau de dossiers et de notes dans la liste des notes.",
     "view_options": "Options d'affichage",
     "customize": "Personnaliser la barre latérale",
     "customize_hint": "Choisir les éléments affichés dans la barre latérale"
@@ -1072,6 +1079,9 @@
   "tasklist": {
     "open_tasks_page": "Voir toutes les tâches",
     "input_placeholder": "Écrivez une nouvelle tâche et appuyez sur Entrée pour l'ajouter à la liste...",
+    "add_row_placeholder": "Ajouter une tâche",
+    "completed_section_one": "1 tâche terminée",
+    "completed_section_other": "{{count}} tâches terminées",
     "drag_to_reorder": "Glisser pour réorganiser",
     "add_to_top": "Ajouter les nouvelles tâches en haut",
     "add_to_bottom": "Ajouter les nouvelles tâches en bas",
@@ -1318,6 +1328,10 @@
       "show": "Afficher les numéros de ligne",
       "hide": "Masquer les numéros de ligne"
     },
+    "code_block_wrap": {
+      "enable": "Renvoyer les lignes longues à la ligne",
+      "disable": "Ne pas renvoyer les lignes longues à la ligne"
+    },
     "paste": {
       "images_dropped_one": "1 image n’a pas pu être collée. Copiez-la seule pour l’ajouter.",
       "images_dropped_other": "{{count}} images n’ont pas pu être collées. Copiez-les une par une pour les ajouter."
@@ -1486,6 +1500,11 @@
       "index_search_bar": "Barre de recherche",
       "tasklist_progress_bar": "Barre de progression des listes de tâches",
       "preview_code_block_delete": "Bouton de suppression des blocs de code, dans l'aperçu markdown",
+      "code_block_collapse": "Bouton de repliage des blocs de code",
+      "code_block_wrap": "Bouton de retour à la ligne des blocs de code",
+      "code_block_line_numbers": "Bouton des numéros de ligne des blocs de code",
+      "code_block_copy": "Bouton de copie des blocs de code",
+      "code_block_delete": "Bouton de suppression des blocs de code",
       "share_restrict_users": "Partage : restreindre à des utilisateurs spécifiques",
       "share_protocol_toggle": "Partage : bascule HTTPS",
       "share_shared_with_me": "Partage : « Partagé avec moi »",
@@ -1499,7 +1518,11 @@
         "settings_cards": "Cartes des paramètres",
         "toolbar": "Barre d'outils",
         "slash_menu": "Menu slash",
-        "panels": "Autre",
+        "note": "Note",
+        "note_subline": "Sous le titre de la note",
+        "floating_buttons": "Boutons flottants",
+        "sharing": "Partage",
+        "backup_restore": "Sauvegarde et restauration",
         "dashboard_toolbar": "Tableau de bord",
         "icon_sidebar": "Rail d'icônes",
         "folder_actions": "Actions des dossiers",
@@ -1507,7 +1530,8 @@
         "note_actions": "Actions des notes",
         "mobile_editor_bar": "Barre d’édition mobile",
         "sidebar": "Barre latérale",
-        "task_lists": "Listes de tâches"
+        "task_lists": "Listes de tâches",
+        "code_blocks": "Blocs de code"
       },
       "badge_all_visible": "Tout visible",
       "badge_hidden_count_admin": "{{count}} masqué(s), dont {{admin}} par l'administrateur",
@@ -1547,12 +1571,14 @@
       "note_info_icon": "Afficher l'icône d'information sous le titre de la note",
       "note_scrollbar": "Barre de défilement des notes",
       "note_scroll_arrows": "Flèches pour remonter et descendre dans la note",
+      "note_section_link": "Icône de copie du lien de section sur les titres",
       "tasklist_add_field": "Champ d'ajout de tâche",
       "tasklist_frame": "Cadre autour de chaque tâche",
       "tasklist_delete": "Supprimer une tâche",
       "tasklist_menu": "Menu des options de tâche (mobile)",
       "tasklist_frame_color": "Couleur de priorité du cadre des tâches",
-      "note_id": "Afficher l'identifiant de la note"
+      "note_id": "Afficher l'identifiant de la note",
+      "backlinks_mentions": "Texte autour de chaque backlink"
     },
     "icon_sidebar_order": {
       "title": "Disposition de la barre d'icônes",
@@ -2258,7 +2284,7 @@
     "moved": "Déplacé avec succès",
     "root": "Racine (aucun dossier)",
     "filter_folders": "Filtrer les dossiers...",
-    "filter_placeholder": "Filtrer les notes par titre ou tags...",
+    "filter_placeholder": "Filtrer les notes par titre, tags ou ID...",
     "filter_type": "Filtrer par type",
     "type_html": "Texte enrichi",
     "type_markdown": "Markdown",
@@ -2329,6 +2355,14 @@
     "mermaid_quadrant": "Matrice à quadrants",
     "mermaid_xy": "Histogramme et courbe",
     "emoji": "Emoji",
+    "symbols": "Symboles",
+    "symbols_recent": "Récents",
+    "symbols_math": "Maths",
+    "symbols_greek": "Grec",
+    "symbols_superscript": "Exposant",
+    "symbols_subscript": "Indice",
+    "symbols_units": "Unités",
+    "symbols_arrows": "Flèches",
     "table": "Tableau",
     "separator": "Séparateur",
     "link_to_note": "Lien vers une note",
@@ -4397,7 +4431,13 @@
     }
   },
   "backlinks": {
-    "title": "Backlinks"
+    "title": "Backlinks",
+    "mentions": {
+      "show": "Afficher le texte autour de chaque lien",
+      "hide": "Masquer le texte autour de chaque lien",
+      "no_context": "Aucun texte à afficher autour de ces liens.",
+      "failed": "Impossible de charger le contexte."
+    }
   },
   "profile": {
     "card": "Mon profil",
@@ -5318,6 +5358,17 @@
     "upload_failed": "L'enregistrement n'a pas pu être sauvegardé : {{error}}",
     "download": "Télécharger l'enregistrement",
     "no_note": "Ouvrez d'abord une note : l'enregistrement est sauvegardé comme pièce jointe de cette note."
+  },
+  "audio_player": {
+    "play": "Lire",
+    "pause": "Pause",
+    "seek": "Se déplacer dans la piste",
+    "speed": "Vitesse de lecture",
+    "unsupported": "Votre navigateur ne sait pas lire ce format audio",
+    "load_error": "Cet enregistrement n'a pas pu être chargé",
+    "volume": "Volume",
+    "mute": "Couper le son",
+    "unmute": "Rétablir le son"
   },
   "diary": {
     "title": "Journal",

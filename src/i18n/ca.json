@@ -53,7 +53,8 @@
       "no_headings": "Aquesta nota no té cap títol",
       "unavailable_tasklist": "L'esquema no està disponible per a les llistes de tasques",
       "toggle_panel": "Commuta el plafó de l'esquema",
-      "copy_section_link": "Copia l'enllaç de la secció"
+      "copy_section_link": "Copia l'enllaç de la secció",
+      "section_not_found": "Aquesta secció ja no existeix en aquesta nota"
     },
     "link_copied": "S'ha copiat l'enllaç",
     "print": "Imprimeix",
@@ -611,6 +612,9 @@
   "tasklist": {
     "open_tasks_page": "Mostra totes les tasques",
     "input_placeholder": "Escriviu una tasca nova i premeu Retorn per afegir-la a la llista...",
+    "add_row_placeholder": "Afegeix una tasca",
+    "completed_section_one": "1 tasca completada",
+    "completed_section_other": "{{count}} tasques completades",
     "drag_to_reorder": "Arrossegueu per reordenar",
     "add_to_top": "Afegeix les tasques noves a dalt",
     "add_to_bottom": "Afegeix les tasques noves a baix",
@@ -964,6 +968,11 @@
       "index_search_bar": "Barra de cerca",
       "tasklist_progress_bar": "Barra de progrés de les llistes de tasques",
       "preview_code_block_delete": "Botó de suprimir als blocs de codi, a la previsualització Markdown",
+      "code_block_collapse": "Botó de plegat dels blocs de codi",
+      "code_block_wrap": "Botó d'ajust de línia dels blocs de codi",
+      "code_block_line_numbers": "Botó de números de línia dels blocs de codi",
+      "code_block_copy": "Botó de còpia dels blocs de codi",
+      "code_block_delete": "Botó d'eliminació dels blocs de codi",
       "share_restrict_users": "Compartició: restringeix a usuaris concrets",
       "share_protocol_toggle": "Compartició: commutador HTTPS",
       "share_shared_with_me": "Compartició: «Compartits amb mi»",
@@ -977,7 +986,11 @@
         "settings_cards": "Targetes dels paràmetres",
         "toolbar": "Barra d'eines",
         "slash_menu": "Menú de barra",
-        "panels": "Altres",
+        "note": "Nota",
+        "note_subline": "Sota el títol de la nota",
+        "floating_buttons": "Botons flotants",
+        "sharing": "Compartició",
+        "backup_restore": "Còpia de seguretat i restauració",
         "dashboard_toolbar": "Tauler",
         "icon_sidebar": "Barra d'icones",
         "folder_actions": "Accions de les carpetes",
@@ -985,7 +998,8 @@
         "note_actions": "Accions de les notes",
         "mobile_editor_bar": "Barra de l'editor per a mòbils",
         "sidebar": "Barra lateral",
-        "task_lists": "Llistes de tasques"
+        "task_lists": "Llistes de tasques",
+        "code_blocks": "Blocs de codi"
       },
       "badge_all_visible": "Tot visible",
       "badge_hidden_count_admin": "{{count}} amagats ({{admin}} per l'administrador)",
@@ -1025,12 +1039,14 @@
       "note_info_icon": "Mostra la icona d'informació sota el títol de la nota",
       "note_scrollbar": "Barra de desplaçament de la nota",
       "note_scroll_arrows": "Fletxes per desplaçar-se a dalt i a baix",
+      "note_section_link": "Icona per copiar l'enllaç de secció als títols",
       "tasklist_add_field": "Camp per afegir una tasca",
       "tasklist_frame": "Marc al voltant de cada tasca",
       "tasklist_delete": "Suprimeix una tasca",
       "tasklist_menu": "Menú d'opcions de la tasca (mòbil)",
       "tasklist_frame_color": "Color de prioritat del marc de les tasques",
-      "note_id": "Mostra l'identificador de la nota"
+      "note_id": "Mostra l'identificador de la nota",
+      "backlinks_mentions": "Text al voltant de cada retroenllaç"
     },
     "icon_sidebar_order": {
       "title": "Disposició de la barra lateral d'icones",
@@ -1730,7 +1746,7 @@
     "moved": "S'ha mogut correctament",
     "root": "Arrel (sense carpeta)",
     "filter_folders": "Filtra les carpetes...",
-    "filter_placeholder": "Filtra les notes pel títol o les etiquetes...",
+    "filter_placeholder": "Filtra les notes pel títol, les etiquetes o l'ID...",
     "filter_type": "Filtra per tipus",
     "type_html": "Text enriquit",
     "type_markdown": "Markdown",
@@ -1802,6 +1818,14 @@
     "mermaid_quadrant": "Gràfic de quadrants",
     "mermaid_xy": "Gràfic de barres i línies",
     "emoji": "Emoji",
+    "symbols": "Símbols",
+    "symbols_recent": "Recents",
+    "symbols_math": "Matemàtiques",
+    "symbols_greek": "Grec",
+    "symbols_superscript": "Superíndex",
+    "symbols_subscript": "Subíndex",
+    "symbols_units": "Unitats",
+    "symbols_arrows": "Fletxes",
     "table": "Taula",
     "separator": "Separador",
     "link_to_note": "Enllaç a una nota",
@@ -2119,6 +2143,10 @@
     "code_block_line_numbers": {
       "show": "Mostra els números de línia",
       "hide": "Amaga els números de línia"
+    },
+    "code_block_wrap": {
+      "enable": "Ajustar les línies llargues",
+      "disable": "No ajustar les línies llargues"
     },
     "colors": {
       "none": "Cap"
@@ -2984,6 +3012,8 @@
     },
     "show_offline_dots": "Mostra els punts de fora de línia",
     "hide_offline_dots": "Amaga els punts de fora de línia",
+    "tree_indent": "Sagnat de l'arbre",
+    "tree_indent_hint": "Quant se sagna cada nivell de carpetes i notes a la llista de notes.",
     "view_options": "Opcions de visualització",
     "customize": "Personalitza la barra lateral",
     "customize_hint": "Trieu quins elements de la barra lateral es mostren"
@@ -3790,7 +3820,13 @@
     }
   },
   "backlinks": {
-    "title": "Enllaços entrants"
+    "title": "Enllaços entrants",
+    "mentions": {
+      "show": "Mostra el text al voltant de cada enllaç",
+      "hide": "Amaga el text al voltant de cada enllaç",
+      "no_context": "No hi ha text per mostrar al voltant d'aquests enllaços.",
+      "failed": "No s'ha pogut carregar el context."
+    }
   },
   "multiuser": {
     "acting_as": "actuant com a {{user}}",
@@ -4556,7 +4592,10 @@
       "create_button": "Crea i enllaça",
       "recent_notes": "Notes recents",
       "search_placeholder": "Cerqueu una nota...",
-      "all_workspaces": "Cerca a tots els espais de treball"
+      "all_workspaces": "Cerca a tots els espais de treball",
+      "link_to_section": "Enllaça a una secció",
+      "no_sections": "Aquesta nota no té cap títol al qual enllaçar",
+      "sections_failed": "No s'ha pogut llegir aquesta nota"
     },
     "untitled": "Sense títol",
     "empty": {
@@ -4870,6 +4909,17 @@
     "upload_failed": "No s'ha pogut desar l'enregistrament: {{error}}",
     "download": "Baixa l'enregistrament",
     "no_note": "Primer obriu una nota: l'enregistrament es desa com a fitxer adjunt d'aquella nota."
+  },
+  "audio_player": {
+    "play": "Reprodueix",
+    "pause": "Pausa",
+    "seek": "Desplaça't per la pista",
+    "speed": "Velocitat de reproducció",
+    "unsupported": "El teu navegador no pot reproduir aquest format d'àudio",
+    "load_error": "No s'ha pogut carregar aquest enregistrament",
+    "volume": "Volum",
+    "mute": "Silencia",
+    "unmute": "Activa el so"
   },
   "diary": {
     "title": "Diari",

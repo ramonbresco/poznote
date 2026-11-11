@@ -14,7 +14,7 @@ ICONS maps the class suffix to the devicon directory and file. Only single
 variants that read as a silhouette are listed: a mark built from white cut-outs
 on a coloured plate would mask into a solid block, so a variant is checked by
 eye at 16px before it lands here. Languages devicon has no usable mark for
-(SQL, XML) keep a Lucide icon in js/slash-command.js instead.
+(SQL, TOML, XML) keep a Lucide icon in js/slash-command.js instead.
 
 DEVICON_VERSION must stay in sync with the devicon entry in vendor.json, which
 records what the committed CSS was generated from.
@@ -45,6 +45,7 @@ ICONS = {
     "python": ("python", "python-plain"),
     "ruby": ("ruby", "ruby-plain"),
     "rust": ("rust", "rust-original"),
+    "terraform": ("terraform", "terraform-plain"),
     "typescript": ("typescript", "typescript-plain"),
     "yaml": ("yaml", "yaml-plain"),
 }

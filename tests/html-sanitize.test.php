@@ -106,3 +106,26 @@ test('a toggle stores neither whether it is open nor an editing host of its own'
     assertContains('<div class="toggle-content">x</div>', $html, 'the note is the only editing host');
     assertNotContains('contenteditable', $html);
 });
+
+// Version 6.146.0 saved the fold chevron of a code block, and the line count
+// next to it, into the note at every save. They are the app's controls.
+test('sanitizeHtml drops the controls drawn around a code block', function () {
+    $html = '<p>before</p>'
+        . '<span class="code-block-collapsed-summary">30 lines</span>'
+        . '<pre class="code-block" data-language="python"><code>line 1</code></pre>'
+        . '<button class="code-block-collapse-btn" style=""><svg width="14" height="14"><path d="m18 15-6-6-6 6"></path></svg></button>'
+        . '<button class="code-block-wrap-btn" type="button"></button>'
+        . '<p>after</p>';
+    $clean = sanitizeHtml($html);
+    assertNotContains('code-block-collapse-btn', $clean);
+    assertNotContains('code-block-collapsed-summary', $clean);
+    assertNotContains('code-block-wrap-btn', $clean);
+    assertNotContains('30 lines', $clean);
+    assertContains('<p>before</p>', $clean);
+    assertContains('line 1', $clean);
+    assertContains('<p>after</p>', $clean);
+});
+
+test('sanitizeHtml keeps a class that only looks like a code block control', function () {
+    assertContains('my-code-block-copy-btn-notes', sanitizeHtml('<span class="my-code-block-copy-btn-notes">kept</span>'));
+});

@@ -3,7 +3,7 @@
     "message": "Poznote URL Saver"
   },
   "extDescription": {
-    "message": "Salva o endereço ou uma captura da página atual no Poznote, como uma nova nota ou no final de uma nota existente."
+    "message": "Salva a página no Poznote como link, captura ou texto Markdown, numa nova nota ou no final de uma nota existente."
   },
   "optionsTitle": {
     "message": "Configurações do Poznote URL Saver"
@@ -70,6 +70,27 @@
   },
   "screenshotTitle": {
     "message": "Salvar o link com uma captura da parte visível da página"
+  },
+  "savePageText": {
+    "message": "Salvar texto"
+  },
+  "savePageTextTitle": {
+    "message": "Salvar o texto principal da página em Markdown. Selecione um texto antes para salvar só essa parte."
+  },
+  "saveSelection": {
+    "message": "Salvar seleção"
+  },
+  "saveSelectionTitle": {
+    "message": "Salvar o texto selecionado em Markdown"
+  },
+  "readingPage": {
+    "message": "Lendo a página..."
+  },
+  "pageTextFailed": {
+    "message": "Não é possível ler o texto desta página."
+  },
+  "noTextFound": {
+    "message": "Nenhum texto encontrado nesta página."
   },
   "loadingNotes": {
     "message": "Carregando notas..."

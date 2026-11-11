@@ -691,6 +691,19 @@ a.links_arbo_left::-webkit-scrollbar,
     padding: 10px 0;
 }
 
+/* Symbol picker: narrow glyphs, so one more column than the emoji grid */
+.symbol-picker .emoji-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    padding: 0 2px;
+}
+
+.symbol-picker .emoji-item {
+    font-size: 18px;
+    width: 32px;
+    height: 30px;
+}
+
 /* Hide open in new tab button on mobile (it's in the overflow menu) */
 .btn-open-new-tab {
     display: none !important;

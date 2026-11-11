@@ -12,8 +12,16 @@
  * A [[Note Title]] only resolves inside its own workspace, so it counts only
  * for notes of the target's workspace; id-based links count from any
  * workspace.
+ *
+ * With context=1 each backlink also carries the text around every link it
+ * writes (discussion #1761, lib/backlink-context.php); with context=check it
+ * only carries whether there is any, which is what the row needs to know
+ * before it offers a chevron to unfold. Without either the response is byte
+ * for byte what it has always been, so get_backlinks and every other caller
+ * are untouched.
  */
 require_once __DIR__ . '/../../../note_loader.php';
+require_once __DIR__ . '/../../../lib/backlink-context.php';
 
 class BacklinksController
 {
@@ -52,6 +60,12 @@ class BacklinksController
             }
             $allWorkspaces = ($_GET['all_workspaces'] ?? '') === '1'
                 && !(function_exists('isSharedWorkspaceScopeActive') && isSharedWorkspaceScopeActive());
+            // context=1 quotes the text around every link; context=check
+            // only says whether there is any, which is what the row needs to
+            // know before it offers to unfold (discussion #1761).
+            $contextMode = (string) ($_GET['context'] ?? '');
+            $withContext = ($contextMode === '1');
+            $checkContext = ($contextMode === 'check');
 
             $targetSql = 'SELECT id, heading, workspace FROM entries WHERE id = ? AND trash = 0';
             $targetParams = [$noteId];
@@ -126,11 +140,33 @@ class BacklinksController
                 }
 
                 if ($found) {
-                    $backlinks[] = [
+                    $entry = [
                         'id'      => (int) $note['id'],
                         'heading' => $note['heading'] !== '' ? $note['heading'] : 'Untitled',
                         'workspace' => (string) $note['workspace'],
                     ];
+                    if ($withContext || $checkContext) {
+                        // The wiki form only counts inside the target's own
+                        // workspace, the same condition as detection 3 above:
+                        // without it a [[Title]] of another workspace would
+                        // come back as a snippet for a link nobody counted.
+                        $mentions = poznoteExtractBacklinkMentions(
+                            $content,
+                            (string) $note['type'],
+                            $noteId,
+                            $targetHeading,
+                            (string) $note['workspace'] === $targetWorkspace,
+                            // One match is all "is there anything to show"
+                            // needs, and it is what the probe stops at
+                            $checkContext ? 1 : null
+                        );
+                        if ($checkContext) {
+                            $entry['has_mentions'] = ($mentions !== []);
+                        } else {
+                            $entry['mentions'] = $mentions;
+                        }
+                    }
+                    $backlinks[] = $entry;
                 }
             }
 

@@ -314,6 +314,8 @@
     // ── Filter ────────────────────────────────────────────────────────────────
     function applyFilter() {
         var q = filterText.toLowerCase();
+        var idMatch = /^#?(\d+)$/.exec(q);
+        var idQuery = idMatch ? String(parseInt(idMatch[1], 10)) : null;
         if (!q && !filterType) {
             filteredNotes = allNotes.slice();
         } else {
@@ -324,6 +326,12 @@
                 }
 
                 if (!q) {
+                    return true;
+                }
+
+                // A number (or "#123") also finds the note with that id: the
+                // whole id, not a part of it, so "12" does not list 112 and 120
+                if (idQuery !== null && String(n.id) === idQuery) {
                     return true;
                 }
 
@@ -645,6 +653,11 @@
         titleWrap.appendChild(typeEl);
         titleWrap.appendChild(link);
 
+        // Id, discreet, just before the tags (searchable in the filter bar)
+        var idEl = document.createElement('span');
+        idEl.className = 'nm-note-id';
+        idEl.textContent = '#' + note.id;
+
         // Tags chips
         var tagsEl = document.createElement('span');
         tagsEl.className = 'nm-note-tags';
@@ -666,6 +679,7 @@
 
         row.appendChild(cb);
         row.appendChild(titleWrap);
+        row.appendChild(idEl);
         row.appendChild(tagsEl);
         row.appendChild(meta);
         return row;

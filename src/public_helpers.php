@@ -115,7 +115,43 @@ function buildPublicAudioAttachmentUrlFromPlayerSrc(string $playerSrc): string {
     return $url;
 }
 
-function buildPublicAudioTagFromIframeAttrs(string $attrs): ?string {
+/**
+ * The note and attachment a player frame addresses, when it addresses one.
+ *
+ * @return array{0: int, 1: string}|null
+ */
+function publicAudioIdsFromPlayerSrc(string $playerSrc): ?array {
+    $decodedSrc = html_entity_decode(trim($playerSrc), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    if ($decodedSrc === '') {
+        return null;
+    }
+
+    $parts = parse_url($decodedSrc);
+    $path = $parts['path'] ?? '';
+    parse_str($parts['query'] ?? '', $query);
+
+    if (preg_match('#(?:^|/+)audio_player\.php$#i', $path)) {
+        $noteId = isset($query['note']) ? (int)$query['note'] : 0;
+        $attachmentId = isset($query['attachment']) ? trim((string)$query['attachment']) : '';
+        return ($noteId > 0 && $attachmentId !== '') ? [$noteId, $attachmentId] : null;
+    }
+
+    if (preg_match('~/api/v1/notes/(\d+)/attachments/([^/?#]+)~', $path, $matches)) {
+        return [(int)$matches[1], rawurldecode($matches[2])];
+    }
+
+    return null;
+}
+
+/**
+ * The player (lib/audio-player.php) that takes the place of the editor's
+ * audio frame on a page that only reads the note.
+ *
+ * $tagsResolver, when a caller has the note's attachment records at hand,
+ * says what the file's tags are: a page that cannot read them renders the
+ * plain waveform player, which is what an untagged recording gets anyway.
+ */
+function buildPublicAudioTagFromIframeAttrs(string $attrs, ?callable $tagsResolver = null): ?string {
     $decodedAttrs = html_entity_decode($attrs, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $classAttr = getPublicHtmlAttributeValue($decodedAttrs, 'class');
     $isAudioEmbed = stripos($decodedAttrs, 'data-is-audio') !== false
@@ -125,25 +161,50 @@ function buildPublicAudioTagFromIframeAttrs(string $attrs): ?string {
         return null;
     }
 
+    $playerSrc = getPublicHtmlAttributeValue($decodedAttrs, 'src');
     $audioSrc = getPublicHtmlAttributeValue($decodedAttrs, 'data-audio-src');
     if ($audioSrc === '') {
-        $audioSrc = buildPublicAudioAttachmentUrlFromPlayerSrc(getPublicHtmlAttributeValue($decodedAttrs, 'src'));
+        $audioSrc = buildPublicAudioAttachmentUrlFromPlayerSrc($playerSrc);
     }
 
     if ($audioSrc === '') {
         return null;
     }
 
-    return '<audio controls preload="metadata" src="' . htmlspecialchars($audioSrc, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '"></audio>';
+    $tags = ['title' => '', 'artist' => '', 'has_cover' => false, 'size' => 0];
+    if ($tagsResolver !== null) {
+        $ids = publicAudioIdsFromPlayerSrc($playerSrc);
+        if ($ids === null) {
+            $ids = publicAudioIdsFromPlayerSrc($audioSrc);
+        }
+        if ($ids !== null) {
+            $resolved = $tagsResolver($ids[0], $ids[1]);
+            if (is_array($resolved)) {
+                $tags = array_merge($tags, $resolved);
+            }
+        }
+    }
+
+    require_once __DIR__ . '/lib/audio-player.php';
+
+    return poznoteRenderAudioPlayer([
+        'src' => $audioSrc,
+        'cover_url' => !empty($tags['has_cover'])
+            ? $audioSrc . (strpos($audioSrc, '?') !== false ? '&' : '?') . 'audio_cover=1'
+            : '',
+        'title' => (string)$tags['title'],
+        'artist' => (string)$tags['artist'],
+        'size' => (int)$tags['size'],
+    ]);
 }
 
-function replacePublicAudioEmbedIframes(string $content): string {
+function replacePublicAudioEmbedIframes(string $content, ?callable $tagsResolver = null): string {
     if ($content === '') {
         return $content;
     }
 
-    $replaceCallback = function(array $matches): string {
-        $audioTag = buildPublicAudioTagFromIframeAttrs($matches[1] ?? '');
+    $replaceCallback = function(array $matches) use ($tagsResolver): string {
+        $audioTag = buildPublicAudioTagFromIframeAttrs($matches[1] ?? '', $tagsResolver);
         return $audioTag !== null ? $audioTag : $matches[0];
     };
 
@@ -326,6 +387,12 @@ function sanitizePublicNoteHtml(string $content, ?string $lang = null): string {
     }
 
     $xpath = new DOMXPath($dom);
+
+    // A note saved by version 6.146.0 can carry the fold chevrons of its code
+    // blocks in its content: they are the app's controls, not the note's
+    require_once __DIR__ . '/lib/code-block-controls.php';
+    poznoteRemoveCodeBlockControls($xpath);
+
     foreach (iterator_to_array($xpath->query('//body//*')) as $el) {
         if (!($el instanceof DOMElement) || $el->parentNode === null) {
             continue; // detached by an earlier removal/unwrap

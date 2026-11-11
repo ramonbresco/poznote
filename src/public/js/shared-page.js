@@ -1018,17 +1018,56 @@
         updateTreeToolbar(hierarchyPresentation);
 
         hierarchyPresentation.visibleItems.forEach(function(item) {
+            var row;
             if (item._type === 'note') {
-                list.appendChild(renderNoteItem(item));
+                row = renderNoteItem(item);
             } else if (item._type === 'shared_with_me_note' || item._type === 'shared_with_me_folder') {
-                list.appendChild(renderSharedWithMeItem(item));
+                row = renderSharedWithMeItem(item);
             } else {
-                list.appendChild(renderFolderItem(item));
+                row = renderFolderItem(item);
             }
+            appendMobileActionsMenu(row);
+            list.appendChild(row);
         });
 
         container.appendChild(list);
         adjustSharedColumnWidths();
+    }
+
+    // On a phone (css/shared/responsive.css, .shares-list-page) the row's
+    // action buttons give way to a single "..." button whose menu lists them:
+    // four buttons beside a name left it a few letters. Each entry clicks the
+    // real button, so the actions themselves exist once. Built for every row
+    // and hidden by CSS above 800px, so a rotation or a resize needs no
+    // re-render. A row with a single button (a share received from another
+    // user) keeps it, a menu of one entry would only add a tap.
+    function appendMobileActionsMenu(row) {
+        var actionsDiv = row.querySelector('.note-actions');
+        if (!actionsDiv || !window.poznoteRowActionsMenu) return;
+        var buttons = Array.prototype.slice.call(actionsDiv.querySelectorAll('.btn'));
+        if (buttons.length < 2) return;
+
+        var toggle = window.poznoteRowActionsMenu.createToggle(config.txtTableActions, function() {
+            return buttons.map(function(btn) {
+                var iconEl = btn.querySelector('i.lucide');
+                var iconClass = '';
+                if (iconEl) {
+                    iconEl.classList.forEach(function(cls) {
+                        if (cls.indexOf('lucide-') === 0) iconClass = cls;
+                    });
+                }
+                return {
+                    icon: iconClass,
+                    label: btn.dataset.menuLabel || btn.title,
+                    danger: btn.classList.contains('btn-danger'),
+                    disabled: btn.disabled,
+                    // A greyed entry says why, as the button's tooltip does
+                    title: btn.disabled ? btn.title : '',
+                    onSelect: function() { btn.click(); }
+                };
+            });
+        }, { className: 'shared-mobile-actions-toggle' });
+        actionsDiv.appendChild(toggle);
     }
 
     // Content-adaptive columns: after each render, the NAME, PATH/FOLDER and
@@ -1485,6 +1524,7 @@
                 editTokenBtnDisabled.disabled = true;
                 editTokenBtnDisabled.innerHTML = '<i class="lucide lucide-pencil"></i>';
                 editTokenBtnDisabled.title = config.txtNoteSharedThroughFolder;
+                editTokenBtnDisabled.dataset.menuLabel = config.txtEditToken;
                 actionsDiv.appendChild(editTokenBtnDisabled);
             }
 
@@ -1513,6 +1553,8 @@
                 revokeBtn.className = 'btn btn-sm btn-share-disabled';
                 revokeBtn.innerHTML = '<i class="lucide lucide-eye-off"></i>';
                 revokeBtn.title = config.txtShareDisabledBadge;
+                // In the phone menu the entry names the action, not the state
+                revokeBtn.dataset.menuLabel = config.txtRevoke;
             } else {
                 revokeBtn.className = 'btn btn-sm btn-danger';
                 revokeBtn.innerHTML = '<i class="lucide lucide-ban"></i>';
@@ -1686,6 +1728,8 @@
                 revokeBtn.className = 'btn btn-sm btn-share-disabled btn-revoke';
                 revokeBtn.innerHTML = '<i class="lucide lucide-eye-off"></i>';
                 revokeBtn.title = config.txtShareDisabledBadge;
+                // In the phone menu the entry names the action, not the state
+                revokeBtn.dataset.menuLabel = config.txtRevoke;
             } else {
                 revokeBtn.className = 'btn btn-sm btn-danger btn-revoke';
                 revokeBtn.innerHTML = '<i class="lucide lucide-ban"></i>';

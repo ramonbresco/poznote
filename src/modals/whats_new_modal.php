@@ -10,7 +10,7 @@
 ?>
 <!-- What's new: release notes shown once after an update (js/whats-new.js) -->
 <div id="whatsNewModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="whatsNewTitle">
-    <div class="modal-content whats-new-content">
+    <div class="modal-content whats-new-content" tabindex="-1">
         <div class="whats-new-header">
             <h3 id="whatsNewTitle"><?php echo t_h('whats_new.title', [], "What's new in Poznote"); ?></h3>
             <p class="whats-new-subtitle" id="whatsNewSubtitle"></p>

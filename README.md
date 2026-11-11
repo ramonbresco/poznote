@@ -9,7 +9,8 @@
   <a href="docs/README.zh-cn.md">简体中文</a> ·
   <a href="docs/README.ko.md">한국어</a> ·
   <a href="docs/README.ja.md">日本語</a> ·
-  <a href="docs/README.ca.md">Català</a>
+  <a href="docs/README.ca.md">Català</a> ·
+  <a href="docs/README.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 
@@ -1475,7 +1476,7 @@ The [Apps page](https://poznote.com/apps.html) of the website lists everything a
 
 ## Chrome Extension
 
-The **Poznote URL Saver** is a browser extension that saves the URL, or even a full-page screenshot, of the current page to your Poznote instance with a single click. Install it from the Chrome Web Store: [Install extension](https://chromewebstore.google.com/detail/bmjclfamahegmgillaghhmnbkjebipbh?utm_source=item-share-cb)
+The **Poznote URL Saver** is a browser extension that saves the URL, a screenshot or the text of the current page (the whole article or just the selection, as Markdown) to your Poznote instance with a single click. Install it from the Chrome Web Store: [Install extension](https://chromewebstore.google.com/detail/bmjclfamahegmgillaghhmnbkjebipbh?utm_source=item-share-cb)
 
 The extension connects to your instance with your username and an [app password](#app-passwords). The setup steps are in the [Chrome Extension documentation](docs/CHROME-EXTENSION.md).
 
