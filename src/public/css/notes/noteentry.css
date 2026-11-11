@@ -123,6 +123,36 @@ body.note-virtual-space #right_col .note-bottom-space {
     min-height: var(--pz-note-bottom-space-min, 0px);
 }
 
+/* The room reads as part of the text: the I-beam of a text editor, because a
+   drag starting there selects the end of the note. It does so for every type
+   of note, by two different routes: where the note is edited in place the
+   selection is extended by hand (js/index-events.js), and where it is only
+   read (a task list, a Markdown note showing its preview, a note held
+   read-only or locked) the browser's own drag already reaches the text, the
+   room and the text being in the same selection root. A single click still
+   puts no caret in a note that takes none, as it puts none in the text of
+   such a note either. */
+#right_col .note-bottom-space {
+    cursor: text;
+}
+
+/* The empty margins on either side of a narrowed note ("Note width", "center
+   note content") read as part of the text as well: the pointer there is over
+   .innernote, the page background beside the body, and the browser resolves a
+   click to the nearest editable position, so it lands the caret on the line it
+   is level with (the start of the line on the left, its end on the right) and a
+   drag down the margin selects whole lines, exactly like the gutter of a text
+   editor. The cursor is an inherited property, so every row takes it back: the
+   gutter is the box of .innernote itself, nothing inside it. The room below the
+   note keeps the rule above (it is a child too). */
+#right_col .innernote {
+    cursor: text;
+}
+
+#right_col .innernote > :not(.note-bottom-space) {
+    cursor: auto;
+}
+
 @media screen and (min-width: 801px) {
     body.note-virtual-space #right_col .innernote:has(.noteentry.markdown-split-mode) .note-bottom-space {
         height: 0;

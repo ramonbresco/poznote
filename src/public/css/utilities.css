@@ -111,7 +111,11 @@ body #right_col .notecard[data-content-width] {
 }
 
 @media (min-width: 801px) {
-    #right_col .innernote > :not(.note-header):not(.note-scroll-edge-controls) {
+    /* The empty room under the note keeps the full column instead: it is what
+       a click and a drag below the text act on (js/index-events.js), and
+       narrowed to the note it left a strip on either side that behaved the
+       same while looking like page background. Nothing is drawn in it. */
+    #right_col .innernote > :not(.note-header):not(.note-scroll-edge-controls):not(.note-bottom-space) {
         width: 100%;
         max-width: var(--note-width, 100%);
         align-self: center;
