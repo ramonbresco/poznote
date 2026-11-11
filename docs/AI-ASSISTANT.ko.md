@@ -9,7 +9,8 @@
   <a href="AI-ASSISTANT.zh-cn.md">简体中文</a> ·
   <b>한국어</b> ·
   <a href="AI-ASSISTANT.ja.md">日本語</a> ·
-  <a href="AI-ASSISTANT.ca.md">Català</a>
+  <a href="AI-ASSISTANT.ca.md">Català</a> ·
+  <a href="AI-ASSISTANT.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 

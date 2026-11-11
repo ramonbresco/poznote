@@ -9,7 +9,8 @@
   <a href="VSCODE-COPILOT.zh-cn.md">简体中文</a> ·
   <a href="VSCODE-COPILOT.ko.md">한국어</a> ·
   <b>日本語</b> ·
-  <a href="VSCODE-COPILOT.ca.md">Català</a>
+  <a href="VSCODE-COPILOT.ca.md">Català</a> ·
+  <a href="VSCODE-COPILOT.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 
