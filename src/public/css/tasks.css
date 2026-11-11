@@ -505,6 +505,16 @@
     font-size: 16px !important;
 }
 
+/* Lucide draws the arrow in 14 of its 24 units (the trash, flag and calendar
+   next to it take 16 to 18), so at the same box it looked lost in more empty
+   space than its neighbours. Drawn at 20px it inks as wide as them; the -2px
+   margins keep its 16px place in the row, so the buttons do not move. */
+.task-move-btn i.lucide-arrow-right {
+    width: 20px;
+    height: 20px;
+    margin: -2px;
+}
+
 .task-delete-btn i,
 .task-priority-btn i,
 .task-move-btn i,
