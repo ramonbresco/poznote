@@ -16,7 +16,7 @@
 
 # Poznote Chrome Extension
 
-The **Poznote URL Saver** is a browser extension that saves the current page to your Poznote instance in one click: its address, or its address with a screenshot, as a new note or at the end of a note you already have.
+The **Poznote URL Saver** is a browser extension that saves the current page to your Poznote instance in one click: its address, its address with a screenshot, or its text as Markdown, as a new note or at the end of a note you already have.
 
 <p align="center">
   <img src="../images/chrome-extension.png" alt="Poznote Chrome Extension" width="50%">
@@ -49,3 +49,5 @@ Click the extension's icon on the page you want to keep, then choose where it go
 - **Existing note** adds the page at the end of a note you pick in the list, which shows your latest notes and searches them as you type. It lists the notes of the workspace picked in the settings; turn on **All workspaces** to pick a note anywhere. The extension remembers that note for the next page, so collecting links in a single reading list takes one click per page. HTML and Markdown notes can receive pages.
 
 Then click **Save link** to save the page's address, or **Screenshot** to save the address followed by a picture of the visible part of the page. The confirmation has a link that opens the note in Poznote.
+
+**Save page text** saves the text of the page itself, converted to Markdown, below its address and the date it was saved: the main content only, without menus, sidebars or footers, with its headings, lists, links, tables, code blocks and images (images stay links to the site). Select some text first and the button becomes **Save selection**, which saves only that part. A new note made this way is a Markdown note; added to an existing note, the text is written in that note's format. Because the text is read in your browser, it works for pages behind a login, it stays in the note if the page disappears, and Poznote's search, the API and the MCP server can work on it.

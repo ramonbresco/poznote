@@ -3,7 +3,7 @@
     "message": "Poznote URL Saver"
   },
   "extDescription": {
-    "message": "Enregistre l'adresse ou une capture de la page en cours dans Poznote, dans une nouvelle note ou à la fin d'une note existante."
+    "message": "Enregistre la page dans Poznote en lien, en capture ou en texte Markdown, dans une nouvelle note ou à la fin d'une note existante."
   },
   "optionsTitle": {
     "message": "Paramètres de Poznote URL Saver"
@@ -70,6 +70,27 @@
   },
   "screenshotTitle": {
     "message": "Enregistrer le lien avec une capture de la partie visible de la page"
+  },
+  "savePageText": {
+    "message": "Enregistrer le texte"
+  },
+  "savePageTextTitle": {
+    "message": "Enregistrer le texte principal de la page en Markdown. Sélectionnez d'abord du texte pour n'enregistrer que cette partie."
+  },
+  "saveSelection": {
+    "message": "Enregistrer la sélection"
+  },
+  "saveSelectionTitle": {
+    "message": "Enregistrer le texte sélectionné en Markdown"
+  },
+  "readingPage": {
+    "message": "Lecture de la page..."
+  },
+  "pageTextFailed": {
+    "message": "Le texte de cette page ne peut pas être lu."
+  },
+  "noTextFound": {
+    "message": "Aucun texte trouvé sur cette page."
   },
   "loadingNotes": {
     "message": "Chargement des notes..."

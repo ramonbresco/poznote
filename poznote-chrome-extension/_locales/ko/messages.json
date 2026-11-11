@@ -3,7 +3,7 @@
     "message": "Poznote URL Saver"
   },
   "extDescription": {
-    "message": "현재 페이지의 주소나 스크린샷을 Poznote에 새 노트로 또는 기존 노트의 끝에 저장합니다."
+    "message": "현재 페이지의 주소, 스크린샷 또는 Markdown 형식의 본문을 Poznote에 새 노트로 또는 기존 노트의 끝에 저장합니다."
   },
   "optionsTitle": {
     "message": "Poznote URL Saver 설정"
@@ -70,6 +70,27 @@
   },
   "screenshotTitle": {
     "message": "보이는 페이지의 스크린샷과 함께 링크 저장"
+  },
+  "savePageText": {
+    "message": "본문 저장"
+  },
+  "savePageTextTitle": {
+    "message": "페이지의 본문을 Markdown으로 저장합니다. 일부만 저장하려면 먼저 텍스트를 선택하세요."
+  },
+  "saveSelection": {
+    "message": "선택 영역 저장"
+  },
+  "saveSelectionTitle": {
+    "message": "선택한 텍스트를 Markdown으로 저장"
+  },
+  "readingPage": {
+    "message": "페이지를 읽는 중..."
+  },
+  "pageTextFailed": {
+    "message": "이 페이지의 텍스트를 읽을 수 없습니다."
+  },
+  "noTextFound": {
+    "message": "이 페이지에서 텍스트를 찾을 수 없습니다."
   },
   "loadingNotes": {
     "message": "노트를 불러오는 중..."

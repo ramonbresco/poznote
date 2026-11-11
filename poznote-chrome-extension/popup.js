@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const allWorkspacesToggle = $('allWorkspaces');
   const saveNoteBtn = $('saveNote');
   const saveScreenshotBtn = $('saveScreenshot');
+  const saveTextBtn = $('saveText');
 
   let config = null;
   let tab = null;
@@ -68,6 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function setBusy(button, busy) {
     saveNoteBtn.disabled = busy;
     saveScreenshotBtn.disabled = busy;
+    saveTextBtn.disabled = busy;
     button.classList.toggle('busy', busy);
   }
 
@@ -99,6 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   mainView.hidden = false;
 
   [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  refreshTextButton();
 
   // --- New note or existing note --------------------------------------------
 
@@ -268,10 +271,60 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   saveNoteBtn.addEventListener('click', () => saveToNote('url', saveNoteBtn));
   saveScreenshotBtn.addEventListener('click', () => saveToNote('screenshot', saveScreenshotBtn));
+  saveTextBtn.addEventListener('click', () => saveToNote('text', saveTextBtn));
+
+  /**
+   * "Save selection" when text is selected in the page, "Save page text"
+   * otherwise. Opening the popup leaves the page's selection in place, so
+   * what the label says is what the click saves. A page the extension cannot
+   * read (chrome://, the Web Store) keeps the default label and says so on click.
+   */
+  async function refreshTextButton() {
+    let selected = false;
+    try {
+      const [frame] = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => {
+          const selection = window.getSelection();
+          return Boolean(selection && !selection.isCollapsed && String(selection).trim());
+        }
+      });
+      selected = Boolean(frame && frame.result);
+    } catch (e) {
+      selected = false;
+    }
+    $('saveTextLabel').textContent = t(selected ? 'saveSelection' : 'savePageText');
+    saveTextBtn.title = t(selected ? 'saveSelectionTitle' : 'savePageTextTitle');
+    $('saveTextIcon').setAttribute('href', selected ? '#i-text-select' : '#i-text');
+  }
+
+  /**
+   * The selection, or the main text of the page, as Markdown and as HTML (clip.js)
+   */
+  async function readPageText(tabId) {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: ['vendor/Readability.js', 'vendor/turndown.js', 'vendor/turndown-plugin-gfm.js', 'clip.js']
+    });
+    const [frame] = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => globalThis.poznoteClipPage()
+    });
+    return frame && frame.result;
+  }
+
+  /**
+   * Local date and time, "2026-11-11 14:32": the same reading in every language
+   */
+  function savedAtNow() {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  }
 
   /**
    * Save current page to Poznote, as a new note or at the end of the picked one
-   * @param {string} contentType - 'url' or 'screenshot'
+   * @param {string} contentType - 'url', 'screenshot' or 'text'
    * @param {HTMLElement} button - The button that was clicked
    */
   async function saveToNote(contentType, button) {
@@ -287,7 +340,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setBusy(button, true);
     try {
-      const entry = { url: tab.url, screenshot: null };
+      const entry = { url: tab.url, screenshot: null, clip: null };
+      if (contentType === 'text') {
+        showStatus(t('readingPage'), 'loading');
+        try {
+          entry.clip = await readPageText(tab.id);
+        } catch (error) {
+          showStatus(t('pageTextFailed'), 'error');
+          console.error(error);
+          return;
+        }
+        if (!entry.clip || !entry.clip.markdown) {
+          showStatus(t('noTextFound'), 'error');
+          return;
+        }
+        entry.savedAt = savedAtNow();
+      }
       if (contentType === 'screenshot') {
         showStatus(t('capturing'), 'loading');
         try {

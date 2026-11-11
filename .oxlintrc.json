@@ -26,6 +26,7 @@
     "src/public/js/katex/**",
     "src/public/js/mermaid/**",
     "src/public/js/qrcode-generator/**",
+    "poznote-chrome-extension/vendor/**",
     "**/node_modules/**",
     "**/*.min.js"
   ],

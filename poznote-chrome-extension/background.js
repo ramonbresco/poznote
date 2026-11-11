@@ -165,9 +165,13 @@ async function createNote(config, noteData) {
       ...getHeaders(config),
       'Content-Type': 'application/json'
     },
+    // The text of a page is saved as Markdown, what discussion #1760 asked for;
+    // a link or a screenshot stays an HTML note, as before
     body: JSON.stringify({
       heading: noteData.heading,
-      content: buildHtmlEntry(noteData.entry),
+      ...(noteData.entry.clip
+        ? { type: 'markdown', content: buildMarkdownEntry(noteData.entry, '') }
+        : { content: buildHtmlEntry(noteData.entry) }),
       tags: noteData.tags || '',
       workspace: noteData.workspace,
       ...(noteData.folder_id ? { folder_id: Number(noteData.folder_id) } : {})
@@ -290,7 +294,7 @@ async function uploadImageAttachment(config, noteId, dataUrl, fileName) {
  * returned and the write is tried again.
  * @param {Object} config - Configuration object
  * @param {number} noteId - Target note
- * @param {Object} entry - { url, screenshot: dataUrl|null }
+ * @param {Object} entry - { url, screenshot: dataUrl|null, clip: {markdown, html}|null, savedAt }
  * @returns {Promise<Object>} The note's id and heading
  */
 async function appendToNote(config, noteId, entry) {
@@ -367,10 +371,16 @@ function escapeHtml(value) {
 
 /**
  * One saved page in an HTML note: its address as a link and, for a
- * screenshot, an empty line then the picture
+ * screenshot, an empty line then the picture. For the text of the page, the
+ * address carries the date it was saved, then an empty line and the text.
  */
 function buildHtmlEntry(entry) {
   const url = escapeHtml(entry.url);
+  if (entry.clip) {
+    const when = entry.savedAt ? ` · ${escapeHtml(entry.savedAt)}` : '';
+    // The server sanitizes the page's markup like any other HTML it receives
+    return `<p><a href="${url}" target="_blank">${url}</a>${when}</p><p><br></p>${entry.clip.html}`;
+  }
   let html = `<p><a href="${url}" target="_blank">${url}</a></p>`;
   if (entry.screenshot) {
     html += `<p><br></p><p><img src="${entry.screenshot}" alt="${escapeHtml(t('pageScreenshot'))}" style="max-width: 100%; height: auto;" /></p>`;
@@ -386,6 +396,9 @@ function buildMarkdownEntry(entry, screenshotSrc) {
   const target = entry.url.replace(/[\s()<>]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0'));
   const label = entry.url.replace(/([\\[\]])/g, '\\$1');
   let md = `[${label}](${target})`;
+  if (entry.clip) {
+    return md + (entry.savedAt ? ` · ${entry.savedAt}` : '') + '\n\n' + entry.clip.markdown;
+  }
   if (screenshotSrc) {
     md += `\n\n<br>\n\n![${t('pageScreenshot')}](${screenshotSrc})`;
   }
