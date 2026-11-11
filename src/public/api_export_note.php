@@ -447,8 +447,8 @@ function cleanExportContent($content, $referenceResolver = null) {
 
     $xpath = new DOMXPath($dom);
     // Code block UI affordances (copy / delete / language badge / line numbers
-    // / fold chevron and its line count)
-    $actionButtons = $xpath->query("//*[contains(@class, 'code-block-copy-btn') or contains(@class, 'code-block-delete-btn') or contains(@class, 'code-block-lang-btn') or contains(@class, 'code-block-line-numbers-btn') or contains(@class, 'code-block-collapse-btn') or contains(@class, 'code-block-collapsed-summary')]");
+    // / word wrap / fold chevron and its line count)
+    $actionButtons = $xpath->query("//*[contains(@class, 'code-block-copy-btn') or contains(@class, 'code-block-delete-btn') or contains(@class, 'code-block-lang-btn') or contains(@class, 'code-block-line-numbers-btn') or contains(@class, 'code-block-wrap-btn') or contains(@class, 'code-block-collapse-btn') or contains(@class, 'code-block-collapsed-summary')]");
     foreach ($actionButtons as $button) {
         $button->parentNode->removeChild($button);
     }

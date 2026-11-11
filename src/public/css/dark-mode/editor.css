@@ -72,8 +72,14 @@ html[data-theme='dark'] .pz-edge-btn:focus {
    and Mermaid labels (js/mermaid-theme.js picks those against their fill).
    Inline formatting inside a coloured run is left alone too: bolding part of a
    coloured span nests a style-less <b> in it, which has to inherit that colour
-   instead of being painted back to the default text colour (#1401). */
-html[data-theme='dark'] .noteentry *:not([style*="color"]):not(:is(b, strong, i, em, u, s, strike, del, ins, sub, sup, small, span, font):is([style*="color"] *)):not(a):not([class*="hljs"]):not(code[class*="language-"]):not(.code-line):not(.search-highlight):not(.search-highlight-active):not([class^="md-"]):not([class*=" md-"]):not(.markdown-codemirror-host *):not(.mermaid *) {
+   instead of being painted back to the default text colour (#1401).
+   The controls in a code block's corner keep their own colours (the red bin,
+   the faint grey of the others, css/code-blocks.css): they are the app's, not
+   the note's text, and so do their icons, which draw in currentColor. They
+   are whatever the block's action host holds besides the <pre>
+   (js/copy-code-on-focus.js). :where() so the exception adds no weight to
+   this rule. */
+html[data-theme='dark'] .noteentry *:not([style*="color"]):not(:is(b, strong, i, em, u, s, strike, del, ins, sub, sup, small, span, font):is([style*="color"] *)):not(a):not([class*="hljs"]):not(code[class*="language-"]):not(.code-line):not(.search-highlight):not(.search-highlight-active):not([class^="md-"]):not([class*=" md-"]):not(.markdown-codemirror-host *):not(.mermaid *):not(:where(.code-block-actions-host > :not(pre), .code-block-actions-host > :not(pre) *)) {
     color: var(--pz-text) !important;
 }
 
@@ -142,7 +148,8 @@ html[data-theme='dark'] .code-block-actions-host > .code-block-copy-btn,
 html[data-theme='dark'] .code-block-actions-host > .code-block-delete-btn,
 html[data-theme='dark'] .code-block-line-numbers-btn,
 html[data-theme='dark'] .noteentry pre .code-block-line-numbers-btn,
-html[data-theme='dark'] .code-block-actions-host > .code-block-line-numbers-btn {
+html[data-theme='dark'] .code-block-actions-host > .code-block-line-numbers-btn,
+html[data-theme='dark'] .code-block-wrap-btn {
     background: transparent !important;
     border: none !important;
     opacity: 0.55 !important;
@@ -150,8 +157,16 @@ html[data-theme='dark'] .code-block-actions-host > .code-block-line-numbers-btn 
 
 html[data-theme='dark'] .code-block-copy-btn svg,
 html[data-theme='dark'] .code-block-delete-btn svg,
-html[data-theme='dark'] .code-block-line-numbers-btn svg {
+html[data-theme='dark'] .code-block-line-numbers-btn svg,
+html[data-theme='dark'] .code-block-wrap-btn svg {
     stroke: currentColor !important;
+}
+
+/* The grey buttons keep the light grey they had while the note's text colour
+   reached them (the .noteentry * rule above now leaves them alone, so the bin
+   can be red): the subtle grey of the light theme fades out on a dark ground */
+html[data-theme='dark'] .code-block-actions-host > :is(.code-block-copy-btn, .code-block-line-numbers-btn, .code-block-wrap-btn, .code-block-collapse-btn) {
+    color: var(--pz-text) !important;
 }
 
 html[data-theme='dark'] .code-block-delete-btn,
@@ -169,7 +184,9 @@ html[data-theme='dark'] .public-note .content pre .code-block-copy-btn:hover,
 html[data-theme='dark'] .code-block-actions-host > .code-block-copy-btn:hover,
 html[data-theme='dark'] .code-block-actions-host > .code-block-delete-btn:hover,
 html[data-theme='dark'] .code-block-line-numbers-btn:hover,
-html[data-theme='dark'] .code-block-actions-host > .code-block-line-numbers-btn:hover {
+html[data-theme='dark'] .code-block-actions-host > .code-block-line-numbers-btn:hover,
+html[data-theme='dark'] .code-block-actions-host > .code-block-wrap-btn:hover,
+html[data-theme='dark'] .code-block-actions-host > .code-block-collapse-btn:hover {
     background: transparent !important;
     color: var(--pz-text-strong) !important;
     opacity: 1 !important;

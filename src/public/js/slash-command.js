@@ -6339,6 +6339,9 @@
     // Desktop only, a long press on a phone selects a word and shows the native
     // selection toolbar. The attachment menu runs first and takes the event when
     // it opens; the table menu is left the cells it owns.
+    const CODE_BLOCK_CONTROLS_SELECTOR = '.code-block-copy-btn, .code-block-delete-btn, .code-block-line-numbers-btn, ' +
+        '.code-block-wrap-btn, .code-block-collapse-btn, .code-block-collapsed-summary, .cm-live-code-actions';
+
     function handleSelectionContextMenu(e) {
         if (e.defaultPrevented || slashMenuElement) return;
         // Shift + right click keeps the browser's menu, the only place its
@@ -6346,6 +6349,10 @@
         // it on its own, Chromium needs the event left alone
         if (e.shiftKey) return;
         if (window.matchMedia && window.matchMedia('(max-width: 800px)').matches) return;
+        // The controls in a code block's corner are the app's, not the note's
+        // text: a right-click on one belongs to the Hide menu of Element
+        // visibility (js/hide-element-menu.js), not to the commands of the note
+        if (e.target && e.target.closest && e.target.closest(CODE_BLOCK_CONTROLS_SELECTOR)) return;
 
         const pointer = { left: e.clientX, right: e.clientX, top: e.clientY, bottom: e.clientY, width: 0, height: 0 };
         if (showSlashMenuForSelection(e.target, pointer)) {

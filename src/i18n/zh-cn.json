@@ -1253,6 +1253,10 @@
       "show": "显示行号",
       "hide": "隐藏行号"
     },
+    "code_block_wrap": {
+      "enable": "长行自动换行",
+      "disable": "长行不自动换行"
+    },
     "colors": {
       "none": "无"
     },
@@ -1489,6 +1493,11 @@
       "index_search_bar": "搜索栏",
       "tasklist_progress_bar": "任务列表进度条",
       "preview_code_block_delete": "Markdown 预览中代码块的删除按钮",
+      "code_block_collapse": "代码块折叠按钮",
+      "code_block_wrap": "代码块自动换行按钮",
+      "code_block_line_numbers": "代码块行号按钮",
+      "code_block_copy": "代码块复制按钮",
+      "code_block_delete": "代码块删除按钮",
       "share_restrict_users": "分享：限制为特定用户",
       "share_protocol_toggle": "分享：HTTPS 开关",
       "share_shared_with_me": "分享：“与我共享”",
@@ -1514,7 +1523,8 @@
         "note_actions": "笔记操作",
         "mobile_editor_bar": "移动端编辑栏",
         "sidebar": "侧边栏",
-        "task_lists": "任务列表"
+        "task_lists": "任务列表",
+        "code_blocks": "代码块"
       },
       "check_all": "全选",
       "uncheck_all": "取消全选",

@@ -965,6 +965,11 @@
       "index_search_bar": "Barra de cerca",
       "tasklist_progress_bar": "Barra de progrés de les llistes de tasques",
       "preview_code_block_delete": "Botó de suprimir als blocs de codi, a la previsualització Markdown",
+      "code_block_collapse": "Botó de plegat dels blocs de codi",
+      "code_block_wrap": "Botó d'ajust de línia dels blocs de codi",
+      "code_block_line_numbers": "Botó de números de línia dels blocs de codi",
+      "code_block_copy": "Botó de còpia dels blocs de codi",
+      "code_block_delete": "Botó d'eliminació dels blocs de codi",
       "share_restrict_users": "Compartició: restringeix a usuaris concrets",
       "share_protocol_toggle": "Compartició: commutador HTTPS",
       "share_shared_with_me": "Compartició: «Compartits amb mi»",
@@ -990,7 +995,8 @@
         "note_actions": "Accions de les notes",
         "mobile_editor_bar": "Barra de l'editor per a mòbils",
         "sidebar": "Barra lateral",
-        "task_lists": "Llistes de tasques"
+        "task_lists": "Llistes de tasques",
+        "code_blocks": "Blocs de codi"
       },
       "badge_all_visible": "Tot visible",
       "badge_hidden_count_admin": "{{count}} amagats ({{admin}} per l'administrador)",
@@ -2134,6 +2140,10 @@
     "code_block_line_numbers": {
       "show": "Mostra els números de línia",
       "hide": "Amaga els números de línia"
+    },
+    "code_block_wrap": {
+      "enable": "Ajustar les línies llargues",
+      "disable": "No ajustar les línies llargues"
     },
     "colors": {
       "none": "Cap"

@@ -965,6 +965,11 @@
       "index_search_bar": "検索バー",
       "tasklist_progress_bar": "タスクリストの進捗バー",
       "preview_code_block_delete": "Markdownプレビューのコードブロックの削除ボタン",
+      "code_block_collapse": "コードブロックの折りたたみボタン",
+      "code_block_wrap": "コードブロックの折り返しボタン",
+      "code_block_line_numbers": "コードブロックの行番号ボタン",
+      "code_block_copy": "コードブロックのコピーボタン",
+      "code_block_delete": "コードブロックの削除ボタン",
       "share_restrict_users": "共有：特定のユーザーに限定",
       "share_protocol_toggle": "共有：HTTPSの切り替え",
       "share_shared_with_me": "共有：「共有されたワークスペース」",
@@ -990,7 +995,8 @@
         "note_actions": "ノートの操作",
         "mobile_editor_bar": "モバイルのエディターバー",
         "sidebar": "サイドバー",
-        "task_lists": "タスクリスト"
+        "task_lists": "タスクリスト",
+        "code_blocks": "コードブロック"
       },
       "badge_all_visible": "すべて表示",
       "badge_hidden_count_admin": "{{count}}件を非表示（うち管理者による非表示{{admin}}件）",
@@ -2134,6 +2140,10 @@
     "code_block_line_numbers": {
       "show": "行番号を表示",
       "hide": "行番号を非表示"
+    },
+    "code_block_wrap": {
+      "enable": "長い行を折り返す",
+      "disable": "長い行を折り返さない"
     },
     "colors": {
       "none": "なし"

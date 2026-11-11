@@ -1323,6 +1323,10 @@
       "show": "Afficher les numéros de ligne",
       "hide": "Masquer les numéros de ligne"
     },
+    "code_block_wrap": {
+      "enable": "Renvoyer les lignes longues à la ligne",
+      "disable": "Ne pas renvoyer les lignes longues à la ligne"
+    },
     "paste": {
       "images_dropped_one": "1 image n’a pas pu être collée. Copiez-la seule pour l’ajouter.",
       "images_dropped_other": "{{count}} images n’ont pas pu être collées. Copiez-les une par une pour les ajouter."
@@ -1491,6 +1495,11 @@
       "index_search_bar": "Barre de recherche",
       "tasklist_progress_bar": "Barre de progression des listes de tâches",
       "preview_code_block_delete": "Bouton de suppression des blocs de code, dans l'aperçu markdown",
+      "code_block_collapse": "Bouton de repliage des blocs de code",
+      "code_block_wrap": "Bouton de retour à la ligne des blocs de code",
+      "code_block_line_numbers": "Bouton des numéros de ligne des blocs de code",
+      "code_block_copy": "Bouton de copie des blocs de code",
+      "code_block_delete": "Bouton de suppression des blocs de code",
       "share_restrict_users": "Partage : restreindre à des utilisateurs spécifiques",
       "share_protocol_toggle": "Partage : bascule HTTPS",
       "share_shared_with_me": "Partage : « Partagé avec moi »",
@@ -1516,7 +1525,8 @@
         "note_actions": "Actions des notes",
         "mobile_editor_bar": "Barre d’édition mobile",
         "sidebar": "Barre latérale",
-        "task_lists": "Listes de tâches"
+        "task_lists": "Listes de tâches",
+        "code_blocks": "Blocs de code"
       },
       "badge_all_visible": "Tout visible",
       "badge_hidden_count_admin": "{{count}} masqué(s), dont {{admin}} par l'administrateur",

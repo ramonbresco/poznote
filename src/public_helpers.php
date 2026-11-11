@@ -387,6 +387,12 @@ function sanitizePublicNoteHtml(string $content, ?string $lang = null): string {
     }
 
     $xpath = new DOMXPath($dom);
+
+    // A note saved by version 6.146.0 can carry the fold chevrons of its code
+    // blocks in its content: they are the app's controls, not the note's
+    require_once __DIR__ . '/lib/code-block-controls.php';
+    poznoteRemoveCodeBlockControls($xpath);
+
     foreach (iterator_to_array($xpath->query('//body//*')) as $el) {
         if (!($el instanceof DOMElement) || $el->parentNode === null) {
             continue; // detached by an earlier removal/unwrap

@@ -388,8 +388,24 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-scroll-arrows" checked><span><?php echo t_h('modals.ui_customization.note_scroll_arrows', [], 'Scroll to top and bottom arrows'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-section-link" checked><span><?php echo t_h('modals.ui_customization.note_section_link', [], 'Copy section link icon on headings'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:note-icons" checked><span><?php echo t_h('display.cards.show_note_icons', [], 'Show note icons'); ?></span></label>
-    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:preview-code-block-delete" checked><span><?php echo t_h('modals.ui_customization.preview_code_block_delete', [], 'Delete button on code blocks, in markdown preview'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:backlinks-mentions" checked><span><?php echo t_h('modals.ui_customization.backlinks_mentions', [], 'Text around each backlink'); ?></span></label>
+</div>
+</div>
+
+<!-- Code Blocks Section: the controls in a code block's corner, one each, in
+     the order they stand from the left (js/copy-code-on-focus.js in a note and
+     its preview, live-preview.js in the editor views). A right-click on one
+     offers to hide it (js/hide-element-menu.js). -->
+<div class="ui-custom-section" data-ui-pages="notes">
+<?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.code_blocks', [], 'Code blocks')); ?>
+<div class="ui-custom-items">
+<?php echo poznoteUiCustomizationListToggleAll(); ?>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:code-block-collapse" checked><span><?php echo t_h('modals.ui_customization.code_block_collapse', [], 'Code block fold button'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:code-block-wrap" checked><span><?php echo t_h('modals.ui_customization.code_block_wrap', [], 'Code block word wrap button'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:code-block-line-numbers" checked><span><?php echo t_h('modals.ui_customization.code_block_line_numbers', [], 'Code block line numbers button'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:code-block-copy" checked><span><?php echo t_h('modals.ui_customization.code_block_copy', [], 'Code block copy button'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:code-block-delete" checked><span><?php echo t_h('modals.ui_customization.code_block_delete', [], 'Code block delete button'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:preview-code-block-delete" checked><span><?php echo t_h('modals.ui_customization.preview_code_block_delete', [], 'Delete button on code blocks, in markdown preview'); ?></span></label>
 </div>
 </div>
 

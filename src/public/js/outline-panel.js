@@ -1331,12 +1331,21 @@ function initTouchSupport() {
             return titleScroller;
         }
 
-        // Only block the swipe gesture on code blocks when word wrap is disabled
-        // (body has .code-block-no-wrap), because that's when blocks can scroll
-        // horizontally and the swipe should be reserved for native scroll.
+        // Only block the swipe gesture on code blocks whose lines do not wrap,
+        // because that's when a block can scroll horizontally and the swipe
+        // should be reserved for native scroll: the account's setting (body
+        // has .code-block-no-wrap), unless the block's own wrap button said
+        // otherwise (data-code-wrap on its action host,
+        // js/copy-code-on-focus.js).
         const codeBlock = target.closest('pre, .code-block');
-        if (codeBlock && document.body.classList.contains('code-block-no-wrap')) {
-            return codeBlock;
+        if (codeBlock) {
+            const wrapHost = codeBlock.closest('.code-block-actions-host');
+            const wrapChoice = wrapHost ? wrapHost.getAttribute('data-code-wrap') : null;
+            const unwrapped = wrapChoice === '0' ||
+                (wrapChoice !== '1' && document.body.classList.contains('code-block-no-wrap'));
+            if (unwrapped) {
+                return codeBlock;
+            }
         }
 
         // A swipe across a table is meant for the table (reading along a row,

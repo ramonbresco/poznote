@@ -1255,6 +1255,10 @@
       "show": "Zeilennummern anzeigen",
       "hide": "Zeilennummern ausblenden"
     },
+    "code_block_wrap": {
+      "enable": "Lange Zeilen umbrechen",
+      "disable": "Lange Zeilen nicht umbrechen"
+    },
     "colors": {
       "none": "Keine"
     },
@@ -1491,6 +1495,11 @@
       "index_search_bar": "Suchleiste",
       "tasklist_progress_bar": "Fortschrittsbalken der Aufgabenlisten",
       "preview_code_block_delete": "Löschen-Schaltfläche an Codeblöcken, in der Markdown-Vorschau",
+      "code_block_collapse": "Einklapp-Schaltfläche der Codeblöcke",
+      "code_block_wrap": "Zeilenumbruch-Schaltfläche der Codeblöcke",
+      "code_block_line_numbers": "Zeilennummern-Schaltfläche der Codeblöcke",
+      "code_block_copy": "Kopier-Schaltfläche der Codeblöcke",
+      "code_block_delete": "Lösch-Schaltfläche der Codeblöcke",
       "share_restrict_users": "Teilen: auf bestimmte Benutzer beschränken",
       "share_protocol_toggle": "Teilen: HTTPS-Schalter",
       "share_shared_with_me": "Teilen: „Mit mir geteilt“",
@@ -1516,7 +1525,8 @@
         "note_actions": "Notizaktionen",
         "mobile_editor_bar": "Mobile Editorleiste",
         "sidebar": "Seitenleiste",
-        "task_lists": "Aufgabenlisten"
+        "task_lists": "Aufgabenlisten",
+        "code_blocks": "Codeblöcke"
       },
       "check_all": "Alle auswählen",
       "uncheck_all": "Alle abwählen",

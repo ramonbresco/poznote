@@ -425,6 +425,11 @@ function cleanHtmlContent($content) {
     $content = preg_replace('/<[^>]*class="[^"]*code-block-delete-btn[^"]*"[^>]*>.*?<\/[^>]+>/is', '', $content);
     $content = preg_replace('/<[^>]*class="[^"]*code-block-lang-btn[^"]*"[^>]*>.*?<\/[^>]+>/is', '', $content);
     $content = preg_replace('/<[^>]*class="[^"]*code-block-line-numbers-btn[^"]*"[^>]*>.*?<\/[^>]+>/is', '', $content);
+    $content = preg_replace('/<[^>]*class="[^"]*code-block-wrap-btn[^"]*"[^>]*>.*?<\/[^>]+>/is', '', $content);
+    // The fold chevron holds an <svg>, whose own closing tag would end a lazy
+    // match too early: its button is matched whole
+    $content = preg_replace('/<button[^>]*class="[^"]*code-block-collapse-btn[^"]*"[^>]*>.*?<\/button>/is', '', $content);
+    $content = preg_replace('/<span[^>]*class="[^"]*code-block-collapsed-summary[^"]*"[^>]*>.*?<\/span>/is', '', $content);
     // Also remove button elements that might be copy buttons
     $content = preg_replace('/<button[^>]*class="[^"]*copy[^"]*"[^>]*>.*?<\/button>/is', '', $content);
     

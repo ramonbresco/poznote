@@ -454,6 +454,15 @@
         'favorites-folder': '.favorites-section',
         'folder-note-count': '.folder-note-count',
         'tasklist-progress': '.tasklist-progress',
+        // The controls in a code block's corner (js/copy-code-on-focus.js in a
+        // note and its Markdown preview, live-preview.js in the editor views),
+        // one key each. The bin of the Markdown preview has its own key
+        // (preview-code-block-delete, below), hidden by default; the fold
+        // chevron is handled in applyHiddenKeys(), hiding it unfolds blocks.
+        'code-block-copy': '.code-block-copy-btn, .markdown-codemirror-host .cm-live-code-copy',
+        'code-block-line-numbers': '.code-block-line-numbers-btn, .markdown-codemirror-host .cm-live-code-lines',
+        'code-block-wrap': '.code-block-wrap-btn, .markdown-codemirror-host .cm-live-code-wrap',
+        'code-block-delete': '.code-block-delete-btn:not(.markdown-preview *), .markdown-codemirror-host .cm-live-code-delete',
         // The text around each backlink (js/backlinks.js): the passages the
         // row unfolds and the chevron that unfolds them, never the row.
         'backlinks-mentions': '.backlinks-mentions, .backlinks-mentions-toggle',
@@ -474,6 +483,7 @@
         'panel:speed-dial-frame': '.speed-dial-tile',
         'panel:speed-dial-group-rules': '.speed-dial-group-rule',
         'panel:preview-code-block-delete': '.markdown-preview .code-block-delete-btn',
+        'panel:code-block-collapse': '.code-block-collapse-btn, .code-block-collapsed-summary, .markdown-codemirror-host .cm-live-code-collapse, .markdown-codemirror-host .cm-live-code-lines-count',
         'tasklist:frame': '.task-list-container .task-item',
         'tasklist:frame-color': '.task-list-container .task-item:is(.priority-high, .priority-medium, .priority-low)',
         // Blocks of the share dialog, hidden by rules of
@@ -585,12 +595,18 @@
                     // the bin sits next to the copy button, so a misclick costs
                     // the block. Hidden by default, see
                     // poznoteGetDefaultHiddenUiKeys() in lib/ui-customization.php.
-                    // The three buttons are absolutely positioned at fixed right
-                    // offsets 32px apart (css/code-blocks.css), so the ones that
-                    // stay slide into the gap instead of leaving it empty.
+                    // The buttons that stay slide into the gap on their own,
+                    // js/copy-code-on-focus.js stacking the visible ones.
                     rules.push('.markdown-preview .code-block-delete-btn { display: none !important; }');
-                    rules.push('.markdown-preview .code-block-copy-btn { right: 8px !important; }');
-                    rules.push('.markdown-preview .code-block-line-numbers-btn { right: 40px !important; }');
+                } else if (id === 'code-block-collapse') {
+                    // The fold chevron and its line count. Gone, nothing could
+                    // unfold a folded block again, so folded blocks are shown
+                    // whole while it is hidden (the choice stays stored).
+                    // Mirrors lib/ui-customization.php.
+                    rules.push('.code-block-collapse-btn, .code-block-collapsed-summary, .markdown-codemirror-host .cm-live-code-collapse, .markdown-codemirror-host .cm-live-code-lines-count { display: none !important; }');
+                    rules.push('.noteentry pre[data-collapsed="1"] > code { max-height: none !important; overflow: visible !important; display: block !important; }');
+                    rules.push('.markdown-codemirror-host .cm-live-preview .cm-line.cm-live-code-folded { height: auto !important; overflow: visible !important; }');
+                    rules.push('body:not(.code-block-no-wrap) .markdown-codemirror-host .cm-live-preview .cm-live-code-block:not(.cm-live-code-block-nowrap) > .cm-line.cm-live-code-folded, .markdown-codemirror-host .cm-live-preview .cm-live-code-block.cm-live-code-block-wrap > .cm-line.cm-live-code-folded { border-width: 0 1px !important; }');
                 }
             }
         });

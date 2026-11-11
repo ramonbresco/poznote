@@ -1255,6 +1255,10 @@
       "show": "Mostrar números de linha",
       "hide": "Ocultar números de linha"
     },
+    "code_block_wrap": {
+      "enable": "Quebrar linhas longas",
+      "disable": "Não quebrar linhas longas"
+    },
     "colors": {
       "none": "Nenhum"
     },
@@ -1491,6 +1495,11 @@
       "index_search_bar": "Barra de pesquisa",
       "tasklist_progress_bar": "Barra de progresso das listas de tarefas",
       "preview_code_block_delete": "Botão de eliminar nos blocos de código, na pré-visualização markdown",
+      "code_block_collapse": "Botão de recolher dos blocos de código",
+      "code_block_wrap": "Botão de quebra de linha dos blocos de código",
+      "code_block_line_numbers": "Botão de números de linha dos blocos de código",
+      "code_block_copy": "Botão de copiar dos blocos de código",
+      "code_block_delete": "Botão de excluir dos blocos de código",
       "share_restrict_users": "Partilha: restringir a utilizadores específicos",
       "share_protocol_toggle": "Partilha: interruptor HTTPS",
       "share_shared_with_me": "Partilha: «Partilhado comigo»",
@@ -1516,7 +1525,8 @@
         "note_actions": "Ações das notas",
         "mobile_editor_bar": "Barra de edição móvel",
         "sidebar": "Barra lateral",
-        "task_lists": "Listas de tarefas"
+        "task_lists": "Listas de tarefas",
+        "code_blocks": "Blocos de código"
       },
       "check_all": "Marcar todos",
       "uncheck_all": "Desmarcar todos",

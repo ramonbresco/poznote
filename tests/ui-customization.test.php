@@ -37,14 +37,28 @@ test('the JS runtime knows every default-hidden key too', function () {
     }
 });
 
-// The bin button of a code block in the markdown preview (issue #1406). Its two
-// neighbours are absolutely positioned at fixed offsets, so hiding it without
-// moving them leaves a 32px hole at the right edge of every code block.
-test('hiding the preview bin button closes the gap it leaves', function () {
+// The bin button of a code block in the markdown preview (issue #1406). Its
+// neighbours close the gap themselves (js/copy-code-on-focus.js stacks the
+// visible controls), so the rule only hides it and pins no offset.
+test('hiding the preview bin button only hides it', function () {
     $rules = poznoteBuildUiCustomizationRules(['panel:preview-code-block-delete']);
     assertContains('.markdown-preview .code-block-delete-btn { display: none !important; }', $rules);
-    assertContains('.markdown-preview .code-block-copy-btn { right: 8px !important; }', $rules);
-    assertContains('.markdown-preview .code-block-line-numbers-btn { right: 40px !important; }', $rules);
+    assertNotContains('right:', $rules);
+});
+
+// Each control of a code block has its own key (discussion 1764). The fold
+// chevron is the one that cannot just go: a folded block would stay folded.
+test('hiding a code block control hides it in every view', function () {
+    $rules = poznoteBuildUiCustomizationRules(['panel:code-block-wrap', 'panel:code-block-delete']);
+    assertContains('.code-block-wrap-btn, .markdown-codemirror-host .cm-live-code-wrap { display: none !important; }', $rules);
+    assertContains('.code-block-delete-btn:not(.markdown-preview *), .markdown-codemirror-host .cm-live-code-delete { display: none !important; }', $rules);
+});
+
+test('hiding the fold chevron unfolds the folded blocks', function () {
+    $rules = poznoteBuildUiCustomizationRules(['panel:code-block-collapse']);
+    assertContains('.code-block-collapse-btn, .code-block-collapsed-summary', $rules);
+    assertContains('.noteentry pre[data-collapsed="1"] > code { max-height: none !important;', $rules);
+    assertContains('.cm-line.cm-live-code-folded { height: auto !important;', $rules);
 });
 
 // The preference stores hidden keys only, so a key that is non-hideable can

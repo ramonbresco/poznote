@@ -962,6 +962,11 @@
       "index_search_bar": "Панель поиска",
       "tasklist_progress_bar": "Индикатор выполнения списков задач",
       "preview_code_block_delete": "Кнопка удаления у блоков кода в режиме предпросмотра markdown",
+      "code_block_collapse": "Кнопка сворачивания блоков кода",
+      "code_block_wrap": "Кнопка переноса строк в блоках кода",
+      "code_block_line_numbers": "Кнопка номеров строк в блоках кода",
+      "code_block_copy": "Кнопка копирования блоков кода",
+      "code_block_delete": "Кнопка удаления блоков кода",
       "share_restrict_users": "Общий доступ: ограничить определёнными пользователями",
       "share_protocol_toggle": "Общий доступ: переключатель HTTPS",
       "share_shared_with_me": "Общий доступ: «Поделились со мной»",
@@ -987,7 +992,8 @@
         "note_actions": "Действия с заметками",
         "mobile_editor_bar": "Мобильная панель редактора",
         "sidebar": "Боковая панель",
-        "task_lists": "Списки задач"
+        "task_lists": "Списки задач",
+        "code_blocks": "Блоки кода"
       },
       "check_all": "Выбрать все",
       "uncheck_all": "Снять все",
@@ -2136,6 +2142,10 @@
     "code_block_line_numbers": {
       "show": "Показать номера строк",
       "hide": "Скрыть номера строк"
+    },
+    "code_block_wrap": {
+      "enable": "Переносить длинные строки",
+      "disable": "Не переносить длинные строки"
     },
     "colors": {
       "none": "Нет"

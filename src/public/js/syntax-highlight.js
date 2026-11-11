@@ -92,7 +92,10 @@
             node.classList.contains('code-block-copy-btn') ||
             node.classList.contains('code-block-delete-btn') ||
             node.classList.contains('code-block-lang-btn') ||
-            node.classList.contains('code-block-line-numbers-btn')
+            node.classList.contains('code-block-line-numbers-btn') ||
+            node.classList.contains('code-block-wrap-btn') ||
+            node.classList.contains('code-block-collapse-btn') ||
+            node.classList.contains('code-block-collapsed-summary')
         )) {
             return '';
         }

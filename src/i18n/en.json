@@ -965,6 +965,11 @@
       "index_search_bar": "Search bar",
       "tasklist_progress_bar": "Task list progress bar",
       "preview_code_block_delete": "Delete button on code blocks, in markdown preview",
+      "code_block_collapse": "Code block fold button",
+      "code_block_wrap": "Code block word wrap button",
+      "code_block_line_numbers": "Code block line numbers button",
+      "code_block_copy": "Code block copy button",
+      "code_block_delete": "Code block delete button",
       "share_restrict_users": "Share: restrict to specific users",
       "share_protocol_toggle": "Share: HTTPS toggle",
       "share_shared_with_me": "Share: \"Shared with me\"",
@@ -990,7 +995,8 @@
         "note_actions": "Note Actions",
         "mobile_editor_bar": "Mobile editor bar",
         "sidebar": "Sidebar",
-        "task_lists": "Task lists"
+        "task_lists": "Task lists",
+        "code_blocks": "Code blocks"
       },
       "badge_all_visible": "All visible",
       "badge_hidden_count_admin": "{{count}} hidden ({{admin}} by the administrator)",
@@ -2134,6 +2140,10 @@
     "code_block_line_numbers": {
       "show": "Show line numbers",
       "hide": "Hide line numbers"
+    },
+    "code_block_wrap": {
+      "enable": "Wrap long lines",
+      "disable": "Do not wrap long lines"
     },
     "colors": {
       "none": "None"

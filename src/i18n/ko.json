@@ -965,6 +965,11 @@
       "index_search_bar": "검색창",
       "tasklist_progress_bar": "할 일 목록 진행 표시줄",
       "preview_code_block_delete": "마크다운 미리보기에서 코드 블록의 삭제 버튼",
+      "code_block_collapse": "코드 블록 접기 버튼",
+      "code_block_wrap": "코드 블록 줄 바꿈 버튼",
+      "code_block_line_numbers": "코드 블록 줄 번호 버튼",
+      "code_block_copy": "코드 블록 복사 버튼",
+      "code_block_delete": "코드 블록 삭제 버튼",
       "share_restrict_users": "공유: 특정 사용자로 제한",
       "share_protocol_toggle": "공유: HTTPS 토글",
       "share_shared_with_me": "공유: \"나와 공유됨\"",
@@ -990,7 +995,8 @@
         "note_actions": "노트 작업",
         "mobile_editor_bar": "모바일 편집기 표시줄",
         "sidebar": "사이드바",
-        "task_lists": "할 일 목록"
+        "task_lists": "할 일 목록",
+        "code_blocks": "코드 블록"
       },
       "badge_all_visible": "모두 표시됨",
       "badge_hidden_count_admin": "{{count}}개 숨김(관리자가 숨긴 항목 {{admin}}개)",
@@ -2134,6 +2140,10 @@
     "code_block_line_numbers": {
       "show": "줄 번호 표시",
       "hide": "줄 번호 숨기기"
+    },
+    "code_block_wrap": {
+      "enable": "긴 줄 바꿈",
+      "disable": "긴 줄 바꾸지 않기"
     },
     "colors": {
       "none": "없음"

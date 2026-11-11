@@ -16,6 +16,7 @@
 // decides whether an embed is trusted, and a missing list made it fatal on any
 // iframe when loaded on its own.
 require_once __DIR__ . '/embed-providers.php';
+require_once __DIR__ . '/code-block-controls.php';
 
 /**
  * Decide whether an iframe `src` points at a trusted origin.
@@ -335,6 +336,10 @@ function sanitizeHtml($html) {
             $anchor->parentNode->removeChild($anchor);
         }
     }
+
+    // The controls drawn around a code block are runtime UI too
+    // (lib/code-block-controls.php)
+    poznoteRemoveCodeBlockControls($xpath);
 
     // Embedded task-list widgets are runtime UI rebuilt by tasklist-embed.js
     // from the persisted marker; only the marker div and its fallback link

@@ -94,7 +94,8 @@ pre.code-block .code-block-delete-btn,
 .noteentry pre .code-block-delete-btn,
 .code-block-line-numbers-btn,
 pre.code-block .code-block-line-numbers-btn,
-.noteentry pre .code-block-line-numbers-btn {
+.noteentry pre .code-block-line-numbers-btn,
+.code-block-wrap-btn {
     position: absolute;
     top: 2px;
     width: 28px;
@@ -127,6 +128,14 @@ pre.code-block .code-block-line-numbers-btn,
     right: 72px;
 }
 
+/* Word wrap of this one block (js/copy-code-on-focus.js), left of the line
+   numbers. Inside a note the script stacks the visible controls from the
+   right itself (layoutCodeBlockActions), any of them can be hidden from
+   Element visibility; these offsets are where they stand before it runs. */
+.code-block-wrap-btn {
+    right: 104px;
+}
+
 .code-block-delete-btn,
 pre.code-block .code-block-delete-btn,
 .noteentry pre .code-block-delete-btn {
@@ -136,7 +145,8 @@ pre.code-block .code-block-delete-btn,
 
 .code-block-copy-btn:hover,
 .code-block-delete-btn:hover,
-.code-block-line-numbers-btn:hover {
+.code-block-line-numbers-btn:hover,
+.code-block-wrap-btn:hover {
     opacity: 1;
     transform: scale(1.05);
 }
@@ -179,7 +189,8 @@ pre.code-block .code-block-delete-btn,
 
 .code-block-copy-btn:active,
 .code-block-delete-btn:active,
-.code-block-line-numbers-btn:active {
+.code-block-line-numbers-btn:active,
+.code-block-wrap-btn:active {
     transform: scale(0.95);
 }
 
@@ -192,14 +203,16 @@ pre.code-block .code-block-delete-btn,
 
 .code-block-copy-btn svg,
 .code-block-delete-btn svg,
-.code-block-line-numbers-btn svg {
+.code-block-line-numbers-btn svg,
+.code-block-wrap-btn svg {
     width: 14px;
     height: 14px;
 }
 
 .code-block-actions-host > .code-block-copy-btn,
 .code-block-actions-host > .code-block-delete-btn,
-.code-block-actions-host > .code-block-line-numbers-btn {
+.code-block-actions-host > .code-block-line-numbers-btn,
+.code-block-actions-host > .code-block-wrap-btn {
     width: 28px;
     height: 28px;
     padding: 0 !important;
@@ -215,12 +228,14 @@ pre.code-block .code-block-delete-btn,
 
 .code-block-actions-host > .code-block-copy-btn:hover,
 .code-block-actions-host > .code-block-delete-btn:hover,
-.code-block-actions-host > .code-block-line-numbers-btn:hover {
+.code-block-actions-host > .code-block-line-numbers-btn:hover,
+.code-block-actions-host > .code-block-wrap-btn:hover {
     opacity: 1;
 }
 
 .code-block-actions-host > .code-block-copy-btn:hover,
-.code-block-actions-host > .code-block-line-numbers-btn:hover {
+.code-block-actions-host > .code-block-line-numbers-btn:hover,
+.code-block-actions-host > .code-block-wrap-btn:hover {
     color: var(--pz-text-strong);
 }
 
@@ -230,7 +245,8 @@ pre.code-block .code-block-delete-btn,
 
 .code-block-actions-host > .code-block-copy-btn svg,
 .code-block-actions-host > .code-block-delete-btn svg,
-.code-block-actions-host > .code-block-line-numbers-btn svg {
+.code-block-actions-host > .code-block-line-numbers-btn svg,
+.code-block-actions-host > .code-block-wrap-btn svg {
     width: 14px;
     height: 14px;
 }
@@ -247,16 +263,20 @@ pre.code-block .code-block-delete-btn,
     .noteentry pre .code-block-line-numbers-btn,
     .code-block-actions-host > .code-block-copy-btn,
     .code-block-actions-host > .code-block-delete-btn,
-    .code-block-actions-host > .code-block-line-numbers-btn {
+    .code-block-actions-host > .code-block-line-numbers-btn,
+    .code-block-wrap-btn {
         top: 2px;
     }
 }
 
-/* Additional specific rule to ensure padding is applied */
+/* Additional specific rule to ensure padding is applied. The top holds the
+   language badge and the row of buttons, which end 30px down: 6px more keep
+   the first line of code off them. */
 .noteentry pre,
 pre.code-block,
 .code-block {
     padding: 30px !important;
+    padding-top: 36px !important;
     padding-bottom: 20px !important;
 }
 
@@ -488,6 +508,36 @@ body.code-block-no-wrap .noteentry div[style*='monospace'] {
     white-space: pre !important;
     word-wrap: normal !important;
     overflow-wrap: normal !important;
+}
+
+/* ============================================
+   Word wrap of ONE block (discussion 1764)
+   The button in a block's corner (js/copy-code-on-focus.js) writes
+   data-code-wrap on the block's action host: "0" lets the long lines of that
+   block run and the block scroll sideways, "1" wraps them, whatever the
+   account's setting says for the others. No attribute: the block follows the
+   setting, through the rules above. The mark is on the host, which is taken
+   away before a note is stored, so the choice never travels with the note.
+   ============================================ */
+.noteentry .code-block-actions-host[data-code-wrap="0"] > :is(pre, .code-block) {
+    white-space: pre !important;
+    word-wrap: normal !important;
+    overflow-wrap: normal !important;
+    overflow-x: auto !important;
+}
+
+.noteentry .code-block-actions-host[data-code-wrap="0"] > :is(pre, .code-block) code {
+    white-space: pre !important;
+    word-wrap: normal !important;
+    overflow-wrap: normal !important;
+}
+
+/* (heavier than the body.code-block-no-wrap rules above, which they undo) */
+body .noteentry .code-block-actions-host[data-code-wrap="1"] > :is(pre, .code-block),
+body .noteentry .code-block-actions-host[data-code-wrap="1"] > :is(pre, .code-block) code {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 /* ── Desktop scrollbar for code blocks ─────────────────────────────────── */
