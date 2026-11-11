@@ -1526,6 +1526,12 @@
     padding: 24px;
 }
 
+/* Focused by script on opening (js/whats-new.js), only to move focus into
+   the dialog: no ring around the whole box */
+#whatsNewModal .whats-new-content:focus {
+    outline: none;
+}
+
 #whatsNewModal .whats-new-header h3 {
     margin: 0 0 6px;
     font-size: 20px;

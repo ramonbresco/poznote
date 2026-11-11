@@ -155,8 +155,11 @@
         }
 
         modal.style.display = 'flex';
-        var closeBtn = document.getElementById('whatsNewClose');
-        if (closeBtn) closeBtn.focus();
+        // Focus goes to the dialog itself, not to Close: a focused button
+        // opens with a focus ring (Chrome draws it for a focus made by script
+        // before any click), and Escape is handled at document level anyway
+        var content = modal.querySelector('.whats-new-content');
+        if (content) content.focus({ preventScroll: true });
     }
 
     function putSetting(key, value) {
