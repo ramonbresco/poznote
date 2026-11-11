@@ -2461,7 +2461,7 @@
         }
     }
 
-    function openEmojiForInput(input) {
+    function openEmojiForInput(input, kind) {
         if (!isTextFieldElement(input)) return;
 
         input.focus();
@@ -2473,10 +2473,11 @@
 
         pauseTaskEditBlurSave(input);
 
-        if (typeof window.toggleEmojiPicker === 'function') {
-            setTimeout(() => window.toggleEmojiPicker(), 0);
+        const open = (kind === 'symbols') ? window.toggleSymbolPicker : window.toggleEmojiPicker;
+        if (typeof open === 'function') {
+            setTimeout(() => open(), 0);
         } else {
-            // Emoji picker unavailable — release the blur-save lock immediately.
+            // Picker unavailable — release the blur-save lock immediately.
             resumeTaskEditBlurSave(input);
         }
     }
@@ -2597,6 +2598,14 @@
                     openEmojiForInput(savedEditableElement);
                 }
             },
+            {
+                id: 'symbols',
+                icon: 'lucide-sigma',
+                label: t('slash_menu.symbols', null, 'Symbols'),
+                action: function () {
+                    openEmojiForInput(savedEditableElement, 'symbols');
+                }
+            },
             buildDateSection(t, function (request) {
                 openDateForInput(savedEditableElement, request);
             }, false)
@@ -2614,6 +2623,14 @@
                 label: t('slash_menu.emoji', null, 'Emoji'),
                 action: function () {
                     openEmojiForInput(savedEditableElement);
+                }
+            },
+            {
+                id: 'symbols',
+                icon: 'lucide-sigma',
+                label: t('slash_menu.symbols', null, 'Symbols'),
+                action: function () {
+                    openEmojiForInput(savedEditableElement, 'symbols');
                 }
             },
             buildDateSection(t, function (request) {
@@ -2953,6 +2970,21 @@
                     }
                 }
             },
+            // Scientific and technical characters (m², μ, ±, →). Offered on
+            // mobile too, unlike the emoji grid above: a phone keyboard has
+            // emoji of its own, but none of these.
+            symbols: {
+                id: 'symbols',
+                icon: 'lucide-sigma',
+                label: t('slash_menu.symbols', null, 'Symbols'),
+                action: function () {
+                    if (typeof window.toggleSymbolPicker === 'function') {
+                        // Let the focus and the selection settle after the slash
+                        // deletion, as the emoji entry above does.
+                        setTimeout(() => window.toggleSymbolPicker(), 10);
+                    }
+                }
+            },
             noteReference: {
                 id: 'note-reference',
                 icon: 'lucide lucide-at',
@@ -3181,6 +3213,7 @@
                     },
                     common.recordAudio,
                     common.emoji,
+                    common.symbols,
                     {
                         id: 'table',
                         icon: 'lucide-table',
@@ -3558,6 +3591,7 @@
                     },
                     common.recordAudio,
                     common.emoji,
+                    common.symbols,
                     {
                         id: 'table',
                         icon: 'lucide-table',

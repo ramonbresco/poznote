@@ -296,6 +296,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:media" checked><span><?php echo t_h('slash_menu.media', [], 'Media'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:toggle" checked><span><?php echo t_h('slash_menu.toggle', [], 'Toggle'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:emoji" checked><span><?php echo t_h('slash_menu.emoji', [], 'Emoji'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:symbols" checked><span><?php echo t_h('slash_menu.symbols', [], 'Symbols'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:date" checked><span><?php echo t_h('slash_menu.date_section', [], 'Calendar and time'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:now" checked><span><?php echo t_h('slash_menu.date_section', [], 'Calendar and time') . ' › ' . t_h('slash_menu.now', [], 'Now'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:relative-date" checked><span><?php echo t_h('slash_menu.date_section', [], 'Calendar and time') . ' › ' . t_h('slash_menu.relative_date', [], 'Relative'); ?></span></label>

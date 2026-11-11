@@ -84,3 +84,47 @@
 .emoji-picker::-webkit-scrollbar-thumb:hover {
     background: var(--pz-scrollbar-hover);
 }
+
+/* SYMBOL PICKER
+   The same popup holding scientific characters instead of emoji
+   (js/toolbar-emoji.js). Narrower glyphs, so more of them per row, and each
+   group carries a label since nothing else says what a column of
+   superscripts is. */
+
+.symbol-picker .emoji-category {
+    /* Six groups, so every pixel here is paid six times: at 8px the last one
+       fell ten pixels below the fold on a 900px-tall screen. */
+    padding: 6px 0;
+}
+
+.symbol-picker .char-group-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--pz-text-subtle);
+    padding: 0 15px 6px;
+    user-select: none;
+}
+
+.symbol-picker .emoji-grid {
+    /* Fourteen to a row: every group then takes two or three rows instead of
+       four or five, so most of the six fit in the popup without scrolling. */
+    grid-template-columns: repeat(14, 1fr);
+    gap: 2px;
+    padding: 0 12px;
+}
+
+.symbol-picker .emoji-item {
+    font-size: 18px;
+    width: 100%;
+    height: 28px;
+    /* A superscript or subscript glyph is drawn small inside its em box, so
+       the cell needs a fixed height to stay on the grid of its neighbours. */
+    line-height: 1;
+}
+
+.symbol-picker .emoji-item:hover {
+    /* The emoji grid above hardcodes a pale blue; the theme token is what the
+       rest of the app uses for a hovered row and it works in dark mode too. */
+    background-color: var(--pz-surface-hover);
+}
