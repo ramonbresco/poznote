@@ -686,6 +686,7 @@
             entry.querySelectorAll('input, textarea, select, button').forEach(function (element) {
                 setTemporarilyDisabled(element, true);
             });
+            syncMarkdownEditorReadOnly(entry);
 
             if (document.activeElement && entry.contains(document.activeElement)) {
                 document.activeElement.blur();
@@ -728,6 +729,20 @@
             entry.querySelectorAll('input, textarea, select, button').forEach(function (element) {
                 setTemporarilyDisabled(element, true);
             });
+            syncMarkdownEditorReadOnly(entry);
+        }
+    }
+
+    // CodeMirror owns the contenteditable of its .cm-content and writes it
+    // back from its own state at its next update, so forcing the attribute
+    // above does not hold: a tap in a Markdown note locked while its editor
+    // was up focused the editor, opened the keyboard and took input. The
+    // editor is made read-only through its own state instead (readOnly +
+    // editable facets), which the note-load path already does for a note
+    // that opens locked.
+    function syncMarkdownEditorReadOnly(entry) {
+        if (isMarkdownEntry(entry) && typeof window.syncMarkdownEditorEditableState === 'function') {
+            window.syncMarkdownEditorEditableState(entry);
         }
     }
 
