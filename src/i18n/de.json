@@ -1079,6 +1079,9 @@
   "tasklist": {
     "open_tasks_page": "Alle Aufgaben anzeigen",
     "input_placeholder": "Neue Aufgabe schreiben und Enter drücken, um sie zur Liste hinzuzufügen...",
+    "add_row_placeholder": "Aufgabe hinzufügen",
+    "completed_section_one": "1 erledigte Aufgabe",
+    "completed_section_other": "{{count}} erledigte Aufgaben",
     "drag_to_reorder": "Zum Neuanordnen ziehen",
     "add_to_top": "Neue Aufgaben oben hinzufügen",
     "add_to_bottom": "Neue Aufgaben unten hinzufügen",

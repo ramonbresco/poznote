@@ -612,6 +612,9 @@
   "tasklist": {
     "open_tasks_page": "すべてのタスクを表示",
     "input_placeholder": "新しいタスクを入力し、Enterで追加...",
+    "add_row_placeholder": "タスクを追加",
+    "completed_section_one": "完了したタスク 1 件",
+    "completed_section_other": "完了したタスク {{count}} 件",
     "drag_to_reorder": "ドラッグして並べ替え",
     "add_to_top": "新しいタスクを先頭に追加",
     "add_to_bottom": "新しいタスクを末尾に追加",

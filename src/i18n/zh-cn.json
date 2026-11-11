@@ -1078,6 +1078,9 @@
   "tasklist": {
     "open_tasks_page": "查看所有任务",
     "input_placeholder": "输入新任务并按回车键添加到列表...",
+    "add_row_placeholder": "添加任务",
+    "completed_section_one": "1 个已完成任务",
+    "completed_section_other": "{{count}} 个已完成任务",
     "drag_to_reorder": "拖动以重新排序",
     "add_to_top": "在顶部添加新任务",
     "add_to_bottom": "在底部添加新任务",

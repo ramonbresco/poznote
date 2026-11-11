@@ -612,6 +612,9 @@
   "tasklist": {
     "open_tasks_page": "모든 할 일 보기",
     "input_placeholder": "새 할 일을 작성하고 Enter를 눌러 목록에 추가하세요...",
+    "add_row_placeholder": "작업 추가",
+    "completed_section_one": "완료된 작업 1개",
+    "completed_section_other": "완료된 작업 {{count}}개",
     "drag_to_reorder": "드래그하여 재정렬하세요.",
     "add_to_top": "새 할 일을 상단에 추가",
     "add_to_bottom": "새 할 일을 하단에 추가",

@@ -612,6 +612,9 @@
   "tasklist": {
     "open_tasks_page": "View all tasks",
     "input_placeholder": "Write a new task and press Enter to add to list...",
+    "add_row_placeholder": "Add a task",
+    "completed_section_one": "1 completed task",
+    "completed_section_other": "{{count}} completed tasks",
     "drag_to_reorder": "Drag to reorder",
     "add_to_top": "Add new tasks to top",
     "add_to_bottom": "Add new tasks to bottom",

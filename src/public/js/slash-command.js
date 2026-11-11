@@ -2432,9 +2432,11 @@
     }
 
     // The textarea of the "Edit task" dialog (js/tasklist-edit-modal.js), which
-    // also edits subtasks and the tasks of an embedded list
+    // also edits subtasks and the tasks of an embedded list, and the textarea of
+    // the empty "add a task" row of a task list (js/tasklist-render.js)
     function isTaskEditTextarea(el) {
-        return !!(el && el.tagName === 'TEXTAREA' && el.id === 'taskEditTextarea');
+        return !!(el && el.tagName === 'TEXTAREA' && (el.id === 'taskEditTextarea'
+            || (el.classList && el.classList.contains('task-input'))));
     }
 
     // Plain text fields the menu opens in (title, task fields): their caret is
@@ -2452,13 +2454,13 @@
     }
 
     function pauseTaskEditBlurSave(input) {
-        if (input && input.classList && (input.classList.contains('task-edit-input') || input.classList.contains('task-subitem-input')) && typeof window.pauseTaskEditBlurSave === 'function') {
+        if (input && input.classList && (input.classList.contains('task-edit-input') || input.classList.contains('task-subitem-input') || input.classList.contains('task-input')) && typeof window.pauseTaskEditBlurSave === 'function') {
             window.pauseTaskEditBlurSave(input);
         }
     }
 
     function resumeTaskEditBlurSave(input) {
-        if (input && input.classList && (input.classList.contains('task-edit-input') || input.classList.contains('task-subitem-input')) && typeof window.resumeTaskEditBlurSave === 'function') {
+        if (input && input.classList && (input.classList.contains('task-edit-input') || input.classList.contains('task-subitem-input') || input.classList.contains('task-input')) && typeof window.resumeTaskEditBlurSave === 'function') {
             window.resumeTaskEditBlurSave(input);
         }
     }

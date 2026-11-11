@@ -226,6 +226,7 @@ function toggleTaskInsertOrder() {
                 .then(() => {
                     // Keep the cached preference used by addTask() in sync
                     cachedTasklistInsertOrder = newOrder;
+                    placeAllTaskAddRows();
 
                     // Update button appearance
                     updateTaskInsertOrderButton(newOrder);
@@ -354,7 +355,7 @@ function attachDesktopDragHandlers(tasksList, noteId) {
 
         const listEl = document.getElementById(`tasks-list-${noteId}`);
         if (listEl) {
-            listEl.innerHTML = renderTasks(tasks, noteId);
+            renderTasksInto(listEl, tasks, noteId);
             setTimeout(() => enableDragAndDrop(noteId), 0);
         }
 
@@ -482,7 +483,7 @@ function attachMobilePointerDragHandlers(tasksList, noteId) {
                     noteEntry.dataset.tasklistJson = JSON.stringify(newTasks);
                     const listEl = document.getElementById(`tasks-list-${state.noteId}`);
                     if (listEl) {
-                        listEl.innerHTML = renderTasks(newTasks, state.noteId);
+                        renderTasksInto(listEl, newTasks, state.noteId);
                         setTimeout(() => enableDragAndDrop(state.noteId), 0);
                     }
                     markTaskListAsModified(state.noteId);
@@ -515,6 +516,9 @@ function enableDragAndDrop(noteId) {
             const sortable = new Sortable(tasksList, {
                 animation: 150,
                 handle: '.task-drag-handle', // Only allow dragging by the hamburger handle
+                // Only task rows count: the empty "add a task" row sits among
+                // them, so indexes are read from oldDraggableIndex/newDraggableIndex
+                draggable: '.task-item',
                 onStart: function(evt) {
                     // Add dragging class for visual feedback
                     evt.item.classList.add('dragging');
@@ -529,9 +533,13 @@ function enableDragAndDrop(noteId) {
 
                     let tasks = parseTaskData(noteEntry);
 
-                    const oldIndex = evt.oldIndex;
-                    const newIndex = evt.newIndex;
-                    if (typeof oldIndex !== 'number' || typeof newIndex !== 'number' || oldIndex === newIndex) return;
+                    const oldIndex = evt.oldDraggableIndex;
+                    const newIndex = evt.newDraggableIndex;
+                    if (typeof oldIndex !== 'number' || typeof newIndex !== 'number' || oldIndex === newIndex) {
+                        // Dropped back in place, but maybe on the other side of the add row
+                        placeTaskAddRow(noteId);
+                        return;
+                    }
 
                     const [moved] = tasks.splice(oldIndex, 1);
                     tasks.splice(newIndex, 0, moved);
@@ -540,6 +548,10 @@ function enableDragAndDrop(noteId) {
                     noteEntry.dataset.tasklistJson = JSON.stringify(tasks);
 
                     // sortable moved
+
+                    // The task may now sit below the add row (or the last open
+                    // task above it): put the row back where the next task goes
+                    placeTaskAddRow(noteId);
 
                     // Mark note modified so it gets saved
                     markTaskListAsModified(noteId);
@@ -604,8 +616,9 @@ function enableDragAndDrop(noteId) {
 // Listen for i18n loaded event to update task input placeholders
 document.addEventListener('poznote:i18n:loaded', function() {
     // Update all task input placeholders with translations
-    document.querySelectorAll('.task-input').forEach(function(input) {
-        input.placeholder = window.t ? window.t('tasklist.input_placeholder', null, 'Write a new task and press enter to add it to the list...') : 'Write a new task and press enter to add it to the list...';
+    document.querySelectorAll('.task-add-row .task-input').forEach(function(input) {
+        input.placeholder = taskAddRowPlaceholder();
+        input.setAttribute('aria-label', input.placeholder);
     });
     
     // Update task insert order button

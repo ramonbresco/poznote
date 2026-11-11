@@ -216,7 +216,7 @@
         if (
             savedEditableElement &&
             savedEditableElement.classList &&
-            (savedEditableElement.classList.contains('task-edit-input') || savedEditableElement.classList.contains('task-subitem-input')) &&
+            (savedEditableElement.classList.contains('task-edit-input') || savedEditableElement.classList.contains('task-subitem-input') || savedEditableElement.classList.contains('task-input')) &&
             typeof window.resumeTaskEditBlurSave === 'function'
         ) {
             window.resumeTaskEditBlurSave(savedEditableElement);

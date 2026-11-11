@@ -1079,6 +1079,9 @@
   "tasklist": {
     "open_tasks_page": "Ver todas las tareas",
     "input_placeholder": "Escribe una nueva tarea y presiona enter para agregarla a la lista...",
+    "add_row_placeholder": "Añadir una tarea",
+    "completed_section_one": "1 tarea completada",
+    "completed_section_other": "{{count}} tareas completadas",
     "drag_to_reorder": "Arrastrar para reordenar",
     "add_to_top": "Agregar nuevas tareas arriba",
     "add_to_bottom": "Agregar nuevas tareas abajo",

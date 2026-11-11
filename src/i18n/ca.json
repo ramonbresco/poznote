@@ -612,6 +612,9 @@
   "tasklist": {
     "open_tasks_page": "Mostra totes les tasques",
     "input_placeholder": "Escriviu una tasca nova i premeu Retorn per afegir-la a la llista...",
+    "add_row_placeholder": "Afegeix una tasca",
+    "completed_section_one": "1 tasca completada",
+    "completed_section_other": "{{count}} tasques completades",
     "drag_to_reorder": "Arrossegueu per reordenar",
     "add_to_top": "Afegeix les tasques noves a dalt",
     "add_to_bottom": "Afegeix les tasques noves a baix",

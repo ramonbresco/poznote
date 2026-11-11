@@ -610,6 +610,9 @@
   "tasklist": {
     "open_tasks_page": "Показать все задачи",
     "input_placeholder": "Напишите новую задачу и нажмите Enter, чтобы добавить в список...",
+    "add_row_placeholder": "Добавить задачу",
+    "completed_section_one": "Выполнено задач: 1",
+    "completed_section_other": "Выполнено задач: {{count}}",
     "drag_to_reorder": "Перетащите, чтобы изменить порядок",
     "add_to_top": "Добавлять новые задачи в начало",
     "add_to_bottom": "Добавлять новые задачи в конец",

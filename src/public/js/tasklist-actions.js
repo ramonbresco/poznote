@@ -26,6 +26,9 @@ function deleteTask(taskId, noteId) {
     // Ensure DnD state is consistent after deletion
     enableDragAndDrop(noteId);
 
+    // The completed header counts the task that just went (or goes with it)
+    if (typeof placeTaskAddRow === 'function') placeTaskAddRow(noteId);
+
     updateTaskListProgress(noteId, tasks);
 
     markTaskListAsModified(noteId);
