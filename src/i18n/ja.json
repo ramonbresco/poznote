@@ -1036,7 +1036,8 @@
       "tasklist_delete": "タスクの削除",
       "tasklist_menu": "タスクのオプションメニュー（モバイル）",
       "tasklist_frame_color": "タスクの枠の優先度の色",
-      "note_id": "ノート ID を表示"
+      "note_id": "ノート ID を表示",
+      "backlinks_mentions": "各バックリンクの前後のテキスト"
     },
     "icon_sidebar_order": {
       "title": "アイコンサイドバーのレイアウト",
@@ -3804,7 +3805,13 @@
     }
   },
   "backlinks": {
-    "title": "バックリンク"
+    "title": "バックリンク",
+    "mentions": {
+      "show": "各リンクの前後のテキストを表示",
+      "hide": "各リンクの前後のテキストを非表示",
+      "no_context": "これらのリンクの周囲に表示できるテキストがありません。",
+      "failed": "コンテキストを読み込めませんでした。"
+    }
   },
   "multiuser": {
     "acting_as": "{{user}}として操作中",

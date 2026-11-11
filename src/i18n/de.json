@@ -1562,7 +1562,8 @@
       "tasklist_delete": "Aufgabe löschen",
       "tasklist_menu": "Menü der Aufgabenoptionen (Mobil)",
       "tasklist_frame_color": "Prioritätsfarbe des Aufgabenrahmens",
-      "note_id": "Notiz-ID anzeigen"
+      "note_id": "Notiz-ID anzeigen",
+      "backlinks_mentions": "Text um jeden Backlink"
     },
     "icon_sidebar_order": {
       "title": "Layout der Icon-Seitenleiste",
@@ -4310,7 +4311,13 @@
     }
   },
   "backlinks": {
-    "title": "Backlinks"
+    "title": "Backlinks",
+    "mentions": {
+      "show": "Text um jeden Link anzeigen",
+      "hide": "Text um jeden Link ausblenden",
+      "no_context": "Kein Text um diese Links vorhanden.",
+      "failed": "Der Kontext konnte nicht geladen werden."
+    }
   },
   "profile": {
     "card": "Mein Profil",

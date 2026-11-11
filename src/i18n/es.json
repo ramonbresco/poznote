@@ -1562,7 +1562,8 @@
       "tasklist_delete": "Eliminar una tarea",
       "tasklist_menu": "Menú de opciones de la tarea (móvil)",
       "tasklist_frame_color": "Color de prioridad del marco de las tareas",
-      "note_id": "Mostrar el identificador de la nota"
+      "note_id": "Mostrar el identificador de la nota",
+      "backlinks_mentions": "Texto alrededor de cada retroenlace"
     },
     "icon_sidebar_order": {
       "title": "Diseño de la barra de iconos",
@@ -4311,7 +4312,13 @@
     }
   },
   "backlinks": {
-    "title": "Backlinks"
+    "title": "Backlinks",
+    "mentions": {
+      "show": "Mostrar el texto alrededor de cada enlace",
+      "hide": "Ocultar el texto alrededor de cada enlace",
+      "no_context": "No hay texto que mostrar alrededor de estos enlaces.",
+      "failed": "No se pudo cargar el contexto."
+    }
   },
   "profile": {
     "card": "Mi perfil",

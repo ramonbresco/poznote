@@ -1562,7 +1562,8 @@
       "tasklist_delete": "Excluir uma tarefa",
       "tasklist_menu": "Menu de opções da tarefa (celular)",
       "tasklist_frame_color": "Cor de prioridade da moldura das tarefas",
-      "note_id": "Mostrar o identificador da nota"
+      "note_id": "Mostrar o identificador da nota",
+      "backlinks_mentions": "Texto à volta de cada backlink"
     },
     "icon_sidebar_order": {
       "title": "Layout da barra de ícones",
@@ -4311,7 +4312,13 @@
     }
   },
   "backlinks": {
-    "title": "Backlinks"
+    "title": "Backlinks",
+    "mentions": {
+      "show": "Mostrar o texto à volta de cada link",
+      "hide": "Ocultar o texto à volta de cada link",
+      "no_context": "Nenhum texto para mostrar à volta destes links.",
+      "failed": "Não foi possível carregar o contexto."
+    }
   },
   "profile": {
     "card": "Meu perfil",

@@ -504,6 +504,10 @@ function poznotePanelUiSelectors(): array {
         // legacy hide_folder_counts hover-reveal is gone).
         'folder-note-count' => '.folder-note-count',
         'tasklist-progress' => '.tasklist-progress',
+        // The text around each backlink (discussion #1761, js/backlinks.js):
+        // the passages the row unfolds, and the chevron that unfolds them.
+        // The row of linking notes itself stays.
+        'backlinks-mentions' => '.backlinks-mentions, .backlinks-mentions-toggle',
         // The parts of the speed dial repeated on each tile, and the
         // workspace chip its page shares with others (issue #1714)
         'speed-dial-workspace' => '.speed-dial-container .poznote-page-title-workspace',

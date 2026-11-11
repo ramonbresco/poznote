@@ -1036,7 +1036,8 @@
       "tasklist_delete": "Delete a task",
       "tasklist_menu": "Task options menu (mobile)",
       "tasklist_frame_color": "Priority colour of the task frame",
-      "note_id": "Show the note id"
+      "note_id": "Show the note id",
+      "backlinks_mentions": "Text around each backlink"
     },
     "icon_sidebar_order": {
       "title": "Icon sidebar layout",
@@ -3804,7 +3805,13 @@
     }
   },
   "backlinks": {
-    "title": "Backlinks"
+    "title": "Backlinks",
+    "mentions": {
+      "show": "Show the text around each link",
+      "hide": "Hide the text around each link",
+      "no_context": "No text to show around these links.",
+      "failed": "Could not load the context."
+    }
   },
   "multiuser": {
     "acting_as": "acting as {{user}}",

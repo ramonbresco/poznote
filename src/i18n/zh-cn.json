@@ -1560,7 +1560,8 @@
       "tasklist_delete": "删除任务",
       "tasklist_menu": "任务选项菜单（移动端）",
       "tasklist_frame_color": "任务边框的优先级颜色",
-      "note_id": "显示笔记 ID"
+      "note_id": "显示笔记 ID",
+      "backlinks_mentions": "每个反向链接周围的文字"
     },
     "icon_sidebar_order": {
       "title": "图标侧边栏布局",
@@ -4407,7 +4408,13 @@
     }
   },
   "backlinks": {
-    "title": "反向链接"
+    "title": "反向链接",
+    "mentions": {
+      "show": "显示每个链接周围的文字",
+      "hide": "隐藏每个链接周围的文字",
+      "no_context": "这些链接周围没有可显示的文字。",
+      "failed": "无法加载上下文。"
+    }
   },
   "profile": {
     "card": "我的资料",

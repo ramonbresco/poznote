@@ -454,6 +454,9 @@
         'favorites-folder': '.favorites-section',
         'folder-note-count': '.folder-note-count',
         'tasklist-progress': '.tasklist-progress',
+        // The text around each backlink (js/backlinks.js): the passages the
+        // row unfolds and the chevron that unfolds them, never the row.
+        'backlinks-mentions': '.backlinks-mentions, .backlinks-mentions-toggle',
         'speed-dial-workspace': '.speed-dial-container .poznote-page-title-workspace',
         'speed-dial-edit': '.speed-dial-edit',
         'speed-dial-labels': '.speed-dial-label',

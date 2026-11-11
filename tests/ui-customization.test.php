@@ -59,6 +59,24 @@ test('a default-hidden key is not also listed as non-hideable', function () {
     }
 });
 
+// The "Mentions" block under a note (discussion #1761) is visible by default,
+// so the two tests above never reach it; both copies of the rule builder still
+// have to know the key, or the block flashes in and out as the panel saves.
+test('the text around each backlink can be hidden from both copies', function () {
+    // The chevron goes with the passages it unfolds, or it would be left
+    // opening nothing; the row of linking notes is not touched.
+    $rules = poznoteBuildUiCustomizationRules(['panel:backlinks-mentions']);
+    assertContains('.backlinks-mentions, .backlinks-mentions-toggle { display: none !important; }', $rules);
+    assertNotContains('.backlinks-row', $rules);
+
+    $js = file_get_contents(dirname(__DIR__) . '/src/public/js/ui-customization.js');
+    assertContains("'backlinks-mentions': '.backlinks-mentions, .backlinks-mentions-toggle'", $js);
+
+    // And the panel offers the box, or the key is hidden with no way back
+    $sections = file_get_contents(dirname(__DIR__) . '/src/modals/ui_customization_sections.php');
+    assertContains('data-ui-key="panel:backlinks-mentions"', $sections);
+});
+
 // The icon that copies a link to a section (discussion #1758) is visible by
 // default too, and it is drawn in two places at once: the heading the pointer
 // is on and the outline rows. One key hides both, so both selectors have to

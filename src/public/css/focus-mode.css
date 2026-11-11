@@ -66,7 +66,8 @@
     html.focus-mode #right_col .innernote > .note-title-heading,
     html.focus-mode #right_col .innernote > .note-tags-row,
     html.focus-mode #right_col .innernote > .note-attachments-row:has(~ .noteentry),
-    html.focus-mode #right_col .innernote > .backlinks-row:has(~ .noteentry) {
+    html.focus-mode #right_col .innernote > .backlinks-row:has(~ .noteentry),
+    html.focus-mode #right_col .innernote > .backlinks-mentions:has(~ .noteentry) {
         display: none !important;
     }
 }

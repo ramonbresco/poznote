@@ -1562,7 +1562,8 @@
       "tasklist_delete": "Supprimer une tâche",
       "tasklist_menu": "Menu des options de tâche (mobile)",
       "tasklist_frame_color": "Couleur de priorité du cadre des tâches",
-      "note_id": "Afficher l'identifiant de la note"
+      "note_id": "Afficher l'identifiant de la note",
+      "backlinks_mentions": "Texte autour de chaque backlink"
     },
     "icon_sidebar_order": {
       "title": "Disposition de la barre d'icônes",
@@ -4415,7 +4416,13 @@
     }
   },
   "backlinks": {
-    "title": "Backlinks"
+    "title": "Backlinks",
+    "mentions": {
+      "show": "Afficher le texte autour de chaque lien",
+      "hide": "Masquer le texte autour de chaque lien",
+      "no_context": "Aucun texte à afficher autour de ces liens.",
+      "failed": "Impossible de charger le contexte."
+    }
   },
   "profile": {
     "card": "Mon profil",
