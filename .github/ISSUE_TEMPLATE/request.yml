@@ -1,0 +1,32 @@
+
+name: 📝 Issue / Feature request
+description: Report a bug or suggest an improvement
+title: ""
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 👋 A little note before posting
+
+        Hi! I'm Tim, the developer behind Poznote. 😊
+
+        Just a friendly reminder that **there's a real human being behind this project**, working on it in his free time.
+
+        I love receiving suggestions and improving Poznote, but sometimes requests come without even a "Hello" or a "Please", and after implementing them, I never hear back.
+
+        I'm not asking for much, just a little kindness and human interaction. ❤️
+
+        - 👋 **Say hello and be polite.** I'm a person, not a support bot. 😊
+        - 💬 **Please follow up.** If I've fixed something or implemented your suggestion, let me know if it works for you. A simple "Thank you" means a lot!
+        - ✅ **Close your own issues** once you're happy with the solution.
+
+        Thanks for understanding and being part of Poznote! ❤️
+
+  - type: textarea
+    id: request
+    attributes:
+      label: 📝 Your request
+      description: Describe your bug, question, or suggestion.
+      placeholder: "Hello! I'd like to suggest..."
+    validations:
+      required: true
