@@ -955,6 +955,7 @@ if (poznoteMarkdownColoredEnabled($markdownColoredTheme)) {
     <!-- No KaTeX auto-render: renderMathInElement comes from js/math-renderer.js, which renders the .math-block/.math-inline spans the parser emits -->
     <script src="<?php echo poznoteAsset('js/highlight/highlight.min.js'); ?>"></script>
     <script src="<?php echo poznoteAsset('js/highlight/powershell.min.js'); ?>"></script>
+    <script src="<?php echo poznoteAsset('js/hljs-config-languages.js'); ?>"></script>
     <script src="<?php echo poznoteAsset('js/syntax-highlight.js'); ?>"></script>
 </head>
 <body class="<?php echo htmlspecialchars($publicBodyClasses, ENT_QUOTES); ?>"<?php echo $publicBodyStyle !== '' ? ' style="' . htmlspecialchars($publicBodyStyle, ENT_QUOTES) . '"' : ''; ?> data-task-access-mode="<?php echo htmlspecialchars($taskAccessMode, ENT_QUOTES); ?>">

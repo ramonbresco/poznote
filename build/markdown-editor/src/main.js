@@ -23,6 +23,7 @@ import { csharp } from '@codemirror/legacy-modes/mode/clike'
 import { powerShell } from '@codemirror/legacy-modes/mode/powershell'
 import { ruby } from '@codemirror/legacy-modes/mode/ruby'
 import { shell } from '@codemirror/legacy-modes/mode/shell'
+import { hclMode, tomlMode } from './config-languages.js'
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'
 // searchKeymap includes Mod-f (Ctrl+F) which would intercept the browser's native find.
 // We filter it out so Ctrl+F opens the browser find dialog instead of CodeMirror's panel.
@@ -509,6 +510,8 @@ const codeLanguages = [
   LanguageDescription.of({ name: 'Rust', alias: ['rs'], extensions: ['rs'], load: () => Promise.resolve(rust()) }),
   LanguageDescription.of({ name: 'Ruby', alias: ['rb'], extensions: ['rb'], load: () => Promise.resolve(legacyLanguage(ruby)) }),
   LanguageDescription.of({ name: 'YAML', alias: ['yml'], extensions: ['yaml', 'yml'], load: () => Promise.resolve(yaml()) }),
+  LanguageDescription.of({ name: 'TOML', extensions: ['toml'], load: () => Promise.resolve(legacyLanguage(tomlMode)) }),
+  LanguageDescription.of({ name: 'Terraform', alias: ['hcl', 'tf', 'tfvars', 'hcl2'], extensions: ['tf', 'tfvars', 'hcl'], load: () => Promise.resolve(legacyLanguage(hclMode)) }),
   LanguageDescription.of({ name: 'XML', alias: ['xsl', 'svg', 'rss'], extensions: ['xml'], load: () => Promise.resolve(xml()) }),
   LanguageDescription.of({ name: 'Markdown', alias: ['md'], extensions: ['md'], load: () => Promise.resolve(markdown({ base: markdownLanguage })) })
 ]
@@ -613,8 +616,8 @@ const pasteUrlOverSelection = EditorView.domEventHandlers({
 
 const CODE_BLOCK_LANGUAGES = [
   'javascript', 'typescript', 'python', 'html', 'css', 'json', 'bash', 'powershell',
-  'sql', 'php', 'java', 'csharp', 'cpp', 'go', 'rust', 'ruby', 'yaml', 'xml',
-  'markdown', 'mermaid', 'text'
+  'sql', 'php', 'java', 'csharp', 'cpp', 'go', 'rust', 'ruby', 'yaml', 'toml',
+  'terraform', 'xml', 'markdown', 'mermaid', 'text'
 ]
 
 const HTML_TAGS = [

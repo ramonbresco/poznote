@@ -56,8 +56,8 @@
     // <> for twelve of them. The marks come from devicon and are emitted as CSS
     // masks by tools/generate-devicon-icons.py, so the shape stays recognisable
     // while the colour stays the one every other menu icon uses, in every theme.
-    // Devicon has no SQL mark at all and its XML one is a handwritten word that
-    // is unreadable at 16px, so those two keep a Lucide icon. Kept in
+    // Devicon has no SQL or TOML mark at all and its XML one is a handwritten
+    // word that is unreadable at 16px, so those three keep a Lucide icon. Kept in
     // alphabetical order, which is also the order of the code block language
     // modal (js/code-block-language.js reads the list as it is).
     var CODE_BLOCK_LANGUAGES = [
@@ -77,6 +77,8 @@
         { id: 'code-ruby', icon: 'devicon-ruby', label: 'Ruby', lang: 'ruby' },
         { id: 'code-rust', icon: 'devicon-rust', label: 'Rust', lang: 'rust' },
         { id: 'code-sql', icon: 'lucide-database', label: 'SQL', lang: 'sql' },
+        { id: 'code-terraform', icon: 'devicon-terraform', label: 'Terraform', lang: 'terraform' },
+        { id: 'code-toml', icon: 'lucide-settings-2', label: 'TOML', lang: 'toml' },
         { id: 'code-typescript', icon: 'devicon-typescript', label: 'TypeScript', lang: 'typescript' },
         { id: 'code-xml', icon: 'lucide-file-code', label: 'XML', lang: 'xml' },
         { id: 'code-yaml', icon: 'devicon-yaml', label: 'YAML', lang: 'yaml' }

@@ -614,10 +614,13 @@ body:not(.markdown-colored) .markdown-codemirror-host .cm-live-preview .poznote-
 }
 
 /* Same in the lines of a code block, whose own size rule (top of this file,
-   span:not(.cm-live-code-lang)) outweighs the one above: without this, the
-   closing ``` of every block stayed in sight in rich text. */
-.markdown-editor .cm-live-preview .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line) :is(.cm-live-empty-pair, .cm-live-squeezed-tail),
-.markdown-editor .cm-live-preview .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line) :is(.cm-live-empty-pair, .cm-live-squeezed-tail) * {
+   span:not(.cm-live-code-lang)...) outweighs the one above: without this, the
+   closing ``` of every block stayed in sight in rich text. The second #id
+   keeps this rule ahead of that one however many :not() it gains: it was
+   tied on ids and one class ahead, and the :not(.cm-live-code-lines-count)
+   of the folded blocks' line count was enough to bring the ``` back. */
+.markdown-editor .cm-live-preview .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line) :is(#poznote-md-live-size-boost, .cm-live-empty-pair, .cm-live-squeezed-tail),
+.markdown-editor .cm-live-preview .cm-line:is(#poznote-md-code-font-boost, .cm-md-code-line) :is(#poznote-md-live-size-boost, .cm-live-empty-pair, .cm-live-squeezed-tail) * {
     font-size: 0 !important;
 }
 

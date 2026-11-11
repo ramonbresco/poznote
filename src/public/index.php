@@ -491,6 +491,7 @@ if ($center_note_content_enabled && $width_value !== '1' && $width_value !== 'tr
     <link type="text/css" rel="stylesheet" href="css/syntax-highlight.css?v=<?php echo $v; ?>"/>
     <script defer src="js/highlight/highlight.min.js?v=<?php echo $v; ?>"></script>
     <script defer src="js/highlight/powershell.min.js?v=<?php echo $v; ?>"></script>
+    <script defer src="js/hljs-config-languages.js?v=<?php echo $v; ?>"></script>
     <script defer src="js/syntax-highlight.js?v=<?php echo $v; ?>"></script>
 
 </head>

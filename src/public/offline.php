@@ -74,6 +74,7 @@ $scripts = [
     'js/codemirror-dist/markdown-codemirror.iife.js?v=' . $v,
     'js/highlight/highlight.min.js?v=' . $v,
     'js/highlight/powershell.min.js?v=' . $v,
+    poznoteAsset('js/hljs-config-languages.js'),
     'js/syntax-highlight.js?v=' . $v,
     poznoteAsset('js/events-text-selection.js'),
     poznoteAsset('js/task-priority.js'),

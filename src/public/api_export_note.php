@@ -658,6 +658,7 @@ function generatePrintHtml($content, $note, $referenceResolver = null) {
     </div></div></div></div>
     <script src="js/highlight/highlight.min.js?v=' . $v . '"></script>
     <script src="js/highlight/powershell.min.js?v=' . $v . '"></script>
+    <script src="js/hljs-config-languages.js?v=' . $v . '"></script>
     <script src="js/syntax-highlight.js?v=' . $v . '"></script>
     <script src="js/math-renderer.js?v=' . $v . '"></script>
     <script src="js/mermaid-theme.js?v=' . $v . '"></script>
