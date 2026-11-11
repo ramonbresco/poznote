@@ -63,6 +63,7 @@ LANGUAGES = {
     "ko": "한국어",
     "ja": "日本語",
     "ca": "Català",
+    "vi": "Tiếng Việt",
 }
 
 SELECTOR_START = "<!-- lang-selector -->"

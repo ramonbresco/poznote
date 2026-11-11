@@ -9,7 +9,8 @@
   <a href="CLAUDE-CLI.zh-cn.md">简体中文</a> ·
   <a href="CLAUDE-CLI.ko.md">한국어</a> ·
   <b>日本語</b> ·
-  <a href="CLAUDE-CLI.ca.md">Català</a>
+  <a href="CLAUDE-CLI.ca.md">Català</a> ·
+  <a href="CLAUDE-CLI.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 

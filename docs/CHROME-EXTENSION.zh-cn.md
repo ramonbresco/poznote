@@ -9,7 +9,8 @@
   <b>简体中文</b> ·
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
-  <a href="CHROME-EXTENSION.ca.md">Català</a>
+  <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
 
