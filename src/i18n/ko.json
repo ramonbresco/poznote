@@ -4888,6 +4888,17 @@
     "download": "녹음 다운로드",
     "no_note": "먼저 노트를 엽니다. 녹음은 해당 노트의 첨부 파일로 저장됩니다."
   },
+  "audio_player": {
+    "play": "재생",
+    "pause": "일시정지",
+    "seek": "탐색",
+    "speed": "재생 속도",
+    "unsupported": "브라우저가 이 오디오 형식을 재생할 수 없습니다",
+    "load_error": "이 녹음을 불러오지 못했습니다",
+    "volume": "음량",
+    "mute": "음소거",
+    "unmute": "음소거 해제"
+  },
   "diary": {
     "title": "일기",
     "today_button_go": "오늘의 항목으로 이동",

@@ -10,6 +10,7 @@ require_once __DIR__ . '/../functions.php';
 require_once __DIR__ . '/../note_loader.php';
 require_once __DIR__ . '/../markdown_parser.php';
 require_once __DIR__ . '/../public_helpers.php';
+require_once __DIR__ . '/../lib/audio-player.php';
 require_once __DIR__ . '/../share_passwords.php';
 require_once __DIR__ . '/../version_helper.php';
 
@@ -596,9 +597,23 @@ if (($note['type'] ?? 'note') === 'tasklist') {
 // editable source when the share allows public editing of markdown notes.
 $rawStoredContent = $content;
 
-// Public pages do not need the editor-only iframe workaround for audio embeds.
-// Convert saved audio iframes to native audio tags so shared links can stream them.
-$content = replacePublicAudioEmbedIframes($content);
+// Public pages do not need the editor-only iframe workaround for audio embeds:
+// the frame becomes the player itself (lib/audio-player.php), carrying what
+// the file's tags say about it. Those are looked up in this note's own
+// attachment records and nowhere else, so a frame left behind by a move, or
+// the original note of a shortcut, finds nothing rather than reading a file
+// the share does not expose.
+$publicAudioAttachments = isset($note) && is_array($note) ? poznoteDecodeAttachments($note['attachments'] ?? '') : [];
+$publicAudioTagsResolver = function (int $audioNoteId, string $audioAttachmentId) use ($publicAudioAttachments): array {
+    foreach ($publicAudioAttachments as $attachment) {
+        if (!is_array($attachment) || (string)($attachment['id'] ?? '') !== $audioAttachmentId) {
+            continue;
+        }
+        return array_merge(poznoteAudioAttachmentTags($attachment), ['size' => (int)($attachment['file_size'] ?? 0)]);
+    }
+    return ['title' => '', 'artist' => '', 'has_cover' => false, 'size' => 0];
+};
+$content = replacePublicAudioEmbedIframes($content, $publicAudioTagsResolver);
 
 $contentForAttachmentDetection = $content;
 
@@ -1050,6 +1065,7 @@ if (poznoteMarkdownColoredEnabled($markdownColoredTheme)) {
 <script src="<?php echo poznoteAsset('js/mermaid-zoom.js'); ?>"></script>
 <script src="<?php echo poznoteAsset('js/excalidraw-theme-colors.js'); ?>"></script>
 <script src="<?php echo poznoteAsset('js/embeds.js'); ?>"></script>
+<script src="<?php echo poznoteAsset('js/audio-player.js'); ?>"></script>
 <script src="<?php echo poznoteAsset('js/public-note.js'); ?>"></script>
 <?php if ($noteBodyEditable): ?>
 <script src="<?php echo poznoteAsset('js/shortcut-key.js'); ?>"></script>

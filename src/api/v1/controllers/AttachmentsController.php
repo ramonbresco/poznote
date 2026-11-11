@@ -6,6 +6,7 @@
  *   GET    /api/v1/notes/{noteId}/attachments                   - List attachments for a note
  *   POST   /api/v1/notes/{noteId}/attachments                   - Upload an attachment
  *   GET    /api/v1/notes/{noteId}/attachments/{attachmentId}    - Download an attachment
+ *   GET    .../{attachmentId}?audio_cover=1                      - The cover art embedded in an audio attachment
  *   DELETE /api/v1/notes/{noteId}/attachments/{attachmentId}    - Delete an attachment
  *   POST   /api/v1/notes/{noteId}/attachments/{attachmentId}/move - Move an attachment to another note
  */
@@ -148,7 +149,8 @@ class AttachmentsController {
             : 'Expires: 0'
         );
 
-        if (!$forceDownload && $this->clientHasFreshAttachment($etag, $lastModified)) {
+        $hasRange = isset($_SERVER['HTTP_RANGE']) && trim((string)$_SERVER['HTTP_RANGE']) !== '';
+        if (!$forceDownload && !$hasRange && $this->clientHasFreshAttachment($etag, $lastModified)) {
             header_remove('Content-Type');
             http_response_code(304);
             exit;
@@ -366,6 +368,12 @@ class AttachmentsController {
     public function show($noteId, $attachmentId) {
         $workspace = $_GET['workspace'] ?? null;
         $forceDownload = isset($_GET['download']) && $_GET['download'] !== '0';
+        // The picture a music file carries in its tags, for the note player
+        // (lib/audio-player.php). It is served from here rather than from an
+        // endpoint of its own so that it is reached exactly like the file it
+        // was taken from: the same note, the same share token, the same
+        // password, the same checks below.
+        $wantAudioCover = !$forceDownload && isset($_GET['audio_cover']) && $_GET['audio_cover'] !== '0';
         
         if (empty($noteId) || empty($attachmentId)) {
             http_response_code(400);
@@ -467,6 +475,32 @@ class AttachmentsController {
 
                             $inlineTextContentType = $this->getSafeInlineTextContentType($attachment);
                             $stat = $storage->statForHeaders($attachment);
+
+                            if ($wantAudioCover) {
+                                $this->sendAudioCoverArt($storage, $attachment, $stat);
+                            }
+
+                            // Byte ranges, which is what lets a browser move the
+                            // playhead of a recording it has not finished
+                            // downloading, and what makes a large download
+                            // resumable. Only for a file on disk: a bucket object
+                            // is streamed through as it arrives and cannot be
+                            // opened in the middle, so the promise is not made.
+                            $localForRange = $storage->localFileIfOnDisk($attachmentFilename);
+                            $range = null;
+                            if ($localForRange !== null && (int)$stat['size'] > 0) {
+                                header('Accept-Ranges: bytes');
+                                $range = poznoteParseRangeHeader(
+                                    isset($_SERVER['HTTP_RANGE']) ? (string)$_SERVER['HTTP_RANGE'] : '',
+                                    (int)$stat['size']
+                                );
+                                if ($range === false) {
+                                    header('Content-Range: bytes */' . (int)$stat['size']);
+                                    http_response_code(416);
+                                    exit;
+                                }
+                            }
+
                             $this->sendAttachmentCacheHeaders($stat, $attachment, $forceDownload);
 
                             if ($forceDownload) {
@@ -490,11 +524,15 @@ class AttachmentsController {
                             }
 
                             header('Content-Description: File Transfer');
-                            if ($stat['size'] > 0) {
+                            if (is_array($range)) {
+                                http_response_code(206);
+                                header('Content-Range: bytes ' . $range['start'] . '-' . $range['end'] . '/' . (int)$stat['size']);
+                                header('Content-Length: ' . $range['length']);
+                            } elseif ($stat['size'] > 0) {
                                 header('Content-Length: ' . $stat['size']);
                             }
 
-                            $storage->stream($attachmentFilename);
+                            $storage->stream($attachmentFilename, is_array($range) ? $range : null);
                             exit;
                         } else {
                             http_response_code(404);
@@ -513,6 +551,47 @@ class AttachmentsController {
             http_response_code(500);
             exit('Error: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Send the cover art of an audio attachment and end the request, or fall
+     * through when there is none to send.
+     *
+     * The type comes from the picture's own first bytes, never from what the
+     * tag claims (lib/audio-metadata.php), so nothing can be served as an
+     * image that is not one. A file kept in a bucket is left alone: reading
+     * its tags would mean downloading the whole object, which is a lot of
+     * work for a thumbnail, and the player simply shows no cover.
+     */
+    private function sendAudioCoverArt(AttachmentStorage $storage, array $attachment, array $stat): void {
+        require_once __DIR__ . '/../../../lib/attachments.php';
+        require_once __DIR__ . '/../../../lib/audio-metadata.php';
+
+        if (poznoteAttachmentPreviewKind($attachment) !== 'audio') {
+            http_response_code(404);
+            exit('No cover art');
+        }
+
+        $path = $storage->localFileIfOnDisk((string)($attachment['filename'] ?? ''));
+        $cover = $path !== null ? poznoteAudioCoverArt($path) : null;
+        if ($cover === null) {
+            http_response_code(404);
+            exit('No cover art');
+        }
+
+        // The cache entry is the picture's, not the file's: same note, same
+        // attachment, different body.
+        $coverStat = ['size' => strlen($cover['data']), 'mtime' => $stat['mtime']];
+        $coverAttachment = $attachment;
+        $coverAttachment['id'] = (string)($attachment['id'] ?? '') . ':cover';
+        $this->sendAttachmentCacheHeaders($coverStat, $coverAttachment, false);
+
+        header('Content-Type: ' . $cover['mime']);
+        header('Content-Disposition: ' . poznoteContentDisposition('inline', 'cover'));
+        header('Content-Length: ' . strlen($cover['data']));
+        header('X-Content-Type-Options: nosniff');
+        echo $cover['data'];
+        exit;
     }
 
     private function authorizePublicAttachmentAccess(int $noteId): bool {

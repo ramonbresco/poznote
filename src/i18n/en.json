@@ -4888,6 +4888,17 @@
     "download": "Download the recording",
     "no_note": "Open a note first: the recording is saved as an attachment of that note."
   },
+  "audio_player": {
+    "play": "Play",
+    "pause": "Pause",
+    "seek": "Seek",
+    "speed": "Playback speed",
+    "unsupported": "Your browser cannot play this audio format",
+    "load_error": "This recording could not be loaded",
+    "volume": "Volume",
+    "mute": "Mute",
+    "unmute": "Unmute"
+  },
   "diary": {
     "title": "Diary",
     "today_button_go": "Go to today's entry",

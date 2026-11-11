@@ -19,6 +19,7 @@ require_once __DIR__ . '/../../../../db_connect.php';
 require_once __DIR__ . '/../../../../functions.php';
 require_once __DIR__ . '/../../../../markdown_parser.php';
 require_once __DIR__ . '/../../../../public_helpers.php';
+require_once __DIR__ . '/../../../../lib/audio-player.php';
 
 header('Content-Type: application/json');
 
@@ -55,13 +56,13 @@ try {
     $folderIds = getDiaryFolderIds($con, $workspace);
     if (!empty($folderIds)) {
         $stmt = $con->prepare(
-            "SELECT id, type, entry, linked_note_id FROM entries" .
+            "SELECT id, type, entry, attachments, linked_note_id FROM entries" .
             " WHERE trash = 0 AND workspace = ?" .
             " AND id IN (" . implode(',', array_fill(0, count($ids), '?')) . ")" .
             " AND folder_id IN (" . implode(',', array_fill(0, count($folderIds), '?')) . ")"
         );
         $stmt->execute(array_merge([$workspace], $ids, $folderIds));
-        $targetStmt = $con->prepare("SELECT id, type, entry FROM entries WHERE id = ? AND trash = 0");
+        $targetStmt = $con->prepare("SELECT id, type, entry, attachments FROM entries WHERE id = ? AND trash = 0");
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $source = $row;
@@ -83,7 +84,19 @@ try {
                 $content = resolveTasklistStoredContent($content, (string)($source['entry'] ?? ''));
             }
 
-            $entries[(string)$row['id']] = renderDiaryJournalContent($content, $type);
+            // What a recording in the entry carries in its tags, read from
+            // the note's own attachment records (lib/audio-player.php).
+            $attachments = (string)($source['attachments'] ?? '');
+            $tagsResolver = function (int $audioNoteId, string $audioAttachmentId) use ($attachments): array {
+                foreach (poznoteDecodeAttachments($attachments) as $attachment) {
+                    if (is_array($attachment) && (string)($attachment['id'] ?? '') === $audioAttachmentId) {
+                        return array_merge(poznoteAudioAttachmentTags($attachment), ['size' => (int)($attachment['file_size'] ?? 0)]);
+                    }
+                }
+                return ['title' => '', 'artist' => '', 'has_cover' => false, 'size' => 0];
+            };
+
+            $entries[(string)$row['id']] = renderDiaryJournalContent($content, $type, $tagsResolver);
         }
     }
 

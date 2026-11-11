@@ -4888,6 +4888,17 @@
     "download": "Baixa l'enregistrament",
     "no_note": "Primer obriu una nota: l'enregistrament es desa com a fitxer adjunt d'aquella nota."
   },
+  "audio_player": {
+    "play": "Reprodueix",
+    "pause": "Pausa",
+    "seek": "Desplaça't per la pista",
+    "speed": "Velocitat de reproducció",
+    "unsupported": "El teu navegador no pot reproduir aquest format d'àudio",
+    "load_error": "No s'ha pogut carregar aquest enregistrament",
+    "volume": "Volum",
+    "mute": "Silencia",
+    "unmute": "Activa el so"
+  },
   "diary": {
     "title": "Diari",
     "today_button_go": "Ves a l'entrada d'avui",

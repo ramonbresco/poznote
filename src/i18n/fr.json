@@ -5337,6 +5337,17 @@
     "download": "Télécharger l'enregistrement",
     "no_note": "Ouvrez d'abord une note : l'enregistrement est sauvegardé comme pièce jointe de cette note."
   },
+  "audio_player": {
+    "play": "Lire",
+    "pause": "Pause",
+    "seek": "Se déplacer dans la piste",
+    "speed": "Vitesse de lecture",
+    "unsupported": "Votre navigateur ne sait pas lire ce format audio",
+    "load_error": "Cet enregistrement n'a pas pu être chargé",
+    "volume": "Volume",
+    "mute": "Couper le son",
+    "unmute": "Rétablir le son"
+  },
   "diary": {
     "title": "Journal",
     "today_button_go": "Aller à la note du jour",

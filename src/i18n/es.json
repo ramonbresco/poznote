@@ -5233,6 +5233,17 @@
     "download": "Descargar la grabación",
     "no_note": "Abre primero una nota: la grabación se guarda como adjunto de esa nota."
   },
+  "audio_player": {
+    "play": "Reproducir",
+    "pause": "Pausa",
+    "seek": "Desplazarse por la pista",
+    "speed": "Velocidad de reproducción",
+    "unsupported": "Tu navegador no puede reproducir este formato de audio",
+    "load_error": "No se ha podido cargar esta grabación",
+    "volume": "Volumen",
+    "mute": "Silenciar",
+    "unmute": "Activar el sonido"
+  },
   "diary": {
     "title": "Diario",
     "today_button_go": "Ir a la entrada de hoy",

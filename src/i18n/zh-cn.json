@@ -5329,6 +5329,17 @@
     "download": "下载录音",
     "no_note": "请先打开一条笔记：录音会保存为该笔记的附件。"
   },
+  "audio_player": {
+    "play": "播放",
+    "pause": "暂停",
+    "seek": "跳转",
+    "speed": "播放速度",
+    "unsupported": "您的浏览器无法播放此音频格式",
+    "load_error": "无法加载此录音",
+    "volume": "音量",
+    "mute": "静音",
+    "unmute": "取消静音"
+  },
   "diary": {
     "title": "日记",
     "today_button_go": "前往今日日记",

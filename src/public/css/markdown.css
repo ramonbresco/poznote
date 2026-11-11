@@ -1409,18 +1409,16 @@ html[data-theme='dark'] .markdown-preview pre.indented-pre {
 @media screen and (max-width: 768px) {
 
     .markdown-preview audio,
-    .markdown-preview .note-audio-embed,
-    .markdown-codemirror-host .cm-live-media audio,
-    .markdown-codemirror-host .cm-live-media .note-audio-embed {
+    .markdown-codemirror-host .cm-live-media audio {
         max-width: 240px;
     }
 }
 
 .markdown-preview iframe[data-is-audio],
 .markdown-codemirror-host .cm-live-media iframe[data-is-audio] {
-    max-width: 280px;
+    max-width: var(--pz-audio-player-width);
     width: 100%;
-    height: 54px;
+    height: var(--pz-audio-player-height);
     display: block;
     overflow: hidden;
     margin: 8px 0;
@@ -1430,26 +1428,15 @@ html[data-theme='dark'] .markdown-preview pre.indented-pre {
 }
 
 .markdown-preview iframe.note-audio-embed {
-    max-width: 280px;
+    max-width: var(--pz-audio-player-width);
     width: 100%;
-    height: 54px;
+    height: var(--pz-audio-player-height);
     display: block;
     overflow: hidden;
     margin: 8px 0;
     border: none;
     border-radius: var(--pz-radius-lg);
     background: transparent;
-}
-
-@media screen and (max-width: 768px) {
-    .markdown-preview iframe[data-is-audio],
-    .markdown-codemirror-host .cm-live-media iframe[data-is-audio] {
-        max-width: 240px;
-    }
-
-    .markdown-preview iframe.note-audio-embed {
-        max-width: 240px;
-    }
 }
 
 .markdown-preview hr {

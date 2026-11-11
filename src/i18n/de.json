@@ -5232,6 +5232,17 @@
     "download": "Aufnahme herunterladen",
     "no_note": "Öffnen Sie zuerst eine Notiz: Die Aufnahme wird als Anhang dieser Notiz gespeichert."
   },
+  "audio_player": {
+    "play": "Abspielen",
+    "pause": "Pause",
+    "seek": "In der Spur navigieren",
+    "speed": "Wiedergabegeschwindigkeit",
+    "unsupported": "Dein Browser kann dieses Audioformat nicht abspielen",
+    "load_error": "Diese Aufnahme konnte nicht geladen werden",
+    "volume": "Lautstärke",
+    "mute": "Stummschalten",
+    "unmute": "Ton einschalten"
+  },
   "diary": {
     "title": "Tagebuch",
     "today_button_go": "Zum heutigen Eintrag",
