@@ -3806,6 +3806,55 @@ const protectMarkersFilter = EditorState.transactionFilter.of(transaction => {
   }
 })
 
+// Typing at either edge of a link's text, where its syntax is squeezed out of
+// sight: the caret is drawn outside the link, so what is typed has to land
+// outside it too. Without this, a word written after a link joined its label
+// and became part of the link (reported 2026-11-11: a note ended up holding
+// "[Code examples Here is a simple inline equation.](index.php?note=20)").
+// Only while the syntax is hidden: with it revealed the writer sees the
+// brackets and the caret inside them, and extending the label is the point.
+function linkEdgeInsertPos(state, pos) {
+  for (const side of [-1, 1]) {
+    for (let node = syntaxTree(state).resolveInner(pos, side); node; node = node.parent) {
+      if (node.name !== 'Link') continue
+      const marks = node.getChildren('LinkMark')
+      // The same shape decorateLink() asks for before hiding anything: a
+      // link it leaves alone is one the caret sits in plainly.
+      if (marks.length < 4 || !node.getChild('URL')) return null
+      const textFrom = marks[0].to
+      const textTo = marks[1].from
+      if (textTo <= textFrom || !state.doc.sliceString(textFrom, textTo).trim()) return null
+      if (pos === textTo) return node.to
+      if (pos === textFrom) return node.from
+      return null
+    }
+  }
+  return null
+}
+
+const typeOutsideLinkFilter = EditorState.transactionFilter.of(transaction => {
+  if (!transaction.docChanged || isSyntaxRevealed()) return transaction
+  if (!transaction.isUserEvent('input.type')) return transaction
+
+  let change = null
+  let count = 0
+  transaction.changes.iterChanges((fromA, toA, fromB, toB, inserted) => {
+    count++
+    change = { from: fromA, to: toA, text: inserted.toString() }
+  })
+  if (count !== 1 || !change || change.from !== change.to || !change.text) return transaction
+
+  const moved = linkEdgeInsertPos(transaction.startState, change.from)
+  if (moved === null) return transaction
+
+  return {
+    changes: { from: moved, insert: change.text },
+    selection: { anchor: moved + change.text.length },
+    userEvent: 'input.type',
+    scrollIntoView: true
+  }
+})
+
 function deleteSelectionSafely(view) {
   if (isSyntaxRevealed() || view.state.readOnly) return false
   const selection = view.state.selection
@@ -5074,6 +5123,7 @@ export const livePreview = [
   richTextKeymap,
   alignedCaretFilter,
   protectMarkersFilter,
+  typeOutsideLinkFilter,
   livePreviewPlugin,
   EditorView.atomicRanges.of(view => {
     const plugin = view.plugin(livePreviewPlugin)
