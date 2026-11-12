@@ -2222,9 +2222,16 @@
             const hasNoteId = urlParams.has('note') && urlParams.get('note');
             const isSearch = urlParams.has('search') || urlParams.has('tags_search') || urlParams.has('created_from') || urlParams.has('created_to') || window.isSearchMode;
 
+            // The flag alone (arriving through login.php, js/workspace-redirect.js)
+            // names no note: slide only if the page rendered one, the pane
+            // is empty when the last opened note is gone.
+            const hasRenderedNote = !!document.querySelector('#right_col .notecard');
+
             if (hasScrollFlag || (hasNoteId && !isSearch)) {
                 requestAnimationFrame(function () {
-                    if (typeof window.scrollToRightColumn === 'function') {
+                    if (!hasNoteId && !hasRenderedNote) {
+                        // nothing to show: stay on the list
+                    } else if (typeof window.scrollToRightColumn === 'function') {
                         window.scrollToRightColumn();
                     } else if (typeof scrollToRightColumn === 'function') {
                         scrollToRightColumn();

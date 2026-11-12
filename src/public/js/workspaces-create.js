@@ -221,6 +221,24 @@ function refreshLeftColumnForWorkspace(workspaceName) {
             if (newLeftCol && currentLeftCol) {
                 currentLeftCol.innerHTML = newLeftCol.innerHTML;
 
+                // No tabs on a phone (js/tabs.js leaves the pane alone there):
+                // open the note this same response landed on, the last one
+                // opened in the workspace (issue #1630), as a fresh page load
+                // of the workspace would. Nothing when the pane got something
+                // in the meantime, or when the server rendered no note.
+                if (window.innerWidth <= 800 && typeof window.loadNoteDirectly === 'function'
+                    && !document.querySelector('#right_col .notecard')) {
+                    var landingCard = doc.querySelector('#right_col .notecard[id^="note"]');
+                    var landingNoteId = landingCard ? landingCard.id.replace(/^note/, '') : '';
+                    if (/^\d+$/.test(landingNoteId)) {
+                        window.loadNoteDirectly(
+                            'index.php?workspace=' + encodeURIComponent(workspaceName) + '&note=' + landingNoteId,
+                            landingNoteId,
+                            null
+                        );
+                    }
+                }
+
                 // Reinitialize components after workspace change
                 try {
                     // Reinitialize workspace menus
