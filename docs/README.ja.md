@@ -68,7 +68,7 @@ https://poznote.com/press.html
 
 コミュニティに参加して、質問したり、フィードバックを送ったり、開発の様子を追ったりできます：
 
-https://discord.gg/fuEV6uqf4N
+https://discord.gg/ADyrkPVMAf
 
 ## 目次
 
@@ -505,7 +505,7 @@ docker compose pull
 docker compose up -d
 ```
 
-*   **切り替える前に**：ベータ版にはまだバグが含まれている可能性があるため、先に[バックアップ](#バックアップエクスポート)を取ってください。問題は[GitHubのissue](https://github.com/timothepoznanski/poznote/issues)か[Discord](https://discord.gg/fuEV6uqf4N)で報告できます。
+*   **切り替える前に**：ベータ版にはまだバグが含まれている可能性があるため、先に[バックアップ](#バックアップエクスポート)を取ってください。問題は[GitHubのissue](https://github.com/timothepoznanski/poznote/issues)か[Discord](https://discord.gg/ADyrkPVMAf)で報告できます。
 *   **アップデート**：以後は`docker compose pull`のたびに、最新のベータ版か、リリースされた安定版が取得されます。上のアップデート手順では、安定版のタグを使う新しい`docker-compose.yml`をダウンロードするので、その手順の後で2つの`image`行をもう一度変更してください。
 *   **安定版に戻す**：ベータ版はデータベースを変更することがあるため、古い安定版に戻すと動かない場合があります。ベータ版の変更を含む次の安定版のリリースを待ってから、上のアップデート手順に従ってください。
 
