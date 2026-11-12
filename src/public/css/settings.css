@@ -404,7 +404,10 @@ body:not(.dark-mode) #changePasswordModal .change-password-description {
 
 /* The list ends on a row border and .modal-buttons only carries margin-top:
    auto, so the buttons touched it. Same per-modal fix, and same value, as
-   #embedsModal and #outboundHostsModal. */
+   #embedsModal and #outboundHostsModal. The app passwords and connected apps
+   modals end on the same list. */
+#appPasswordsModal .modal-buttons,
+#connectedAppsModal .modal-buttons,
 #userSessionsModal .modal-buttons {
     margin-top: 20px;
 }
