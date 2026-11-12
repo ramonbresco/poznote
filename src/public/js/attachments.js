@@ -1124,12 +1124,14 @@ function handleImageFilesAndInsert(files, dropTarget, dropPoint) {
 // Files dropped on a note that go to its attachments (discussion 1725), one
 // upload after the other: the server rewrites the note's whole list of
 // attachments on each one. Nothing is written into the note itself.
-function handleDroppedFilesAsAttachments(files, noteEntry) {
+// onDone, optional, runs once every upload is over.
+function handleDroppedFilesAsAttachments(files, noteEntry, onDone) {
     var noteId = noteEntry && noteEntry.id ? noteEntry.id.replace('entry', '') : '';
-    if (!noteId || !files) return;
-
-    var queue = Array.prototype.slice.call(files);
-    if (queue.length === 0) return;
+    var queue = noteId && files ? Array.prototype.slice.call(files) : [];
+    if (queue.length === 0) {
+        if (typeof onDone === 'function') onDone();
+        return;
+    }
 
     var maxSize = 200 * 1024 * 1024; // 200MB, as the server
     var attachedNames = [];
@@ -1198,9 +1200,118 @@ function handleDroppedFilesAsAttachments(files, noteEntry) {
             var failureText = failures.length === 1 ? failures[0] : '\n' + failures.join('\n');
             showNotificationPopup(tr('attachments.errors.upload_failed', { error: failureText }, 'Upload failed: {{error}}'), 'error');
         }
+
+        if (typeof onDone === 'function') onDone();
     }
 
     uploadNext();
+}
+
+// The caret when it is in the note, otherwise the end of the note: a drop
+// leaves the selection wherever it was, possibly outside the note
+function caretRangeInNote(noteEntry) {
+    var sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+        var current = sel.getRangeAt(0);
+        if (noteEntry.contains(current.startContainer)) return current.cloneRange();
+    }
+    var range = document.createRange();
+    range.selectNodeContents(noteEntry);
+    range.collapse(false);
+    return range;
+}
+
+// After the line the file was dropped on, as in a Markdown note: the player
+// is a block, and put at the exact drop point it would cut the line (and its
+// paragraph) in two
+function rangeAfterDropLine(noteEntry, range) {
+    var node = range.startContainer;
+    while (node && node.parentNode && node.parentNode !== noteEntry) node = node.parentNode;
+    if (!node || node.parentNode !== noteEntry) return null;
+    var after = document.createRange();
+    after.setStartAfter(node);
+    after.collapse(true);
+    return after;
+}
+
+// The files the audio insertion accepts (isAudioFile() of js/slash-command.js)
+function isDroppedAudioFile(file) {
+    if (!file) return false;
+    var type = String(file.type || '').toLowerCase();
+    if (type.indexOf('audio/') === 0) return true;
+    return /\.(mp3|wav|m4a|ogg|flac)$/i.test(String(file.name || ''));
+}
+
+// Audio files dropped on a note: each one is uploaded as an attachment and its
+// player inserted where the file was dropped, the same path as Insert > Audio
+// in the slash menu, so no question is asked. One after the other, the server
+// rewriting the note's whole list of attachments on each upload, and each
+// player after the previous one. waitFor, optional, lets the drop's other
+// files finish uploading first, for the same reason.
+function handleDroppedAudio(files, noteEntry, dropPoint, waitFor) {
+    if (!files || files.length === 0 || !noteEntry) return;
+    if (typeof window.insertAudioFileWithContext !== 'function') {
+        handleDroppedFilesAsAttachments(files, noteEntry);
+        return;
+    }
+
+    var noteId = noteEntry.id ? noteEntry.id.replace('entry', '') : '';
+    var queue = Array.prototype.slice.call(files);
+    var editor = noteEntry.querySelector('.markdown-editor');
+    var isMarkdown = noteEntry.getAttribute('data-note-type') === 'markdown';
+    // Pinned now, while the point still lies over the note
+    var pinned = pinDropPoint(noteEntry, dropPoint) || {};
+    var first = true;
+
+    function insertNext() {
+        if (queue.length === 0) {
+            // A drop on the preview wrote into the hidden editor: the preview
+            // does not follow it on its own
+            var preview = isMarkdown ? noteEntry.querySelector('.markdown-preview') : null;
+            var cmApi = _getCmApi();
+            if (preview && preview.offsetParent !== null && editor && cmApi && typeof cmApi.getValue === 'function'
+                && typeof window.renderMarkdownPreview === 'function') {
+                window.renderMarkdownPreview(preview, cmApi.getValue(editor), noteId, { delay: 50 });
+            }
+            if (noteId) {
+                updateAttachmentCountInMenu(noteId);
+                if (typeof currentNoteIdForAttachments !== 'undefined' && currentNoteIdForAttachments == noteId) {
+                    loadAttachments(noteId);
+                }
+            }
+            return;
+        }
+
+        var options = {
+            file: queue.shift(),
+            noteEntry: noteEntry,
+            editableElement: isMarkdown ? editor : noteEntry,
+            isMarkdown: isMarkdown,
+            onInserted: insertNext,
+            tight: true,
+            onUploadError: insertNext
+        };
+        // The first player goes where the file was dropped, the next ones
+        // after it, where the insertion leaves the caret
+        if (isMarkdown) {
+            if (first && editor && pinned.cmPos !== undefined) {
+                options.codeMirrorSelection = { editor: editor, start: pinned.cmPos, end: pinned.cmPos };
+            }
+        } else {
+            options.savedRange = (first && pinned.range && rangeAfterDropLine(noteEntry, pinned.range)) || caretRangeInNote(noteEntry);
+        }
+        first = false;
+        // -1 until the note takes the focus, and a drop on the preview of a
+        // Markdown note never gives it: the save would go nowhere
+        if (noteId) window.noteid = noteId;
+        window.insertAudioFileWithContext(options);
+    }
+
+    if (typeof waitFor === 'function') {
+        waitFor(insertNext);
+    } else {
+        insertNext();
+    }
 }
 
 // Images dropped on a note: the user picks between the note's content and its

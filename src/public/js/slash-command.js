@@ -388,8 +388,9 @@
     // line, whole, instead of cutting it at the caret (which, in the middle of
     // a bold word, left one half of the markers on each side of the block).
     // Returns where to insert and the text to insert, with the line breaks
-    // that takes.
-    function placeMarkdownBlock(api, editor, from, to, insertText) {
+    // that takes. tight: no blank line between the block and the line above
+    // (a dropped audio file).
+    function placeMarkdownBlock(api, editor, from, to, insertText, tight) {
         const placed = { from: from, to: to, text: insertText };
         if (!/^(?:\||```|\n---\n$|\n<details\b|<(?:video|audio|iframe)\b)/.test(insertText) || !api || typeof api.getValue !== 'function') return placed;
         const value = api.getValue(editor) || '';
@@ -403,7 +404,7 @@
         const isToggle = /^\n<details\b/.test(insertText);
         if (from === to && value.slice(lineStart, lineEnd).trim() !== '') {
             placed.from = placed.to = lineEnd;
-            if (!isToggle) placed.text = (isRule ? '\n' : '\n\n') + insertText;
+            if (!isToggle) placed.text = (isRule || tight ? '\n' : '\n\n') + insertText;
         } else if (isToggle && value.slice(lineStart, lineEnd).trim() === '') {
             // The line the caret is on is already empty: it is the block's
             placed.text = insertText.slice(1);
@@ -422,7 +423,7 @@
         const caretDelta = typeof caretDeltaFromInsertEnd === 'number' ? caretDeltaFromInsertEnd : 0;
 
         if (snapshot && api && isMarkdownCodeMirrorEditor(snapshot.editor) && typeof api.replaceRange === 'function') {
-            const placed = placeMarkdownBlock(api, snapshot.editor, Math.min(snapshot.start, snapshot.end), Math.max(snapshot.start, snapshot.end), insertText);
+            const placed = placeMarkdownBlock(api, snapshot.editor, Math.min(snapshot.start, snapshot.end), Math.max(snapshot.start, snapshot.end), insertText, !!context.tightBlock);
             const from = placed.from;
             const to = placed.to;
             insertText = placed.text;
@@ -459,7 +460,7 @@
             }
         }
 
-        insertMarkdownAtCursor(insertText, caretDelta);
+        insertMarkdownAtCursor(insertText, caretDelta, !!(context && context.tightBlock));
         return false;
     }
 
@@ -667,7 +668,7 @@
     }
 
     // Insert Markdown text at cursor position
-    function insertMarkdownAtCursor(text, caretDeltaFromInsertEnd) {
+    function insertMarkdownAtCursor(text, caretDeltaFromInsertEnd, tightBlock) {
         // Prefer DOM-range insertion to avoid line/offset mismatches in contentEditable.
         const editor = getCurrentMarkdownEditorFromSelection();
         if (!editor) {
@@ -681,7 +682,7 @@
 
             let insertText = String(text || '');
             const caretDelta = typeof caretDeltaFromInsertEnd === 'number' ? caretDeltaFromInsertEnd : 0;
-            const placed = placeMarkdownBlock(api, editor, Math.min(selectionOffsets.start, selectionOffsets.end), Math.max(selectionOffsets.start, selectionOffsets.end), insertText);
+            const placed = placeMarkdownBlock(api, editor, Math.min(selectionOffsets.start, selectionOffsets.end), Math.max(selectionOffsets.start, selectionOffsets.end), insertText, !!tightBlock);
             const from = placed.from;
             const to = placed.to;
             insertText = placed.text;
@@ -6933,6 +6934,10 @@
                         // Focusing, or setting the selection inside the editable,
                         // would reopen the phone keyboard the recorder closed
                         var keepKeyboardClosed = !!(preset && preset.keepKeyboardClosed);
+                        // A dropped audio file goes in with no empty line
+                        // above or below it
+                        var tight = !!(preset && preset.tight);
+                        var markdownSuffix = tight ? '' : '\n\n';
                         var markdownApi = getMarkdownCodeMirrorApi();
 
                         if (editableElement && !keepKeyboardClosed) {
@@ -6952,7 +6957,7 @@
                             && markdownApi.replaceRangeKeepSelection(savedCodeMirrorSelection.editor,
                                 Math.min(savedCodeMirrorSelection.start, savedCodeMirrorSelection.end),
                                 Math.max(savedCodeMirrorSelection.start, savedCodeMirrorSelection.end),
-                                mediaHtml + '\n\n');
+                                mediaHtml + markdownSuffix);
 
                         if (isMarkdown) {
                             if (!insertedInMarkdown) {
@@ -6960,8 +6965,9 @@
                                     noteEntry,
                                     editableElement,
                                     savedRange,
-                                    codeMirrorSelection: savedCodeMirrorSelection
-                                }, mediaHtml + '\n\n', 0);
+                                    codeMirrorSelection: savedCodeMirrorSelection,
+                                    tightBlock: tight
+                                }, mediaHtml + markdownSuffix, 0);
                                 if (editableElement) {
                                     editableElement.dispatchEvent(new Event('input', { bubbles: true }));
                                 }
@@ -6991,13 +6997,17 @@
                                     var mediaEl = temp.firstChild;
 
                                     var fragment = document.createDocumentFragment();
-                                    var lineBefore = document.createElement('div');
-                                    lineBefore.innerHTML = '<br>';
-                                    fragment.appendChild(lineBefore);
+                                    if (!tight) {
+                                        var lineBefore = document.createElement('div');
+                                        lineBefore.innerHTML = '<br>';
+                                        fragment.appendChild(lineBefore);
+                                    }
                                     fragment.appendChild(mediaEl);
-                                    var lineAfter = document.createElement('div');
-                                    lineAfter.innerHTML = '<br>';
-                                    fragment.appendChild(lineAfter);
+                                    if (!tight) {
+                                        var lineAfter = document.createElement('div');
+                                        lineAfter.innerHTML = '<br>';
+                                        fragment.appendChild(lineAfter);
+                                    }
 
                                     range.deleteContents();
                                     range.insertNode(fragment);
@@ -7027,6 +7037,11 @@
                         // Close upload spinner
                         if (uploadSpinner?.close) {
                             uploadSpinner.close();
+                        }
+
+                        if (preset && typeof preset.onInserted === 'function') {
+                            // Outside the upload's catch: a failure here is not a failed upload
+                            setTimeout(preset.onInserted, 0);
                         }
                     })
                     .catch(function (error) {
@@ -7108,7 +7123,10 @@
         // options.onUploadError lets the recorder offer it back if the upload fails
         // options.keepKeyboardClosed: the recorder closed the phone keyboard for its
         // dialog, and the player goes in without focusing the editor again
-        var preset = options.file ? { file: options.file, onError: options.onUploadError, keepKeyboardClosed: !!options.keepKeyboardClosed } : null;
+        // options.onInserted: called once the player is in the note (an audio file
+        // dropped on the note waits for it before uploading the next one)
+        // options.tight: no empty line above or below the player (a dropped file)
+        var preset = options.file ? { file: options.file, onError: options.onUploadError, onInserted: options.onInserted, keepKeyboardClosed: !!options.keepKeyboardClosed, tight: !!options.tight } : null;
         insertUploadedAudio(isMarkdown, noteEntry, editableElement, savedRange, savedCodeMirrorSelection, preset);
     };
 

@@ -102,12 +102,23 @@ function setupDragDropEvents() {
             if (dt.files && dt.files.length > 0) {
                 if (!canDropFilesOnNote(note)) return;
                 // Images go into the note or to its attachments, the user
-                // picks; the other files go straight to the attachments
+                // picks; audio goes into the note where it is dropped, and is
+                // an attachment all the same (the player plays the attachment);
+                // the other files go straight to the attachments
                 var files = droppedFilesWithoutFolders(dt);
                 var images = files.filter(function (file) { return file.type && file.type.startsWith('image/'); });
-                var others = files.filter(function (file) { return images.indexOf(file) === -1; });
-                if (others.length > 0) handleDroppedFilesAsAttachments(others, note);
-                if (images.length > 0) handleDroppedImages(images, note, { x: e.clientX, y: e.clientY });
+                var audios = files.filter(function (file) { return images.indexOf(file) === -1 && isDroppedAudioFile(file); });
+                var others = files.filter(function (file) { return images.indexOf(file) === -1 && audios.indexOf(file) === -1; });
+                var dropPoint = { x: e.clientX, y: e.clientY };
+                if (audios.length > 0) {
+                    // The audio uploads wait for the other files' ones
+                    handleDroppedAudio(audios, note, dropPoint, others.length > 0
+                        ? function (start) { handleDroppedFilesAsAttachments(others, note, start); }
+                        : null);
+                } else if (others.length > 0) {
+                    handleDroppedFilesAsAttachments(others, note);
+                }
+                if (images.length > 0) handleDroppedImages(images, note, dropPoint);
             }
         } catch (err) {
             console.debug('events-drag-drop: setupDragDropEvents() failed:', err);

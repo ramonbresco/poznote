@@ -1784,6 +1784,17 @@ function parseMarkdown(text) {
             continue;
         }
 
+        // A line that is only an embedded player (iframe, video, audio) is a
+        // block of its own, even right under or over a line of text (a dropped
+        // audio file is written with no blank line around it): inside a
+        // paragraph, the <br> after a block element draws an empty line.
+        // Same markup as the player between two blank lines.
+        if (/^\s*\x00P(?:IFRAME|VIDEO|AUDIO)\d+\x00\s*$/.test(line)) {
+            flushParagraph();
+            result.push('<p data-line="' + sourceLineOf(i) + '">' + applyInlineStyles(line.trim()) + '</p>');
+            continue;
+        }
+
         // Check for math block placeholders
         if (line.match(/\x00MATHBLOCK\d+\x00/)) {
             flushParagraph();

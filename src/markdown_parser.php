@@ -1305,6 +1305,17 @@ function parseMarkdown($text) {
             continue;
         }
 
+        // A line that is only an embedded player (iframe, video, audio) is a
+        // block of its own, even right under or over a line of text (a dropped
+        // audio file is written with no blank line around it): inside a
+        // paragraph, the <br> after a block element draws an empty line.
+        // Same markup as the player between two blank lines.
+        if (preg_match('/^\s*\x00P(?:IFRAME|VIDEO|AUDIO)\d+\x00\s*$/', $line)) {
+            $flushParagraph();
+            $result[] = '<p data-line="' . $i . '">' . $applyInlineStyles(trim($line, " \t\r")) . '</p>';
+            continue;
+        }
+
         // Check for protected HTML block tags (details, summary)
         // This ensures they are treated as block-level elements
         if (preg_match('/^\x00PTAG\d+\x00/', $line)) {
