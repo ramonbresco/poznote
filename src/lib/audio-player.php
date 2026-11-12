@@ -124,8 +124,10 @@ function poznoteRenderAudioPlayer(array $options): string
         . '<button type="button" class="pz-audio-volume-btn" aria-label="' . $escape($labelMute) . '" title="' . $escape($labelMute) . '">'
         . '<span class="pz-audio-volume-icon" aria-hidden="true"></span>'
         . '</button>'
+        . '<span class="pz-audio-volume-pop">'
         . '<input type="range" class="pz-audio-volume-slider" min="0" max="100" step="1" value="100"'
-        . ' aria-label="' . $escape($labelVolume) . '" title="' . $escape($labelVolume) . '">'
+        . ' aria-label="' . $escape($labelVolume) . '">'
+        . '</span>'
         . '</div>';
 
     $html .= '<div class="pz-audio-side">'
