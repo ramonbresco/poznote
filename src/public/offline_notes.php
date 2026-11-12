@@ -77,7 +77,7 @@ $currentLang = getUserLanguage();
 		<div class="shared-filter-bar initially-hidden" id="sharedFilterBar">
 			<?php // The filter folds behind a magnifier, first on the row of buttons (js/search-toggle.js) ?>
 			<div class="filter-type-buttons pz-search-row">
-				<?php echo poznoteRenderSearchToggle('offlineFilterWrapper', t('offline.page.filter_placeholder', [], 'Filter by name or folder...')); ?>
+				<?php echo poznoteRenderSearchToggle('offlineFilterWrapper', t('offline.page.filter_placeholder', [], 'Filter by name or folder...'), 'pz-toolbar-btn'); ?>
 				<div class="filter-input-wrapper pz-search-collapsible is-search-collapsed" id="offlineFilterWrapper">
 					<input
 						type="text"
@@ -91,7 +91,7 @@ $currentLang = getUserLanguage();
 				</div>
 				<?php // Right of the magnifier: its chevron alone, its label in the tooltip; always there, greyed out while there is nothing to fold (js/offline-list.js) ?>
 				<div class="shared-filter-tree-actions" id="sharedTreeToolbar">
-					<button type="button" id="toggleAllFoldersBtn" class="btn btn-secondary" disabled title="<?php echo t_h('public.expand_all', [], 'Expand all'); ?>" aria-label="<?php echo t_h('public.expand_all', [], 'Expand all'); ?>">
+					<button type="button" id="toggleAllFoldersBtn" class="pz-toolbar-btn" disabled title="<?php echo t_h('public.expand_all', [], 'Expand all'); ?>" aria-label="<?php echo t_h('public.expand_all', [], 'Expand all'); ?>">
 						<i class="lucide lucide-chevron-down"></i>
 					</button>
 				</div>

@@ -449,6 +449,9 @@ if ($center_note_content_enabled && $width_value !== '1' && $width_value !== 'tr
         // the note would flash until then (issue #1644). Hide it before the
         // first paint; tabs.js lifts the class, the load handler is a fallback.
         (function () {
+            // No tabs at 800px and below (js/tabs.js): the stored state is
+            // frozen there and never empties the pane.
+            if (window.innerWidth <= 800) return;
             try {
                 var key = window.__poznoteTabsStorageKey(<?php echo json_encode($workspace_filter, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP); ?>);
                 var stored = JSON.parse(localStorage.getItem(key) || 'null');

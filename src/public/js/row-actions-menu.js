@@ -14,7 +14,8 @@
  * An item without an icon is text only, and `selected: true` marks the item
  * a list of choices is currently on (role menuitemradio). The toggle options
  * are all optional: `icon` (the "..." of the row menus by default),
- * `className` added to the button, `menuClass` added to the menu, and
+ * `buttonClass` the button's base classes (the small grey row button by
+ * default), `className` added to the button, `menuClass` added to the menu, and
  * `align` ('right' under the button by default, 'left' for a narrow button).
  *
  * The items are built when the menu opens, so a disabled state always
@@ -152,7 +153,7 @@
         options = options || {};
         var toggle = document.createElement('button');
         toggle.type = 'button';
-        toggle.className = 'btn btn-secondary row-actions-toggle' + (options.className ? ' ' + options.className : '');
+        toggle.className = (options.buttonClass || 'btn btn-secondary row-actions-toggle') + (options.className ? ' ' + options.className : '');
         toggle.setAttribute('aria-haspopup', 'menu');
         toggle.setAttribute('aria-expanded', 'false');
         toggle.setAttribute('aria-label', label);

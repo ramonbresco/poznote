@@ -586,14 +586,22 @@
     }
 
     function syncViewUi() {
+        // One button for the two views: it shows the view a click goes to
         var toggle = document.getElementById('tasksViewToggle');
         if (toggle) {
-            toggle.querySelectorAll('.tasks-view-btn').forEach(function (btn) {
-                btn.classList.toggle('active', btn.getAttribute('data-view') === viewMode);
-            });
+            var target = viewMode === 'calendar' ? 'list' : 'calendar';
+            var label = toggle.getAttribute('data-label-' + target) || '';
+            toggle.title = label;
+            toggle.setAttribute('aria-label', label);
+            var icon = toggle.querySelector('.lucide');
+            if (icon) icon.className = 'lucide ' + (target === 'calendar' ? 'lucide-calendar' : 'lucide-layout-list');
         }
         var container = document.querySelector('.tasks-container');
         if (container) container.classList.toggle('view-calendar', viewMode === 'calendar');
+        // Collapse/expand only acts on the note groups of the list view: in
+        // the calendar it stays in its place, greyed out
+        var toggleAllBtn = document.getElementById('toggleAllNotesBtn');
+        if (toggleAllBtn) toggleAllBtn.disabled = viewMode === 'calendar';
     }
 
     // Collapse/expand is a single toggle, like the shared page: it expands
@@ -1638,12 +1646,8 @@
 
         var viewToggle = document.getElementById('tasksViewToggle');
         if (viewToggle) {
-            viewToggle.addEventListener('click', function (e) {
-                var btn = e.target.closest('.tasks-view-btn');
-                if (!btn) return;
-                var mode = btn.getAttribute('data-view') === 'calendar' ? 'calendar' : 'list';
-                if (mode === viewMode) return;
-                viewMode = mode;
+            viewToggle.addEventListener('click', function () {
+                viewMode = viewMode === 'calendar' ? 'list' : 'calendar';
                 saveViewMode();
                 render();
             });

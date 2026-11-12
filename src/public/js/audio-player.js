@@ -313,17 +313,98 @@
         state.track.setAttribute('aria-valuetext', formatTime(audio.currentTime));
     }
 
+    /* One recording at a time on a page. In the editor every recording is an
+       iframe of its own (audio_player.php), so looking in this document only
+       found the player itself: the walk starts at the highest same-origin
+       window and goes down through every frame it can read. */
+    function topWindow() {
+        var win = window;
+        try {
+            while (win.parent && win.parent !== win) {
+                // Reading the parent's document throws when it belongs to
+                // another origin, which is where the page we own ends.
+                if (!win.parent.document) break;
+                win = win.parent;
+            }
+        } catch (e) {
+            // A cross-origin parent: this window is as high as we may go.
+        }
+        return win;
+    }
+
+    function collectPlayers(doc, found, depth) {
+        var players = doc.querySelectorAll('[data-pz-audio] .pz-audio-el');
+        for (var i = 0; i < players.length; i++) found.push(players[i]);
+        if (depth > 4) return;
+        var frames = doc.querySelectorAll('iframe');
+        for (var f = 0; f < frames.length; f++) {
+            var inner = null;
+            try {
+                inner = frames[f].contentDocument;
+            } catch (e) {
+                inner = null;
+            }
+            if (inner) collectPlayers(inner, found, depth + 1);
+        }
+    }
+
     function pauseOthers(state) {
-        var players = document.querySelectorAll('[data-pz-audio] .pz-audio-el');
+        var players = [];
+        try {
+            collectPlayers(topWindow().document, players, 0);
+        } catch (e) {
+            collectPlayers(document, players, 0);
+        }
         for (var i = 0; i < players.length; i++) {
             if (players[i] !== state.audio && !players[i].paused) players[i].pause();
         }
     }
 
+    // --- Hover readout -----------------------------------------------------
+
+    function tipFor(state) {
+        if (!state.tip) {
+            state.tip = document.createElement('span');
+            state.tip.className = 'pz-audio-tip';
+            state.tip.setAttribute('aria-hidden', 'true');
+            state.root.appendChild(state.tip);
+        }
+        return state.tip;
+    }
+
+    /** Shows `text` centred on clientX, just above `target`, inside the player. */
+    function showTip(state, target, clientX, text) {
+        var tip = tipFor(state);
+        tip.textContent = text;
+        var rootRect = state.root.getBoundingClientRect();
+        var targetRect = target.getBoundingClientRect();
+        var width = tip.offsetWidth;
+        var height = tip.offsetHeight;
+        var left = clientX - rootRect.left - width / 2;
+        left = Math.max(2, Math.min(rootRect.width - width - 2, left));
+        // Measured from the root's padding box, which is what an absolutely
+        // positioned child is placed against; the border sits outside it.
+        var top = targetRect.top - rootRect.top - state.root.clientTop - height - 2;
+        top = Math.max(1, top);
+        tip.style.left = Math.round(left) + 'px';
+        tip.style.top = Math.round(top) + 'px';
+        tip.classList.add('is-visible');
+    }
+
+    function hideTip(state) {
+        if (state.tip) state.tip.classList.remove('is-visible');
+    }
+
+    function pointerRatio(element, clientX) {
+        var rect = element.getBoundingClientRect();
+        if (!rect.width) return 0;
+        return Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    }
+
     function seekToPointer(state, event) {
         var rect = state.track.getBoundingClientRect();
         if (!rect.width) return;
-        var ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+        var ratio = pointerRatio(state.track, event.clientX);
         var duration = state.audio.duration;
         if (!isFinite(duration) || duration <= 0) return;
         state.audio.currentTime = ratio * duration;
@@ -356,7 +437,8 @@
             peaksLoading: false,
             peaksFailed: false,
             drawnCount: 0,
-            speedIndex: 0
+            speedIndex: 0,
+            tip: null
         };
         state.peakKey = peakKey(root, audio.getAttribute('src') || '');
 
@@ -374,7 +456,6 @@
 
         playButton.addEventListener('click', function () {
             if (audio.paused) {
-                pauseOthers(state);
                 var played = audio.play();
                 if (played && typeof played.catch === 'function') {
                     played.catch(function () {
@@ -395,6 +476,9 @@
             var paintVolume = function () {
                 var level = audio.volume;
                 volumeSlider.value = String(Math.round(level * 100));
+                // Chrome has no pseudo-element for the filled part of a range,
+                // so its track paints a gradient that stops here.
+                volumeSlider.style.setProperty('--pz-audio-volume-fill', Math.round(level * 100) + '%');
                 volumeBox.classList.toggle('is-muted', level === 0);
                 var label = root.getAttribute(level === 0 ? 'data-label-unmute' : 'data-label-mute') || '';
                 volumeButton.setAttribute('aria-label', label);
@@ -424,6 +508,58 @@
                 audio.volume = readVolume();
                 paintVolume();
             });
+
+            /* Open while the pointer is over the box (CSS :hover), while a drag
+               that started on the slider is still going (it may wander off the
+               box), and while the keyboard is on the control. A mouse click
+               also leaves the slider focused, which is why this is not
+               :focus-within: the slider stayed up until something else was
+               clicked. */
+            var dragging = false;
+            var syncOpen = function () {
+                var keyboard = false;
+                try {
+                    keyboard = volumeBox.querySelector(':focus-visible') !== null;
+                } catch (e) {
+                    keyboard = false;
+                }
+                volumeBox.classList.toggle('is-open', dragging || keyboard);
+            };
+            var levelTip = function (clientX) {
+                showTip(state, volumeSlider, clientX, Math.round(pointerRatio(volumeSlider, clientX) * 100) + '%');
+            };
+            volumeSlider.addEventListener('pointerdown', function (event) {
+                dragging = true;
+                syncOpen();
+                levelTip(event.clientX);
+                var release = function () {
+                    dragging = false;
+                    document.removeEventListener('pointerup', release, true);
+                    document.removeEventListener('pointercancel', release, true);
+                    // The pointer may have been let go outside the box.
+                    if (!volumeBox.matches(':hover')) hideTip(state);
+                    syncOpen();
+                };
+                document.addEventListener('pointerup', release, true);
+                document.addEventListener('pointercancel', release, true);
+            });
+            volumeSlider.addEventListener('pointermove', function (event) {
+                if (dragging || event.pointerType === 'mouse') levelTip(event.clientX);
+            });
+            volumeSlider.addEventListener('pointerleave', function () {
+                if (!dragging) hideTip(state);
+            });
+            // The keyboard moves the level without a pointer: read it out at
+            // the point of the line it has reached.
+            volumeSlider.addEventListener('keyup', function () {
+                var rect = volumeSlider.getBoundingClientRect();
+                showTip(state, volumeSlider, rect.left + rect.width * audio.volume, Math.round(audio.volume * 100) + '%');
+            });
+            volumeBox.addEventListener('focusin', syncOpen);
+            volumeBox.addEventListener('focusout', function () {
+                hideTip(state);
+                window.setTimeout(syncOpen, 0);
+            });
         }
 
         var speedButton = root.querySelector('.pz-audio-speed');
@@ -444,7 +580,10 @@
             playButton.setAttribute('title', label);
         };
 
+        // On the media element and not on the button: playback started from
+        // the keyboard or the system's media keys stops the others too.
         audio.addEventListener('play', function () {
+            pauseOthers(state);
             root.classList.add('is-playing');
             setPlayLabel(labelPause);
         });
@@ -494,13 +633,29 @@
                 // Carry on without capture: the move handler still follows.
             }
             seekToPointer(state, event);
+            timeTip(event.clientX);
             event.preventDefault();
         });
+        var timeTip = function (clientX) {
+            var duration = audio.duration;
+            if (!isFinite(duration) || duration <= 0) {
+                hideTip(state);
+                return;
+            }
+            showTip(state, track, clientX, formatTime(pointerRatio(track, clientX) * duration));
+        };
         track.addEventListener('pointermove', function (event) {
             if (dragging) seekToPointer(state, event);
+            // A touch has no hover: the readout only follows a finger that is
+            // dragging the playhead.
+            if (dragging || event.pointerType === 'mouse') timeTip(event.clientX);
         });
-        var endDrag = function () {
+        track.addEventListener('pointerleave', function () {
+            if (!dragging) hideTip(state);
+        });
+        var endDrag = function (event) {
             dragging = false;
+            if (!event || event.pointerType !== 'mouse' || !track.matches(':hover')) hideTip(state);
         };
         track.addEventListener('pointerup', endDrag);
         track.addEventListener('pointercancel', endDrag);

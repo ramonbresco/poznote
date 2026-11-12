@@ -54,6 +54,12 @@
     --pz-audio-player-width: 420px;
     --pz-audio-player-height: 56px;
 
+    /* The buttons of a page's toolbar row (css/components/toolbar-button.css),
+       the Dashboard's size. The dropdowns that sit on those rows (Notes,
+       Attachments) take the same height. */
+    --pz-toolbar-btn-width: 36px;
+    --pz-toolbar-btn-height: 33px;
+
     /* Diagonal resize, for an image handle and for an embed grip alike: the
        system arrow is a hairline that disappears on a busy picture, this one
        carries its own white halo. The keyword stays as the fallback. */

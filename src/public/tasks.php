@@ -72,7 +72,7 @@ $cache_v = urlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 
 		<?php // The filter folds behind a magnifier, first on the row (js/search-toggle.js) ?>
 		<div class="tasks-filter-bar pz-search-row">
-			<?php echo poznoteRenderSearchToggle('tasksFilterWrapper', t('tasks_page.filter_placeholder', [], 'Filter by task, title or folder name...'), 'tasks-filter-btn'); ?>
+			<?php echo poznoteRenderSearchToggle('tasksFilterWrapper', t('tasks_page.filter_placeholder', [], 'Filter by task, title or folder name...'), 'pz-toolbar-btn'); ?>
 			<div class="filter-input-wrapper pz-search-collapsible is-search-collapsed" id="tasksFilterWrapper">
 				<input
 					type="text"
@@ -84,17 +84,17 @@ $cache_v = urlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 					<i class="lucide lucide-x"></i>
 				</button>
 			</div>
-			<div class="tasks-view-toggle" id="tasksViewToggle" role="group">
-				<button type="button" class="tasks-view-btn active" data-view="list" title="<?php echo t_h('tasks_page.view_list', [], 'List view'); ?>">
-					<i class="lucide lucide-layout-list"></i>
-				</button>
-				<button type="button" class="tasks-view-btn" data-view="calendar" title="<?php echo t_h('tasks_page.view_calendar', [], 'Calendar view'); ?>">
-					<i class="lucide lucide-calendar"></i>
-				</button>
-			</div>
+			<?php // One button for the two views: it shows the other one, its icon and its name (syncViewUi in js/tasks-page.js) ?>
+			<button type="button" id="tasksViewToggle" class="pz-toolbar-btn"
+			        data-label-list="<?php echo t_h('tasks_page.view_list', [], 'List view'); ?>"
+			        data-label-calendar="<?php echo t_h('tasks_page.view_calendar', [], 'Calendar view'); ?>"
+			        title="<?php echo t_h('tasks_page.view_calendar', [], 'Calendar view'); ?>"
+			        aria-label="<?php echo t_h('tasks_page.view_calendar', [], 'Calendar view'); ?>">
+				<i class="lucide lucide-calendar"></i>
+			</button>
 			<?php // The status chips sit in a panel behind one button, like the dashboard's filters (js/tasks-page.js) ?>
 			<div class="tasks-filter-wrap">
-				<button type="button" id="tasksFilterBtn" class="tasks-filter-btn" title="<?php echo t_h('tasks_page.filters', [], 'Filters'); ?>" aria-label="<?php echo t_h('tasks_page.filters', [], 'Filters'); ?>" aria-haspopup="true" aria-expanded="false" aria-controls="tasksFilterPanel">
+				<button type="button" id="tasksFilterBtn" class="pz-toolbar-btn tasks-filter-btn" title="<?php echo t_h('tasks_page.filters', [], 'Filters'); ?>" aria-label="<?php echo t_h('tasks_page.filters', [], 'Filters'); ?>" aria-haspopup="true" aria-expanded="false" aria-controls="tasksFilterPanel">
 					<i class="lucide lucide-filter"></i>
 					<span class="tasks-filter-badge" hidden></span>
 				</button>
@@ -114,7 +114,7 @@ $cache_v = urlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 			</div>
 			<?php // Collapse/expand toggle, right of the filter button: its chevron alone, its label in the tooltip (js/tasks-page.js) ?>
 			<div class="tasks-collapse-actions">
-				<button type="button" id="toggleAllNotesBtn" class="tasks-collapse-btn" aria-expanded="true" title="<?php echo t_h('tasks_page.collapse_all', [], 'Collapse all'); ?>">
+				<button type="button" id="toggleAllNotesBtn" class="pz-toolbar-btn" aria-expanded="true" title="<?php echo t_h('tasks_page.collapse_all', [], 'Collapse all'); ?>">
 					<i class="lucide lucide-chevron-up"></i>
 				</button>
 			</div>

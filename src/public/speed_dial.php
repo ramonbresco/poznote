@@ -188,12 +188,12 @@ $cache_v = rawurlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 		<?php endif; ?>
 		<?php ob_start(); ?>
 		<?php // Created from the default speed dial only ?>
-		<?php if ($canEditBoards && $boardKey === ''): ?><button type="button" id="speedDialNewBtn" class="speed-dial-board-new" title="<?php echo t_h('speed_dial.new_button', [], 'New speed dial'); ?>" aria-label="<?php echo t_h('speed_dial.new_button', [], 'New speed dial'); ?>"><i class="lucide lucide-plus"></i></button><?php endif; ?>
+		<?php if ($canEditBoards && $boardKey === ''): ?><button type="button" id="speedDialNewBtn" class="pz-toolbar-btn" title="<?php echo t_h('speed_dial.new_button', [], 'New speed dial'); ?>" aria-label="<?php echo t_h('speed_dial.new_button', [], 'New speed dial'); ?>"><i class="lucide lucide-plus"></i></button><?php endif; ?>
 		<?php // The settings belong to the account: not for someone only looking at it ?>
 		<?php if (isActiveAccountOwnedByAuthenticatedUser()): ?>
 		<?php if (!empty($items)): ?>
 		<div id="speedDialSize" class="speed-dial-size">
-			<button type="button" id="speedDialSizeBtn" class="speed-dial-size-btn" aria-expanded="false" aria-controls="speedDialSizePopover" title="<?php echo t_h('speed_dial.tile_size', [], 'Tile size'); ?>" aria-label="<?php echo t_h('speed_dial.tile_size', [], 'Tile size'); ?>">
+			<button type="button" id="speedDialSizeBtn" class="pz-toolbar-btn" aria-haspopup="true" aria-expanded="false" aria-controls="speedDialSizePopover" title="<?php echo t_h('speed_dial.tile_size', [], 'Tile size'); ?>" aria-label="<?php echo t_h('speed_dial.tile_size', [], 'Tile size'); ?>">
 				<i class="lucide lucide-zoom-in"></i>
 			</button>
 			<div id="speedDialSizePopover" class="speed-dial-size-popover" hidden>
@@ -204,7 +204,7 @@ $cache_v = rawurlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 		<?php endif; ?>
 		<?php // Width of the column: a slider in a popover (js/page-width.js) ?>
 		<div id="speedDialWidth" class="speed-dial-size speed-dial-width">
-			<button type="button" id="speedDialWidthBtn" class="speed-dial-size-btn" data-page-width-toggle aria-haspopup="true" aria-expanded="false" aria-controls="speedDialWidthPopover" title="<?php echo t_h('page_menu.page_width', [], 'Page width'); ?>" aria-label="<?php echo t_h('page_menu.page_width', [], 'Page width'); ?>">
+			<button type="button" id="speedDialWidthBtn" class="pz-toolbar-btn" data-page-width-toggle aria-haspopup="true" aria-expanded="false" aria-controls="speedDialWidthPopover" title="<?php echo t_h('page_menu.page_width', [], 'Page width'); ?>" aria-label="<?php echo t_h('page_menu.page_width', [], 'Page width'); ?>">
 				<i class="lucide lucide-move-horizontal"></i>
 			</button>
 			<div id="speedDialWidthPopover" class="speed-dial-size-popover" hidden>
@@ -222,7 +222,7 @@ $cache_v = rawurlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 		<?php else: ?>
 		<?php // The filter folds behind a magnifier, first on the row (js/search-toggle.js) ?>
 		<div class="speed-dial-toolbar pz-search-row">
-		<?php echo poznoteRenderSearchToggle('speedDialFilter', t('public.filter_placeholder', [], 'Filter by name or link...'), 'speed-dial-size-btn'); ?>
+		<?php echo poznoteRenderSearchToggle('speedDialFilter', t('public.filter_placeholder', [], 'Filter by name or link...'), 'pz-toolbar-btn'); ?>
 		<div id="speedDialFilter" class="home-search-container pz-search-collapsible is-search-collapsed">
 			<div class="home-search-wrapper">
 				<input type="text" id="speedDialFilterInput" class="home-search-input" placeholder="<?php echo t_h('public.filter_placeholder', [], 'Filter by name or link...'); ?>" autocomplete="off">

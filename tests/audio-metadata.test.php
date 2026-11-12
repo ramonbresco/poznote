@@ -251,6 +251,63 @@ test('ID3v2: an unsynchronised tag is put back together before it is read', func
     });
 });
 
+/** An ID3v2.4 frame stored unsynchronised, its size counting the stored bytes. */
+function audioTestId3v24UnsyncFrame(string $id, string $body, int $frameFlags = 0x0002): string
+{
+    $stored = preg_replace('/\xFF(?=[\x00\xE0-\xFF]|\z)/', "\xFF\x00", $body);
+    return $id . audioTestSynchsafe(strlen($stored)) . chr($frameFlags >> 8) . chr($frameFlags & 0xFF) . $stored;
+}
+
+test('ID3v2.4: a tag-level unsynchronisation flag is undone frame by frame', function () {
+    // In 2.4 the flag on the tag says every frame is unsynchronised on its
+    // own, and each frame size counts the bytes as stored. A JPEG is full of
+    // FF 00, so undoing the whole tag first left the cover frame longer than
+    // the tag and the cover was never found.
+    $jpeg = "\xFF\xD8\xFF\xE0" . str_repeat("\xFF\x00AB", 50) . "\xFF\xD9";
+    foreach ([0x0002, 0x0000] as $frameFlags) {
+        $frames = audioTestId3v24UnsyncFrame('TIT2', "\x03" . 'Song', $frameFlags)
+            . audioTestId3v24UnsyncFrame('APIC', audioTestApicBody('image/jpeg', '', $jpeg), $frameFlags);
+        audioTestWithFile(audioTestId3Tag($frames, 4, 0x80, 64), function ($path) use ($jpeg, $frameFlags) {
+            $meta = poznoteAudioMetadata($path, true);
+            $label = sprintf('frame flags %04x', $frameFlags);
+            assertSame('Song', $meta['title'], $label);
+            assertSame(true, $meta['has_cover'], $label);
+            assertSame('image/jpeg', $meta['cover']['mime'] ?? null, $label);
+            assertSame($jpeg, $meta['cover']['data'] ?? null, $label);
+        });
+    }
+});
+
+test('ID3v2.4: a frame flagged unsynchronised but stored as is keeps its bytes', function () {
+    // Some writers set the flag and store the picture untouched. Its FF 00
+    // pairs are JPEG data, and the FF E0 next to them says nothing was
+    // unsynchronised: the frame is taken as it is.
+    $jpeg = "\xFF\xD8\xFF\xE0" . str_repeat("\xFF\x00AB", 50) . "\xFF\xD9";
+    $body = audioTestApicBody('image/jpeg', '', $jpeg);
+    $frames = 'APIC' . audioTestSynchsafe(strlen($body)) . "\x00\x02" . $body;
+    audioTestWithFile(audioTestId3Tag($frames, 4, 0, 64), function ($path) use ($jpeg) {
+        assertSame($jpeg, poznoteAudioCoverArt($path)['data'] ?? null);
+    });
+});
+
+test('ID3v2: a tag made of thousands of tiny frames is not walked to its end', function () {
+    // A frame costs a seek and a read, so a tag of tens of megabytes of
+    // one-byte frames used to cost seconds each time the note was shown. The
+    // walk stops after POZNOTE_AUDIO_ID3_MAX_FRAMES: a title before the
+    // ceiling is read, one after it is not.
+    $filler = str_repeat(audioTestId3Frame('XXXX', 'a'), POZNOTE_AUDIO_ID3_MAX_FRAMES - 1);
+    $title = audioTestId3Frame('TIT2', "\x00" . 'Within');
+    audioTestWithFile(audioTestId3Tag($filler . $title), function ($path) {
+        assertSame('Within', poznoteAudioMetadata($path)['title']);
+    });
+
+    $filler = str_repeat(audioTestId3Frame('XXXX', 'a'), POZNOTE_AUDIO_ID3_MAX_FRAMES + 50);
+    $title = audioTestId3Frame('TIT2', "\x00" . 'Beyond');
+    audioTestWithFile(audioTestId3Tag($filler . $title), function ($path) {
+        assertSame('', poznoteAudioMetadata($path)['title']);
+    });
+});
+
 test('ID3v1 fills in what ID3v2 did not say', function () {
     $frames = audioTestId3Frame('TIT2', "\x00" . 'From v2');
     $file = audioTestId3Tag($frames) . str_repeat("\x00", 256) . audioTestId3v1Tag('From v1', 'Artist v1', 'Album v1');

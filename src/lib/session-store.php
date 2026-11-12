@@ -184,8 +184,12 @@ function poznoteDescribeSessionClient(?string $userAgent): string {
  * Each row carries its handle, whether it is the session making the request,
  * how it signed in, the client that opened it, when it was opened, when it was
  * last active and when it expires if left alone.
+ *
+ * $withRememberToken adds the fingerprint of the remember-me cookie the
+ * session travels with ('' when it has none). It is what a revoke needs and
+ * nothing a page should see, so it is left out unless asked for.
  */
-function poznoteListUserSessions(int $userId, string $currentSessionId = ''): array {
+function poznoteListUserSessions(int $userId, string $currentSessionId = '', bool $withRememberToken = false): array {
     if ($userId <= 0) {
         return [];
     }
@@ -200,6 +204,9 @@ function poznoteListUserSessions(int $userId, string $currentSessionId = ''): ar
 
     $lifetime = poznoteSessionLifetimeSeconds();
     $wanted = ['login_user_id', 'authenticated', 'auth_method', 'session_client', 'session_created_at'];
+    if ($withRememberToken) {
+        $wanted[] = 'remember_token';
+    }
     $rows = [];
     foreach ($files as $file) {
         if (strncmp($file, 'sess_', 5) !== 0) {
@@ -220,7 +227,7 @@ function poznoteListUserSessions(int $userId, string $currentSessionId = ''): ar
 
         $sessionId = substr($file, 5);
         $lastActive = @filemtime($path) ?: 0;
-        $rows[] = [
+        $row = [
             'id' => poznoteSessionHandle($sessionId),
             'current' => $currentSessionId !== '' && hash_equals($sessionId, $currentSessionId),
             'auth_method' => is_string($data['auth_method'] ?? null) ? $data['auth_method'] : '',
@@ -229,6 +236,10 @@ function poznoteListUserSessions(int $userId, string $currentSessionId = ''): ar
             'last_active' => $lastActive,
             'expires_at' => $lastActive > 0 ? $lastActive + $lifetime : 0,
         ];
+        if ($withRememberToken) {
+            $row['remember_token'] = is_string($data['remember_token'] ?? null) ? $data['remember_token'] : '';
+        }
+        $rows[] = $row;
     }
 
     usort($rows, static function (array $a, array $b): int {
@@ -245,15 +256,25 @@ function poznoteListUserSessions(int $userId, string $currentSessionId = ''): ar
  * what ends it: the next request that presents the cookie finds nothing and
  * lands on the login page. False when no session of this profile matches, so a
  * handle from another account can never delete anything.
+ *
+ * The file is only half of a device that ticked "Remember me": its cookie
+ * would open a new session on the very next request. $endRememberToken is
+ * handed the fingerprint of that cookie, before the file goes, so the caller
+ * can put it on the list of cookies that no longer sign anyone in. It takes
+ * (int $userId, string $fingerprint) and is not called for a session that
+ * travels with no cookie.
  */
-function poznoteRevokeUserSession(int $userId, string $handle): bool {
+function poznoteRevokeUserSession(int $userId, string $handle, ?callable $endRememberToken = null): bool {
     if ($userId <= 0 || $handle === '') {
         return false;
     }
     $directory = poznoteSessionSavePath();
-    foreach (poznoteListUserSessions($userId) as $row) {
+    foreach (poznoteListUserSessions($userId, '', true) as $row) {
         if (!hash_equals($row['id'], $handle)) {
             continue;
+        }
+        if ($endRememberToken !== null && $row['remember_token'] !== '') {
+            $endRememberToken($userId, $row['remember_token']);
         }
         // The handle is one way, so the file is found by re-hashing the
         // candidates rather than by naming it from the handle.
@@ -272,13 +293,13 @@ function poznoteRevokeUserSession(int $userId, string $handle): bool {
 }
 
 /** Ends every session of this profile except the one making the request. */
-function poznoteRevokeOtherUserSessions(int $userId, string $currentSessionId): int {
+function poznoteRevokeOtherUserSessions(int $userId, string $currentSessionId, ?callable $endRememberToken = null): int {
     $ended = 0;
     foreach (poznoteListUserSessions($userId, $currentSessionId) as $row) {
         if ($row['current']) {
             continue;
         }
-        if (poznoteRevokeUserSession($userId, $row['id'])) {
+        if (poznoteRevokeUserSession($userId, $row['id'], $endRememberToken)) {
             $ended++;
         }
     }

@@ -60,6 +60,9 @@
             });
         }, {
             icon: options.icon || 'lucide-arrow-up-down',
+            // It sits on a page's toolbar row, with the magnifier
+            // (css/components/toolbar-button.css)
+            buttonClass: 'pz-toolbar-btn',
             className: 'pz-select-menu-toggle' + (options.className ? ' ' + options.className : ''),
             menuClass: 'row-actions-menu-choices',
             align: options.align || 'left'

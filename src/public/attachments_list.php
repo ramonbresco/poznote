@@ -28,7 +28,7 @@ $currentLang = getUserLanguage();
 		
 		<?php // The filter folds behind a magnifier, first on the row (js/search-toggle.js) ?>
 		<div class="shared-filter-bar attachments-filter-bar pz-search-row">
-			<?php echo poznoteRenderSearchToggle('attachmentsFilterWrapper', t('attachments.list.filter_placeholder', [], 'Filter by note title or attachment name...')); ?>
+			<?php echo poznoteRenderSearchToggle('attachmentsFilterWrapper', t('attachments.list.filter_placeholder', [], 'Filter by note title or attachment name...'), 'pz-toolbar-btn'); ?>
 			<div class="filter-input-wrapper pz-search-collapsible is-search-collapsed" id="attachmentsFilterWrapper">
 				<input type="text" id="filterInput" class="filter-input" placeholder="<?php echo t_h('attachments.list.filter_placeholder', [], 'Filter by note title or attachment name...'); ?>"/>
 				<button id="clearFilterBtn" class="clear-filter-btn initially-hidden">

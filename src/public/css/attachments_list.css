@@ -71,12 +71,11 @@ body.attachments-page {
     justify-content: center;
     align-items: center;
     gap: 12px;
-    /* The magnifier (css/components/search-toggle.css) as tall as the type dropdown */
-    --pz-search-toggle-size: 38px;
 }
 
 /* As wide as its words and without the arrow, like the type dropdown of
-   notes_manager.php */
+   notes_manager.php, and the frame, height and grey of the shared toolbar
+   button beside it (css/components/toolbar-button.css) */
 .file-type-filter {
     flex: 0 0 auto;
     min-width: 0;
@@ -92,25 +91,26 @@ body.attachments-page {
     text-align-last: center;
     /* The magnifier's height, whatever the font's line box */
     box-sizing: border-box;
-    height: var(--pz-search-toggle-size, 38px);
+    height: var(--pz-toolbar-btn-height, 33px);
     padding: 0;
-    outline: 1px solid var(--border-color, var(--pz-border));
+    outline: 1px solid var(--pz-border);
     outline-offset: -1px;
     border: solid transparent;
     border-width: 1px 12px;
     border-radius: var(--pz-radius-lg);
     /* The page's font: a select falls back to the browser's own (Arial on Windows) */
     font-family: inherit;
-    font-size: 14px;
-    color: var(--text-color, var(--pz-text));
-    background-color: var(--input-bg, var(--pz-bg));
+    font-size: 13px;
+    color: var(--pz-text-muted);
+    background-color: var(--pz-bg);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: outline-color 0.2s ease, color 0.2s ease;
 }
 
+.file-type-filter:hover,
 .file-type-filter:focus {
     outline-color: var(--pz-accent-text);
-    box-shadow: 0 0 0 3px rgba(var(--pz-accent-text-rgb), 0.1);
+    color: var(--pz-accent-text);
 }
 
 .thumbnails-toggle {
@@ -289,11 +289,13 @@ html[data-theme='dark'] .filter-input {
 html[data-theme='dark'] .file-type-filter {
     background-color: var(--pz-surface);
     outline-color: var(--pz-border);
-    color: var(--pz-text);
+    color: var(--pz-text-muted);
 }
 
+html[data-theme='dark'] .file-type-filter:hover,
 html[data-theme='dark'] .file-type-filter:focus {
     outline-color: var(--pz-accent-text);
+    color: var(--pz-accent-text);
 }
 
 html[data-theme='dark'] .filter-stats {

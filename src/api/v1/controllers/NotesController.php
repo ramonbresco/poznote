@@ -2633,13 +2633,29 @@ class NotesController {
         }
         
         try {
-            // Get note type
-            $typeStmt = $this->con->prepare("SELECT type FROM entries WHERE id = ?");
+            // Get note type. A note in the trash is not one this saves into,
+            // the same rule as update(): its text is what a restore brings
+            // back.
+            $typeStmt = $this->con->prepare("SELECT type FROM entries WHERE id = ? AND trash = 0");
             $typeStmt->execute([$noteId]);
             $noteType = $typeStmt->fetchColumn();
-            
+
             if ($noteType === false) {
                 $this->sendError(404, 'Note not found');
+                return;
+            }
+
+            // A note its owner locked (lib/note-lock.php) refuses this write
+            // like every other one: the emergency save is one more way into
+            // the note's text, and it must not be the one that gets through.
+            if (poznoteNoteIsLocked($this->con, $noteId)) {
+                http_response_code(403);
+                echo json_encode([
+                    'success' => false,
+                    'error' => poznoteNoteLockedMessage(),
+                    'code' => POZNOTE_NOTE_LOCKED_CODE,
+                    'locked' => true,
+                ], JSON_UNESCAPED_UNICODE);
                 return;
             }
 
@@ -2671,11 +2687,13 @@ class NotesController {
             
             // Update database
             $now_utc = gmdate('Y-m-d H:i:s', time());
-            $stmt = $this->con->prepare("UPDATE entries SET entry = ?, updated = ?, updated_by_user_id = ? WHERE id = ?");
-            
-            if ($stmt->execute([$content, $now_utc, $this->getActorUserId(), $noteId])) {
+            // Where the write came from, as update() records it
+            // (lib/write-source.php)
+            $stmt = $this->con->prepare("UPDATE entries SET entry = ?, updated = ?, updated_by_user_id = ?, updated_source = ? WHERE id = ?");
+
+            if ($stmt->execute([$content, $now_utc, $this->getActorUserId(), poznoteDetectWriteSource(), $noteId])) {
                 $this->sendSuccess(['id' => $noteId]);
-                
+
                 // Trigger auto Git sync on emergency save (leaving page)
                 $this->triggerGitSync($noteId, 'push');
             } else {

@@ -168,11 +168,12 @@ body.tasks-page {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
 }
 
 /* Status filter: one button opening a panel with the chips (js/tasks-page.js).
-   Same height as the view toggle and the filter input on the row. */
+   The buttons of the row are the shared toolbar buttons
+   (css/components/toolbar-button.css); this one carries the count badge. */
 .tasks-filter-wrap {
     position: relative;
     display: inline-flex;
@@ -181,35 +182,6 @@ body.tasks-page {
 
 .tasks-filter-btn {
     position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 31px;
-    height: 29px;
-    padding: 0;
-    border: 1px solid var(--border-color, var(--pz-border));
-    border-radius: var(--pz-radius-lg);
-    /* The ground of the filter field, not the page's */
-    background: var(--input-bg, var(--pz-bg));
-    color: var(--text-color, var(--pz-text));
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.tasks-filter-btn:hover {
-    border-color: var(--pz-accent);
-    color: var(--pz-accent-text);
-}
-
-.tasks-filter-btn.active {
-    border-color: var(--pz-accent);
-    color: var(--pz-accent-text);
-    background: color-mix(in srgb, var(--pz-accent) 5%, var(--pz-bg));
-}
-
-.tasks-filter-btn .lucide {
-    width: 16px;
-    height: 16px;
 }
 
 .tasks-filter-badge {
@@ -351,31 +323,6 @@ body.tasks-page {
     display: flex;
     gap: 8px;
     flex-shrink: 0;
-}
-
-.tasks-collapse-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 31px;
-    height: 29px;
-    padding: 0;
-    border: 1px solid var(--border-color, var(--pz-border));
-    border-radius: var(--pz-radius-lg);
-    background: var(--input-bg, var(--pz-bg));
-    color: var(--text-color, var(--pz-text));
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.tasks-collapse-btn .lucide {
-    width: 16px;
-    height: 16px;
-}
-
-.tasks-collapse-btn:hover {
-    border-color: var(--pz-accent);
-    color: var(--pz-accent-text);
 }
 
 /* Note groups. Each group is framed as a card so consecutive sections read
@@ -741,44 +688,6 @@ html[data-theme='dark'] .tasks-note-source-badge {
 
 .tasks-task-item.completed .task-due-chip {
     opacity: 0.6;
-}
-
-/* View toggle (list / calendar), a small segmented control */
-.tasks-view-toggle {
-    display: flex;
-    flex-shrink: 0;
-    border: 1px solid var(--border-color, var(--pz-border));
-    border-radius: var(--pz-radius-lg);
-    overflow: hidden;
-    background: var(--input-bg, var(--pz-bg));
-}
-
-.tasks-view-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 29px;
-    height: 27px;
-    padding: 0;
-    border: none;
-    background: transparent;
-    color: var(--text-color, var(--pz-text));
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.tasks-view-btn:hover {
-    color: var(--pz-accent-text);
-}
-
-.tasks-view-btn.active {
-    background-color: var(--pz-accent);
-    color: var(--pz-text-inverse);
-}
-
-/* Collapse/expand only makes sense for the note groups of the list view */
-.tasks-container.view-calendar .tasks-collapse-actions {
-    display: none;
 }
 
 /* Calendar view: month grid. It spans the full viewport width; the body and
@@ -1211,37 +1120,10 @@ html[data-theme='dark'] .tasks-filter-chip.active {
     color: var(--pz-text-inverse);
 }
 
-html[data-theme='dark'] .tasks-filter-btn {
-    border-color: var(--pz-border);
-    background: var(--pz-surface);
-    color: var(--pz-text);
-}
-
-html[data-theme='dark'] .tasks-filter-btn:hover,
-html[data-theme='dark'] .tasks-filter-btn.active {
-    border-color: var(--pz-accent);
-    color: var(--pz-accent-text);
-}
-
-html[data-theme='dark'] .tasks-filter-btn.active {
-    background: var(--pz-surface-hover);
-}
-
 html[data-theme='dark'] .tasks-filter-panel {
     background: var(--pz-surface);
     border-color: var(--pz-border);
     box-shadow: 0 6px 20px rgba(var(--pz-shadow-rgb), 0.5);
-}
-
-html[data-theme='dark'] .tasks-collapse-btn {
-    border-color: var(--pz-border);
-    background: var(--pz-surface);
-    color: var(--pz-text);
-}
-
-html[data-theme='dark'] .tasks-collapse-btn:hover {
-    border-color: var(--pz-accent);
-    color: var(--pz-accent-text);
 }
 
 html[data-theme='dark'] .tasks-progress-bar {
@@ -1302,20 +1184,6 @@ html[data-theme='dark'] .tasks-task-due-btn:hover {
 html[data-theme='dark'] .task-due-chip.overdue {
     background-color: var(--pz-bg);
     color: var(--pz-danger-text);
-}
-
-html[data-theme='dark'] .tasks-view-toggle {
-    border-color: var(--pz-border);
-    background: var(--pz-surface);
-}
-
-html[data-theme='dark'] .tasks-view-btn {
-    color: var(--pz-text);
-}
-
-html[data-theme='dark'] .tasks-view-btn.active {
-    background-color: var(--pz-accent);
-    color: var(--pz-text-inverse);
 }
 
 html[data-theme='dark'] .tasks-cal-nav,

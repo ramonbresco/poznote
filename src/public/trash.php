@@ -172,7 +172,7 @@ $trashOrderBy = $trashSort === 'created'
 
         <?php // The search folds behind a magnifier, first on the row (js/search-toggle.js) ?>
         <div class="trash-filter-bar pz-search-row">
-            <?php echo poznoteRenderSearchToggle('trashSearchWrapper', t('trash.search.placeholder', [], 'Search in trash...')); ?>
+            <?php echo poznoteRenderSearchToggle('trashSearchWrapper', t('trash.search.placeholder', [], 'Search in trash...'), 'pz-toolbar-btn'); ?>
             <div class="filter-input-wrapper pz-search-collapsible<?php echo $search === '' ? ' is-search-collapsed' : ''; ?>" id="trashSearchWrapper">
                 <form action="trash.php" method="POST" id="trashSearchForm">
                     <i class="lucide lucide-search trash-search-icon"></i>
@@ -194,30 +194,29 @@ $trashOrderBy = $trashSort === 'created'
                 <?php endif; ?>
             </div>
             <?php // Right of the magnifier and in its look, its bin alone in red, its label in the tooltip (js/trash.js) ?>
-            <button type="button" class="trash-empty-btn" id="emptyTrashBtn" title="<?php echo t_h('trash.actions.empty_trash', [], 'Empty trash'); ?>" aria-label="<?php echo t_h('trash.actions.empty_trash', [], 'Empty trash'); ?>">
+            <button type="button" class="pz-toolbar-btn trash-empty-btn" id="emptyTrashBtn" title="<?php echo t_h('trash.actions.empty_trash', [], 'Empty trash'); ?>" aria-label="<?php echo t_h('trash.actions.empty_trash', [], 'Empty trash'); ?>">
                 <i class="lucide lucide-trash-2"></i>
             </button>
             <?php
-            // Each option is a link so the sort survives without JavaScript;
-            // the active search is carried over so re-sorting does not drop it.
-            $sortOptions = [
+            // One button for the two sorts: it shows the current one, and a
+            // click goes to the other. A link, so the sort survives without
+            // JavaScript; the active search is carried over so re-sorting does
+            // not drop it.
+            $sortLabels = [
                 'trashed' => t_h('trash.sort.deleted', [], 'Deletion date'),
                 'created' => t_h('trash.sort.created', [], 'Creation date'),
             ];
+            $nextSort = $trashSort === 'created' ? 'trashed' : 'created';
+            $nextSortHref = 'trash.php?sort=' . $nextSort
+                . ($search !== '' ? '&search=' . urlencode($search) : '')
+                . ($pageWorkspace !== '' ? '&workspace=' . urlencode($pageWorkspace) : '');
             ?>
-            <div class="trash-sort-toggle" role="group" aria-label="<?php echo t_h('trash.sort.label', [], 'Sort notes'); ?>">
-                <?php foreach ($sortOptions as $sortKey => $sortLabel): ?>
-                    <?php
-                    $isActive = ($trashSort === $sortKey);
-                    $href = 'trash.php?sort=' . $sortKey
-                        . ($search !== '' ? '&search=' . urlencode($search) : '')
-                        . ($pageWorkspace !== '' ? '&workspace=' . urlencode($pageWorkspace) : '');
-                    ?>
-                    <a class="trash-sort-option<?php echo $isActive ? ' is-active' : ''; ?>"
-                       href="<?php echo htmlspecialchars($href, ENT_QUOTES, 'UTF-8'); ?>"
-                       aria-current="<?php echo $isActive ? 'true' : 'false'; ?>"><?php echo $sortLabel; ?></a>
-                <?php endforeach; ?>
-            </div>
+            <a class="pz-toolbar-btn pz-toolbar-btn-text trash-sort-toggle"
+               href="<?php echo htmlspecialchars($nextSortHref, ENT_QUOTES, 'UTF-8'); ?>"
+               title="<?php echo t_h('trash.sort.label', [], 'Sort notes'); ?>">
+                <i class="lucide lucide-arrow-up-down"></i>
+                <span><?php echo $sortLabels[$trashSort]; ?></span>
+            </a>
             <div class="trash-page-count"><?php echo $countLabel; ?></div>
         </div>
 

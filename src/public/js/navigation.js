@@ -125,7 +125,12 @@ function getBackToNotesUrl() {
     var pageWorkspace = getPageWorkspace();
     var workspace = getEffectiveWorkspace(pageWorkspace);
     var params = {};
-    var context = getUrlNoteContext() || getStoredActiveTabContext(workspace);
+    // No tabs at 800px and below: the stored state there is frozen at the
+    // last time the window was wide (js/tabs.js), so it names an old note,
+    // and an empty one would blank the pane. index.php lands on the last
+    // opened note on its own.
+    var tabsApply = window.innerWidth > 800;
+    var context = getUrlNoteContext() || (tabsApply ? getStoredActiveTabContext(workspace) : null);
 
     if (workspace) {
         params.workspace = workspace;
@@ -134,7 +139,7 @@ function getBackToNotesUrl() {
         params.note = context.noteId;
     } else if (context && context.type === 'kanban' && context.folderId) {
         params.kanban = context.folderId;
-    } else if (hasEmptyStoredTabs(workspace)) {
+    } else if (tabsApply && hasEmptyStoredTabs(workspace)) {
         params.blank = '1';
     }
 

@@ -164,15 +164,6 @@ html[data-theme='dark'] .trash-innernote {
     color: var(--pz-text);
 }
 
-html[data-theme='dark'] .trash-sort-toggle {
-    border-color: var(--pz-border);
-}
-
-html[data-theme='dark'] .trash-sort-option.is-active {
-    background-color: var(--pz-surface);
-    box-shadow: none;
-}
-
 /* ============================================
    Attachments
    ============================================ */

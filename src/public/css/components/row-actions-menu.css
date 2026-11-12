@@ -42,10 +42,9 @@ html[data-theme='dark'] .row-actions-item.is-danger.is-disabled:hover, html[data
    stays in the page without being seen or reachable */
 .pz-select-menu-source { position: absolute; width: 1px; height: 1px; padding: 0; border: 0; margin: -1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; pointer-events: none; }
 
-/* Icon button standing for a <select>. Its look is the page's business (it
-   sits with the page's other icon buttons), only its emptiness is not. */
-.btn.pz-select-menu-toggle { padding: 0; }
-/* The page can take the button away (the Offline page while the notes have
-   only one reason): .initially-hidden is a plain display:none and would lose
-   to the display of the button's own base rule */
-.btn.pz-select-menu-toggle.initially-hidden { display: none; }
+/* Icon button standing for a <select>: a toolbar button
+   (css/components/toolbar-button.css), it sits with the magnifier. The page
+   can take it away (the Offline page while the notes have only one reason):
+   .initially-hidden is a plain display:none and would lose to the display of
+   the button's own base rule */
+.pz-select-menu-toggle.initially-hidden { display: none; }

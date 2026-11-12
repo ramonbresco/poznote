@@ -106,26 +106,6 @@ body.speed-dial-page {
     color: var(--pz-text-inverse);
 }
 
-.speed-dial-board-new {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 33px;
-    padding: 0;
-    border: 1px solid var(--pz-border);
-    border-radius: var(--pz-radius-lg);
-    background: var(--pz-bg);
-    color: var(--pz-text-muted);
-    cursor: pointer;
-}
-
-.speed-dial-board-new:hover,
-.speed-dial-board-new:focus-visible {
-    border-color: var(--pz-accent-text);
-    color: var(--pz-accent-text);
-}
-
 .speed-dial-board-menu {
     position: fixed;
     z-index: 10002;
@@ -208,27 +188,6 @@ body.speed-dial-page {
     position: relative;
 }
 
-.speed-dial-size-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 33px;
-    padding: 0;
-    border: 1px solid var(--pz-border);
-    border-radius: var(--pz-radius-lg);
-    background: var(--pz-bg);
-    color: var(--pz-text-muted);
-    cursor: pointer;
-}
-
-.speed-dial-size-btn:hover,
-.speed-dial-size-btn:focus-visible,
-.speed-dial-size-btn[aria-expanded="true"] {
-    border-color: var(--pz-accent-text);
-    color: var(--pz-accent-text);
-}
-
 /* Under its button, its right edge on the button's: the width button ends
    the row, so the popover opens towards the middle and stays on a phone
    screen */
@@ -277,12 +236,6 @@ body.speed-dial-page {
     font-family: inherit;
     font-size: 13px;
     box-shadow: none;
-}
-
-.speed-dial-board-new i,
-.speed-dial-size-btn i {
-    width: 18px;
-    height: 18px;
 }
 
 .speed-dial-empty {

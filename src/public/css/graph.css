@@ -31,8 +31,8 @@ body.graph-page {
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    /* The buttons sit close under the title */
-    gap: 12px;
+    /* The buttons sit close under the title, 8px apart as on the Dashboard */
+    gap: 8px;
     padding: 2px 14px 0;
     /* Transparent so the page background shows through, matching the filter
        rows on the other pages now that the title sits above it. */
@@ -74,7 +74,7 @@ body.graph-page {
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
 }
 
 /* The checkboxes, on a line of their own under the toolbar, a little apart
@@ -127,36 +127,14 @@ body.graph-page {
     cursor: default;
 }
 
-/* The toolbar buttons are their icon alone: the view (network or tree, a
-   click goes to the other one), the search, the folder filter, "Separate
-   groups" and "Reset layout" */
-.graph-icon-btn {
-    justify-content: center;
-    flex-shrink: 0;
-    width: 34px;
-    padding: 0;
-    font-size: 15px;
-    /* The icon color of the app, lighter than the text of a labelled button */
-    color: var(--pz-icon);
-}
-
-/* The icon takes the color of its button, at rest and under the pointer */
-.graph-icon-btn .lucide,
-.graph-icon-btn .lucide:hover {
-    color: inherit;
-    transform: none;
-}
-
-/* A button that stays on: a folder picked in the filter */
+/* The toolbar buttons (the search, the view, the folder filter, "Separate
+   groups", "Reset layout", Information) are the shared toolbar buttons
+   (css/components/toolbar-button.css). One that stays on: a folder picked in
+   the filter. */
 .graph-folder-btn.is-filtering {
     border-color: var(--pz-accent-text);
     color: var(--pz-accent-text);
-}
-
-/* Folder filter: the folder icon beside the search */
-.graph-folder-btn:focus-visible {
-    outline: none;
-    border-color: var(--pz-accent-text);
+    background: color-mix(in srgb, var(--pz-accent) 5%, var(--pz-bg));
 }
 
 /* ...and the dialog it opens */
@@ -507,11 +485,7 @@ html[data-theme='dark'] .graph-reset-btn:disabled {
 html[data-theme='dark'] .graph-folder-btn.is-filtering {
     border-color: var(--pz-accent-text);
     color: var(--pz-accent-text);
-}
-
-html[data-theme='dark'] .graph-icon-btn .lucide,
-html[data-theme='dark'] .graph-icon-btn .lucide:hover {
-    color: inherit;
+    background: var(--pz-surface-hover);
 }
 
 html[data-theme='dark'] .graph-folder-option:hover,

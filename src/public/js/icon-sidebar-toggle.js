@@ -254,10 +254,14 @@
         }
         ['blank', 'note', 'kanban'].forEach(function (key) { url.searchParams.delete(key); });
 
-        var stored = readStoredTabs(url.searchParams.get('workspace') || 'default');
+        // Mobile has no tabs: what is stored there is frozen (js/tabs.js), so
+        // it says nothing about what the pane should hold.
+        var stored = window.innerWidth > TABS_MAX_MOBILE_WIDTH
+            ? readStoredTabs(url.searchParams.get('workspace') || 'default')
+            : null;
         if (stored && stored.tabs.length === 0) {
             url.searchParams.set('blank', '1');
-        } else if (stored && window.innerWidth > TABS_MAX_MOBILE_WIDTH) {
+        } else if (stored) {
             var active = null;
             stored.tabs.forEach(function (tab) {
                 if (!active && tab && tab.id === stored.activeTabId) active = tab;

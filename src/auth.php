@@ -9,6 +9,7 @@
  */
 
 require_once __DIR__ . '/lib/session.php';
+require_once __DIR__ . '/lib/remember-me-token.php';
 
 // Read as globals by the cookie helpers below and by REMEMBER_ME_COOKIE
 $isSecure = poznoteSessionCookieIsSecure();
@@ -88,6 +89,134 @@ function setRememberMeCookie(string $value, int $expires): void {
         'httponly'  => true,
         'samesite' => 'Lax'
     ]);
+
+    // The session remembers which cookie it travels with, so that ending the
+    // session from the "Connected devices" dialog can end the cookie too
+    // (poznoteBindSessionToRememberMeCookie()). The cookie this request came
+    // in with is no longer the browser's: it is not adopted again below.
+    $GLOBALS['poznoteRememberMeCookieWritten'] = true;
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        if ($value !== '' && !empty($_SESSION['authenticated'])
+            && poznoteRememberMeTokenUserId($value) === (int)($_SESSION['login_user_id'] ?? 0)) {
+            $_SESSION['remember_token'] = poznoteRememberMeFingerprint($value);
+        } else {
+            unset($_SESSION['remember_token']);
+        }
+    }
+}
+
+
+/**
+ * The profile whose signature a remember-me cookie really carries, 0 when it
+ * carries none: the cookie is not one, names a profile that is gone or cannot
+ * sign any more, or was signed with another password.
+ *
+ * Only for ending a cookie at logout. It is the signature check of
+ * isAuthenticated() without what decides a sign-in (the cookie's age, the
+ * account being active, two-factor, the list of ended cookies): a cookie too
+ * old to sign in is still one that may be ended.
+ */
+function poznoteRememberMeTokenOwner(string $token): int {
+    $parts = poznoteRememberMeTokenParts($token);
+    if ($parts === null || $parts['user_id'] <= 0) {
+        return 0;
+    }
+    try {
+        require_once __DIR__ . '/users/db_master.php';
+        $user = getUserProfileById($parts['user_id']);
+        $secret = $user ? getRememberMeSecret($user) : null;
+        if (!$user || $secret === null || (string)$user['username'] !== $parts['username']) {
+            return 0;
+        }
+        $valid = hash_equals(createRememberMeHash($parts['username'], $parts['user_id'], $parts['timestamp'], $secret), $parts['hash'])
+            || hash_equals(createLegacyRememberMeHash($parts['username'], $parts['user_id'], $parts['timestamp'], $secret), $parts['hash']);
+        return $valid ? $parts['user_id'] : 0;
+    } catch (Throwable $e) {
+        return 0;
+    }
+}
+
+/**
+ * Ends, on the server, the remember-me cookie of the browser that is logging
+ * out. Called by logout() before the session goes.
+ *
+ * Logout used to remove the cookie from the browser and nothing else: the
+ * cookie is signed, not stored, so a copy of it taken beforehand kept opening
+ * sessions for up to 30 days. Its fingerprint now goes on the list of cookies
+ * that no longer sign anyone in, like one ended from the "Connected devices"
+ * dialog.
+ *
+ * Two cookies are looked at: the one the session travels with, and the one
+ * the request carries when its signature holds (which covers a logout made
+ * after the session itself expired). A cookie that proves nothing writes
+ * nothing, so the list cannot be filled by sending made-up cookies here.
+ * Never fails: a logout that cannot reach the list is still a logout.
+ */
+function poznoteEndRememberMeCookieOnLogout(): void {
+    try {
+        $ended = [];
+
+        $loginUserId = !empty($_SESSION['authenticated']) ? (int)($_SESSION['login_user_id'] ?? 0) : 0;
+        $sessionToken = $_SESSION['remember_token'] ?? '';
+        if ($loginUserId > 0 && is_string($sessionToken) && $sessionToken !== '') {
+            $ended[$sessionToken] = $loginUserId;
+        }
+
+        $cookie = $_COOKIE[REMEMBER_ME_COOKIE] ?? '';
+        if (is_string($cookie) && $cookie !== '') {
+            $ownerId = poznoteRememberMeTokenOwner($cookie);
+            if ($ownerId > 0) {
+                $ended[poznoteRememberMeFingerprint($cookie)] = $ownerId;
+            }
+        }
+
+        if ($ended === []) {
+            return;
+        }
+        require_once __DIR__ . '/users/db_master.php';
+        foreach ($ended as $fingerprint => $userId) {
+            revokeRememberMeToken((int)$userId, (string)$fingerprint, time() + REMEMBER_ME_DURATION);
+        }
+    } catch (Throwable $e) {
+        error_log('Poznote: could not end the remember-me cookie at logout: ' . $e->getMessage());
+    }
+}
+
+
+/**
+ * Ties the session of this request to the remember-me cookie its browser
+ * holds, when that cookie is one of the same profile.
+ *
+ * A remember-me cookie is signed with the password hash and nothing else: no
+ * row anywhere says which browser holds one. Deleting a device's session
+ * file therefore signed nobody out, the cookie opened a new session on the
+ * next request. With the fingerprint in the session, the dialog knows which
+ * cookie to end along with it (poznoteRevokeUserSession()).
+ *
+ * Read on every request and written only when it changes, so a session
+ * opened before this existed, or a cookie issued by any path, is picked up
+ * the next time the browser shows it.
+ */
+function poznoteBindSessionToRememberMeCookie(): void {
+    if (!empty($GLOBALS['poznoteRememberMeCookieWritten'])
+        || session_status() !== PHP_SESSION_ACTIVE
+        || !empty($_SESSION['login_user']['_api_auth_method'])) {
+        return;
+    }
+    $token = $_COOKIE[REMEMBER_ME_COOKIE] ?? '';
+    if (!is_string($token) || $token === '') {
+        return;
+    }
+    // Only a cookie of the profile that is signed in: a leftover cookie of
+    // another account in the same browser is not this session's to end.
+    $loginUserId = (int)($_SESSION['login_user_id'] ?? 0);
+    if ($loginUserId <= 0 || poznoteRememberMeTokenUserId($token) !== $loginUserId) {
+        return;
+    }
+    $fingerprint = poznoteRememberMeFingerprint($token);
+    if (($_SESSION['remember_token'] ?? '') !== $fingerprint) {
+        $_SESSION['remember_token'] = $fingerprint;
+    }
 }
 
 /**
@@ -258,6 +387,9 @@ function setAuthenticatedIdentity(array $authUser, ?string $authMethod = null): 
     // agent is kept as the browser sent it, trimmed, and only ever turned into
     // a "Chrome, Android" label for display; no address is stored.
     $_SESSION['session_created_at'] = time();
+    // Whichever cookie the previous identity of this session travelled with
+    // is not this one's; the paths that sign in with a cookie set it again.
+    unset($_SESSION['remember_token']);
     $sessionClient = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
     if ($sessionClient !== '') {
         $_SESSION['session_client'] = substr($sessionClient, 0, 255);
@@ -598,6 +730,8 @@ function isAuthenticated() {
         }
 
         if (sessionMatchesCurrentCredentials()) {
+            poznoteBindSessionToRememberMeCookie();
+
             if (!sessionMeetsRequiredTwoFactor()) {
                 return false;
             }
@@ -641,7 +775,24 @@ function isAuthenticated() {
                         $legacyExpectedHash = createLegacyRememberMeHash($username, (int)$userId, (int)$timestamp, $secretToUse);
                         $validHash = hash_equals($expectedHash, $hash);
                         $validLegacyHash = !$validHash && hash_equals($legacyExpectedHash, $hash);
-                        
+
+                        // Signed out from the "Connected devices" dialog: the
+                        // signature still holds, the cookie no longer opens
+                        // anything and is removed below like an invalid one.
+                        // When the list cannot be read the cookie is neither
+                        // honoured nor thrown away: this request goes on
+                        // without it and the next one asks again.
+                        if ($validHash || $validLegacyHash) {
+                            $revoked = isRememberMeTokenRevoked(poznoteRememberMeFingerprint((string)$token));
+                            if ($revoked === null) {
+                                return signInWithoutCredentials();
+                            }
+                            if ($revoked) {
+                                $validHash = false;
+                                $validLegacyHash = false;
+                            }
+                        }
+
                         if (($validHash || $validLegacyHash) && !rememberedLoginMeetsRequiredTwoFactor((int)$userId)) {
                             // Remembered before two-factor was required: the
                             // password form takes over, then the setup step.
@@ -652,6 +803,7 @@ function isAuthenticated() {
 
                         if ($validHash || $validLegacyHash) {
                             $activeAccountSelected = startAuthenticatedUserSession($user);
+                            $_SESSION['remember_token'] = poznoteRememberMeFingerprint((string)$token);
                             updateUserLastLogin((int)$userId);
 
                             if ($validLegacyHash) {
@@ -1930,6 +2082,10 @@ function logout() {
             }
         }
     }
+
+    // The remember-me cookie stops working on the server too, not only in
+    // this browser. Before session_destroy(): the session says which cookie.
+    poznoteEndRememberMeCookieOnLogout();
 
     session_destroy();
     // Remove remember me cookie

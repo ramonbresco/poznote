@@ -104,9 +104,7 @@ body.trash-page {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    /* The magnifier (css/components/search-toggle.css) as tall as the sort switch */
-    --pz-search-toggle-size: 38px;
+    gap: 8px;
 }
 
 .trash-filter-bar .filter-input-wrapper {
@@ -179,55 +177,10 @@ body.trash-page {
     color: var(--pz-text-subtle);
 }
 
-/* Sort toggle: two links styled as one segmented control, sitting next to the
-   search box in the filter bar. */
-.trash-sort-toggle {
-    display: inline-flex;
-    flex: 0 0 auto;
-    padding: 3px;
-    border: 1px solid var(--pz-border);
-    border-radius: var(--pz-radius-lg);
-    background-color: var(--pz-chrome-bg);
-}
-
-.trash-sort-option {
-    padding: 7px 14px;
-    border-radius: var(--pz-radius);
-    font-size: 13px;
-    line-height: 1.2;
-    color: var(--pz-text-muted);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-}
-
-.trash-sort-option:hover {
-    color: var(--pz-accent-text);
-}
-
-.trash-sort-option.is-active {
-    background-color: var(--pz-bg);
-    color: var(--pz-accent-text);
-    font-weight: var(--pz-weight-semibold);
-    box-shadow: 0 1px 2px rgba(var(--pz-shadow-rgb), 0.08);
-}
-
-/* Empty trash, right of the magnifier: its square, ground and border
-   (css/components/search-toggle.css), the bin alone in the danger red */
+/* Empty trash, right of the magnifier: a shared toolbar button, the bin alone
+   in the danger red */
 .trash-empty-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-sizing: border-box;
-    width: var(--pz-search-toggle-size);
-    height: var(--pz-search-toggle-size);
-    padding: 0;
-    border: 1px solid var(--pz-border);
-    border-radius: var(--pz-radius-lg);
-    background: var(--pz-bg);
     color: var(--pz-danger-text);
-    cursor: pointer;
 }
 
 .trash-empty-btn:hover,
@@ -236,10 +189,15 @@ body.trash-page {
     color: var(--pz-danger-text-hover);
 }
 
-.trash-empty-btn .lucide {
-    width: 18px;
-    height: 18px;
-    color: inherit;
+html[data-theme='dark'] .trash-empty-btn,
+html[data-theme='dark'] .trash-empty-btn .lucide {
+    color: var(--pz-danger-text);
+}
+
+html[data-theme='dark'] .trash-empty-btn:hover,
+html[data-theme='dark'] .trash-empty-btn:focus-visible {
+    border-color: var(--pz-danger-text);
+    color: var(--pz-danger-text-hover);
 }
 
 .trash-content {

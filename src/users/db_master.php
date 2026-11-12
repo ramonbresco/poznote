@@ -360,6 +360,20 @@ function initializeMasterDatabase(PDO $con): void {
         )
     ");
 
+    // Remember-me cookies ended from the "Connected devices" dialog. Such a
+    // cookie is signed, not stored: nothing on the server knows it exists, so
+    // deleting a device's session file left the cookie free to open a new
+    // session on the next request. A row here is the one-way fingerprint of a
+    // cookie that must not do that any more (auth.php), kept until the cookie
+    // would have expired on its own.
+    $con->exec("
+        CREATE TABLE IF NOT EXISTS revoked_remember_tokens (
+            fingerprint TEXT PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            expires_at INTEGER NOT NULL
+        )
+    ");
+
     // Migration: user webhooks used to be implicitly owned by the primary
     // account (user 1); attach the pre-existing rows to it so they keep
     // working now that every account can register its own.
@@ -2991,6 +3005,49 @@ function getRememberMeSecret(array $user): ?string {
         return bindRememberMeSecretToTotp($userId, $secret);
     } catch (Throwable $e) {
         error_log("Failed to read two-factor state for user $userId: " . $e->getMessage());
+        return null;
+    }
+}
+
+/**
+ * Stop a remember-me cookie from opening sessions, by its fingerprint
+ * (poznoteRememberMeFingerprint() in lib/remember-me-token.php). $expiresAt is when the cookie
+ * would have stopped working anyway; rows past theirs are dropped on the way.
+ */
+function revokeRememberMeToken(int $userId, string $fingerprint, int $expiresAt): bool {
+    if ($userId <= 0 || $fingerprint === '') {
+        return false;
+    }
+    try {
+        $con = getMasterConnection();
+        $con->prepare('DELETE FROM revoked_remember_tokens WHERE expires_at < ?')->execute([time()]);
+        $stmt = $con->prepare('
+            INSERT INTO revoked_remember_tokens (fingerprint, user_id, expires_at)
+            VALUES (?, ?, ?)
+            ON CONFLICT(fingerprint) DO UPDATE SET expires_at = MAX(expires_at, excluded.expires_at)
+        ');
+        return $stmt->execute([$fingerprint, $userId, $expiresAt]);
+    } catch (Exception $e) {
+        error_log('Poznote: could not revoke a remember-me cookie: ' . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Whether a remember-me cookie was ended from the "Connected devices" dialog.
+ * Null when the list cannot be read: the caller must not take that for "no".
+ */
+function isRememberMeTokenRevoked(string $fingerprint): ?bool {
+    if ($fingerprint === '') {
+        return false;
+    }
+    try {
+        $con = getMasterConnection();
+        $stmt = $con->prepare('SELECT 1 FROM revoked_remember_tokens WHERE fingerprint = ? LIMIT 1');
+        $stmt->execute([$fingerprint]);
+        return $stmt->fetchColumn() !== false;
+    } catch (Exception $e) {
+        error_log('Poznote: could not read the revoked remember-me cookies: ' . $e->getMessage());
         return null;
     }
 }

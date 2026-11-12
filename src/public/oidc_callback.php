@@ -57,13 +57,16 @@ try {
     // Custom Tab on mobile)
     $loginHintEmail = $_SESSION['oidc_claims']['email'] ?? null;
 
-    echo '<!DOCTYPE html><html><head>';
+    // The viewport tag gives a phone its real width: js/workspace-redirect.js
+    // reads it to open the note on arrival, and without it every phone
+    // reports the 980px default layout width.
+    echo '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1">';
     echo '<script type="application/json" id="workspace-redirect-data">' . json_encode($redirectConfig) . '</script>';
     if (is_string($loginHintEmail) && $loginHintEmail !== '') {
         echo '<script type="application/json" id="oidc-login-hint-data">' . json_encode(['email' => $loginHintEmail], JSON_HEX_TAG | JSON_HEX_AMP) . '</script>';
         echo '<script src="js/oidc-login-hint.js?v=' . rawurlencode(getAppVersion()) . '"></script>';
     }
-    echo '<script src="js/workspace-redirect.js?v=' . rawurlencode(getAppVersion()) . '"></script>';
+    echo '<script src="' . poznoteAsset('js/workspace-redirect.js') . '"></script>';
     echo '</head><body>' . t_h('login.redirecting', [], 'Redirecting...', getUserLanguage()) . '</body></html>';
     exit;
 } catch (Exception $e) {

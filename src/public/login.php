@@ -85,7 +85,10 @@ function poznoteRenderLoginRedirectAndExit(?string $redirectAfter, string $curre
         unset($_SESSION['post_login_redirect']);
     }
 
-    echo '<!DOCTYPE html><html><head>';
+    // The viewport tag gives a phone its real width: js/workspace-redirect.js
+    // reads it to open the note on arrival, and without it every phone
+    // reports the 980px default layout width.
+    echo '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1">';
     echo '<script type="application/json" id="workspace-redirect-data">' . json_encode($redirectConfig) . '</script>';
     echo '<script src="' . poznoteAsset('js/workspace-redirect.js') . '"></script>';
     echo '</head><body>' . t_h('login.redirecting', [], 'Redirecting...', $currentLang) . '</body></html>';

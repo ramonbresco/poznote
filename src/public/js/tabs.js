@@ -1750,7 +1750,11 @@
             _loadingNoteId = null;
         }
 
+        // Below 800px the tabs are a frozen copy that does not say what the
+        // pane shows (see _restoreTabs): closing one updates that copy and
+        // leaves the pane alone, or it would load the neighbouring old tab
         var wasActive = (tabId === activeTabId);
+        var paneFollowsTabs = _areTabsEnabled();
         tabs.splice(idx, 1);
         delete _scrollPositions[tabId];
 
@@ -1760,7 +1764,7 @@
             _pendingTabSwitch = null;
             _saveToStorage();
             render();
-            if (wasActive && !keepPane) _clearContentPane();
+            if (wasActive && !keepPane && paneFollowsTabs) _clearContentPane();
             return true;
         }
 
@@ -1771,7 +1775,7 @@
             activeTabId = nextTab.id;
             _saveToStorage();
             render();
-            _loadTabContent(nextTab);
+            if (paneFollowsTabs) _loadTabContent(nextTab);
         } else {
             _saveToStorage();
             render();
@@ -1821,7 +1825,7 @@
         // Iterate backwards to avoid index shifting issues
         for (var i = tabs.length - 1; i >= 0; i--) {
             if (_isNoteTab(tabs[i]) && tabs[i].noteId === noteId) {
-                if (tabs[i].id === activeTabId) closedActive = true;
+                if (tabs[i].id === activeTabId && _areTabsEnabled()) closedActive = true;
                 closeTab(tabs[i].id, true, !updatePane); // force close even if pinned
             }
         }
@@ -1955,6 +1959,16 @@
     function _restoreTabs() {
         hasInitialized = true;
 
+        // Below 800px there are no tabs, and the stored state is frozen:
+        // _onNoteLoaded() does not follow the notes opened there. It is still
+        // read, so the tabs come back if the window widens, but it must not
+        // touch the pane: the note index.php rendered is the last one opened,
+        // whereas the stored active tab is whatever was open the last time the
+        // window was wide (a phone once turned sideways). Loading it replaced
+        // the right note at every start of the PWA, and the load recorded it
+        // as the last opened one, so the next start landed on it again.
+        var paneFollowsTabs = _areTabsEnabled();
+
         // Read current note from page config
         var currentNoteId = null;
         var currentKanbanFolderId = null;
@@ -1987,7 +2001,7 @@
             tabs = [];
             activeTabId = null;
             render();
-            if (_getRenderedNoteId()) _clearContentPaneNow(true);
+            if (paneFollowsTabs && _getRenderedNoteId()) _clearContentPaneNow(true);
             return;
         }
 
@@ -2018,7 +2032,7 @@
                 activeTabId = null;
                 _saveToStorage();
                 render();
-                if (!currentNoteId && !currentKanbanFolderId && _getRenderedNoteId()) {
+                if (paneFollowsTabs && !currentNoteId && !currentKanbanFolderId && _getRenderedNoteId()) {
                     _clearContentPaneNow(true);
                 }
                 return;
@@ -2086,7 +2100,7 @@
             _saveToStorage();
             render();
 
-            if (!currentNoteId && !currentKanbanFolderId && !_isSearchFilteringActive()) {
+            if (paneFollowsTabs && !currentNoteId && !currentKanbanFolderId && !_isSearchFilteringActive()) {
                 var activeTabToRestore = _findTabById(activeTabId);
                 if (_shouldRestoreActiveTabContent(activeTabToRestore)) {
                     setTimeout(function () {
@@ -2183,8 +2197,18 @@
      *                                   If not provided, uses the current _getWorkspace().
      */
     function switchWorkspace(oldWorkspace) {
+        // Below 800px the stored tabs are frozen (see _restoreTabs): writing
+        // them back would only save that stale state, or an empty one that
+        // a wide window would read as "every tab closed", and loading the
+        // active one would open whatever was open the last time the window
+        // was wide. js/workspaces-create.js opens the workspace's last opened
+        // note instead.
+        var paneFollowsTabs = _areTabsEnabled();
+
         // Save current tabs for the old workspace explicitly
-        if (oldWorkspace) {
+        if (!paneFollowsTabs) {
+            // nothing to save
+        } else if (oldWorkspace) {
             try {
                 localStorage.setItem(_storageKey(oldWorkspace), JSON.stringify({
                     tabs: tabs,
@@ -2241,7 +2265,7 @@
         }
 
         // Load the active tab if we have one
-        if (activeTabId) {
+        if (paneFollowsTabs && activeTabId) {
             var activeTab = _findTabById(activeTabId);
             _loadTabContent(activeTab);
         }

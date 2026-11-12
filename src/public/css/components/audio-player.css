@@ -7,6 +7,7 @@
    decided by @container rules and never by the page around it. */
 
 .pz-audio {
+    position: relative;
     container-type: inline-size;
     container-name: pz-audio;
     --pz-audio-progress: 0%;
@@ -131,17 +132,24 @@
 .pz-audio-has-cover .pz-audio-play::before {
     content: "";
     position: absolute;
+    z-index: 1;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background: rgba(var(--pz-shadow-rgb), 0.45);
+    background: rgba(var(--pz-shadow-rgb), 0.5);
     opacity: 0;
     transition: opacity 0.12s ease;
 }
 
+/* The cover is positioned too and comes later in the button, so without a
+   z-index it paints over the scrim and the cover never darkens. The glyph
+   sits above both, and takes the highlight channel rather than the accent's
+   label colour: it is drawn on a darkened photo, whatever the theme. */
 .pz-audio-has-cover .pz-audio-play-icon {
     position: relative;
+    z-index: 2;
+    color: rgb(var(--pz-highlight-rgb));
     opacity: 0;
     transition: opacity 0.12s ease;
 }
@@ -246,6 +254,19 @@
    that seeks does not ask for the 4px of the bar itself. */
 .pz-audio-tagged .pz-audio-track {
     height: 18px;
+    margin-top: -1px;
+}
+
+/* The words sit low, next to the line they describe, rather than up against
+   the top of the box with the hit area of the line opening a gap under them.
+   The 4px they move down are taken from the gap, so the body keeps its height
+   and the line stays where it was. */
+.pz-audio-tagged .pz-audio-body {
+    gap: 0;
+}
+
+.pz-audio-tagged .pz-audio-tags {
+    margin-top: 4px;
 }
 
 .pz-audio .pz-audio-track:focus-visible {
@@ -376,34 +397,69 @@
     mask-image: var(--pz-icon-volume-off);
 }
 
-.pz-audio .pz-audio-volume-slider {
+.pz-audio .pz-audio-volume-pop {
     position: absolute;
     top: 50%;
     right: 100%;
+    display: flex;
+    align-items: center;
     width: 76px;
-    height: 20px;
-    margin: -10px 6px 0 0;
-    padding: 0 8px;
-    border: 1px solid var(--pz-border);
-    border-radius: var(--pz-radius-pill);
-    background: var(--pz-bg);
+    height: 24px;
+    margin-top: -12px;
+    /* The air between the slider and the speaker is padding of the pop, not a
+       margin: the pointer crossing it is still on the volume box, so the
+       slider does not start to fade on the way from one to the other. */
+    padding: 0 6px 0 4px;
+    /* The player's own ground, so the slider covers the clock under it
+       rather than being drawn across the digits. */
+    background: var(--pz-surface);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.12s ease, visibility 0.12s ease;
+}
+
+/* Hover, a drag in progress or keyboard focus (.is-open, js/audio-player.js).
+   Not :focus-within: a click leaves the slider focused, and the pop stayed
+   up until something else was clicked. */
+.pz-audio .pz-audio-volume:hover .pz-audio-volume-pop,
+.pz-audio .pz-audio-volume.is-open .pz-audio-volume-pop {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* The same line as the seek bar of a tagged player: a 4px track in the border
+   colour, filled with the accent up to the level, no knob. The input is
+   taller than the line so a click does not have to land on the 4px. */
+.pz-audio .pz-audio-volume-slider {
+    --pz-audio-volume-fill: 100%;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    height: 18px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
     appearance: none;
     cursor: pointer;
 }
 
-.pz-audio .pz-audio-volume:hover .pz-audio-volume-slider,
-.pz-audio .pz-audio-volume:focus-within .pz-audio-volume-slider {
-    opacity: 1;
-    visibility: visible;
+.pz-audio .pz-audio-volume-slider:focus {
+    outline: none;
+}
+
+.pz-audio .pz-audio-volume-slider:focus-visible {
+    border-radius: var(--pz-radius-sm);
+    outline: 2px solid var(--pz-accent);
+    outline-offset: 1px;
 }
 
 .pz-audio .pz-audio-volume-slider::-webkit-slider-runnable-track {
     height: 4px;
     border-radius: var(--pz-radius-sm);
-    background: var(--pz-border);
+    background: linear-gradient(to right,
+        var(--pz-accent) 0 var(--pz-audio-volume-fill),
+        var(--pz-border) var(--pz-audio-volume-fill) 100%);
 }
 
 .pz-audio .pz-audio-volume-slider::-moz-range-track {
@@ -412,30 +468,42 @@
     background: var(--pz-border);
 }
 
-.pz-audio .pz-audio-volume-slider::-webkit-slider-thumb {
-    width: 10px;
-    height: 10px;
-    margin-top: -3px;
-    border: 0;
-    border-radius: var(--pz-radius-circle);
+.pz-audio .pz-audio-volume-slider::-moz-range-progress {
+    height: 4px;
+    border-radius: var(--pz-radius-sm);
     background: var(--pz-accent);
+}
+
+/* A knob of no width: the browser still needs one to map the pointer to a
+   value, the reader only needs the line. */
+.pz-audio .pz-audio-volume-slider::-webkit-slider-thumb {
+    width: 1px;
+    height: 4px;
+    border: 0;
+    background: transparent;
     appearance: none;
 }
 
 .pz-audio .pz-audio-volume-slider::-moz-range-thumb {
-    width: 10px;
-    height: 10px;
+    width: 1px;
+    height: 4px;
     border: 0;
-    border-radius: var(--pz-radius-circle);
-    background: var(--pz-accent);
+    border-radius: 0;
+    background: transparent;
 }
 
+/* Rounded square like the play button, and one width for every speed: sized
+   on its own label, "1.25×" was wider than "1×" and pushed the clock and the
+   speaker sideways at each click. */
 .pz-audio .pz-audio-speed {
-    min-width: 30px;
-    height: 20px;
-    padding: 0 5px;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 22px;
+    padding: 0;
     border: 1px solid var(--pz-border);
-    border-radius: var(--pz-radius-pill);
+    border-radius: var(--pz-radius-sm);
+    text-align: center;
+    white-space: nowrap;
     background: transparent;
     color: var(--pz-text-muted);
     font-family: inherit;
@@ -453,6 +521,36 @@
 .pz-audio .pz-audio-speed.is-changed {
     border-color: var(--pz-accent);
     color: var(--pz-accent-text, var(--pz-accent));
+}
+
+/* --- Hover readout --------------------------------------------------------
+
+   The time under the pointer on the seek bar, the level under it on the
+   volume slider (js/audio-player.js places it). It lives inside the player's
+   box, above the control it reads: in the editor the player is an iframe of
+   its own size, and nothing can be drawn past its edges. */
+.pz-audio .pz-audio-tip {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    padding: 1px 5px;
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-sm);
+    background: var(--pz-bg);
+    color: var(--pz-text);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    line-height: 15px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.pz-audio .pz-audio-tip.is-visible {
+    opacity: 1;
+    visibility: visible;
 }
 
 /* --- Narrow players ------------------------------------------------------- */
