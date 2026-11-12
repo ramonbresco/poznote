@@ -13,6 +13,8 @@ if (!function_exists('createDirectoryWithPermissions')) {
 }
 // What a rendered note shows, for the search_clean_entry SQLite function below
 require_once __DIR__ . '/lib/search-text.php';
+// The version the bootstrap below brings an account database to
+require_once __DIR__ . '/lib/schema-version.php';
 
 // Determine database path based on authenticated user
 $dbPath = SQLITE_DATABASE; // Default path (fallback)
@@ -161,7 +163,7 @@ try {
     // migrations, indexes, default settings, welcome note, legacy repair)
     // is skipped when the database is already at the current version, leaving
     // a single SELECT on the settings table per request.
-    $CURRENT_SCHEMA_VERSION = 55; // 55: entries.updated_source (where the last change came from); 54: entries.locked (a note its owner locked against editing); 53: shared_notes.password_exempt (per-note exemption from an inherited folder share password); 52: folders.title_color (#1729); 51: the speed dial's rail entry shown again; 50: entries.speed_dial_order
+    $CURRENT_SCHEMA_VERSION = POZNOTE_SCHEMA_VERSION; // lib/schema-version.php, with what each version added
     $currentVersion = 0;
 
     // Whether this database is being created right now, as opposed to an

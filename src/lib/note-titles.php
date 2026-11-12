@@ -8,30 +8,36 @@
 require_once __DIR__ . '/search-text.php';
 
 /**
- * Default note titles as they may already be stored in existing databases,
- * derived from src/i18n/* index.note.new_note values.
+ * The title a new note receives, in every language Poznote ships
+ * (index.note.new_note of each src/i18n file, in the order of the files).
+ *
+ * Written out rather than read from the dictionaries: this list is needed by
+ * every note and every row of the notes tree, and reading it meant decoding
+ * the ten dictionaries (3.4 MB of JSON, about 25 ms and 9 MB) on each of those
+ * requests. tests/note-titles.test.php fails when a dictionary carries a title
+ * this list does not.
+ *
+ * A title that changes in a dictionary is ADDED here, the old one stays:
+ * existing databases still hold notes named after it.
+ */
+const POZNOTE_DEFAULT_NOTE_TITLES = [
+    'Nota nova',      // ca
+    'Neue Notiz',     // de
+    'New note',       // en
+    'Nueva nota',     // es
+    'Nouvelle note',  // fr
+    '新規ノート',      // ja
+    '새 노트',         // ko
+    'Nova nota',      // pt
+    'Новая заметка',  // ru
+    '新笔记',          // zh-cn
+];
+
+/**
+ * Default note titles as they may already be stored in existing databases.
  */
 function getDefaultNoteTitles(): array {
-    static $titles = null;
-
-    if ($titles === null) {
-        $titles = [];
-        foreach (glob(__DIR__ . '/../i18n/*.json') ?: [] as $file) {
-            $lang = basename($file, '.json');
-            $dict = loadI18nDictionary($lang);
-            $title = i18nGet($dict, 'index.note.new_note');
-            if ($title !== null && trim($title) !== '') {
-                $titles[] = $title;
-            }
-        }
-
-        $titles = array_values(array_unique($titles));
-        if (empty($titles)) {
-            $titles = ['New note'];
-        }
-    }
-
-    return $titles;
+    return POZNOTE_DEFAULT_NOTE_TITLES;
 }
 
 /**

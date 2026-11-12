@@ -521,6 +521,20 @@ function restoreDatabaseFromFile($sqlFile, $alreadyValidated = false) {
     // Ensure proper permissions on restored database
     setFilePermissions($dbPath, 0664);
 
+    // The dump holds tables and rows, not the indexes: a database restored at
+    // the current schema version would skip the bootstrap that builds them
+    // (lib/schema-version.php). Failing here must not fail the restore, the
+    // data is back either way.
+    try {
+        require_once __DIR__ . '/schema-version.php';
+        $versionCon = new PDO('sqlite:' . $dbPath);
+        $versionCon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        poznoteForgetRestoredSchemaVersion($versionCon);
+        $versionCon = null;
+    } catch (Exception $e) {
+        error_log('restoreDatabaseFromFile: could not reset the schema version: ' . $e->getMessage());
+    }
+
     // Workspace shares live in master.db and outlive the swap: the ones whose
     // workspace the restored database does not hold go, or recreating that
     // name later would hand it to those accounts unasked (users/db_master.php).

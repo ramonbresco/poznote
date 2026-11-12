@@ -18,6 +18,29 @@ test('the default titles cover every shipped language, not just English', functi
     assertTrue(in_array('Nouvelle note', $titles, true), 'French default missing');
 });
 
+// The list is written out in note-titles.php instead of being read from the
+// dictionaries on every request. This is what keeps the two from drifting.
+test('every dictionary\'s default title is in the written-out list', function () {
+    $titles = getDefaultNoteTitles();
+    $files = glob(dirname(__DIR__) . '/src/i18n/*.json') ?: [];
+    assertTrue(count($files) >= count(poznoteSupportedLanguages()), 'dictionaries found');
+
+    foreach ($files as $file) {
+        $lang = basename($file, '.json');
+        $title = i18nGet(loadI18nDictionary($lang), 'index.note.new_note');
+        if ($title === null || trim($title) === '') {
+            fail($lang . '.json has no index.note.new_note');
+        }
+        if (!in_array($title, $titles, true)) {
+            fail($lang . '.json names a new note ' . var_export($title, true)
+                . ', which POZNOTE_DEFAULT_NOTE_TITLES (src/lib/note-titles.php) does not list.'
+                . ' Add it there, and keep the previous title: existing notes still carry it');
+        }
+    }
+
+    assertSame(count($titles), count(array_unique($titles)), 'no title listed twice');
+});
+
 test('a localized default title is recognised, with or without a suffix', function () {
     assertSame('Nouvelle note', matchDefaultNoteTitle('Nouvelle note')['title']);
     assertSame('3', matchDefaultNoteTitle('Nouvelle note (3)')['number']);
