@@ -1079,6 +1079,54 @@ html[data-theme='dark'] .kanban-inline-header {
     transform: translateY(-1px);
 }
 
+/* ===== Background image of the board (issue #1771) =====
+   Same shell as the size toggle. The picture is a layer under the board,
+   inside the wrapper, so it fills the room the columns scroll in and stays
+   put while they scroll. The columns are opaque; what is written directly on
+   the board (empty state) gets a ground of its own, as on the speed dial. */
+
+.kanban-background-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    padding: 6px 10px;
+    background: var(--bg-secondary, var(--pz-surface-hover));
+    color: var(--pz-text-muted);
+    border: 1px solid var(--border-color, var(--pz-border-light));
+    border-radius: var(--pz-radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.kanban-background-btn:hover {
+    background: var(--pz-surface-sunken);
+    border-color: var(--pz-neutral);
+    transform: translateY(-1px);
+}
+
+.kanban-background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.kanban-board-wrapper > .kanban-board {
+    position: relative;
+    z-index: 1;
+}
+
+.has-kanban-background .kanban-empty-state {
+    padding: 16px 20px;
+    border-radius: var(--pz-radius-lg);
+    background: var(--pz-bg);
+}
+
 /* ===== Card sort toggle (date / tag / custom) =====
    Same shell as the size toggle; kanban.js swaps the icon for the active sort. */
 

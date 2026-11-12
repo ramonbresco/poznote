@@ -5,7 +5,7 @@
             <h3><?php echo t_h('modals.background_image.title', [], 'Background Image Settings'); ?></h3>
         </div>
         <div class="modal-body">
-            <p><?php echo t_h('modals.background_image.description', [], 'Upload a background image for your workspace. You can adjust the opacity to make it subtle.'); ?></p>
+            <p id="backgroundImageDescription"><?php echo t_h('modals.background_image.description', [], 'Upload a background image for your workspace. You can adjust the opacity to make it subtle.'); ?></p>
             
             <div class="background-preview-container" id="backgroundPreviewContainer">
                 <div class="background-preview" id="backgroundPreview">

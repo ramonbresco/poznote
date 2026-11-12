@@ -999,7 +999,8 @@
         "mobile_editor_bar": "Barra de l'editor per a mòbils",
         "sidebar": "Barra lateral",
         "task_lists": "Llistes de tasques",
-        "code_blocks": "Blocs de codi"
+        "code_blocks": "Blocs de codi",
+        "kanban": "Kanban"
       },
       "badge_all_visible": "Tot visible",
       "badge_hidden_count_admin": "{{count}} amagats ({{admin}} per l'administrador)",
@@ -2990,6 +2991,10 @@
     "empty": {
       "message": "Creeu subcarpetes en aquesta carpeta per fer servir la visualització Kanban. Cada subcarpeta es convertirà en una columna.",
       "title": "Encara no hi ha subcarpetes"
+    },
+    "background": {
+      "button": "Imatge de fons",
+      "description": "Puja una imatge de fons per a aquest tauler Kanban. Es mostra darrere de les columnes."
     }
   },
   "sidebar": {

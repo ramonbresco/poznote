@@ -579,6 +579,7 @@ function showChangeIconModal(targetType, targetId, targetName) {
     currentIconTargetType = targetType === 'note' ? 'note' : 'folder';
     currentFolderIdForIcon = targetId;
     currentFolderNameForIcon = targetName;
+    syncOpenKanbanButton();
     // '' means: use default folder icon (toggle open/closed). null means: not initialized.
     selectedIconClass = null;
     selectedIconColor = '';
@@ -1045,6 +1046,33 @@ function targetTitleHasIconColor(targetType, targetId, pageIconColor) {
 }
 
 /**
+ * "Open Kanban view" of the picker: a folder only, and not when the picker
+ * was opened from that very board (its header icon opens it too).
+ */
+function syncOpenKanbanButton() {
+    const button = document.getElementById('openKanbanFromIconBtn');
+    if (!button) return;
+    const onThisBoard = !!document.querySelector(`#kanban-view-container[data-folder-id="${currentFolderIdForIcon}"]`);
+    button.hidden = currentIconTargetType !== 'folder' || !currentFolderIdForIcon || onThisBoard;
+}
+
+// In place where the board can show (index.php's right column), otherwise
+// on index.php, which opens it from ?kanban= (list_folders.php)
+function openKanbanFromIconModal() {
+    const folderId = currentFolderIdForIcon;
+    const folderName = currentFolderNameForIcon;
+    if (currentIconTargetType !== 'folder' || !folderId) return;
+    closeFolderIconModal();
+    if (document.getElementById('right_col') && typeof window.openKanbanView === 'function') {
+        window.openKanbanView(folderId, folderName);
+        return;
+    }
+    const workspace = typeof window.getSelectedWorkspace === 'function' ? window.getSelectedWorkspace() : '';
+    window.location.href = 'index.php?kanban=' + encodeURIComponent(folderId)
+        + (workspace ? '&workspace=' + encodeURIComponent(workspace) : '');
+}
+
+/**
  * Set up the "Apply the color to the folder/note title" box: the label that
  * fits the target, ticked when the title already has the icon colour.
  */
@@ -1184,6 +1212,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const resetButton = document.getElementById('resetFolderIconBtn');
     if (resetButton) {
         resetButton.addEventListener('click', resetFolderIcon);
+    }
+
+    const openKanbanButton = document.getElementById('openKanbanFromIconBtn');
+    if (openKanbanButton) {
+        openKanbanButton.addEventListener('click', openKanbanFromIconModal);
     }
 
     // Close modal when clicking outside

@@ -150,6 +150,24 @@
     background: var(--pz-neutral-hover);
 }
 
+/* "Open Kanban view" green and "Set default icon" red (.btn-success and
+   .btn-danger of css/components/buttons.css), in the shape of their neighbours */
+.folder-icon-modal-content .modal-buttons .btn-success,
+.folder-icon-modal-content .modal-buttons .btn-danger {
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--pz-radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+/* "Open Kanban view" (folders only): .modal-buttons gives its buttons a
+   display of their own, which beats the hidden attribute */
+.folder-icon-modal-content .modal-buttons button[hidden] {
+    display: none;
+}
+
 /* Scrollbar styling for icon grid */
 .folder-icon-grid::-webkit-scrollbar {
     width: 8px;
@@ -253,6 +271,8 @@
     }
 
     .folder-icon-modal-content .modal-buttons .btn-secondary,
+    .folder-icon-modal-content .modal-buttons .btn-success,
+    .folder-icon-modal-content .modal-buttons .btn-danger,
     .folder-icon-modal-content .modal-buttons .btn-cancel {
         width: 100%;
         margin-left: 0;

@@ -536,6 +536,18 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
 </div>
 </div>
 
+<!-- Kanban Section: the buttons of the board's header (kanban_content.php), in their order -->
+<div class="ui-custom-section" data-ui-pages="notes">
+<?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.kanban', [], 'Kanban')); ?>
+<div class="ui-custom-items">
+<?php echo poznoteUiCustomizationListToggleAll(); ?>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:kanbanSortBtn" checked><span><?php echo t_h('kanban.sort.label', [], 'Sort by'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:kanbanSizeBtn" checked><span><?php echo t_h('kanban.card_size', [], 'Card size'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:kanbanBackgroundBtn" checked><span><?php echo t_h('kanban.background.button', [], 'Background image'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:kanbanAddColumnBtn" checked><span><?php echo t_h('kanban.add_column', [], 'Add column'); ?></span></label>
+</div>
+</div>
+
 <!-- Note Actions Section -->
 <div class="ui-custom-section" data-ui-pages="notes">
 <?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.note_actions', [], 'Note Actions')); ?>

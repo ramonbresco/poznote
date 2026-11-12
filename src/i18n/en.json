@@ -999,7 +999,8 @@
         "mobile_editor_bar": "Mobile editor bar",
         "sidebar": "Sidebar",
         "task_lists": "Task lists",
-        "code_blocks": "Code blocks"
+        "code_blocks": "Code blocks",
+        "kanban": "Kanban"
       },
       "badge_all_visible": "All visible",
       "badge_hidden_count_admin": "{{count}} hidden ({{admin}} by the administrator)",
@@ -2990,6 +2991,10 @@
     "empty": {
       "message": "Create subfolders in this folder to use the Kanban view. Each subfolder will become a column.",
       "title": "No subfolders yet"
+    },
+    "background": {
+      "button": "Background image",
+      "description": "Upload a background image for this Kanban board. It is shown behind the columns."
     }
   },
   "sidebar": {

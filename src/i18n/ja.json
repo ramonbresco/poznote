@@ -999,7 +999,8 @@
         "mobile_editor_bar": "モバイルのエディターバー",
         "sidebar": "サイドバー",
         "task_lists": "タスクリスト",
-        "code_blocks": "コードブロック"
+        "code_blocks": "コードブロック",
+        "kanban": "かんばん"
       },
       "badge_all_visible": "すべて表示",
       "badge_hidden_count_admin": "{{count}}件を非表示（うち管理者による非表示{{admin}}件）",
@@ -2990,6 +2991,10 @@
     "empty": {
       "message": "カンバン表示を使うには、このフォルダーにサブフォルダーを作成してください。各サブフォルダーが列になります。",
       "title": "サブフォルダーはまだありません"
+    },
+    "background": {
+      "button": "背景画像",
+      "description": "このかんばんボードの背景画像をアップロードします。列の後ろに表示されます。"
     }
   },
   "sidebar": {

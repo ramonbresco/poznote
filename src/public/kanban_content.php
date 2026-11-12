@@ -24,6 +24,7 @@ try {
     require_once __DIR__ . '/../functions.php';
     require_once __DIR__ . '/../db_connect.php';
     require_once __DIR__ . '/../lib/note-sort.php';
+    require_once __DIR__ . '/../lib/kanban-background.php';
 
     // 3. Input Validation
     $folder_id = intval($_GET['folder_id'] ?? 0);
@@ -656,9 +657,14 @@ try {
         <?php
     }
 
+    // The board's own picture (issue #1771, lib/kanban-background.php)
+    $kanbanBackgroundUrl = poznoteKanbanBackgroundUrl((int)(getCurrentUser()['id'] ?? 0), $folder_id);
+    $kanbanBackgroundOpacity = poznoteKanbanBackgroundOpacity(getSetting('kanban_background_opacity_' . $folder_id, 100));
+    $kanbanBackgroundEditable = poznoteKanbanBackgroundEditable();
+
     // 6. Output HTML
     ?>
-    <div id="kanban-view-container" class="kanban-inline-view" data-folder-id="<?php echo $folder_id; ?>">
+    <div id="kanban-view-container" class="kanban-inline-view<?php echo $kanbanBackgroundUrl !== null ? ' has-kanban-background' : ''; ?>" data-folder-id="<?php echo $folder_id; ?>">
         <!-- Kanban Header -->
         <div class="kanban-inline-header">
             <button class="kanban-scroll-btn-header left" id="kanbanScrollLeft" title="<?php echo t_h('common.scroll_left', [], 'Scroll Left'); ?>">
@@ -688,7 +694,9 @@ try {
                 <button class="kanban-scroll-btn-header right" id="kanbanScrollRight" title="<?php echo t_h('common.scroll_right', [], 'Scroll Right'); ?>">
                     <i class="lucide lucide-chevron-right"></i>
                 </button>
+                <?php // The ids are the Element visibility keys (card:kanbanSortBtn...), right-click "Hide" included ?>
                 <button class="kanban-sort-toggle"
+                        id="kanbanSortBtn"
                         data-action="cycle-kanban-card-sort"
                         data-label="<?php echo t_h('kanban.sort.label', [], 'Sort by'); ?>"
                         data-label-date="<?php echo t_h('kanban.sort.date', [], 'Date'); ?>"
@@ -698,6 +706,7 @@ try {
                     <i class="lucide lucide-calendar kanban-sort-icon"></i>
                 </button>
                 <button class="kanban-size-toggle"
+                        id="kanbanSizeBtn"
                         data-action="cycle-kanban-card-size"
                         data-label="<?php echo t_h('kanban.card_size', [], 'Card size'); ?>"
                         data-label-small="<?php echo t_h('dashboard.view.size_small', [], 'Small'); ?>"
@@ -706,7 +715,20 @@ try {
                         title="<?php echo t_h('kanban.card_size', [], 'Card size'); ?>">
                     <span class="kanban-size-letter">M</span>
                 </button>
+                <?php if ($kanbanBackgroundEditable): ?>
+                <button type="button"
+                        class="kanban-background-btn"
+                        id="kanbanBackgroundBtn"
+                        data-action="open-kanban-background"
+                        data-folder-id="<?php echo $folder_id; ?>"
+                        data-description="<?php echo t_h('kanban.background.description', [], 'Upload a background image for this Kanban board. It is shown behind the columns.'); ?>"
+                        title="<?php echo t_h('kanban.background.button', [], 'Background image'); ?>"
+                        aria-label="<?php echo t_h('kanban.background.button', [], 'Background image'); ?>">
+                    <i class="lucide lucide-image"></i>
+                </button>
+                <?php endif; ?>
                 <button class="kanban-add-column-btn"
+                        id="kanbanAddColumnBtn"
                         data-action="create-kanban-column"
                         data-parent-id="<?php echo $folder_id; ?>"
                         title="<?php echo t_h('kanban.add_column', [], 'Add column'); ?>">
@@ -717,6 +739,7 @@ try {
 
         <!-- Kanban Board Wrapper -->
         <div class="kanban-board-wrapper">
+            <div class="kanban-background"<?php if ($kanbanBackgroundUrl !== null): ?> style="background-image: url('<?php echo htmlspecialchars($kanbanBackgroundUrl, ENT_QUOTES, 'UTF-8'); ?>'); opacity: <?php echo $kanbanBackgroundOpacity / 100; ?>;"<?php endif; ?> aria-hidden="true"></div>
             <!-- Kanban Board -->
             <div class="kanban-board" id="kanbanBoard">
             

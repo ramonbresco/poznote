@@ -171,7 +171,11 @@
       "expand": "Déplier le sous-dossier",
       "collapse": "Replier le sous-dossier"
     },
-    "add_note": "Ajouter une note"
+    "add_note": "Ajouter une note",
+    "background": {
+      "button": "Image de fond",
+      "description": "Ajoutez une image de fond à ce tableau Kanban. Elle s'affiche derrière les colonnes."
+    }
   },
   "folders": {
     "delete": {
@@ -1531,7 +1535,8 @@
         "mobile_editor_bar": "Barre d’édition mobile",
         "sidebar": "Barre latérale",
         "task_lists": "Listes de tâches",
-        "code_blocks": "Blocs de code"
+        "code_blocks": "Blocs de code",
+        "kanban": "Kanban"
       },
       "badge_all_visible": "Tout visible",
       "badge_hidden_count_admin": "{{count}} masqué(s), dont {{admin}} par l'administrateur",

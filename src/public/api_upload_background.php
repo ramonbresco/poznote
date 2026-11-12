@@ -31,7 +31,28 @@ $responseWorkspace = $workspace !== '' ? $workspace : 'default';
 // The speed dial (issue #1714) keeps an image of its own next to the workspace's:
 // shown in full there, it would not suit the faint background of the notes.
 $filePrefix = 'background';
-if (($_GET['scope'] ?? $_POST['scope'] ?? '') === 'speed_dial') {
+$requestScope = (string)($_GET['scope'] ?? $_POST['scope'] ?? '');
+if ($requestScope === 'kanban') {
+    // A Kanban board's own image (issue #1771), one per folder. Kept apart
+    // from the workspace folders (lib/kanban-background.php) so that moving
+    // the folder to another workspace keeps its picture.
+    require_once __DIR__ . '/../lib/kanban-background.php';
+    require_once __DIR__ . '/../db_connect.php';
+    $kanbanFolderId = (int)($_GET['folder_id'] ?? $_POST['folder_id'] ?? 0);
+    $folderStmt = $con->prepare('SELECT id FROM folders WHERE id = ?');
+    $folderStmt->execute([$kanbanFolderId]);
+    if ($kanbanFolderId <= 0 || !$folderStmt->fetchColumn()) {
+        apiFail('Folder not found', 404);
+        exit;
+    }
+    // Decoration of the owner's board, like the other display settings
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET' && !poznoteKanbanBackgroundEditable()) {
+        apiFail('This action is not available in a workspace shared with you', 403);
+        exit;
+    }
+    $workspaceSegment = POZNOTE_KANBAN_BACKGROUND_SEGMENT;
+    $filePrefix = poznoteKanbanBackgroundPrefix($kanbanFolderId);
+} elseif ($requestScope === 'speed_dial') {
     require_once __DIR__ . '/../lib/speed-dial.php';
     $speedDialBoard = (string)($_GET['board'] ?? $_POST['board'] ?? POZNOTE_SPEED_DIAL_TAG);
     $speedDialKey = poznoteSpeedDialIsBoardTag($speedDialBoard) ? poznoteSpeedDialBackgroundKey($speedDialBoard) : '';

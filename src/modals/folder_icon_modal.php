@@ -22,8 +22,10 @@
             </label>
         </div>
         <div class="modal-buttons">
-            <button type="button" class="btn-secondary" id="resetFolderIconBtn"><?php echo t_h('modals.folder_icon.default_icon', [], 'Set default icon'); ?></button>
+            <!-- Folders only, js/folder-icon.js hides it for a note -->
+            <button type="button" class="btn-success" id="openKanbanFromIconBtn" hidden><?php echo t_h('kanban.actions.open', [], 'Open Kanban view'); ?></button>
             <button type="button" class="btn-cancel" data-action="close-folder-icon-modal"><?php echo t_h('common.cancel'); ?></button>
+            <button type="button" class="btn-danger" id="resetFolderIconBtn"><?php echo t_h('modals.folder_icon.default_icon', [], 'Set default icon'); ?></button>
             <button type="button" class="btn-primary" id="applyFolderIconBtn"><?php echo t_h('common.apply', [], 'Apply'); ?></button>
         </div>
     </div>

@@ -172,7 +172,11 @@
       "no_boards": "Noch keine Kanban-Boards.",
       "hint": "Aktivieren Sie die Kanban-Ansicht für einen Ordner, damit er hier erscheint."
     },
-    "add_note": "Notiz hinzufügen"
+    "add_note": "Notiz hinzufügen",
+    "background": {
+      "button": "Hintergrundbild",
+      "description": "Laden Sie ein Hintergrundbild für dieses Kanban-Board hoch. Es wird hinter den Spalten angezeigt."
+    }
   },
   "folders": {
     "delete": {
@@ -1531,7 +1535,8 @@
         "mobile_editor_bar": "Mobile Editorleiste",
         "sidebar": "Seitenleiste",
         "task_lists": "Aufgabenlisten",
-        "code_blocks": "Codeblöcke"
+        "code_blocks": "Codeblöcke",
+        "kanban": "Kanban"
       },
       "check_all": "Alle auswählen",
       "uncheck_all": "Alle abwählen",

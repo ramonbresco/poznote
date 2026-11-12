@@ -999,7 +999,8 @@
         "mobile_editor_bar": "모바일 편집기 표시줄",
         "sidebar": "사이드바",
         "task_lists": "할 일 목록",
-        "code_blocks": "코드 블록"
+        "code_blocks": "코드 블록",
+        "kanban": "칸반"
       },
       "badge_all_visible": "모두 표시됨",
       "badge_hidden_count_admin": "{{count}}개 숨김(관리자가 숨긴 항목 {{admin}}개)",
@@ -2990,6 +2991,10 @@
     "empty": {
       "message": "칸반 보기를 사용하려면 이 폴더에 하위 폴더를 만듭니다. 각 하위 폴더는 열이 됩니다.",
       "title": "아직 하위 폴더가 없습니다."
+    },
+    "background": {
+      "button": "배경 이미지",
+      "description": "이 칸반 보드의 배경 이미지를 업로드합니다. 열 뒤에 표시됩니다."
     }
   },
   "sidebar": {

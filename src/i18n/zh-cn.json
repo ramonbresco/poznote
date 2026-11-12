@@ -171,7 +171,11 @@
       "no_boards": "还没有看板。",
       "hint": "在文件夹上启用看板视图后，它会显示在这里。"
     },
-    "add_note": "添加笔记"
+    "add_note": "添加笔记",
+    "background": {
+      "button": "背景图片",
+      "description": "为此看板上传背景图片，它会显示在列的后面。"
+    }
   },
   "folders": {
     "delete": {
@@ -1529,7 +1533,8 @@
         "mobile_editor_bar": "移动端编辑栏",
         "sidebar": "侧边栏",
         "task_lists": "任务列表",
-        "code_blocks": "代码块"
+        "code_blocks": "代码块",
+        "kanban": "看板"
       },
       "check_all": "全选",
       "uncheck_all": "取消全选",

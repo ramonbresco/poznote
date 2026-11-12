@@ -172,7 +172,11 @@
       "no_boards": "Ainda não há quadros Kanban.",
       "hint": "Ative a visualização Kanban em uma pasta para vê-la aqui."
     },
-    "add_note": "Adicionar nota"
+    "add_note": "Adicionar nota",
+    "background": {
+      "button": "Imagem de fundo",
+      "description": "Envie uma imagem de fundo para este quadro Kanban. Ela é exibida atrás das colunas."
+    }
   },
   "folders": {
     "delete": {
@@ -1531,7 +1535,8 @@
         "mobile_editor_bar": "Barra de edição móvel",
         "sidebar": "Barra lateral",
         "task_lists": "Listas de tarefas",
-        "code_blocks": "Blocos de código"
+        "code_blocks": "Blocos de código",
+        "kanban": "Kanban"
       },
       "check_all": "Marcar todos",
       "uncheck_all": "Desmarcar todos",

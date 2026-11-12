@@ -172,7 +172,11 @@
       "no_boards": "Aún no hay tableros Kanban.",
       "hint": "Activa la vista Kanban en una carpeta para verla aquí."
     },
-    "add_note": "Añadir nota"
+    "add_note": "Añadir nota",
+    "background": {
+      "button": "Imagen de fondo",
+      "description": "Sube una imagen de fondo para este tablero Kanban. Se muestra detrás de las columnas."
+    }
   },
   "folders": {
     "delete": {
@@ -1531,7 +1535,8 @@
         "mobile_editor_bar": "Barra de edición móvil",
         "sidebar": "Barra lateral",
         "task_lists": "Listas de tareas",
-        "code_blocks": "Bloques de código"
+        "code_blocks": "Bloques de código",
+        "kanban": "Kanban"
       },
       "check_all": "Marcar todo",
       "uncheck_all": "Desmarcar todo",
