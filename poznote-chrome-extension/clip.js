@@ -68,12 +68,84 @@
   }
 
   /**
+   * The scroll container an element scrolls in, or null for the page itself
+   */
+  function scrollContainerOf(el) {
+    for (let parent = el.parentElement; parent; parent = parent.parentElement) {
+      if (parent === document.body || parent === document.documentElement) {
+        return null;
+      }
+      const style = getComputedStyle(parent);
+      if (/(auto|scroll|hidden)/.test(style.overflowX + ' ' + style.overflowY)) {
+        return parent;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Items of a snap-scrolling feed that the reader does not see (#1772).
+   * A reel, short or story page (Instagram, TikTok, YouTube Shorts) shows one
+   * item of a feed that scrolls by whole items, with the next ones already in
+   * the page below it: logged in, those are suggested posts of other people.
+   * An item is kept when at least half of it, or half of its feed's box, is in
+   * view. A page that snaps its own scrolling keeps everything: there, the
+   * part out of view is the rest of the page.
+   */
+  function outOfViewFeedItems(elements) {
+    const drop = new Set();
+    elements.forEach(el => {
+      if (/^none( none)?$/.test(getComputedStyle(el).scrollSnapAlign || 'none')) {
+        return;
+      }
+      const container = scrollContainerOf(el);
+      if (!container || getComputedStyle(container).scrollSnapType === 'none') {
+        return;
+      }
+      const box = container.getBoundingClientRect();
+      const rect = el.getBoundingClientRect();
+      const area = rect.width * rect.height;
+      if (!area) {
+        return;
+      }
+      const overlapWidth = Math.max(0, Math.min(rect.right, box.right) - Math.max(rect.left, box.left));
+      const overlapHeight = Math.max(0, Math.min(rect.bottom, box.bottom) - Math.max(rect.top, box.top));
+      const overlap = overlapWidth * overlapHeight;
+      if (overlap < area / 2 && overlap < (box.width * box.height) / 2) {
+        drop.add(el);
+      }
+    });
+    return drop;
+  }
+
+  /**
+   * A copy of the page to read, without what the reader cannot see there.
+   * Visibility is measured on the page, then the same elements are removed
+   * from the copy, found at the same rank: the page itself is never changed.
+   */
+  function readableCopy() {
+    const live = Array.from(document.getElementsByTagName('*'));
+    const drop = outOfViewFeedItems(live);
+    const copy = document.cloneNode(true);
+    if (drop.size) {
+      const copied = Array.from(copy.getElementsByTagName('*'));
+      live.forEach((el, index) => {
+        if (drop.has(el) && copied[index]) {
+          copied[index].remove();
+        }
+      });
+    }
+    return copy;
+  }
+
+  /**
    * The main content of the page, without menus, sidebars and footers
    */
   function articleRoot() {
+    const copy = readableCopy();
     let article = null;
     try {
-      article = new Readability(document.cloneNode(true), { keepClasses: true }).parse();
+      article = new Readability(copy.cloneNode(true), { keepClasses: true }).parse();
     } catch (e) {
       article = null;
     }
@@ -83,7 +155,7 @@
       root.append(...parsed.body.childNodes);
       return { root, title: article.title || '' };
     }
-    const root = document.body ? document.body.cloneNode(true) : document.createElement('div');
+    const root = copy.body || document.createElement('div');
     root.querySelectorAll('nav, header, footer, aside, [role="navigation"], [role="banner"], [role="contentinfo"], [aria-hidden="true"]').forEach(el => el.remove());
     return { root, title: '' };
   }
