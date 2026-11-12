@@ -3009,6 +3009,19 @@
                 label: t('slash_menu.image', null, 'Image'),
                 action: function () { insertImage(); }
             },
+            // An image already in the note's attachments (uploaded with the
+            // paperclip, or pasted then removed from the text), inserted as an
+            // image without uploading it again (js/attachments.js)
+            attachedImage: {
+                id: 'image-from-attachments',
+                icon: 'lucide lucide-file-image',
+                label: t('slash_menu.image_from_attachments', null, 'Image from attachments'),
+                action: function () {
+                    if (typeof window.openAttachmentPickerModal === 'function') {
+                        window.openAttachmentPickerModal('image');
+                    }
+                }
+            },
             takePhoto: {
                 id: 'take-photo',
                 icon: 'lucide lucide-camera',
@@ -3367,6 +3380,7 @@
                 label: t('slash_menu.media', null, 'Media'),
                 submenu: [
                     common.image,
+                    common.attachedImage,
                     supportsCameraCapture() ? common.takePhoto : null,
                     {
                         id: 'youtube-video',
@@ -3775,6 +3789,7 @@
                 label: t('slash_menu.media', null, 'Media'),
                 submenu: [
                     common.image,
+                    common.attachedImage,
                     supportsCameraCapture() ? common.takePhoto : null,
                     {
                         id: 'youtube-video',

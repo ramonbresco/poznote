@@ -162,6 +162,7 @@
       "code_line_numbers": "Show line numbers in code blocks in the markdown preview.",
       "code_block_collapsed_lines": "How many lines of a code block stay on screen once it is folded, from 0 to 100. At 0 a folded block shows none of its listing. A block with no more lines than this is not offered the fold chevron, folding it would hide nothing.",
       "attachment_previews": "Show previews of attachments inside notes.",
+      "attachments_show_inserted_images": "Images pasted or inserted in a note are stored as attachments. They are hidden from the attachment lists so that they do not bury the other files. Enable this to list them too.",
       "attachments_at_bottom": "Show the attachments section at the bottom of notes instead of the top.",
       "allow_executable_attachments": "Allow scripts and executables (.sh, .ps1, .bat, .exe, .py, ...) to be attached to notes, for every account on this instance. Poznote never runs them, it only stores and serves them. File types a web server could execute, such as .php, stay blocked.",
       "backlinks_at_bottom": "Show the backlinks section at the bottom of notes instead of the top.",
@@ -564,6 +565,7 @@
       "code_block_line_numbers": "Code block line numbers",
       "code_block_collapsed_lines": "Folded code blocks",
       "attachment_previews_in_note": "Attachment previews",
+      "attachments_show_inserted_images": "Inserted images in attachments",
       "attachments_at_bottom": "Attachments at bottom",
       "backlinks_at_bottom": "Backlinks at bottom",
       "note_virtual_space": "Space below the note",
@@ -843,6 +845,7 @@
     "context_menu": {
       "open": "Open",
       "download": "Download",
+      "insert_into_note": "Insert into the note",
       "transcribe": "Transcribe",
       "delete": "Delete",
       "delete_confirm_title": "Delete attachment",
@@ -865,7 +868,12 @@
       "message_many": "Insert the {{count}} images into the note, or add them to the attachments?",
       "attach": "Add as attachment",
       "insert": "Insert into the note"
-    }
+    },
+    "picker": {
+      "no_images": "This note has no image in its attachments."
+    },
+    "inserted_images_toggle": "Also show images inserted in the notes",
+    "inserted_images_toggle_note": "Also show images inserted in the note"
   },
   "modals": {
     "paste_markdown": {
@@ -1802,6 +1810,7 @@
     "checklist": "Checklist",
     "done": "Done",
     "image": "Image",
+    "image_from_attachments": "Image from attachments",
     "take_photo": "Take a photo",
     "excalidraw": "Excalidraw",
     "mermaid": "Mermaid",

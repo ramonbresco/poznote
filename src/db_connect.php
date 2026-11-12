@@ -646,6 +646,7 @@ try {
         }
         $con->exec("INSERT OR IGNORE INTO settings (key, value) VALUES ('slash_menu_trigger', 'slash')");
         $con->exec("INSERT OR IGNORE INTO settings (key, value) VALUES ('attachment_previews_in_note', '0')");
+        $con->exec("INSERT OR IGNORE INTO settings (key, value) VALUES ('attachments_show_inserted_images', '0')");
         $con->exec("INSERT OR IGNORE INTO settings (key, value) VALUES ('attachments_at_bottom', '0')");
         $con->exec("INSERT OR IGNORE INTO settings (key, value) VALUES ('backlinks_at_bottom', '0')");
 

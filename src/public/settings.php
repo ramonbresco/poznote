@@ -133,6 +133,7 @@ $settingsPageUserKeys = [
     'code_block_line_numbers',
     'code_block_collapsed_lines',
     'attachment_previews_in_note',
+    'attachments_show_inserted_images',
     'attachments_at_bottom',
     'backlinks_at_bottom',
     'note_virtual_space',
@@ -1436,6 +1437,16 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     <div class="home-card-content">
                         <span class="home-card-title"><?php echo t_h('display.cards.attachment_previews_in_note', [], 'Attachment previews'); ?></span>
                         <span id="attachment-previews-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                    </div>
+                </div>
+
+                <!-- Images inserted in the note, listed with the other attachments -->
+                <div class="home-card" id="attachments-inserted-images-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.attachments_show_inserted_images', [], 'Images pasted or inserted in a note are stored as attachments. They are hidden from the attachment lists so that they do not bury the other files. Enable this to list them too.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon"><i class="lucide lucide-image"></i></div>
+                    <div class="home-card-content">
+                        <span class="home-card-title"><?php echo t_h('display.cards.attachments_show_inserted_images', [], 'Inserted images in attachments'); ?></span>
+                        <span id="attachments-inserted-images-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
                     </div>
                 </div>
             </div>

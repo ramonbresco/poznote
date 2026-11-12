@@ -86,6 +86,24 @@ if (!$note) {
             border-color: #545b62 !important;
         }
 
+        .inserted-images-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 14px 0;
+            font-size: 14px;
+            color: var(--pz-text-muted);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .inserted-images-toggle input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            cursor: pointer;
+        }
+
         .attachments-inline-notice {
             margin: 18px 0 20px;
             padding: 10px 12px;
@@ -118,6 +136,7 @@ if (!$note) {
     </style>
 </head>
 <body class="has-icon-sidebar" data-note-id="<?php echo $note_id; ?>"
+      data-show-inserted-images="<?php echo in_array((string) getSetting('attachments_show_inserted_images', '0'), ['1', 'true'], true) ? '1' : '0'; ?>"
       data-note-type="<?php echo htmlspecialchars($note['type'] ?? 'note', ENT_QUOTES); ?>"
       data-workspace="<?php echo $workspace ? htmlspecialchars($workspace, ENT_QUOTES) : ''; ?>"
       data-txt-uploading="<?php echo t_h('attachments.upload.button_uploading', [], 'Uploading...'); ?>"
@@ -237,6 +256,11 @@ if (!$note) {
         <!-- Attachments List Section -->
         <div class="settings-section">
             <h3><?php echo t_h('attachments.page.current_attachments', [], 'Current Attachments'); ?></h3>
+            <?php // The account setting of Settings > Display, also shown here (js/inserted-images-toggle.js) ?>
+            <label class="inserted-images-toggle">
+                <input type="checkbox" id="showInsertedImagesToggle">
+                <span><?php echo t_h('attachments.inserted_images_toggle_note', [], 'Also show images inserted in the note'); ?></span>
+            </label>
             <div id="attachmentsList" class="attachments-display">
                 <div class="loading-attachments">
                     <?php echo t_h('attachments.page.loading_attachments', [], 'Loading attachments...'); ?>
@@ -251,6 +275,7 @@ if (!$note) {
     <script src="<?php echo poznoteAsset('js/date-time-format.js'); ?>"></script>
     <script src="js/attachment-move.js?v=<?php echo $v; ?>"></script>
     <script src="js/attachments-page.js?v=<?php echo $v; ?>"></script>
+    <script src="<?php echo poznoteAsset('js/inserted-images-toggle.js'); ?>"></script>
     
     <!-- Delete Attachment Confirmation Modal -->
     <div id="deleteAttachmentConfirmModal" class="modal">

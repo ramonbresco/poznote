@@ -113,7 +113,8 @@ body.attachments-page {
     color: var(--pz-accent-text);
 }
 
-.thumbnails-toggle {
+.thumbnails-toggle,
+.inserted-images-toggle {
     flex: 0 0 auto;
     white-space: nowrap;
 }
@@ -412,9 +413,16 @@ html[data-theme='dark'] .attachment-image-preview img {
     }
 
     .file-type-filter,
-    .thumbnails-toggle {
+    .thumbnails-toggle,
+    .inserted-images-toggle {
         max-width: 100%;
         min-width: 0;
+    }
+
+    /* A label longer than the phone's width wraps instead of squeezing its box */
+    .thumbnails-toggle,
+    .inserted-images-toggle {
+        white-space: normal;
     }
 
     .attachment-files-list {
@@ -426,21 +434,26 @@ html[data-theme='dark'] .attachment-image-preview img {
    UTILITY CLASSES FOR INLINE STYLE EXTRACTION
    =========================================== */
 
-/* Toggle Checkbox Styles */
+/* Toggle Checkbox Styles: view options of the filter row, kept discreet next
+   to its buttons (plain weight, small muted text) */
 .toggle-checkbox {
     display: flex;
     align-items: center;
     cursor: pointer;
-    gap: 10px;
+    gap: 6px;
     user-select: none;
+    font-size: 13px;
+    color: var(--pz-text-muted);
 }
 
 .toggle-checkbox input {
-    width: 18px;
-    height: 18px;
+    flex: none;
+    width: 15px;
+    height: 15px;
+    margin: 0;
     cursor: pointer;
 }
 
 .toggle-label {
-    font-weight: var(--pz-weight-medium);
+    font-weight: var(--pz-weight-normal);
 }

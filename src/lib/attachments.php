@@ -256,13 +256,13 @@ function poznotePlanAttachmentMove(array $attachment, $sourceContent, bool $refe
     ];
 }
 
-function poznoteCountDisplayableAttachments($attachments, $content = '') {
+function poznoteCountDisplayableAttachments($attachments, $content = '', bool $includeEmbeddedImages = false) {
     $count = 0;
     foreach (poznoteFilterVisibleAttachments($attachments) as $attachment) {
         if (empty($attachment['id'])) {
             continue;
         }
-        if (poznoteAttachmentIsEmbeddedImageInContent($attachment, $content)) {
+        if (!$includeEmbeddedImages && poznoteAttachmentIsEmbeddedImageInContent($attachment, $content)) {
             continue;
         }
         $count++;

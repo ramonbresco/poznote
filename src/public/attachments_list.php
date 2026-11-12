@@ -19,7 +19,7 @@ $currentLang = getUserLanguage();
 	<?php poznoteRenderBrandIcons(); ?>
 	<?php poznoteRenderUiCustomizationBootstrap(); ?>
 </head>
-<body class="shared-page has-icon-sidebar" data-workspace="<?php echo htmlspecialchars($pageWorkspace, ENT_QUOTES, 'UTF-8'); ?>" data-txt-untitled="<?php echo t_h('common.untitled', [], 'Untitled'); ?>" data-txt-no-results="<?php echo t_h('attachments.list.no_filter_results', [], 'No results.'); ?>" data-txt-all-file-types="<?php echo t_h('attachments.list.all_file_types', [], 'All types'); ?>">
+<body class="shared-page has-icon-sidebar" data-show-inserted-images="<?php echo in_array((string) getSetting('attachments_show_inserted_images', '0'), ['1', 'true'], true) ? '1' : '0'; ?>" data-workspace="<?php echo htmlspecialchars($pageWorkspace, ENT_QUOTES, 'UTF-8'); ?>" data-txt-untitled="<?php echo t_h('common.untitled', [], 'Untitled'); ?>" data-txt-no-results="<?php echo t_h('attachments.list.no_filter_results', [], 'No results.'); ?>" data-txt-all-file-types="<?php echo t_h('attachments.list.all_file_types', [], 'All types'); ?>">
 	<?php include __DIR__ . '/../icon_sidebar.php'; ?>
 	<div class="shared-container">
 		<h1 class="poznote-page-title"><span class="poznote-page-title-name"><i class="lucide lucide-paperclip"></i> <?php echo t_h('notes_list.system_folders.attachments', [], 'Attachments'); ?></span> <?php echo poznoteRenderPageTitleWorkspace($pageWorkspace); ?></h1>
@@ -40,6 +40,11 @@ $currentLang = getUserLanguage();
 				<input type="checkbox" id="showThumbnailsToggle" checked>
 				<span class="toggle-label"><?php echo t_h('attachments.list.show_thumbnails', [], 'Show thumbnails in this list'); ?></span>
 			</label>
+			<?php // The account setting of Settings > Display, also shown here (js/inserted-images-toggle.js) ?>
+			<label class="toggle-checkbox inserted-images-toggle">
+				<input type="checkbox" id="showInsertedImagesToggle">
+				<span class="toggle-label"><?php echo t_h('attachments.inserted_images_toggle', [], 'Also show images inserted in the notes'); ?></span>
+			</label>
 			<div id="filterStats" class="filter-stats initially-hidden"></div>
 		</div>
 		
@@ -58,6 +63,7 @@ $currentLang = getUserLanguage();
 	<script src="<?php echo poznoteAsset('js/navigation.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/icon-sidebar-toggle.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/attachments-list.js'); ?>"></script>
+	<script src="<?php echo poznoteAsset('js/inserted-images-toggle.js'); ?>"></script>
 	<script src="<?php echo poznoteAsset('js/search-toggle.js'); ?>"></script>
 </body>
 </html>

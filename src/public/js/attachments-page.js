@@ -351,6 +351,14 @@
     }
 
     // Load attachments list
+    // What the last load returned, redrawn when the "Also show images inserted
+    // in the note" checkbox changes (js/inserted-images-toggle.js)
+    var lastAttachments = null;
+    var lastNoteContent = '';
+    document.addEventListener('poznote:inserted-images-changed', function () {
+        if (lastAttachments) displayAttachments(lastAttachments, lastNoteContent);
+    });
+
     function loadAttachments() {
         var url = '/api/v1/notes/' + noteId + '/attachments';
         if (noteWorkspace) {
@@ -365,6 +373,8 @@
             .then(function (response) { return response.json(); })
             .then(function (data) {
                 if (data.success) {
+                    lastAttachments = data.attachments;
+                    lastNoteContent = data.entry || '';
                     displayAttachments(data.attachments, data.entry || '');
                 } else {
                     document.getElementById('attachmentsList').innerHTML =
@@ -424,6 +434,9 @@
         var container = document.getElementById('attachmentsList');
 
         var visibleAttachments = (attachments || []).filter(function (attachment) {
+            // Images the note shows are attachments too, listed only when the
+            // "Inserted images in attachments" setting asks for them
+            if (document.body.getAttribute('data-show-inserted-images') === '1') return true;
             return !isEmbeddedImageAttachment(attachment, noteContent);
         });
 

@@ -298,6 +298,7 @@ $settings = [
     'markdown_colored' => '0',
     'markdown_colored_custom' => '',
     'attachment_previews_in_note' => '0',
+    'attachments_show_inserted_images' => '0',
     'attachments_at_bottom' => '0',
     'backlinks_at_bottom' => '0',
     'note_virtual_space' => '1',
@@ -316,7 +317,7 @@ $settings = [
 ];
 
 try {
-    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'sidebar_tree_indent', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'code_block_collapsed_lines', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_at_bottom', 'backlinks_at_bottom', 'note_virtual_space', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color', 'tab_follows_note')");
+    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'sidebar_tree_indent', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'code_block_collapsed_lines', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_show_inserted_images', 'attachments_at_bottom', 'backlinks_at_bottom', 'note_virtual_space', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color', 'tab_follows_note')");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $settings[$row['key']] = $row['value'];
         if ($row['key'] === 'markdown_new_note_view_mode') {
@@ -622,6 +623,9 @@ if (poznoteMarkdownColoredEnabled($settings['markdown_colored'])) {
 }
 $attachment_previews_in_note_setting = poznoteSettingEnabled($settings['attachment_previews_in_note'], false);
 $attachments_at_bottom_setting = poznoteSettingEnabled($settings['attachments_at_bottom'], false);
+// Images inserted in the note are attachments too, hidden by default from the
+// attachment lists so that they do not bury the other files
+$attachments_show_inserted_images_setting = poznoteSettingEnabled($settings['attachments_show_inserted_images'], false);
 $backlinks_at_bottom_setting = poznoteSettingEnabled($settings['backlinks_at_bottom'], false);
 // The one sort order of the tree (#1442), stepped through by the button at the
 // top of the notes list. src/lib/note-sort.php holds the modes and the
@@ -730,6 +734,7 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
             'dateTimeFormat' => getUserDateTimeFormat(),
             'inlineAttachmentPreviews' => $attachment_previews_in_note_setting,
             'attachmentsAtBottom' => $attachments_at_bottom_setting,
+            'showInsertedImageAttachments' => $attachments_show_inserted_images_setting,
             'backlinksAtBottom' => $backlinks_at_bottom_setting,
             'defaultImageBorderNoPadding' => poznoteSettingEnabled($settings['default_image_border_no_padding'], false),
             'archiveWorkspace' => POZNOTE_ARCHIVE_WORKSPACE,

@@ -241,12 +241,13 @@
 
                 
                     // Favorite / Share / Attachment buttons
-                    // Calculate visible attachments count (excluding inline images that are already visible in the note)
+                    // Calculate visible attachments count (excluding inline images that are already visible in the note,
+                    // unless the "Inserted images in attachments" setting lists them too)
                     $attachments_count = 0;
                     $visible_attachments_count = 0;
                     if ($attachments_data !== null) {
                         $attachments_count = count($attachments_data);
-                        $visible_attachments_count = poznoteCountDisplayableAttachments($attachments_data, $row['entry'] ?? '');
+                        $visible_attachments_count = poznoteCountDisplayableAttachments($attachments_data, $row['entry'] ?? '', !empty($attachments_show_inserted_images_setting));
                     }
                 
                     $is_favorite = intval($row['favorite'] ?? 0);
@@ -551,7 +552,7 @@
                                     $is_image = in_array($ext, ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp']);
                                 }
 
-                                if ($is_image) {
+                                if ($is_image && empty($attachments_show_inserted_images_setting)) {
                                     $attachment_id_pattern = 'attachments/' . $attachment['id'];
                                     // Check in raw content
                                     $is_inline_image = (strpos($note_content, $attachment_id_pattern) !== false);

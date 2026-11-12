@@ -590,7 +590,7 @@ function updateAttachmentCountInMenu(noteId) {
                 for (var j = 0; j < data.attachments.length; j++) {
                     var attachment = data.attachments[j];
                     if (attachment.id && attachment.original_filename) {
-                        var isActuallyInline = isEmbeddedImageAttachment(attachment, effectiveNoteContent);
+                        var isActuallyInline = isHiddenInsertedImage(attachment, effectiveNoteContent);
                         if (!isActuallyInline) visibleLinksCount++;
                     }
                 }
@@ -700,7 +700,7 @@ function updateAttachmentCountInMenu(noteId) {
                         for (var k = 0; k < data.attachments.length; k++) {
                             var att = data.attachments[k];
                             if (att.id && att.original_filename) {
-                                var isInline = isEmbeddedImageAttachment(att, effectiveNoteContent);
+                                var isInline = isHiddenInsertedImage(att, effectiveNoteContent);
 
                                 var safeFilename = att.original_filename.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
                                 var dlTitle = tr('attachments.actions.download', { filename: safeFilename }, 'Download {{filename}}');
@@ -818,6 +818,113 @@ function isEmbeddedImageAttachment(attachment, content) {
 
     return htmlImagePattern.test(noteContent) || markdownImagePattern.test(noteContent);
 }
+
+// An image the note shows in its content is an attachment too, left out of the
+// attachment lists unless the "Inserted images in attachments" setting asks
+// for them: a note full of pasted screenshots would bury its other files.
+function isHiddenInsertedImage(attachment, content) {
+    if (window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.showInsertedImageAttachments === true) return false;
+    return isEmbeddedImageAttachment(attachment, content);
+}
+
+// Whether an image attachment of this note can be put into its content: a rich
+// text or Markdown note the viewer may edit
+function canInsertAttachmentImageIntoNote(noteId) {
+    var noteEntry = document.getElementById('entry' + noteId);
+    if (!noteEntry) return false;
+    if (document.body && document.body.classList.contains('shared-workspace-readonly')) return false;
+    if (typeof window.isNoteEditingLocked === 'function' && window.isNoteEditingLocked(noteId)) return false;
+    var card = noteEntry.closest('.notecard');
+    if (card && card.getAttribute('data-note-locked') === '1') return false;
+    var type = noteEntry.getAttribute('data-note-type');
+    if (type === 'markdown') return !!noteEntry.querySelector('.markdown-editor');
+    return type === 'note' && noteEntry.getAttribute('contenteditable') === 'true';
+}
+
+/**
+ * Show an image the note already holds as an attachment in its content, at the
+ * caret, or at the end of the note when the caret is elsewhere. Nothing is
+ * uploaded: the image is the attachment itself, at the address a pasted image
+ * gets. context, optional, is where the caret was before a dialog took the
+ * focus: { range } for a rich text note, { cmOffsets: {start, end} } for a
+ * Markdown note. Returns whether the image went in.
+ */
+function insertAttachmentImageIntoNote(noteId, attachmentId, filename, context) {
+    if (!noteId || !attachmentId || !canInsertAttachmentImageIntoNote(noteId)) return false;
+    context = context || {};
+
+    var noteEntry = document.getElementById('entry' + noteId);
+    var src = '/api/v1/notes/' + noteId + '/attachments/' + attachmentId;
+    var name = String(filename || 'image').replace(/[\r\n\t]+/g, ' ').trim() || 'image';
+    var bordered = !!(window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.defaultImageBorderNoPadding);
+    var inserted = false;
+
+    // -1 until the note takes the focus, and a right-click on the attachments
+    // row never gives it: the save would go nowhere
+    window.noteid = noteId;
+
+    if (noteEntry.getAttribute('data-note-type') === 'markdown') {
+        var editor = noteEntry.querySelector('.markdown-editor');
+        var cmApi = _getCmApi();
+        if (!editor || !_isCmEditor(editor) || typeof cmApi.replaceRange !== 'function' || typeof cmApi.getValue !== 'function') return false;
+
+        var text = cmApi.getValue(editor);
+        var offsets = context.cmOffsets ||
+            (typeof cmApi.getSelectionOffsets === 'function' ? cmApi.getSelectionOffsets(editor) : null) ||
+            { start: text.length, end: text.length };
+        var from = Math.max(0, Math.min(offsets.start, text.length));
+        var to = Math.max(from, Math.min(offsets.end, text.length));
+        // A line of its own: in the middle of a sentence the image would be
+        // an inline one, and the text around it would run into it
+        var markdown = '![' + name.replace(/[\\[\]]/g, '\\$&') + '](' + src + ')' + (bordered ? '{.img-with-border-no-padding}' : '');
+        if (from > 0 && text.charAt(from - 1) !== '\n') markdown = '\n' + markdown;
+        if (to < text.length && text.charAt(to) !== '\n') markdown += '\n';
+        cmApi.replaceRange(editor, from, to, markdown);
+        if (typeof cmApi.setSelection === 'function') cmApi.setSelection(editor, from + markdown.length, from + markdown.length);
+        inserted = true;
+
+        // Inserted from the preview, the hidden editor changed under it
+        var preview = noteEntry.querySelector('.markdown-preview');
+        if (preview && preview.offsetParent !== null && typeof window.renderMarkdownPreview === 'function') {
+            window.renderMarkdownPreview(preview, cmApi.getValue(editor), noteId, { delay: 50 });
+        }
+    } else {
+        var range = (context.range && noteEntry.contains(context.range.startContainer)) ? context.range : caretRangeInNote(noteEntry);
+        try { noteEntry.focus({ preventScroll: true }); } catch (e) { noteEntry.focus(); }
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var alt = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        var html = '<img src="' + src + '" alt="' + alt + '" loading="lazy" decoding="async"' + (bordered ? ' class="img-with-border-no-padding"' : '') + ' />';
+        // The same block a pasted image gets (insertImagePlaceholderAtSelection)
+        inserted = document.execCommand('insertHTML', false, '<div>' + html + '</div><div><br></div>');
+        if (!inserted) {
+            noteEntry.insertAdjacentHTML('beforeend', '<div>' + html + '</div>');
+            inserted = true;
+        }
+    }
+
+    if (typeof window.markNoteAsModified === 'function') window.markNoteAsModified();
+    if (typeof reinitializeImageClickHandlers === 'function') {
+        setTimeout(function () { reinitializeImageClickHandlers(); }, 200);
+    }
+    if (window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.gitSyncAutoPush && typeof window.setNeedsAutoPush === 'function') {
+        window.setNeedsAutoPush(true);
+    }
+    setTimeout(function () {
+        if (typeof window.saveNoteImmediately === 'function') window.saveNoteImmediately();
+        // The image is in the content now: the attachments row and the
+        // preview cards stop listing it (unless the setting asks for it)
+        updateAttachmentCountInMenu(noteId);
+        refreshAttachmentPreviewsForNote(noteId);
+    }, 300);
+    return inserted;
+}
+
+window.getAttachmentPreviewKind = getAttachmentPreviewKind;
+window.canInsertAttachmentImageIntoNote = canInsertAttachmentImageIntoNote;
+window.insertAttachmentImageIntoNote = insertAttachmentImageIntoNote;
 
 function isAttachmentReferencedInContent(attachment, content) {
     if (!attachment || !attachment.id || !content) return false;
@@ -1981,18 +2088,30 @@ function insertHTMLAtSelection(html) {
     }
 }
 
-// Attachment picker modal for slash command menu
+// Attachment picker modal for slash command menu. Two modes: 'link' (Link to
+// attachment) inserts a link to any attachment the note does not show yet,
+// 'image' (Image from attachments) lists the note's images, shown or not, and
+// inserts the chosen one as an image.
 (function () {
     var _savedRange = null;
     var _savedEditableElement = null;
     var _isMarkdown = false;
+    var _savedCmOffsets = null;
+    var _mode = 'link';
 
-    window.openAttachmentPickerModal = function () {
+    function pickerText(key, fallback) {
+        return window.t ? window.t(key, null, fallback) : fallback;
+    }
+
+    window.openAttachmentPickerModal = function (mode) {
         var noteEntry = document.querySelector('.noteentry');
         if (!noteEntry) return;
 
         var noteId = noteEntry.getAttribute('data-note-id');
         if (!noteId) return;
+
+        _mode = mode === 'image' ? 'image' : 'link';
+        if (_mode === 'image' && !canInsertAttachmentImageIntoNote(noteId)) return;
 
         // Save current selection before the modal steals focus
         _savedEditableElement = null;
@@ -2012,8 +2131,24 @@ function insertHTMLAtSelection(html) {
         _isMarkdown = !!(noteEntry.closest && noteEntry.closest('.innernote[data-markdown-note="true"]')) ||
                       !!(noteEntry.getAttribute('data-note-type') === 'markdown');
 
+        _savedCmOffsets = null;
+        var cmEditor = _isMarkdown ? noteEntry.querySelector('.markdown-editor') : null;
+        var cmApi = _getCmApi();
+        if (cmEditor && _isCmEditor(cmEditor) && typeof cmApi.getSelectionOffsets === 'function') {
+            _savedCmOffsets = cmApi.getSelectionOffsets(cmEditor);
+        }
+
         var modal = document.getElementById('attachmentPickerModal');
         if (!modal) return;
+
+        var titleEl = document.getElementById('attachmentPickerTitle');
+        var titleIcon = document.getElementById('attachmentPickerIcon');
+        if (titleEl) {
+            titleEl.textContent = _mode === 'image'
+                ? pickerText('slash_menu.image_from_attachments', 'Image from attachments')
+                : pickerText('slash_menu.link_to_attachment', 'Link to attachment');
+        }
+        if (titleIcon) titleIcon.className = 'lucide ' + (_mode === 'image' ? 'lucide-image' : 'lucide-paperclip');
 
         var list = document.getElementById('attachmentPickerList');
         if (list) {
@@ -2041,17 +2176,30 @@ function insertHTMLAtSelection(html) {
                 var noteContent = data.entry || '';
                 var html = '';
                 data.attachments.forEach(function (att) {
-                    if (isAttachmentReferencedInContent(att, noteContent) && isEmbeddedImageAttachment(att, noteContent)) return;
+                    if (_mode === 'image') {
+                        if (getAttachmentPreviewKind(att) !== 'image') return;
+                    } else if (isAttachmentReferencedInContent(att, noteContent) && isEmbeddedImageAttachment(att, noteContent)) {
+                        return;
+                    }
                     var filename = att.original_filename || att.filename || att.id;
                     var safe = filename.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                    var safeId = String(att.id).replace(/[^A-Za-z0-9_-]/g, '');
+                    // Pasted images are mostly all named image.png: the
+                    // thumbnail is what tells them apart
+                    var lead = _mode === 'image'
+                        ? '<img src="/api/v1/notes/' + encodeURIComponent(noteId) + '/attachments/' + safeId + '" alt="" loading="lazy" decoding="async" ' +
+                          'style="width:40px;height:40px;object-fit:cover;border-radius:4px;flex:none">'
+                        : '<i class="lucide lucide-paperclip" style="margin-right:6px;opacity:0.6"></i>';
                     html += '<div class="note-reference-item" style="cursor:pointer;padding:8px 12px;" ' +
-                        'data-attachment-id="' + att.id + '" data-filename="' + safe + '" data-note-id="' + noteId + '">' +
-                        '<i class="lucide lucide-paperclip" style="margin-right:6px;opacity:0.6"></i>' + safe +
+                        'data-attachment-id="' + safeId + '" data-filename="' + safe + '" data-note-id="' + noteId + '">' +
+                        lead + '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + safe + '</span>' +
                         '</div>';
                 });
                 if (!html) {
                     if (list) list.innerHTML = '<div style="padding:12px;text-align:center;color:var(--text-muted,#999)">' +
-                        (window.t ? window.t('attachments.empty', null, 'No attachments.') : 'No attachments.') +
+                        (_mode === 'image'
+                            ? pickerText('attachments.picker.no_images', 'This note has no image in its attachments.')
+                            : pickerText('attachments.empty', 'No attachments.')) +
                         '</div>';
                     return;
                 }
@@ -2063,7 +2211,14 @@ function insertHTMLAtSelection(html) {
                             var fname = item.getAttribute('data-filename');
                             var nId = item.getAttribute('data-note-id');
                             window.closeAttachmentPickerModal();
-                            insertAttachmentLink(nId, attachmentId, fname);
+                            if (_mode === 'image') {
+                                insertAttachmentImageIntoNote(nId, attachmentId, fname, {
+                                    range: _savedRange,
+                                    cmOffsets: _savedCmOffsets
+                                });
+                            } else {
+                                insertAttachmentLink(nId, attachmentId, fname);
+                            }
                         });
                     });
                 }

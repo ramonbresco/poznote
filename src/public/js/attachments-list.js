@@ -73,6 +73,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // The "Also show images inserted in the notes" checkbox (js/inserted-images-toggle.js)
+    document.addEventListener('poznote:inserted-images-changed', function () {
+        populateFileTypeFilter(allRows);
+        applyFilter();
+    });
+
     loadAttachments();
 });
 
@@ -175,6 +181,9 @@ function populateFileTypeFilter(rows) {
 }
 
 function getDisplayableAttachments(row) {
+    // Images the notes show are attachments too, listed only when the
+    // "Inserted images in attachments" setting asks for them
+    if (document.body.getAttribute('data-show-inserted-images') === '1') return row.attachments;
     return row.attachments.filter(att => !isEmbeddedImageAttachment(row, att));
 }
 

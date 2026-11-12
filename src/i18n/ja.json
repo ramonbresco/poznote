@@ -162,6 +162,7 @@
       "code_line_numbers": "Markdownプレビューのコードブロックに行番号を表示します。",
       "code_block_collapsed_lines": "コードブロックを折りたたんだときに画面に残す行数です（0 〜 100）。0 にすると折りたたんだブロックは中身をまったく表示しません。これ以下の行数のブロックには折りたたみボタンを出しません。折りたたんでも何も隠れないからです。",
       "attachment_previews": "ノート内に添付ファイルのプレビューを表示します。",
+      "attachments_show_inserted_images": "ノートに貼り付けたり挿入したりした画像は添付ファイルとして保存されます。他のファイルが埋もれないよう、添付ファイルの一覧では非表示になっています。有効にすると一覧にも表示されます。",
       "attachments_at_bottom": "添付ファイルのセクションを、ノートの上部ではなく下部に表示します。",
       "allow_executable_attachments": "スクリプトや実行ファイル（.sh、.ps1、.bat、.exe、.pyなど）をノートに添付できるようにします。このインスタンスのすべてのアカウントが対象です。Poznoteはこれらを実行せず、保存して配信するだけです。.phpなど、Webサーバーが実行できる種類のファイルは引き続きブロックされます。",
       "backlinks_at_bottom": "バックリンクのセクションを、ノートの上部ではなく下部に表示します。",
@@ -564,6 +565,7 @@
       "code_block_line_numbers": "コードブロックの行番号",
       "code_block_collapsed_lines": "折りたたんだコードブロック",
       "attachment_previews_in_note": "添付ファイルのプレビュー",
+      "attachments_show_inserted_images": "添付ファイルに挿入画像を表示",
       "attachments_at_bottom": "添付ファイルを下部に表示",
       "backlinks_at_bottom": "バックリンクを下部に表示",
       "note_virtual_space": "ノートの下の余白",
@@ -843,6 +845,7 @@
     "context_menu": {
       "open": "開く",
       "download": "ダウンロード",
+      "insert_into_note": "ノートに挿入",
       "transcribe": "文字起こし",
       "delete": "削除",
       "delete_confirm_title": "添付ファイルを削除",
@@ -865,7 +868,12 @@
       "message_many": "{{count}} 枚の画像をノートに挿入しますか？それとも添付ファイルに追加しますか？",
       "attach": "添付ファイルとして追加",
       "insert": "ノートに挿入"
-    }
+    },
+    "picker": {
+      "no_images": "このノートの添付ファイルには画像がありません。"
+    },
+    "inserted_images_toggle": "ノートに挿入した画像も表示",
+    "inserted_images_toggle_note": "このノートに挿入した画像も表示"
   },
   "modals": {
     "paste_markdown": {
@@ -1802,6 +1810,7 @@
     "checklist": "チェックリスト",
     "done": "完了",
     "image": "画像",
+    "image_from_attachments": "添付ファイルから画像",
     "take_photo": "写真を撮る",
     "excalidraw": "Excalidraw",
     "mermaid": "Mermaid",

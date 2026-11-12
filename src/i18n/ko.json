@@ -162,6 +162,7 @@
       "code_line_numbers": "마크다운 미리보기에서 코드 블록의 줄 번호를 표시합니다.",
       "code_block_collapsed_lines": "코드 블록을 접었을 때 화면에 남는 줄 수입니다(0~100). 0이면 접힌 블록이 코드를 전혀 보여주지 않습니다. 이보다 줄이 많지 않은 블록에는 접기 버튼을 표시하지 않습니다. 접어도 숨길 것이 없기 때문입니다.",
       "attachment_previews": "노트 내부 첨부 파일의 미리보기를 표시합니다.",
+      "attachments_show_inserted_images": "노트에 붙여넣거나 삽입한 이미지는 첨부 파일로 저장됩니다. 다른 파일이 묻히지 않도록 첨부 파일 목록에서는 숨겨집니다. 이 옵션을 켜면 목록에도 표시됩니다.",
       "attachments_at_bottom": "상단 대신 노트 하단에 첨부 파일 섹션을 표시합니다.",
       "allow_executable_attachments": "이 인스턴스의 모든 계정에 대해 스크립트 및 실행 파일(.sh, .ps1, .bat, .exe, .py, ...)이 노트에 연결되도록 허용합니다. Poznote는 절대 실행하지 않으며 저장하고 제공만 합니다. .php 등 웹 서버가 실행할 수 있는 파일 형식은 차단된 상태로 유지됩니다.",
       "backlinks_at_bottom": "노트 상단 대신 하단에 백링크 섹션을 표시합니다.",
@@ -564,6 +565,7 @@
       "code_block_line_numbers": "코드 블록 줄 번호",
       "code_block_collapsed_lines": "접힌 코드 블록",
       "attachment_previews_in_note": "첨부 파일 미리보기",
+      "attachments_show_inserted_images": "첨부 파일에 삽입된 이미지 표시",
       "attachments_at_bottom": "첨부 파일을 하단에 표시",
       "backlinks_at_bottom": "백링크를 하단에 표시",
       "note_virtual_space": "노트 아래 여백",
@@ -843,6 +845,7 @@
     "context_menu": {
       "open": "열기",
       "download": "다운로드",
+      "insert_into_note": "노트에 삽입",
       "transcribe": "음성 텍스트 변환",
       "delete": "삭제",
       "delete_confirm_title": "첨부 파일 삭제",
@@ -865,7 +868,12 @@
       "message_many": "이미지 {{count}}개를 노트에 삽입할까요, 아니면 첨부 파일에 추가할까요?",
       "attach": "첨부 파일로 추가",
       "insert": "노트에 삽입"
-    }
+    },
+    "picker": {
+      "no_images": "이 노트의 첨부 파일에는 이미지가 없습니다."
+    },
+    "inserted_images_toggle": "노트에 삽입한 이미지도 표시",
+    "inserted_images_toggle_note": "이 노트에 삽입한 이미지도 표시"
   },
   "modals": {
     "paste_markdown": {
@@ -1802,6 +1810,7 @@
     "checklist": "체크리스트",
     "done": "완료",
     "image": "이미지",
+    "image_from_attachments": "첨부 파일에서 이미지",
     "take_photo": "사진 촬영",
     "excalidraw": "Excalidraw",
     "mermaid": "Mermaid",

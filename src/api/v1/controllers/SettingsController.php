@@ -388,7 +388,7 @@ class SettingsController {
             return filter_var($value, FILTER_VALIDATE_BOOL) ? '1' : '0';
         }
 
-        if ($key === 'attachment_previews_in_note') {
+        if ($key === 'attachment_previews_in_note' || $key === 'attachments_show_inserted_images') {
             return filter_var($value, FILTER_VALIDATE_BOOL) ? '1' : '0';
         }
 

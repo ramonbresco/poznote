@@ -419,6 +419,7 @@
     "context_menu": {
       "open": "Ouvrir",
       "download": "Télécharger",
+      "insert_into_note": "Insérer dans la note",
       "transcribe": "Transcrire",
       "delete": "Supprimer",
       "delete_confirm_title": "Supprimer la pièce jointe",
@@ -441,7 +442,12 @@
       "message_many": "Insérer les {{count}} images dans la note, ou les ajouter aux pièces jointes ?",
       "attach": "Ajouter en pièce jointe",
       "insert": "Insérer dans la note"
-    }
+    },
+    "picker": {
+      "no_images": "Cette note n'a aucune image dans ses pièces jointes."
+    },
+    "inserted_images_toggle": "Afficher aussi les images insérées dans les notes",
+    "inserted_images_toggle_note": "Afficher aussi les images insérées dans la note"
   },
   "auth": {
     "api": {
@@ -501,6 +507,7 @@
       "code_line_numbers": "Affichez les numéros de ligne dans les blocs de code de l'aperçu markdown.",
       "code_block_collapsed_lines": "Combien de lignes d'un bloc de code restent affichées une fois le bloc replié, de 0 à 100. À 0, un bloc replié ne montre rien de son listing. Un bloc qui n'a pas plus de lignes que ça ne reçoit pas le chevron, le replier ne masquerait rien.",
       "attachment_previews": "Affichez un aperçu des pièces jointes dans les notes.",
+      "attachments_show_inserted_images": "Les images collées ou insérées dans une note sont enregistrées comme pièces jointes. Elles sont masquées dans les listes de pièces jointes pour ne pas noyer les autres fichiers. Activez cette option pour les y afficher aussi.",
       "attachments_at_bottom": "Affichez la section des pièces jointes en bas des notes plutôt qu'en haut.",
       "allow_executable_attachments": "Autorise les scripts et exécutables (.sh, .ps1, .bat, .exe, .py, ...) en pièce jointe, pour tous les comptes de cette instance. Poznote ne les exécute jamais, il ne fait que les stocker et les servir. Les types qu'un serveur web pourrait exécuter, comme .php, restent bloqués.",
       "backlinks_at_bottom": "Affichez la section des rétroliens en bas des notes plutôt qu'en haut.",
@@ -939,6 +946,7 @@
       "code_block_line_numbers": "Numéros de ligne des blocs de code",
       "code_block_collapsed_lines": "Blocs de code repliés",
       "attachment_previews_in_note": "Aperçus des pièces jointes",
+      "attachments_show_inserted_images": "Images insérées dans les pièces jointes",
       "attachments_at_bottom": "Pièces jointes en bas",
       "backlinks_at_bottom": "Backlinks en bas",
       "note_virtual_space": "Espace sous la note",
@@ -2343,6 +2351,7 @@
     "checklist": "Cases à cocher",
     "done": "Fait",
     "image": "Image",
+    "image_from_attachments": "Image depuis les pièces jointes",
     "take_photo": "Prendre une photo",
     "excalidraw": "Excalidraw",
     "mermaid": "Mermaid",

@@ -128,6 +128,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:code-line-numbers-card" checked><span><?php echo t_h('display.cards.code_block_line_numbers', [], 'Code block line numbers'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:code-collapsed-lines-card" checked><span><?php echo t_h('display.cards.code_block_collapsed_lines', [], 'Folded code blocks'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:attachment-previews-card" checked><span><?php echo t_h('display.cards.attachment_previews_in_note', [], 'Attachment previews'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:attachments-inserted-images-card" checked><span><?php echo t_h('display.cards.attachments_show_inserted_images', [], 'Inserted images in attachments'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:attachments-at-bottom-card" checked><span><?php echo t_h('display.cards.attachments_at_bottom', [], 'Attachments at bottom'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:backlinks-at-bottom-card" checked><span><?php echo t_h('display.cards.backlinks_at_bottom', [], 'Backlinks at bottom'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:note-virtual-space-card" checked><span><?php echo t_h('display.cards.note_virtual_space', [], 'Space below the note'); ?></span></label>
@@ -316,6 +317,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:link-to-attachment" checked><span><?php echo t_h('slash_menu.link_to_attachment', [], 'Link to attachment'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:link" checked><span><?php echo t_h('slash_menu.link', [], 'Link'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:image" checked><span><?php echo t_h('slash_menu.image', [], 'Image'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:image-from-attachments" checked><span><?php echo t_h('slash_menu.image_from_attachments', [], 'Image from attachments'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:take-photo" checked><span><?php echo t_h('slash_menu.take_photo', [], 'Take a photo'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:audio-file" checked><span><?php echo t_h('slash_menu.audio', [], 'Audio'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:cancel" checked><span><?php echo t_h('slash_menu.cancel', [], 'Cancel'); ?></span></label>

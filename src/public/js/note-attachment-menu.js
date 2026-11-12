@@ -1,7 +1,8 @@
 /**
- * Right-click menu on an attachment inside a note: open, download, transcribe
- * (audio only, and only when a speech-to-text server is configured), move to
- * another note and delete.
+ * Right-click menu on an attachment inside a note: open, download, insert into
+ * the note (an image listed in the attachments row or the preview cards, that
+ * is one the note does not show yet), transcribe (audio only, and only when a
+ * speech-to-text server is configured), move to another note and delete.
  *
  * An attachment shows up in a note in several shapes, all covered here:
  *   - a link to it, in a rich-text note or in the Markdown preview
@@ -85,7 +86,8 @@
                 attachmentId: card.getAttribute('data-attachment-id'),
                 hostNoteId: cards.getAttribute('data-note-id'),
                 filename: nameEl ? nameEl.textContent.trim() : '',
-                anchor: card
+                anchor: card,
+                listed: true
             };
         }
 
@@ -100,7 +102,8 @@
                 attachmentId: rowLink.getAttribute('data-attachment-id'),
                 hostNoteId: rowNoteId,
                 filename: rowLink.textContent.trim(),
-                anchor: rowLink
+                anchor: rowLink,
+                listed: true
             };
         }
 
@@ -203,6 +206,24 @@
         if (!attachment || String(target.hostNoteId) !== String(target.noteId)) return false;
         if (typeof window.openAttachmentMoveDialog !== 'function') return false;
         return !(typeof window.isNoteEditingLocked === 'function' && window.isNoteEditingLocked(target.noteId));
+    }
+
+    /**
+     * An image picked in the attachments row or the preview cards, put into
+     * the content of the note that holds it (js/attachments.js). Not from the
+     * content itself: an image there is already shown, and a link to it is
+     * the author's choice.
+     */
+    function canInsertIntoNote(target, attachment) {
+        if (!attachment || !target.listed || String(target.hostNoteId) !== String(target.noteId)) return false;
+        if (typeof window.insertAttachmentImageIntoNote !== 'function' ||
+            typeof window.canInsertAttachmentImageIntoNote !== 'function' ||
+            typeof window.getAttachmentPreviewKind !== 'function') return false;
+        return window.getAttachmentPreviewKind(attachment) === 'image' && window.canInsertAttachmentImageIntoNote(target.noteId);
+    }
+
+    function insertIntoNote(target) {
+        window.insertAttachmentImageIntoNote(target.noteId, target.attachmentId, target.filename);
     }
 
     function attachmentUrl(target, forceDownload) {
@@ -351,6 +372,9 @@
 
         addItem(menu, 'open', 'lucide-external-link', t('attachments.context_menu.open', null, 'Open'));
         addItem(menu, 'download', 'lucide-download', t('attachments.context_menu.download', null, 'Download'));
+        if (canInsertIntoNote(target, attachment)) {
+            addItem(menu, 'insert', 'lucide-image', t('attachments.context_menu.insert_into_note', null, 'Insert into the note'));
+        }
         if (canTranscribe(attachment)) {
             addItem(menu, 'transcribe', 'lucide-mic', t('attachments.context_menu.transcribe', null, 'Transcribe'));
         }
@@ -378,6 +402,7 @@
             closeMenu();
             if (action === 'open') openAttachment(target);
             else if (action === 'download') downloadAttachmentFile(target);
+            else if (action === 'insert') insertIntoNote(target);
             else if (action === 'transcribe') transcribe(target);
             else if (action === 'move') moveToAnotherNote(target);
             else if (action === 'delete') confirmDelete(target);
@@ -396,6 +421,7 @@
     function needsRecord() {
         return typeof window.deleteAttachment === 'function' ||
             typeof window.openAttachmentMoveDialog === 'function' ||
+            typeof window.insertAttachmentImageIntoNote === 'function' ||
             !!(window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.speechToText &&
                 typeof window.transcribeAttachment === 'function');
     }

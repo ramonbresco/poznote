@@ -420,6 +420,7 @@
     "context_menu": {
       "open": "Öffnen",
       "download": "Herunterladen",
+      "insert_into_note": "In die Notiz einfügen",
       "transcribe": "Transkribieren",
       "delete": "Löschen",
       "delete_confirm_title": "Anhang löschen",
@@ -442,7 +443,12 @@
       "message_many": "Die {{count}} Bilder in die Notiz einfügen oder zu den Anhängen hinzufügen?",
       "attach": "Als Anhang hinzufügen",
       "insert": "In die Notiz einfügen"
-    }
+    },
+    "picker": {
+      "no_images": "Diese Notiz hat kein Bild in ihren Anhängen."
+    },
+    "inserted_images_toggle": "Auch in Notizen eingefügte Bilder anzeigen",
+    "inserted_images_toggle_note": "Auch in die Notiz eingefügte Bilder anzeigen"
   },
   "auth": {
     "api": {
@@ -502,6 +508,7 @@
       "code_line_numbers": "Zeilennummern in Codeblöcken in der Markdown-Vorschau anzeigen.",
       "code_block_collapsed_lines": "Wie viele Zeilen eines Codeblocks sichtbar bleiben, wenn er eingeklappt ist, von 0 bis 100. Bei 0 zeigt ein eingeklappter Block nichts von seinem Code. Ein Block mit nicht mehr Zeilen als dieser Wert erhält keinen Einklapppfeil, das Einklappen würde nichts verbergen.",
       "attachment_previews": "Zeigen Sie Vorschauen von Anhängen in Notizen an.",
+      "attachments_show_inserted_images": "In eine Notiz eingefügte Bilder werden als Anhänge gespeichert. Sie werden in den Anhangslisten ausgeblendet, damit sie die anderen Dateien nicht verdecken. Aktivieren Sie diese Option, um sie ebenfalls anzuzeigen.",
       "attachments_at_bottom": "Zeigen Sie den Anhangsbereich unten statt oben in Notizen an.",
       "allow_executable_attachments": "Erlaubt Skripte und ausführbare Dateien (.sh, .ps1, .bat, .exe, .py, ...) als Anhang, für alle Konten dieser Instanz. Poznote führt sie nie aus, es speichert und liefert sie nur aus. Dateitypen, die ein Webserver ausführen könnte, etwa .php, bleiben blockiert.",
       "backlinks_at_bottom": "Zeigen Sie den Backlink-Bereich unten statt oben in Notizen an.",
@@ -937,6 +944,7 @@
       "code_block_line_numbers": "Codeblock-Zeilennummern",
       "code_block_collapsed_lines": "Eingeklappte Codeblöcke",
       "attachment_previews_in_note": "Anhangsvorschauen",
+      "attachments_show_inserted_images": "Eingefügte Bilder in Anhängen",
       "attachments_at_bottom": "Anhänge unten",
       "backlinks_at_bottom": "Backlinks unten",
       "note_virtual_space": "Freiraum unter der Notiz",
@@ -2337,6 +2345,7 @@
     "checklist": "Checkliste",
     "done": "Erledigt",
     "image": "Bild",
+    "image_from_attachments": "Bild aus Anhängen",
     "take_photo": "Foto aufnehmen",
     "excalidraw": "Excalidraw",
     "mermaid": "Mermaid",

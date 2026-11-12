@@ -162,6 +162,7 @@
       "code_line_numbers": "Mostra els números de línia als blocs de codi de la previsualització Markdown.",
       "code_block_collapsed_lines": "Quantes línies d'un bloc de codi continuen visibles un cop plegat, de 0 a 100. Amb 0, un bloc plegat no mostra res del seu codi. Un bloc que no tingui més línies que això no rep la fletxa per plegar, plegar-lo no amagaria res.",
       "attachment_previews": "Mostra previsualitzacions dels fitxers adjunts dins de les notes.",
+      "attachments_show_inserted_images": "Les imatges enganxades o inserides en una nota es desen com a adjunts. S'amaguen a les llistes d'adjunts perquè no ofeguin els altres fitxers. Activa aquesta opció per mostrar-les també.",
       "attachments_at_bottom": "Mostra la secció de fitxers adjunts a la part inferior de les notes en lloc de la part superior.",
       "allow_executable_attachments": "Permet adjuntar scripts i executables (.sh, .ps1, .bat, .exe, .py...) a les notes, per a tots els comptes d'aquesta instància. El Poznote no els executa mai, només els emmagatzema i els serveix. Els tipus de fitxer que un servidor web podria executar, com ara .php, continuen bloquejats.",
       "backlinks_at_bottom": "Mostra la secció d'enllaços entrants a la part inferior de les notes en lloc de la part superior.",
@@ -564,6 +565,7 @@
       "code_block_line_numbers": "Números de línia als blocs de codi",
       "code_block_collapsed_lines": "Blocs de codi plegats",
       "attachment_previews_in_note": "Previsualitzacions dels fitxers adjunts",
+      "attachments_show_inserted_images": "Imatges inserides als adjunts",
       "attachments_at_bottom": "Fitxers adjunts a baix",
       "backlinks_at_bottom": "Enllaços entrants a baix",
       "note_virtual_space": "Espai sota la nota",
@@ -843,6 +845,7 @@
     "context_menu": {
       "open": "Obre",
       "download": "Baixa",
+      "insert_into_note": "Insereix a la nota",
       "transcribe": "Transcriu",
       "delete": "Suprimeix",
       "delete_confirm_title": "Supressió del fitxer adjunt",
@@ -865,7 +868,12 @@
       "message_many": "Voleu inserir les {{count}} imatges a la nota o afegir-les als adjunts?",
       "attach": "Afegeix com a adjunt",
       "insert": "Insereix a la nota"
-    }
+    },
+    "picker": {
+      "no_images": "Aquesta nota no té cap imatge als seus adjunts."
+    },
+    "inserted_images_toggle": "Mostra també les imatges inserides a les notes",
+    "inserted_images_toggle_note": "Mostra també les imatges inserides a la nota"
   },
   "modals": {
     "paste_markdown": {
@@ -1802,6 +1810,7 @@
     "checklist": "Llista de comprovació",
     "done": "Fet",
     "image": "Imatge",
+    "image_from_attachments": "Imatge dels adjunts",
     "take_photo": "Fes una foto",
     "excalidraw": "Excalidraw",
     "mermaid": "Mermaid",

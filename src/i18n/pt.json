@@ -420,6 +420,7 @@
     "context_menu": {
       "open": "Abrir",
       "download": "Baixar",
+      "insert_into_note": "Inserir na nota",
       "transcribe": "Transcrever",
       "delete": "Excluir",
       "delete_confirm_title": "Excluir anexo",
@@ -442,7 +443,12 @@
       "message_many": "Inserir as {{count}} imagens na nota ou adicioná-las aos anexos?",
       "attach": "Adicionar como anexo",
       "insert": "Inserir na nota"
-    }
+    },
+    "picker": {
+      "no_images": "Esta nota não tem nenhuma imagem nos seus anexos."
+    },
+    "inserted_images_toggle": "Mostrar também as imagens inseridas nas notas",
+    "inserted_images_toggle_note": "Mostrar também as imagens inseridas na nota"
   },
   "auth": {
     "api": {
@@ -502,6 +508,7 @@
       "code_line_numbers": "Mostre os números de linha nos blocos de código na pré-visualização de markdown.",
       "code_block_collapsed_lines": "Quantas linhas de um bloco de código ficam visíveis depois de recolhido, de 0 a 100. Com 0, um bloco recolhido não mostra nada do seu código. Um bloco que não tenha mais linhas do que isto não recebe a seta para recolher, recolhê-lo não esconderia nada.",
       "attachment_previews": "Mostre pré-visualizações dos anexos dentro das notas.",
+      "attachments_show_inserted_images": "As imagens coladas ou inseridas numa nota são guardadas como anexos. Ficam ocultas nas listas de anexos para não esconder os outros ficheiros. Ative esta opção para mostrá-las também.",
       "attachments_at_bottom": "Mostre a seção de anexos na parte inferior das notas em vez do topo.",
       "allow_executable_attachments": "Permite anexar scripts e executáveis (.sh, .ps1, .bat, .exe, .py, ...), para todas as contas desta instância. O Poznote nunca os executa, apenas os armazena e os entrega. Os tipos que um servidor web poderia executar, como .php, continuam bloqueados.",
       "backlinks_at_bottom": "Mostre a seção de backlinks na parte inferior das notas em vez do topo.",
@@ -937,6 +944,7 @@
       "code_block_line_numbers": "Números de linha em blocos de código",
       "code_block_collapsed_lines": "Blocos de código recolhidos",
       "attachment_previews_in_note": "Pré-visualizações de anexos",
+      "attachments_show_inserted_images": "Imagens inseridas nos anexos",
       "attachments_at_bottom": "Anexos no final",
       "backlinks_at_bottom": "Backlinks no final",
       "note_virtual_space": "Espaço abaixo da nota",
@@ -2336,6 +2344,7 @@
     "checklist": "Lista de verificação",
     "done": "Feito",
     "image": "Imagem",
+    "image_from_attachments": "Imagem dos anexos",
     "take_photo": "Tirar uma foto",
     "excalidraw": "Excalidraw",
     "mermaid": "Mermaid",

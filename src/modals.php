@@ -1329,7 +1329,7 @@ $pzNoteInfoRows = [
 <!-- Note Reference Modal -->
 <div id="attachmentPickerModal" class="modal">
     <div class="modal-content note-reference-modal-content">
-        <h3><i class="lucide lucide-paperclip"></i> <?php echo t_h('slash_menu.link_to_attachment', [], 'Link to attachment'); ?></h3>
+        <h3><i id="attachmentPickerIcon" class="lucide lucide-paperclip"></i> <span id="attachmentPickerTitle"><?php echo t_h('slash_menu.link_to_attachment', [], 'Link to attachment'); ?></span></h3>
         <div id="attachmentPickerList" class="note-reference-list">
             <!-- Attachments will be populated here -->
         </div>
