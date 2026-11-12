@@ -397,7 +397,7 @@ function getPageTitle() {
 function poznoteAboutLinkDefaults(): array {
     return [
         'discussions_url' => 'https://github.com/timothepoznanski/poznote/discussions',
-        'discord_url'     => 'https://discord.gg/fuEV6uqf4N',
+        'discord_url'     => 'https://discord.gg/ADyrkPVMAf',
     ];
 }
 

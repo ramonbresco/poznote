@@ -14,7 +14,7 @@
         <div class="whats-new-header">
             <h3 id="whatsNewTitle"><?php echo t_h('whats_new.title', [], "What's new in Poznote"); ?></h3>
             <p class="whats-new-subtitle" id="whatsNewSubtitle"></p>
-            <a class="whats-new-community" href="<?php echo htmlspecialchars(function_exists('poznoteAboutLink') ? poznoteAboutLink('discord_url') : 'https://discord.gg/fuEV6uqf4N', ENT_QUOTES); ?>" target="_blank" rel="noopener noreferrer"><i class="lucide lucide-message-circle"></i><span><?php echo t_h('whats_new.community', [], 'Questions or ideas? Join the community on Discord'); ?></span></a>
+            <a class="whats-new-community" href="<?php echo htmlspecialchars(function_exists('poznoteAboutLink') ? poznoteAboutLink('discord_url') : 'https://discord.gg/ADyrkPVMAf', ENT_QUOTES); ?>" target="_blank" rel="noopener noreferrer"><i class="lucide lucide-message-circle"></i><span><?php echo t_h('whats_new.community', [], 'Questions or ideas? Join the community on Discord'); ?></span></a>
         </div>
         <div class="whats-new-versions" id="whatsNewVersions" role="navigation" aria-label="<?php echo t_h('whats_new.versions', [], 'Versions'); ?>" hidden></div>
         <div class="whats-new-body" id="whatsNewBody" tabindex="0"></div>

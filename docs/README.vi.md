@@ -68,7 +68,7 @@ https://poznote.com/press.html
 
 Tham gia cộng đồng để đặt câu hỏi, chia sẻ góp ý hoặc theo dõi quá trình phát triển:
 
-https://discord.gg/fuEV6uqf4N
+https://discord.gg/ADyrkPVMAf
 
 ## Mục lục
 
@@ -505,7 +505,7 @@ docker compose pull
 docker compose up -d
 ```
 
-*   **Trước khi chuyển:** bản beta có thể vẫn còn lỗi, vì vậy hãy tạo một [bản sao lưu](#sao-lưu--xuất-dữ-liệu) trước. Mọi lỗi phát sinh có thể báo tại [GitHub issues](https://github.com/timothepoznanski/poznote/issues) hoặc trên [Discord](https://discord.gg/fuEV6uqf4N).
+*   **Trước khi chuyển:** bản beta có thể vẫn còn lỗi, vì vậy hãy tạo một [bản sao lưu](#sao-lưu--xuất-dữ-liệu) trước. Mọi lỗi phát sinh có thể báo tại [GitHub issues](https://github.com/timothepoznanski/poznote/issues) hoặc trên [Discord](https://discord.gg/ADyrkPVMAf).
 *   **Cập nhật:** mỗi lần chạy `docker compose pull` sau đó sẽ kéo bản beta mới nhất, hoặc bản stable ngay khi nó được phát hành. Quy trình cập nhật ở trên tải về tệp `docker-compose.yml` mới sử dụng lại thẻ stable, nên hãy sửa lại hai dòng `image` thêm một lần nữa sau bước đó.
 *   **Quay về stable:** bản beta có thể thay đổi cấu trúc cơ sở dữ liệu, nên việc hạ cấp về bản stable cũ hơn có thể không hoạt động. Hãy đợi bản stable tiếp theo có chứa các thay đổi của bản beta đó, rồi làm theo quy trình cập nhật ở trên.
 

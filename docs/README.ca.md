@@ -68,7 +68,7 @@ https://poznote.com/press.html
 
 Uniu-vos a la comunitat per fer preguntes, compartir comentaris o seguir el desenvolupament:
 
-https://discord.gg/fuEV6uqf4N
+https://discord.gg/ADyrkPVMAf
 
 ## Taula de continguts
 
@@ -505,7 +505,7 @@ docker compose pull
 docker compose up -d
 ```
 
-*   **Abans de canviar:** una beta encara pot contenir errors, de manera que primer feu una [còpia de seguretat](#còpia-de-seguretat--exportació). Podeu comunicar els problemes als [issues de GitHub](https://github.com/timothepoznanski/poznote/issues) o a [Discord](https://discord.gg/fuEV6uqf4N).
+*   **Abans de canviar:** una beta encara pot contenir errors, de manera que primer feu una [còpia de seguretat](#còpia-de-seguretat--exportació). Podeu comunicar els problemes als [issues de GitHub](https://github.com/timothepoznanski/poznote/issues) o a [Discord](https://discord.gg/ADyrkPVMAf).
 *   **Actualitzacions:** aleshores cada `docker compose pull` obté la beta més recent, o la versió estable quan es publica. El procediment d'actualització de més amunt baixa un `docker-compose.yml` nou que torna a fer servir les etiquetes estables, de manera que, després d'aquest pas, cal tornar a canviar les dues línies `image`.
 *   **Tornar a la versió estable:** una beta pot canviar la base de dades, de manera que tornar a una versió estable anterior pot no funcionar. Espereu la versió estable següent, que inclou els canvis de la beta, i després seguiu el procediment d'actualització de més amunt.
 
