@@ -490,8 +490,18 @@ class AttachmentsController {
                             $range = null;
                             if ($localForRange !== null && (int)$stat['size'] > 0) {
                                 header('Accept-Ranges: bytes');
+                                // If-Range: "the rest, if it is still the
+                                // file I hold the start of". When it is not,
+                                // the Range is dropped and the whole body
+                                // goes out, never a 416 and never a slice of
+                                // a different file.
+                                $rangeStillValid = poznoteIfRangeAllowsRange(
+                                    isset($_SERVER['HTTP_IF_RANGE']) ? (string)$_SERVER['HTTP_IF_RANGE'] : '',
+                                    $this->buildAttachmentEtag($stat, $attachment),
+                                    (int)($stat['mtime'] ?: 0)
+                                );
                                 $range = poznoteParseRangeHeader(
-                                    isset($_SERVER['HTTP_RANGE']) ? (string)$_SERVER['HTTP_RANGE'] : '',
+                                    ($rangeStillValid && isset($_SERVER['HTTP_RANGE'])) ? (string)$_SERVER['HTTP_RANGE'] : '',
                                     (int)$stat['size']
                                 );
                                 if ($range === false) {

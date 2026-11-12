@@ -36,6 +36,14 @@ const POZNOTE_AUDIO_TEXT_MAX_BYTES = 8 * 1024;
 /** Characters kept of a single tag value. */
 const POZNOTE_AUDIO_TEXT_MAX_CHARS = 200;
 
+/**
+ * Frames walked in one ID3v2 tag before giving up. A real tag holds a few
+ * dozen; without a ceiling a tag of tens of megabytes made of one-byte frames
+ * costs a seek and a read per frame, seconds of work every time the note is
+ * shown. The other containers are bounded the same way (blocks, atoms, pages).
+ */
+const POZNOTE_AUDIO_ID3_MAX_FRAMES = 1024;
+
 /** The shape every parser in here returns. */
 function poznoteAudioEmptyMetadata(): array
 {
@@ -352,10 +360,18 @@ function poznoteAudioParseId3v2($handle, bool $withCover): ?array
         return null;
     }
 
-    if (($tagFlags & 0x80) !== 0) {
-        // Unsynchronisation rewrites bytes all through the tag, so nothing in
-        // it can be addressed until the whole thing is undone. A tag too big
-        // to hold in memory is left alone rather than read.
+    if (($tagFlags & 0x80) !== 0 && $major < 4) {
+        // Up to 2.3, unsynchronisation rewrites bytes all through the tag
+        // after its frames were laid out, so nothing in it can be addressed
+        // until the whole thing is undone. A tag too big to hold in memory is
+        // left alone rather than read.
+        //
+        // 2.4 is the other way round: each frame is unsynchronised on its
+        // own and its size counts the bytes as stored, so the tag is walked
+        // as it is and the flag is honoured frame by frame
+        // (poznoteAudioParseId3v2Frames()). Undoing the whole tag first would
+        // shorten it under frame sizes that no longer fit, and the cover,
+        // whose JPEG bytes are full of FF 00, was the frame that went missing.
         if ($tagSize > POZNOTE_AUDIO_TAG_READ_LIMIT) {
             return null;
         }
@@ -387,7 +403,7 @@ function poznoteAudioParseId3v2Frames(callable $read, int $major, int $tagFlags,
         ? ['TT2' => 'title', 'TP1' => 'artist', 'TAL' => 'album', 'PIC' => 'picture']
         : ['TIT2' => 'title', 'TPE1' => 'artist', 'TALB' => 'album', 'APIC' => 'picture'];
 
-    while ($pos + $headerLength <= $end) {
+    for ($frame = 0; $frame < POZNOTE_AUDIO_ID3_MAX_FRAMES && $pos + $headerLength <= $end; $frame++) {
         $header = $read($pos, $headerLength);
         if (strlen($header) < $headerLength) {
             break;
@@ -432,7 +448,9 @@ function poznoteAudioParseId3v2Frames(callable $read, int $major, int $tagFlags,
         if ($dataSize <= 0) {
             continue;
         }
-        $frameUnsync = $major >= 4 && ($frameFlags & 0x0002) !== 0;
+        // 2.4 only: the frame's own flag, or the tag's, which says the same
+        // of every frame in it.
+        $frameUnsync = $major >= 4 && (($frameFlags & 0x0002) !== 0 || ($tagFlags & 0x80) !== 0);
 
         if ($field === 'picture') {
             $meta['has_cover'] = true;
@@ -441,7 +459,7 @@ function poznoteAudioParseId3v2Frames(callable $read, int $major, int $tagFlags,
             }
             $raw = $read($dataAt, $dataSize);
             if ($frameUnsync) {
-                $raw = str_replace("\xFF\x00", "\xFF", $raw);
+                $raw = poznoteAudioUndoFrameUnsync($raw);
             }
             $meta['cover'] = poznoteAudioPictureFromId3Frame($raw, $major);
             continue;
@@ -452,12 +470,30 @@ function poznoteAudioParseId3v2Frames(callable $read, int $major, int $tagFlags,
         }
         $raw = $read($dataAt, min($dataSize, POZNOTE_AUDIO_TEXT_MAX_BYTES));
         if ($frameUnsync) {
-            $raw = str_replace("\xFF\x00", "\xFF", $raw);
+            $raw = poznoteAudioUndoFrameUnsync($raw);
         }
         $meta[$field] = poznoteAudioDecodeTagText($raw);
     }
 
     return $meta;
+}
+
+/**
+ * Undo the unsynchronisation of one ID3v2.4 frame: every FF 00 written for
+ * an FF goes back to FF.
+ *
+ * Only when the bytes really are unsynchronised. Some writers set the flag
+ * and store the frame untouched, and a JPEG is full of FF 00 pairs that mean
+ * something: undoing those would break the picture. Unsynchronised data never
+ * holds an FF followed by E0-FF and never ends on an FF, so either one says
+ * the flag lied and the frame is taken as it is.
+ */
+function poznoteAudioUndoFrameUnsync(string $raw): string
+{
+    if (preg_match('/\xFF(?:[\xE0-\xFF]|\z)/', $raw)) {
+        return $raw;
+    }
+    return str_replace("\xFF\x00", "\xFF", $raw);
 }
 
 function poznoteAudioDecodeTagText(string $raw): string

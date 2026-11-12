@@ -1697,6 +1697,17 @@ class UsersController {
     }
 
     /**
+     * Puts the remember-me cookie of a session being ended on the list of
+     * cookies that no longer sign anyone in (revoked_remember_tokens), for as
+     * long as the cookie could have lasted. Without it the device comes back
+     * on its next request: the cookie alone opens a new session.
+     */
+    public function endRememberMeToken(int $userId, string $fingerprint): void {
+        require_once dirname(__DIR__, 3) . '/users/db_master.php';
+        revokeRememberMeToken($userId, $fingerprint, time() + REMEMBER_ME_DURATION);
+    }
+
+    /**
      * DELETE /api/v1/users/me/sessions/{id} - Ends one other session of this
      * profile, named by the handle the listing gave.
      *
@@ -1724,7 +1735,7 @@ class UsersController {
             return ['error' => 'This is the current session, use logout to end it'];
         }
 
-        if (!poznoteRevokeUserSession($userId, $handle)) {
+        if (!poznoteRevokeUserSession($userId, $handle, [$this, 'endRememberMeToken'])) {
             http_response_code(404);
             return ['error' => 'Session not found'];
         }
@@ -1752,7 +1763,7 @@ class UsersController {
         }
 
         $currentId = session_status() === PHP_SESSION_ACTIVE ? (string)session_id() : '';
-        $ended = poznoteRevokeOtherUserSessions($userId, $currentId);
+        $ended = poznoteRevokeOtherUserSessions($userId, $currentId, [$this, 'endRememberMeToken']);
         if ($ended > 0) {
             logActivity(ACTIVITY_SESSION_REVOKED, ['count' => $ended], 'api');
         }

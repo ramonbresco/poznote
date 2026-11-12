@@ -1080,3 +1080,35 @@ function poznoteParseRangeHeader(?string $header, int $size) {
 
     return ['start' => $start, 'end' => $end, 'length' => $end - $start + 1];
 }
+
+/**
+ * Whether an If-Range header lets the Range of the same request be honoured.
+ *
+ * A client resuming a download sends the validator of the copy it already
+ * holds part of: "the rest of the file, if it is still that file". When it is
+ * not, the answer has to be the whole new body from zero, or the client glues
+ * the tail of one file to the head of another.
+ *
+ * RFC 7233 section 3.2: an entity tag is compared strongly (a weak one never
+ * matches), a date must be the exact Last-Modified, and anything unreadable
+ * counts as a mismatch, which costs a full download and never a wrong file.
+ *
+ * @param string $etag         the ETag this response carries, quotes included
+ * @param int    $lastModified the Last-Modified this response carries
+ */
+function poznoteIfRangeAllowsRange(?string $ifRange, string $etag, int $lastModified): bool {
+    $ifRange = trim((string)$ifRange);
+    if ($ifRange === '') {
+        return true;
+    }
+
+    if (strncmp($ifRange, 'W/', 2) === 0) {
+        return false;
+    }
+    if ($ifRange[0] === '"') {
+        return $etag !== '' && $ifRange === $etag;
+    }
+
+    $clientTime = strtotime($ifRange);
+    return $clientTime !== false && $lastModified > 0 && $clientTime === $lastModified;
+}
