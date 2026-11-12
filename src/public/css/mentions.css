@@ -18,25 +18,8 @@
     color: var(--pz-text-muted);
 }
 
-.mentions-toggle-handled {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    border: 1px solid var(--pz-border);
-    border-radius: var(--pz-radius-lg);
-    background-color: var(--pz-bg);
-    color: var(--pz-text-muted);
-    font-size: 13px;
-    text-decoration: none;
-    white-space: nowrap;
-}
-
-.mentions-toggle-handled:hover,
-.mentions-toggle-handled.active {
-    color: var(--pz-accent-text);
-    border-color: var(--pz-accent-text);
-}
+/* "Show handled" / "Hide handled" is a shared toolbar button with its label
+   (css/components/toolbar-button.css) */
 
 .mentions-group-header {
     display: flex;

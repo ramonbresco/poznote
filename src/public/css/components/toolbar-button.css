@@ -1,0 +1,123 @@
+/* Buttons of a page's toolbar row, under the title (the magnifier, the
+   filters, the view switches, Expand/Collapse all...): one look on every page,
+   the Dashboard's (.dashboard-color-filter-btn / .board-view-btn in
+   css/dashboard.css, which keep their own copy). A square of 36x33, 8px
+   corners, a thin border, the muted grey, an 18px icon; the pointer, the focus
+   and an "on" state (an active filter, an open panel) turn the border and the
+   icon to the accent. "Open" only counts for a button that opens a panel
+   (aria-haspopup): on Collapse all / Expand all, aria-expanded tells the
+   state of the groups.
+
+   A button with a label next to its icon adds .pz-toolbar-btn-text: same
+   height and frame, its width follows the text. */
+
+.pz-toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: var(--pz-toolbar-btn-width, 36px);
+    height: var(--pz-toolbar-btn-height, 33px);
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-lg);
+    background: var(--pz-bg);
+    color: var(--pz-text-muted);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.pz-toolbar-btn-text {
+    width: auto;
+    min-width: var(--pz-toolbar-btn-width, 36px);
+    padding: 0 10px;
+}
+
+.pz-toolbar-btn .lucide {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    color: inherit;
+}
+
+.pz-toolbar-btn:hover,
+.pz-toolbar-btn:focus-visible,
+.pz-toolbar-btn.active,
+.pz-toolbar-btn.is-active,
+.pz-toolbar-btn[aria-haspopup][aria-expanded="true"],
+.pz-toolbar-btn[aria-pressed="true"] {
+    border-color: var(--pz-accent-text);
+    color: var(--pz-accent-text);
+    outline: none;
+}
+
+.pz-toolbar-btn.active,
+.pz-toolbar-btn.is-active,
+.pz-toolbar-btn[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--pz-accent) 5%, var(--pz-bg));
+}
+
+/* Greyed out: no answer to the pointer */
+.pz-toolbar-btn:disabled,
+.pz-toolbar-btn[aria-disabled="true"] {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.pz-toolbar-btn:disabled:hover,
+.pz-toolbar-btn[aria-disabled="true"]:hover {
+    border-color: var(--pz-border);
+    color: var(--pz-text-muted);
+}
+
+html[data-theme='dark'] .pz-toolbar-btn {
+    background: var(--pz-surface);
+    border-color: var(--pz-border);
+    color: var(--pz-text-muted);
+}
+
+html[data-theme='dark'] .pz-toolbar-btn:hover,
+html[data-theme='dark'] .pz-toolbar-btn:focus-visible,
+html[data-theme='dark'] .pz-toolbar-btn.active,
+html[data-theme='dark'] .pz-toolbar-btn.is-active,
+html[data-theme='dark'] .pz-toolbar-btn[aria-haspopup][aria-expanded="true"],
+html[data-theme='dark'] .pz-toolbar-btn[aria-pressed="true"] {
+    border-color: var(--pz-accent-text);
+    color: var(--pz-accent-text);
+    background: var(--pz-surface-hover);
+}
+
+html[data-theme='dark'] .pz-toolbar-btn:disabled:hover,
+html[data-theme='dark'] .pz-toolbar-btn[aria-disabled="true"]:hover {
+    border-color: var(--pz-border);
+    color: var(--pz-text-muted);
+    background: var(--pz-surface);
+}
+
+/* In the dark theme the icon at rest is the theme's icon colour, a step
+   brighter than the button's grey, as on the Dashboard. Under the pointer and
+   while on, it takes the accent of its button: the dark theme would repaint
+   it in its own hover grey (css/dark-mode/icons.css). Its zoom stays, as on
+   the Dashboard. */
+html[data-theme='dark'] .pz-toolbar-btn .lucide,
+html[data-theme='dark'] .pz-toolbar-btn:disabled:hover .lucide,
+html[data-theme='dark'] .pz-toolbar-btn[aria-disabled="true"]:hover .lucide {
+    color: var(--pz-icon);
+}
+
+html[data-theme='dark'] .pz-toolbar-btn:hover .lucide,
+html[data-theme='dark'] .pz-toolbar-btn:focus-visible .lucide,
+html[data-theme='dark'] .pz-toolbar-btn.active .lucide,
+html[data-theme='dark'] .pz-toolbar-btn.is-active .lucide,
+html[data-theme='dark'] .pz-toolbar-btn[aria-haspopup][aria-expanded="true"] .lucide,
+html[data-theme='dark'] .pz-toolbar-btn[aria-pressed="true"] .lucide {
+    color: inherit;
+}

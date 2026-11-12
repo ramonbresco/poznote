@@ -34,7 +34,7 @@ $cache_v = rawurlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 			<h1 class="poznote-page-title"><span class="poznote-page-title-name"><i class="lucide lucide-network"></i> <?php echo t_h('home.graph', [], 'Graph'); ?></span> <?php echo poznoteRenderPageTitleWorkspace($workspace); ?></h1>
 
 			<div class="graph-toolbar">
-				<button type="button" id="graphSearchBtn" class="graph-reset-btn graph-icon-btn" aria-expanded="false" aria-controls="graphSearchWrapper" aria-label="<?php echo t_h('graph.search.placeholder', [], 'Find a note or a tag...'); ?>" title="<?php echo t_h('graph.search.placeholder', [], 'Find a note or a tag...'); ?>">
+				<button type="button" id="graphSearchBtn" class="pz-toolbar-btn" aria-expanded="false" aria-controls="graphSearchWrapper" aria-label="<?php echo t_h('graph.search.placeholder', [], 'Find a note or a tag...'); ?>" title="<?php echo t_h('graph.search.placeholder', [], 'Find a note or a tag...'); ?>">
 					<i class="lucide lucide-search"></i>
 				</button>
 				<div class="graph-search-wrapper initially-hidden" id="graphSearchWrapper">
@@ -49,20 +49,20 @@ $cache_v = rawurlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 						<i class="lucide lucide-x"></i>
 					</button>
 				</div>
-				<button type="button" id="graphViewToggle" class="graph-reset-btn graph-icon-btn initially-hidden" data-txt-view="<?php echo t_h('graph.view_toggle', [], 'View'); ?>" data-txt-network="<?php echo t_h('graph.view_network', [], 'Network'); ?>" data-txt-tree="<?php echo t_h('graph.view_tree', [], 'Tree'); ?>">
+				<button type="button" id="graphViewToggle" class="pz-toolbar-btn initially-hidden" data-txt-view="<?php echo t_h('graph.view_toggle', [], 'View'); ?>" data-txt-network="<?php echo t_h('graph.view_network', [], 'Network'); ?>" data-txt-tree="<?php echo t_h('graph.view_tree', [], 'Tree'); ?>">
 					<i class="lucide lucide-share-2"></i>
 				</button>
-				<button type="button" id="graphFolderFilterBtn" class="graph-reset-btn graph-icon-btn graph-folder-btn initially-hidden" aria-haspopup="dialog" data-txt-all="<?php echo t_h('graph.folder_filter_all', [], 'All folders'); ?>" aria-label="<?php echo t_h('graph.folder_filter_hint', [], 'Show only the notes of one folder'); ?>" title="<?php echo t_h('graph.folder_filter_hint', [], 'Show only the notes of one folder'); ?>">
+				<button type="button" id="graphFolderFilterBtn" class="pz-toolbar-btn graph-folder-btn initially-hidden" aria-haspopup="dialog" data-txt-all="<?php echo t_h('graph.folder_filter_all', [], 'All folders'); ?>" aria-label="<?php echo t_h('graph.folder_filter_hint', [], 'Show only the notes of one folder'); ?>" title="<?php echo t_h('graph.folder_filter_hint', [], 'Show only the notes of one folder'); ?>">
 					<i class="lucide lucide-folder"></i>
 				</button>
 				<div class="graph-options">
-					<button type="button" id="graphSeparateGroups" class="graph-reset-btn graph-icon-btn" disabled aria-label="<?php echo t_h('graph.separate_groups', [], 'Separate groups'); ?>" title="<?php echo t_h('graph.separate_groups_hint', [], 'Lay out each group of linked notes apart from the others'); ?>">
+					<button type="button" id="graphSeparateGroups" class="pz-toolbar-btn" disabled aria-label="<?php echo t_h('graph.separate_groups', [], 'Separate groups'); ?>" title="<?php echo t_h('graph.separate_groups_hint', [], 'Lay out each group of linked notes apart from the others'); ?>">
 						<i class="lucide lucide-boxes"></i>
 					</button>
-					<button type="button" id="graphResetLayout" class="graph-reset-btn graph-icon-btn" aria-label="<?php echo t_h('graph.reset_layout', [], 'Reset layout'); ?>" title="<?php echo t_h('graph.reset_layout_hint', [], 'Forget the saved positions and rearrange the graph automatically'); ?>">
+					<button type="button" id="graphResetLayout" class="pz-toolbar-btn" aria-label="<?php echo t_h('graph.reset_layout', [], 'Reset layout'); ?>" title="<?php echo t_h('graph.reset_layout_hint', [], 'Forget the saved positions and rearrange the graph automatically'); ?>">
 						<i class="lucide lucide-rotate-ccw"></i>
 					</button>
-					<button type="button" id="graphInfoBtn" class="graph-reset-btn graph-icon-btn" aria-haspopup="dialog" aria-label="<?php echo t_h('graph.info', [], 'Information'); ?>" title="<?php echo t_h('graph.info', [], 'Information'); ?>">
+					<button type="button" id="graphInfoBtn" class="pz-toolbar-btn" aria-haspopup="dialog" aria-label="<?php echo t_h('graph.info', [], 'Information'); ?>" title="<?php echo t_h('graph.info', [], 'Information'); ?>">
 						<i class="lucide lucide-info"></i>
 					</button>
 				</div>

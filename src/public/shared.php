@@ -181,7 +181,7 @@ usort($shared_folders, function($a, $b) {
 			<?php // As on offline_notes.php: the magnifier of the filter (js/search-toggle.js), the
 			// sort, then the expand/collapse chevron ?>
 			<div class="filter-type-buttons pz-search-row">
-				<?php echo poznoteRenderSearchToggle('sharedFilterWrapper', t('public.filter_placeholder', [], 'Filter by name or token...')); ?>
+				<?php echo poznoteRenderSearchToggle('sharedFilterWrapper', t('public.filter_placeholder', [], 'Filter by name or token...'), 'pz-toolbar-btn'); ?>
 				<div class="filter-input-wrapper pz-search-collapsible is-search-collapsed" id="sharedFilterWrapper">
 					<input 
 						type="text" 
@@ -201,7 +201,7 @@ usort($shared_folders, function($a, $b) {
 				</select>
 				<?php // Its chevron alone, its label in the tooltip (js/shared-page.js) ?>
 				<div class="shared-filter-tree-actions initially-hidden" id="sharedTreeToolbar">
-					<button type="button" id="toggleAllFoldersBtn" class="btn btn-secondary" title="<?php echo t_h('public.expand_all', [], 'Expand all'); ?>" aria-label="<?php echo t_h('public.expand_all', [], 'Expand all'); ?>">
+					<button type="button" id="toggleAllFoldersBtn" class="pz-toolbar-btn" title="<?php echo t_h('public.expand_all', [], 'Expand all'); ?>" aria-label="<?php echo t_h('public.expand_all', [], 'Expand all'); ?>">
 						<i class="lucide lucide-chevron-down"></i>
 					</button>
 				</div>

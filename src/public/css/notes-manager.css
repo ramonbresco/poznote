@@ -32,8 +32,6 @@ body.notes-manager-page {
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    /* The magnifier (css/components/search-toggle.css) as tall as the dropdowns */
-    --pz-search-toggle-size: 40px;
 }
 
 .nm-filter-icon {
@@ -88,22 +86,34 @@ body.notes-manager-page {
     white-space: nowrap;
 }
 
+/* The dropdowns of the row look like its buttons (the shared toolbar
+   buttons, css/components/toolbar-button.css): their height whatever the
+   font's line box, their frame, their grey */
 .nm-filter-select {
     min-width: 130px;
     flex: 0 0 auto;
-    /* The magnifier's height (css/components/search-toggle.css), whatever
-       the font's line box */
-    height: var(--pz-search-toggle-size, 40px);
+    height: var(--pz-toolbar-btn-height, 33px);
     padding: 0 12px;
-    border: 1px solid var(--border-color, var(--pz-border));
+    border: 1px solid var(--pz-border);
     border-radius: var(--pz-radius-lg);
     /* The page's font, as the buttons of the row: a select falls back to the
        browser's own (Arial on Windows) */
     font-family: inherit;
-    font-size: 14px;
-    color: var(--text-color, var(--pz-text));
-    background-color: var(--input-bg, var(--pz-bg));
+    font-size: 13px;
+    color: var(--pz-text-muted);
+    background-color: var(--pz-bg);
     box-sizing: border-box;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.nm-filter-select:not(:disabled):hover {
+    border-color: var(--pz-accent-text);
+    color: var(--pz-accent-text);
+}
+
+html[data-theme='dark'] .nm-filter-select {
+    background-color: var(--pz-surface);
 }
 
 /* A dropdown and the icon that stands for it on a phone (@media below) */
@@ -120,7 +130,6 @@ body.notes-manager-page {
 .nm-filter-select:focus {
     outline: none;
     border-color: var(--pz-accent-text);
-    box-shadow: 0 0 0 3px rgba(var(--pz-accent-text-rgb), 0.1);
 }
 
 /* The type dropdown: as wide as its words and without the arrow, like the
@@ -140,72 +149,33 @@ body.notes-manager-page {
     padding-right: 0;
     border: solid transparent;
     border-width: 1px 12px;
-    outline: 1px solid var(--border-color, var(--pz-border));
+    outline: 1px solid var(--pz-border);
     outline-offset: -1px;
 }
 
+.nm-filter-bar #nmTypeFilter:hover,
 .nm-filter-bar #nmTypeFilter:focus {
     border-color: transparent;
     outline-color: var(--pz-accent-text);
 }
 
-/* Single collapse-all / expand-all toggle, right of the magnifier: its
-   chevron alone, the magnifier's square. Select all visible and Deselect
-   all share the rest of this look. */
-#nmToggleAllBtn {
-    width: 40px;
-    padding: 0;
-}
-
-#nmToggleAllBtn .lucide {
-    width: 16px;
-    height: 16px;
-}
-
-.nm-collapse-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    flex: 0 0 auto;
-    box-sizing: border-box;
-    /* The magnifier's height, also alone on a line when the row wraps */
-    height: var(--pz-search-toggle-size, 40px);
-    padding: 0 12px;
-    /* The look of the "All types" dropdown beside it */
-    border: 1px solid var(--border-color, var(--pz-border));
-    border-radius: var(--pz-radius-lg);
-    background: var(--input-bg, var(--pz-bg));
-    color: var(--text-color, var(--pz-text));
-    font-size: 14px;
-    font-family: inherit;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.nm-collapse-btn:not(:disabled):hover {
-    border-color: var(--pz-accent);
-    color: var(--pz-accent);
-}
-
-html[data-theme='dark'] .nm-collapse-btn:not(:disabled):hover {
-    color: var(--pz-accent-text);
-}
-
-/* The selection controls on the filter row: Select all visible and Deselect
-   all have the collapse toggle's look, the actions the dropdowns'. Greyed out
-   while there is nothing to act on (js/notes-manager.js). */
-.nm-collapse-btn:disabled,
+/* Collapse all / Expand all (its chevron alone), Select all visible and
+   Deselect all are shared toolbar buttons (css/components/toolbar-button.css).
+   The actions dropdown is greyed out like them while there is nothing to act
+   on (js/notes-manager.js). */
 .nm-filter-select:disabled {
-    opacity: 0.5;
+    opacity: 0.45;
     cursor: default;
 }
 
 /* The ground of the enabled controls, not the grey forms.css gives a
    disabled select: only the fading tells them apart */
 .nm-filter-select:disabled {
-    background-color: var(--input-bg, var(--pz-bg));
+    background-color: var(--pz-bg);
+}
+
+html[data-theme='dark'] .nm-filter-select:disabled {
+    background-color: var(--pz-surface);
 }
 
 .nm-modal-input {
@@ -492,10 +462,10 @@ html[data-theme='dark'] .nm-folder-option-selected {
     }
 
     /* One line: every control of the row is its icon alone, in the
-       magnifier's square. The dropdowns stay real selects (the phone's own
+       square of the row's buttons. The dropdowns stay real selects (the phone's own
        picker opens on a tap): their text goes transparent under the icon. */
     .nm-filter-bar .nm-bulk-btn {
-        width: var(--pz-search-toggle-size, 40px);
+        width: var(--pz-toolbar-btn-width, 36px);
         padding: 0;
     }
 
@@ -505,12 +475,12 @@ html[data-theme='dark'] .nm-folder-option-selected {
 
     .nm-mobile-icon {
         display: block;
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
     }
 
     .nm-filter-bar .nm-select-wrap > .nm-filter-select {
-        width: var(--pz-search-toggle-size, 40px);
+        width: var(--pz-toolbar-btn-width, 36px);
         min-width: 0;
         max-width: none;
         padding: 0;
@@ -527,7 +497,7 @@ html[data-theme='dark'] .nm-folder-option-selected {
         left: 50%;
         transform: translate(-50%, -50%);
         pointer-events: none;
-        color: var(--text-color, var(--pz-text));
+        color: var(--pz-text-muted);
     }
 
     .nm-select-wrap:has(> select:disabled) > .nm-mobile-icon {

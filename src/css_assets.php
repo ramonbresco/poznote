@@ -44,6 +44,7 @@ function poznoteCssGroups(): array
             'css/components/audio-player.css',
             'css/components/resize-handle.css',
             'css/components/toggle-block.css',
+            'css/components/toolbar-button.css',
         ],
 
         // The dialog stack, in cascade order.

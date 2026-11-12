@@ -41,10 +41,10 @@ html.tags-page {
     text-align: center;
 }
 
+/* The magnifier (js/search-toggle.js) is a shared toolbar button
+   (css/components/toolbar-button.css) */
 .tags-page .home-search-container {
     display: flex;
-    /* The magnifier (css/components/search-toggle.css) as tall as the field */
-    --pz-search-toggle-size: 40px;
 }
 
 /* Adjust padding for search input without icon */

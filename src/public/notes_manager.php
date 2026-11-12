@@ -75,7 +75,7 @@ $currentLang = getUserLanguage();
 		<!-- Filter bar -->
 		<?php // The filter folds behind a magnifier, first on the row (js/search-toggle.js) ?>
 		<div class="nm-filter-bar pz-search-row">
-			<?php echo poznoteRenderSearchToggle('nmFilterWrapper', t('notes_manager.filter_placeholder', [], 'Filter notes by title, tags or ID...')); ?>
+			<?php echo poznoteRenderSearchToggle('nmFilterWrapper', t('notes_manager.filter_placeholder', [], 'Filter notes by title, tags or ID...'), 'pz-toolbar-btn'); ?>
 			<div class="filter-input-wrapper pz-search-collapsible is-search-collapsed" id="nmFilterWrapper">
 				<i class="lucide lucide-search nm-filter-icon"></i>
 				<input
@@ -90,16 +90,16 @@ $currentLang = getUserLanguage();
 				</button>
 			</div>
 			<?php // Single collapse-all / expand-all toggle for the folder groups: its chevron alone, its label in the tooltip (js/notes-manager.js) ?>
-			<button type="button" id="nmToggleAllBtn" class="nm-collapse-btn" aria-expanded="true" title="<?php echo t_h('tasks_page.collapse_all', [], 'Collapse all'); ?>">
+			<button type="button" id="nmToggleAllBtn" class="pz-toolbar-btn" aria-expanded="true" title="<?php echo t_h('tasks_page.collapse_all', [], 'Collapse all'); ?>">
 				<i class="lucide lucide-chevron-up"></i>
 			</button>
 			<?php // The selection, greyed out while nothing is selected (updateBulkBar in js/notes-manager.js).
 			// On a phone every control of the row is its icon alone, so the row holds on one line (css/notes-manager.css). ?>
-			<button type="button" id="nmSelectAllBtn" class="nm-collapse-btn nm-bulk-btn" title="<?php echo t_h('notes_manager.select_all', [], 'Select all visible'); ?>">
+			<button type="button" id="nmSelectAllBtn" class="pz-toolbar-btn pz-toolbar-btn-text nm-bulk-btn" title="<?php echo t_h('notes_manager.select_all', [], 'Select all visible'); ?>">
 				<i class="lucide lucide-check-square nm-mobile-icon" aria-hidden="true"></i>
 				<span class="nm-btn-label"><?php echo t_h('notes_manager.select_all', [], 'Select all visible'); ?></span>
 			</button>
-			<button type="button" id="nmDeselectAllBtn" class="nm-collapse-btn nm-bulk-btn" disabled title="<?php echo t_h('notes_manager.deselect_all', [], 'Deselect all'); ?>">
+			<button type="button" id="nmDeselectAllBtn" class="pz-toolbar-btn pz-toolbar-btn-text nm-bulk-btn" disabled title="<?php echo t_h('notes_manager.deselect_all', [], 'Deselect all'); ?>">
 				<i class="lucide lucide-square nm-mobile-icon" aria-hidden="true"></i>
 				<span class="nm-btn-label"><?php echo t_h('notes_manager.deselect_all', [], 'Deselect all'); ?></span>
 			</button>

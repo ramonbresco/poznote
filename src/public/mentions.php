@@ -88,7 +88,7 @@ $cache_v = urlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 
 		<div class="mentions-toolbar">
 			<p class="mentions-intro"><?php echo t_h('mentions.intro', ['username' => $mentionUsername], 'Notes of shared workspaces that mention you with @{{username}}.'); ?></p>
-			<a class="mentions-toggle-handled<?php echo $showHandled ? ' active' : ''; ?>" href="<?php echo $esc($mentionToggleUrl); ?>" aria-pressed="<?php echo $showHandled ? 'true' : 'false'; ?>">
+			<a class="pz-toolbar-btn pz-toolbar-btn-text mentions-toggle-handled<?php echo $showHandled ? ' active' : ''; ?>" href="<?php echo $esc($mentionToggleUrl); ?>" aria-pressed="<?php echo $showHandled ? 'true' : 'false'; ?>">
 				<i class="lucide <?php echo $showHandled ? 'lucide-eye-off' : 'lucide-eye'; ?>"></i>
 				<span><?php echo $showHandled ? t_h('mentions.hide_handled', [], 'Hide handled') : t_h('mentions.show_handled', [], 'Show handled'); ?></span>
 			</a>

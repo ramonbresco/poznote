@@ -82,7 +82,7 @@ $cache_v = rawurlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 		
 		<?php // The filter folds behind a magnifier (js/search-toggle.js) ?>
 		<div class="home-search-container pz-search-row">
-			<?php echo poznoteRenderSearchToggle('tagsSearchWrapper', t('tags.search.placeholder', [], 'Filter tags...')); ?>
+			<?php echo poznoteRenderSearchToggle('tagsSearchWrapper', t('tags.search.placeholder', [], 'Filter tags...'), 'pz-toolbar-btn'); ?>
 			<div class="home-search-wrapper pz-search-collapsible is-search-collapsed" id="tagsSearchWrapper">
 				<input 
 					type="text" 
