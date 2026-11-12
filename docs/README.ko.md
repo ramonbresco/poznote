@@ -68,7 +68,7 @@ https://poznote.com/press.html
 
 커뮤니티에서 질문하고 의견을 나누거나 개발 소식을 확인하세요.
 
-https://discord.gg/fuEV6uqf4N
+https://discord.gg/ADyrkPVMAf
 
 ## 목차
 
@@ -505,7 +505,7 @@ docker compose pull
 docker compose up -d
 ```
 
-*   **전환 전:** 베타에는 버그가 있을 수 있으므로 먼저 [백업](#백업--내보내기)하세요. 문제는 [GitHub 이슈](https://github.com/timothepoznanski/poznote/issues)나 [Discord](https://discord.gg/fuEV6uqf4N)로 제보할 수 있습니다.
+*   **전환 전:** 베타에는 버그가 있을 수 있으므로 먼저 [백업](#백업--내보내기)하세요. 문제는 [GitHub 이슈](https://github.com/timothepoznanski/poznote/issues)나 [Discord](https://discord.gg/ADyrkPVMAf)로 제보할 수 있습니다.
 *   **업데이트:** `docker compose pull`은 최신 베타 또는 출시된 안정판을 받습니다. 위 업데이트 절차는 안정판 태그의 새 `docker-compose.yml`을 받으므로 이후 두 `image` 행을 다시 바꿔야 합니다.
 *   **안정판 복귀:** 베타가 DB를 변경하면 이전 안정판으로 돌아가지 못할 수 있습니다. 베타 변경을 포함한 다음 안정판을 기다린 뒤 위 절차로 업데이트하세요.
 
