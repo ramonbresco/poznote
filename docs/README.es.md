@@ -1129,7 +1129,7 @@ Configúralas en **Configuración > Copias de seguridad en el servidor** (solo a
 - **Carpeta de copias de seguridad**: una ruta absoluta en el servidor (dentro del contenedor con Docker). Si se deja vacía, los archivos van a `data/backups`, que ya forma parte del volumen de datos. La carpeta se crea si es necesario y el usuario del servidor web debe poder escribir en ella.
 - **Selección de usuarios**: unas casillas eligen qué usuarios cubren las copias. Todos están marcados por defecto y, mientras todos lo estén, las cuentas nuevas se incluyen automáticamente.
 - **Copias manuales**: un botón «Respaldar ahora» guarda un archivo nuevo para cada usuario seleccionado, un usuario cada vez, con el progreso por usuario. Funciona aunque las copias automáticas estén desactivadas.
-- **Copias automáticas**: cuando están activadas, un worker en segundo plano copia los usuarios seleccionados con la frecuencia elegida (diaria, semanal o mensual). La primera ejecución se produce a los pocos minutos de activarlas, las siguientes tras el intervalo elegido. La página muestra el resultado de la última ejecución y la fecha de la siguiente.
+- **Copias automáticas**: cuando están activadas, un worker en segundo plano copia los usuarios seleccionados con la frecuencia elegida (diaria, semanal o mensual). Se puede elegir una hora del día (por ejemplo las 03:00, en la zona horaria del administrador que la define): cada copia empieza entonces en los primeros minutos después de esa hora, y una hora perdida (servidor detenido) se recupera una vez en el siguiente arranque. Sin hora, la primera ejecución se produce a los pocos minutos de activarlas, las siguientes tras el intervalo elegido. La página muestra el resultado de la última ejecución y la fecha de la siguiente.
 - **Retención**: solo se conservan los N archivos más recientes por usuario, los más antiguos se eliminan de la carpeta tras cada copia (0 lo conserva todo).
 - **Exploración**: la página lista los archivos presentes en la carpeta, con acciones de descarga y eliminación.
 - **Restauración**: los archivos se almacenan bajo `{id de usuario}/` en la carpeta de copias de seguridad y pueden restaurarse con la página estándar [Restaurar / Importar](#restaurar--importar).
@@ -1216,7 +1216,7 @@ Configúralo en **Configuración > Copias de seguridad S3** (solo administradore
 - **Configuración**: URL del endpoint, región, bucket, clave de acceso, clave secreta y direccionamiento de tipo path-style, con una prueba de conexión integrada.
 - **Selección de usuarios**: unas casillas eligen qué usuarios cubren las copias de seguridad. Todos están marcados por defecto y, mientras todos lo estén, las cuentas nuevas se incluyen automáticamente.
 - **Copias manuales**: un botón «Respaldar ahora» sube un archivo nuevo para cada usuario seleccionado, un usuario tras otro, con el progreso de cada uno. Funciona en cuanto la conexión está configurada, aunque las copias automáticas estén desactivadas.
-- **Copias automáticas**: cuando están activadas, un proceso en segundo plano hace la copia de seguridad de los usuarios seleccionados con la frecuencia elegida (diaria, semanal o mensual). La primera ejecución tiene lugar a los pocos minutos de activarlas, las siguientes tras el intervalo elegido.
+- **Copias automáticas**: cuando están activadas, un proceso en segundo plano hace la copia de seguridad de los usuarios seleccionados con la frecuencia elegida (diaria, semanal o mensual). Se puede elegir una hora del día (por ejemplo las 03:00, en la zona horaria del administrador que la define): cada copia empieza entonces en los primeros minutos después de esa hora, y una hora perdida (servidor detenido) se recupera una vez en el siguiente arranque. Sin hora, la primera ejecución se produce a los pocos minutos de activarlas, las siguientes tras el intervalo elegido.
 - **Conservación**: solo se conservan los N archivos más recientes por usuario, los más antiguos se eliminan del bucket después de cada copia (0 lo conserva todo).
 - **Exploración**: la página lista los archivos que hay actualmente en el bucket, con acciones de descarga y eliminación.
 - **Restauración**: los archivos se guardan en `backups/{user id}/` dentro del bucket y pueden restaurarse con la página estándar de [Restaurar / Importar](#restaurar--importar).
@@ -1234,51 +1234,54 @@ Cuando los adjuntos se guardan en S3 (almacenamiento de adjuntos en S3), se incl
 
 Para programar copias de seguridad automatizadas mediante la API, puedes usar el script incluido `backup-poznote.sh`.
 
-**IMPORTANTE:** solo los administradores pueden crear copias de seguridad mediante la API.
-Usa la contraseña actual del perfil de administrador con el que te autenticas. En una instalación nueva, es la contraseña de administrador por defecto (`admin`) hasta que se cambie en Poznote. Una vez definida una contraseña personalizada, esa contraseña es la que se exige para las llamadas a la API.
+Cualquier cuenta puede hacer la copia de seguridad de su propio perfil, con la contraseña de la cuenta o con una contraseña de aplicación. Hacer la copia de seguridad del perfil de otro usuario requiere la contraseña de una cuenta de administrador. Cuando la autenticación de dos factores está activada, la contraseña de la cuenta sola se rechaza. Crea entonces una contraseña de aplicación en **Configuración > Mi cuenta > Contraseñas de aplicación** y úsala en su lugar. Una contraseña de aplicación solo puede hacer la copia de seguridad de su propio perfil, nunca la de otro usuario, aunque pertenezca a un administrador. Para hacer copias programadas de otros perfiles con la autenticación de dos factores activada, usa en su lugar las [Copias de seguridad programadas en una carpeta del servidor](#local-backups).
 
 **Ubicación del script:** `backup-poznote.sh` en la carpeta `tools` del repositorio de Poznote
 
-**Uso por parte de un administrador:**
-
-Los administradores pueden hacer la copia de seguridad de cualquier perfil de usuario: **no hace falta conocer los ID de usuario**, basta con el nombre de usuario:
-
-```bash
-# Copia de seguridad de tu propio perfil
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
-
-# Copia de seguridad del perfil de otro usuario (Nina)
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
-```
-
 **Uso:**
 ```bash
-bash backup-poznote.sh '<poznote_url>' '<admin_username>' '<admin_password>' '<target_username>' '<backup_directory>' '<retention_count>'
+bash backup-poznote.sh '<poznote_url>' '<username>' '<password>' '<target_username>' '<backup_directory>' '<retention_count>'
 ```
+
+**Ejemplos:**
+
+```bash
+# Hacer la copia de seguridad de tu propio perfil
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
+
+# Un administrador hace la copia de seguridad del perfil de otro usuario (Nina), basta con el nombre de usuario
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
+
+# Una contraseña de aplicación hace la copia de seguridad de su propio perfil (funciona con la autenticación de dos factores)
+bash backup-poznote.sh 'https://poznote.example.com' 'Nina' 'pzn_...' 'Nina' '/backups' '30'
+```
+
+**Mantener la contraseña fuera de la línea de comandos:**
+
+Cualquier usuario de la máquina puede leer en la lista de procesos una contraseña escrita en la línea de comandos, y queda en el crontab y en el historial del shell. Pasa `-` en su lugar y el script la lee de la primera línea del archivo indicado por `POZNOTE_PASSWORD_FILE` (legible solo por ti, `chmod 600`), o de la variable de entorno `POZNOTE_PASSWORD`.
 
 **Ejemplo con crontab (un administrador hace la copia de seguridad de Nina):**
 
 ```bash
 # Añadir al crontab para copias de seguridad automáticas dos veces al día
-0 0,12 * * * bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/root/backups' '30'
+0 0,12 * * * POZNOTE_PASSWORD_FILE=/root/.poznote-password bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' '-' 'Nina' '/root/backups' '30'
 ```
 
 **Explicación de los parámetros:**
 - `'https://poznote.example.com'`: la URL de tu instancia de Poznote
-- `'admin'`: nombre de usuario de administrador para la autenticación (debe ser un administrador)
-- `'admin_password'`: contraseña actual de administrador del perfil usado para la API (`admin` por defecto hasta que se cambie, después la contraseña personalizada)
+- `'admin'`: nombre de usuario para la autenticación (debe ser administrador para hacer la copia de seguridad de otro perfil)
+- `'-'`: la contraseña. `-` la lee de `POZNOTE_PASSWORD_FILE` o `POZNOTE_PASSWORD`; si no, escribe directamente la contraseña de la cuenta o una contraseña de aplicación (`pzn_...`). Hacer la copia de seguridad de otro perfil requiere la contraseña de la cuenta de un administrador
 - `'Nina'`: nombre del usuario cuya copia de seguridad se hace
 - `'/root/backups'`: directorio padre donde se guardarán las copias de seguridad (crea una carpeta `backups-poznote-<username>`)
 - `'30'`: número de copias de seguridad que se conservan (las más antiguas se eliminan automáticamente)
 
 **Cómo funciona el proceso de copia de seguridad:**
 
-1. El script se autentica con credenciales de administrador
-2. Busca automáticamente el ID de usuario a partir del nombre de usuario
-3. Crea una copia de seguridad mediante la API
-4. Llama a la API REST v1 de Poznote (`POST /api/v1/backups` con la cabecera `X-User-ID`)
-5. Descarga localmente el ZIP de la copia de seguridad en `backups-poznote-<username>/`
-6. Gestiona automáticamente la conservación (solo guarda el número indicado de copias recientes)
+1. El script se autentica con la contraseña de la cuenta o la contraseña de aplicación indicada
+2. Para tu propio perfil usa el ID del perfil autenticado; para otro perfil busca el ID del usuario a partir de su nombre (solo administradores)
+3. Crea una copia de seguridad mediante la API REST v1 de Poznote (`POST /api/v1/backups` con el encabezado `X-User-ID`)
+4. Descarga localmente el ZIP de la copia de seguridad en `backups-poznote-<username>/`
+5. Gestiona automáticamente la conservación (solo guarda el número indicado de copias recientes)
 
 **Nota:** las copias de seguridad de cada usuario se guardan en carpetas separadas (`backups-poznote-Nina`, `backups-poznote-Tim`, etc.)
 

@@ -1129,7 +1129,7 @@ tar -czvf poznote-full-backup.tar.gz data/
 - **备份文件夹**：服务器上的绝对路径（使用 Docker 时为容器内的路径）。留空时，归档保存到 `data/backups`，它已包含在数据卷中。文件夹会在需要时自动创建，并且 Web 服务器用户必须对其有写入权限。
 - **用户选择**：通过复选框选择备份覆盖哪些用户。默认全部选中，并且只要全部选中，新账户就会自动包含在内。
 - **手动备份**：“立即备份”按钮为每位所选用户保存一份新的归档，每次一位用户，并显示每位用户的进度。即使自动备份已关闭，它也可以使用。
-- **自动备份**：启用后，后台 worker 按所选频率（每天、每周或每月）备份所选用户。首次运行在启用后几分钟内进行，之后按所选间隔运行。页面会显示上次运行的结果和下次运行的日期。
+- **自动备份**：启用后，后台 worker 按所选频率（每天、每周或每月）备份所选用户。还可以选择每天的时间（例如 03:00，按设置该时间的管理员所在时区计算）：此后每次备份都在该整点后的几分钟内开始，错过的时间（服务器停止时）会在下次启动时补做一次。不选择时间时，首次运行在启用后几分钟内进行，之后按所选间隔运行。页面会显示上次运行的结果和下次运行的日期。
 - **保留**：每位用户只保留最新的 N 份归档，较旧的会在每次备份后从文件夹中删除（0 表示全部保留）。
 - **浏览**：页面列出文件夹中现有的归档，并提供下载和删除操作。
 - **恢复**：归档存放在备份文件夹的 `{用户 id}/` 下，可以使用标准的[恢复 / 导入](#还原--导入)页面进行恢复。
@@ -1216,7 +1216,7 @@ docker compose up -d
 - **配置**：端点 URL、区域、存储桶、Access Key、Secret Key 以及 Path-style 寻址，并内置连接测试。
 - **用户选择**：通过复选框选择备份覆盖哪些用户。默认勾选所有人，并且在所有人都被勾选时，新账户会自动包含在内。
 - **手动备份**：“立即备份”按钮会为每个选中的用户上传一份新的归档，一次处理一个用户，并显示每个用户的进度。只要配置好连接即可使用，即使自动备份处于关闭状态。
-- **自动备份**：启用后，后台工作进程会按所选频率（每天、每周或每月）备份选中的用户。首次运行会在启用后几分钟内进行，之后按所选间隔运行。
+- **自动备份**：启用后，后台工作进程会按所选频率（每天、每周或每月）备份选中的用户。还可以选择每天的时间（例如 03:00，按设置该时间的管理员所在时区计算）：此后每次备份都在该整点后的几分钟内开始，错过的时间（服务器停止时）会在下次启动时补做一次。不选择时间时，首次运行在启用后几分钟内进行，之后按所选间隔运行。
 - **保留**：每个用户只保留最近的 N 个归档，每次备份后会从存储桶中删除较旧的归档（0 表示全部保留）。
 - **浏览**：页面会列出存储桶中当前的归档，并提供下载和删除操作。
 - **还原**：归档存储在存储桶的 `backups/{user id}/` 下，可以通过标准的[还原 / 导入](#还原--导入)页面进行还原。
@@ -1234,51 +1234,54 @@ docker compose up -d
 
 如需通过 API 定时自动备份，可以使用附带的 `backup-poznote.sh` 脚本。
 
-**重要：** 只有管理员可以通过 API 创建备份。
-请使用您用于身份验证的管理员资料的当前密码。全新安装时，在 Poznote 中修改之前，该密码就是默认管理员密码（`admin`）。一旦设置了自定义密码，API 调用就需要使用该自定义密码。
+任何账户都可以用账户密码或应用密码备份自己的资料。备份其他用户的资料需要管理员账户的密码。启用双重身份验证后，仅凭账户密码会被拒绝，这时请在 **设置 > 我的账户 > 应用密码** 中创建一个应用密码来代替它。应用密码只能备份它自己的资料，即使属于管理员，也不能备份其他用户的资料。如需在启用双重身份验证的情况下按计划备份其他资料，请改用[按计划备份到服务器上的文件夹](#local-backups)。
 
 **脚本位置：** Poznote 仓库 `tools` 文件夹中的 `backup-poznote.sh`
 
-**管理员用法：**
+**用法：**
+```bash
+bash backup-poznote.sh '<poznote_url>' '<username>' '<password>' '<target_username>' '<backup_directory>' '<retention_count>'
+```
 
-管理员可以备份任意用户资料，**无需知道用户 ID**，只需提供用户名：
+**示例：**
 
 ```bash
 # 备份您自己的资料
 bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
 
-# 备份其他用户（Nina）的资料
+# 管理员备份其他用户（Nina）的资料，只需用户名
 bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
+
+# 用应用密码备份它自己的资料（启用双重身份验证时也可用）
+bash backup-poznote.sh 'https://poznote.example.com' 'Nina' 'pzn_...' 'Nina' '/backups' '30'
 ```
 
-**用法：**
-```bash
-bash backup-poznote.sh '<poznote_url>' '<admin_username>' '<admin_password>' '<target_username>' '<backup_directory>' '<retention_count>'
-```
+**不要把密码写在命令行上：**
+
+写在命令行上的密码，本机的任何用户都能在进程列表中看到，而且会留在 crontab 和 shell 历史记录中。改为传入 `-`，脚本就会从 `POZNOTE_PASSWORD_FILE` 指定文件的第一行（设为只有您能读，`chmod 600`）或环境变量 `POZNOTE_PASSWORD` 中读取密码。
 
 **crontab 示例（管理员备份 Nina）：**
 
 ```bash
 # 添加到 crontab，每天自动备份两次
-0 0,12 * * * bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/root/backups' '30'
+0 0,12 * * * POZNOTE_PASSWORD_FILE=/root/.poznote-password bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' '-' 'Nina' '/root/backups' '30'
 ```
 
 **参数说明：**
 - `'https://poznote.example.com'`：您的 Poznote 实例 URL
-- `'admin'`：用于身份验证的管理员用户名（必须是管理员）
-- `'admin_password'`：API 所用资料的当前管理员密码（修改前默认为 `admin`，修改后为自定义密码）
+- `'admin'`：用于认证的用户名（备份其他资料时必须是管理员）
+- `'-'`：密码。`-` 表示从 `POZNOTE_PASSWORD_FILE` 或 `POZNOTE_PASSWORD` 读取，否则直接填写账户密码或应用密码（`pzn_...`）。备份其他资料需要管理员的账户密码
 - `'Nina'`：要备份的目标用户名
 - `'/root/backups'`：存放备份的上级目录（会创建 `backups-poznote-<username>` 文件夹）
 - `'30'`：要保留的备份数量（较旧的备份会被自动删除）
 
 **备份流程如下：**
 
-1. 脚本使用管理员凭据进行身份验证
-2. 根据用户名自动查找用户 ID
-3. 通过 API 创建备份
-4. 调用 Poznote REST API v1（带 `X-User-ID` 请求头的 `POST /api/v1/backups`）
-5. 将备份 ZIP 下载到本地的 `backups-poznote-<username>/`
-6. 自动管理保留策略（只保留指定数量的最近备份）
+1. 脚本使用提供的账户密码或应用密码进行认证
+2. 备份自己的资料时使用已认证资料的 ID，备份其他资料时根据用户名查找用户 ID（仅限管理员）
+3. 通过 Poznote REST API v1 创建备份（带 `X-User-ID` 请求头的 `POST /api/v1/backups`）
+4. 将备份 ZIP 下载到本地的 `backups-poznote-<username>/`
+5. 自动管理保留策略（只保留指定数量的最近备份）
 
 **注意：** 每个用户的备份存放在不同的文件夹中（`backups-poznote-Nina`、`backups-poznote-Tim` 等）
 

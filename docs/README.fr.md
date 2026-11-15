@@ -1129,7 +1129,7 @@ Configurez-les dans **Paramètres > Sauvegardes sur le serveur** (administrateur
 - **Dossier de sauvegarde** : un chemin absolu sur le serveur (dans le conteneur avec Docker). Laissé vide, les archives vont dans `data/backups`, qui fait déjà partie du volume de données. Le dossier est créé si nécessaire et doit être accessible en écriture par l'utilisateur du serveur web.
 - **Sélection des utilisateurs** : des cases à cocher choisissent les utilisateurs couverts par les sauvegardes. Tout le monde est coché par défaut, et tant que tout le monde est coché, les nouveaux comptes sont inclus automatiquement.
 - **Sauvegardes manuelles** : un bouton « Sauvegarder maintenant » enregistre une nouvelle archive pour chaque utilisateur sélectionné, un utilisateur à la fois, avec une progression par utilisateur. Il fonctionne même lorsque les sauvegardes automatiques sont désactivées.
-- **Sauvegardes automatiques** : une fois activées, un worker en arrière-plan sauvegarde les utilisateurs sélectionnés à la fréquence choisie (quotidienne, hebdomadaire ou mensuelle). La première exécution a lieu dans les minutes qui suivent l'activation, les suivantes après l'intervalle choisi. La page affiche le résultat de la dernière exécution et la date de la prochaine.
+- **Sauvegardes automatiques** : une fois activées, un worker en arrière-plan sauvegarde les utilisateurs sélectionnés à la fréquence choisie (quotidienne, hebdomadaire ou mensuelle). Une heure peut être choisie (par exemple 03:00, dans le fuseau horaire de l'administrateur qui la définit) : chaque sauvegarde démarre alors dans les premières minutes après cette heure, et une heure manquée (serveur arrêté) est rattrapée une fois au démarrage suivant. Sans heure, la première exécution a lieu dans les minutes qui suivent l'activation, les suivantes après l'intervalle choisi. La page affiche le résultat de la dernière exécution et la date de la prochaine.
 - **Rétention** : seules les N archives les plus récentes sont conservées par utilisateur, les plus anciennes sont supprimées du dossier après chaque sauvegarde (0 conserve tout).
 - **Parcourir** : la page liste les archives présentes dans le dossier, avec des actions de téléchargement et de suppression.
 - **Restauration** : les archives sont stockées sous `{id utilisateur}/` dans le dossier de sauvegarde et peuvent être restaurées avec la page standard [Restauration / Import](#restauration--import).
@@ -1216,7 +1216,7 @@ Configurez-les dans **Paramètres > Sauvegardes S3** (administrateurs uniquement
 - **Configuration** : URL du endpoint, région, bucket, clé d'accès, clé secrète et adressage path-style, avec un test de connexion intégré.
 - **Sélection des utilisateurs** : des cases à cocher déterminent les utilisateurs couverts par les sauvegardes. Tout le monde est coché par défaut et, tant que tout le monde est coché, les nouveaux comptes sont inclus automatiquement.
 - **Sauvegardes manuelles** : un bouton « Sauvegarder maintenant » envoie une archive fraîche pour chaque utilisateur sélectionné, un utilisateur à la fois, avec la progression de chacun. Il fonctionne dès que la connexion est configurée, même si les sauvegardes automatiques sont désactivées.
-- **Sauvegardes automatiques** : une fois activées, un processus en arrière-plan sauvegarde les utilisateurs sélectionnés selon la fréquence choisie (quotidienne, hebdomadaire ou mensuelle). La première exécution a lieu dans les minutes qui suivent l'activation, les suivantes après l'intervalle choisi.
+- **Sauvegardes automatiques** : une fois activées, un processus en arrière-plan sauvegarde les utilisateurs sélectionnés selon la fréquence choisie (quotidienne, hebdomadaire ou mensuelle). Une heure peut être choisie (par exemple 03:00, dans le fuseau horaire de l'administrateur qui la définit) : chaque sauvegarde démarre alors dans les premières minutes après cette heure, et une heure manquée (serveur arrêté) est rattrapée une fois au démarrage suivant. Sans heure, la première exécution a lieu dans les minutes qui suivent l'activation, les suivantes après l'intervalle choisi.
 - **Rétention** : seules les N archives les plus récentes sont conservées par utilisateur, les plus anciennes sont supprimées du bucket après chaque sauvegarde (0 conserve tout).
 - **Consultation** : la page liste les archives actuellement présentes dans le bucket, avec des actions de téléchargement et de suppression.
 - **Restauration** : les archives sont stockées sous `backups/{user id}/` dans le bucket et peuvent être restaurées avec la page standard [Restauration / Import](#restauration--import).
@@ -1234,51 +1234,54 @@ Lorsque les pièces jointes sont stockées dans S3 (stockage des pièces jointes
 
 Pour des sauvegardes planifiées via l'API, vous pouvez utiliser le script `backup-poznote.sh` fourni.
 
-**IMPORTANT :** seuls les administrateurs peuvent créer des sauvegardes via l'API.
-Utilisez le mot de passe actuel du profil administrateur avec lequel vous vous authentifiez. Sur une nouvelle installation, il s'agit du mot de passe administrateur par défaut (`admin`) tant qu'il n'a pas été changé dans Poznote. Dès qu'un mot de passe personnalisé est défini, c'est lui qui est requis pour les appels API.
+Tout compte peut sauvegarder son propre profil, avec le mot de passe du compte ou avec un mot de passe d'application. Sauvegarder le profil d'un autre utilisateur demande le mot de passe d'un compte administrateur. Lorsque l'authentification à deux facteurs est activée, le mot de passe du compte seul est refusé. Créez alors un mot de passe d'application dans **Paramètres > Mon compte > Mots de passe d'application** et utilisez-le à sa place. Un mot de passe d'application ne peut sauvegarder que son propre profil, jamais celui d'un autre utilisateur, même s'il appartient à un administrateur. Pour sauvegarder d'autres profils de façon planifiée avec l'authentification à deux facteurs, utilisez plutôt les [Sauvegardes planifiées dans un dossier du serveur](#local-backups).
 
 **Emplacement du script :** `backup-poznote.sh` dans le dossier `tools` du dépôt Poznote
 
-**Utilisation par un administrateur :**
+**Utilisation :**
+```bash
+bash backup-poznote.sh '<poznote_url>' '<username>' '<password>' '<target_username>' '<backup_directory>' '<retention_count>'
+```
 
-Les administrateurs peuvent sauvegarder n'importe quel profil utilisateur, **sans connaître les ID des utilisateurs**, le nom d'utilisateur suffit :
+**Exemples :**
 
 ```bash
 # Sauvegarder votre propre profil
 bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
 
-# Sauvegarder le profil d'un autre utilisateur (Nina)
+# Un administrateur qui sauvegarde le profil d'un autre utilisateur (Nina), seul le nom d'utilisateur est nécessaire
 bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
+
+# Un mot de passe d'application qui sauvegarde son propre profil (fonctionne avec l'authentification à deux facteurs)
+bash backup-poznote.sh 'https://poznote.example.com' 'Nina' 'pzn_...' 'Nina' '/backups' '30'
 ```
 
-**Utilisation :**
-```bash
-bash backup-poznote.sh '<poznote_url>' '<admin_username>' '<admin_password>' '<target_username>' '<backup_directory>' '<retention_count>'
-```
+**Garder le mot de passe hors de la ligne de commande :**
+
+Un mot de passe écrit sur la ligne de commande est lisible par tout utilisateur de la machine dans la liste des processus, et il reste dans la crontab et l'historique du shell. Passez `-` à sa place et le script le lit sur la première ligne du fichier indiqué par `POZNOTE_PASSWORD_FILE` (lisible par vous seul, `chmod 600`), ou dans la variable d'environnement `POZNOTE_PASSWORD`.
 
 **Exemple avec crontab (un administrateur qui sauvegarde Nina) :**
 
 ```bash
 # À ajouter à la crontab pour des sauvegardes automatiques deux fois par jour
-0 0,12 * * * bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/root/backups' '30'
+0 0,12 * * * POZNOTE_PASSWORD_FILE=/root/.poznote-password bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' '-' 'Nina' '/root/backups' '30'
 ```
 
 **Explication des paramètres :**
 - `'https://poznote.example.com'` : l'URL de votre instance Poznote
-- `'admin'` : nom d'utilisateur administrateur pour l'authentification (doit être un administrateur)
-- `'admin_password'` : mot de passe administrateur actuel du profil utilisé pour l'API (`admin` par défaut tant qu'il n'a pas été changé, puis le mot de passe personnalisé)
+- `'admin'` : nom d'utilisateur pour l'authentification (doit être administrateur pour sauvegarder un autre profil)
+- `'-'` : le mot de passe. `-` le lit dans `POZNOTE_PASSWORD_FILE` ou `POZNOTE_PASSWORD`, sinon écrivez directement le mot de passe du compte ou un mot de passe d'application (`pzn_...`). Sauvegarder un autre profil demande le mot de passe du compte d'un administrateur
 - `'Nina'` : nom de l'utilisateur à sauvegarder
 - `'/root/backups'` : répertoire parent où les sauvegardes seront stockées (crée un dossier `backups-poznote-<username>`)
 - `'30'` : nombre de sauvegardes à conserver (les plus anciennes sont supprimées automatiquement)
 
 **Déroulement de la sauvegarde :**
 
-1. Le script s'authentifie avec les identifiants administrateur
-2. Il retrouve automatiquement l'ID de l'utilisateur à partir de son nom d'utilisateur
-3. Il crée une sauvegarde via l'API
-4. Il appelle l'API REST v1 de Poznote (`POST /api/v1/backups` avec l'en-tête `X-User-ID`)
-5. Il télécharge le ZIP de sauvegarde localement dans `backups-poznote-<username>/`
-6. Il gère automatiquement la rétention (ne conserve que le nombre indiqué de sauvegardes récentes)
+1. Le script s'authentifie avec le mot de passe du compte ou le mot de passe d'application fourni
+2. Pour votre propre profil, il utilise l'ID du profil authentifié ; pour un autre profil, il retrouve l'ID de l'utilisateur à partir de son nom (administrateurs uniquement)
+3. Il crée une sauvegarde via l'API REST v1 de Poznote (`POST /api/v1/backups` avec l'en-tête `X-User-ID`)
+4. Il télécharge le ZIP de sauvegarde localement dans `backups-poznote-<username>/`
+5. Il gère automatiquement la rétention (ne conserve que le nombre indiqué de sauvegardes récentes)
 
 **Remarque :** les sauvegardes de chaque utilisateur sont stockées dans des dossiers séparés (`backups-poznote-Nina`, `backups-poznote-Tim`, etc.)
 

@@ -21,6 +21,7 @@ if (!defined('SQLITE_DATABASE')) {
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/users/db_master.php';
 require_once __DIR__ . '/backup_zip.php';
+require_once __DIR__ . '/lib/backup-schedule.php';
 
 class LocalBackupService {
     const FREQUENCIES = [
@@ -43,6 +44,10 @@ class LocalBackupService {
     const USER_STARTED_INDEX = '.poznote_user_started.json';
     const USER_STARTED_CAP_WHEN_KEEP_ALL = 7;
 
+    // Stored selection meaning "nobody": an empty setting already means every
+    // user (future ones included), so unchecking everyone needs its own value.
+    const NO_USERS = 'none';
+
     /**
      * Folder used when none is configured: data/backups, next to the users'
      * data, so it is covered by the volume every installation already mounts.
@@ -64,11 +69,13 @@ class LocalBackupService {
             $retention = 0;
         }
 
-        // Empty setting = back up every user, including future ones; otherwise
-        // a comma-separated allowlist of user ids
+        // Empty setting = back up every user, including future ones; NO_USERS
+        // = nobody; otherwise a comma-separated allowlist of user ids
         $userIdsRaw = trim((string)getGlobalSetting('local_backup_user_ids', ''));
         $userIds = null;
-        if ($userIdsRaw !== '') {
+        if ($userIdsRaw === self::NO_USERS) {
+            $userIds = [];
+        } elseif ($userIdsRaw !== '') {
             $userIds = array_values(array_unique(array_map('intval', explode(',', $userIdsRaw))));
         }
 
@@ -80,6 +87,10 @@ class LocalBackupService {
             'custom_directory' => $customDirectory,
             'directory' => $customDirectory !== '' ? $customDirectory : self::defaultDirectory(),
             'frequency' => $frequency,
+            // Hour of the day the automatic backup starts (null = any time),
+            // read in the timezone of the administrator who chose it (#1780)
+            'hour' => poznoteNormalizeBackupHour(getGlobalSetting('local_backup_hour', '')),
+            'timezone' => poznoteNormalizeBackupTimezone(getGlobalSetting('local_backup_timezone', '')),
             'retention' => $retention,
             'user_ids' => $userIds,
         ];
@@ -201,7 +212,21 @@ class LocalBackupService {
         }
         $lastRun = (int)getGlobalSetting('local_backup_last_auto_run', '0');
         $interval = self::FREQUENCIES[$config['frequency']];
-        return time() >= $lastRun + $interval - 150;
+        return poznoteBackupScheduleIsDue(time(), $lastRun, $interval, $config['hour'], $config['timezone']);
+    }
+
+    /**
+     * When the next automatic backup starts, for the settings page, or null
+     * when it cannot be told (schedule off, or never run without a chosen hour).
+     */
+    public static function nextAutoRun(?array $config = null): ?int {
+        $config = $config ?? self::getConfig();
+        if (!$config['auto_enabled']) {
+            return null;
+        }
+        $lastRun = (int)getGlobalSetting('local_backup_last_auto_run', '0');
+        $interval = self::FREQUENCIES[$config['frequency']];
+        return poznoteBackupScheduleNextRun(time(), $lastRun, $interval, $config['hour'], $config['timezone']);
     }
 
     /**

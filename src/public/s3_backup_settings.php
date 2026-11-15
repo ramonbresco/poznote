@@ -51,6 +51,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save_
     if (!isset(S3BackupService::FREQUENCIES[$frequency])) {
         $frequency = 'daily';
     }
+    // Hour of the day (empty = any time). The timezone it is read in stays
+    // the stored one while the hour does not change (#1780).
+    $previousConfig = S3BackupService::getConfig();
+    $backupHour = poznoteNormalizeBackupHour($_POST['s3_backup_hour'] ?? '');
+    $backupTimezone = poznoteBackupTimezoneToStore(
+        $backupHour,
+        $previousConfig['hour'],
+        (string)getGlobalSetting('s3_backup_timezone', ''),
+        getUserTimezone()
+    );
     $retention = max(0, (int)($_POST['s3_backup_retention'] ?? 7));
     $skipS3Attachments = isset($_POST['s3_backup_skip_s3_attachments']) ? '1' : '0';
 
@@ -74,6 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save_
             && setGlobalSetting('s3_backup_access_key', $accessKey)
             && setGlobalSetting('s3_backup_path_style', $pathStyle)
             && setGlobalSetting('s3_backup_frequency', $frequency)
+            && setGlobalSetting('s3_backup_hour', $backupHour === null ? '' : (string)$backupHour)
+            && setGlobalSetting('s3_backup_timezone', $backupTimezone)
             && setGlobalSetting('s3_backup_retention', (string)$retention)
             && setGlobalSetting('s3_backup_skip_s3_attachments', $skipS3Attachments)
             && setGlobalSetting('s3_backup_user_ids', $userIdsSetting);
@@ -255,8 +267,10 @@ $allBackupUsers = listAllUserProfiles();
                             <option value="weekly" <?php echo $backupConfig['frequency'] === 'weekly' ? 'selected' : ''; ?>><?php echo t_h('s3_backup.frequency_weekly', [], 'Weekly'); ?></option>
                             <option value="monthly" <?php echo $backupConfig['frequency'] === 'monthly' ? 'selected' : ''; ?>><?php echo t_h('s3_backup.frequency_monthly', [], 'Monthly (every 30 days)'); ?></option>
                         </select>
-                        <span class="label-desc"><?php echo t_h('s3_backup.frequency_description', [], 'The first automatic backup runs within a few minutes of enabling, the next ones after the chosen interval.'); ?></span>
+                        <span class="label-desc"><?php echo t_h('s3_backup.frequency_description', [], 'How often the automatic backup runs.'); ?></span>
                     </div>
+
+                    <?php poznoteRenderBackupHourField('s3_backup_hour', $backupConfig['hour'], $backupConfig['hour'] !== null ? $backupConfig['timezone'] : getUserTimezone()); ?>
 
                     <div class="git-field-group">
                         <label class="git-field-label" for="s3_backup_retention"><?php echo t_h('s3_backup.retention_label', [], 'Backups to keep per user'); ?></label>
@@ -474,6 +488,7 @@ $allBackupUsers = listAllUserProfiles();
             lastRun: <?php echo json_encode(t('s3_backup.last_run', [], 'Last run ({{trigger}}): {{date}}, {{uploaded}}/{{total}} user(s) uploaded.')); ?>,
             triggerAuto: <?php echo json_encode(t('s3_backup.trigger_auto', [], 'automatic')); ?>,
             triggerManual: <?php echo json_encode(t('s3_backup.trigger_manual', [], 'manual')); ?>,
+            nextRun: <?php echo json_encode(t('local_backup.next_run', [], 'Next automatic backup: {{date}}.')); ?>,
             listEmpty: <?php echo json_encode(t('s3_backup.list_empty', [], 'No backup in the bucket yet.')); ?>,
             listCount: <?php echo json_encode(t('s3_backup.list_count', [], '{{total}} backup(s)')); ?>,
             listCountFiltered: <?php echo json_encode(t('s3_backup.list_count_filtered', [], '{{shown}} of {{total}} backup(s) shown')); ?>,
@@ -612,22 +627,25 @@ $allBackupUsers = listAllUserProfiles();
 
         function renderLastRun() {
             var el = document.getElementById('s3-backup-last-run');
-            if (!statusData || !statusData.last_run) {
-                el.textContent = '';
-                el.hidden = true;
-                return;
+            var text = '';
+            if (statusData && statusData.last_run) {
+                var run = statusData.last_run;
+                var date = run.finished_at ? new Date(run.finished_at * 1000).toLocaleString() : '?';
+                text = i18n.lastRun
+                    .replace('{{trigger}}', run.trigger === 'auto' ? i18n.triggerAuto : i18n.triggerManual)
+                    .replace('{{date}}', date)
+                    .replace('{{uploaded}}', run.uploaded)
+                    .replace('{{total}}', run.users);
+                if (run.errors && run.errors.length) {
+                    text += ' ' + run.errors.join(' | ');
+                }
             }
-            el.hidden = false;
-            var run = statusData.last_run;
-            var date = run.finished_at ? new Date(run.finished_at * 1000).toLocaleString() : '?';
-            el.textContent = i18n.lastRun
-                .replace('{{trigger}}', run.trigger === 'auto' ? i18n.triggerAuto : i18n.triggerManual)
-                .replace('{{date}}', date)
-                .replace('{{uploaded}}', run.uploaded)
-                .replace('{{total}}', run.users);
-            if (run.errors && run.errors.length) {
-                el.textContent += ' ' + run.errors.join(' | ');
+            if (statusData && statusData.next_auto_run) {
+                text += (text ? ' ' : '') + i18n.nextRun
+                    .replace('{{date}}', new Date(statusData.next_auto_run * 1000).toLocaleString());
             }
+            el.textContent = text;
+            el.hidden = text === '';
         }
 
         function refreshStatus() {

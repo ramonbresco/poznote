@@ -158,9 +158,8 @@ switch ($action) {
             'frequency' => $config['frequency'],
             'retention' => $config['retention'],
             'last_auto_run' => $lastAutoRun,
-            'next_auto_run' => $config['auto_enabled'] && $lastAutoRun > 0
-                ? $lastAutoRun + LocalBackupService::FREQUENCIES[$config['frequency']]
-                : null,
+            'hour' => $config['hour'],
+            'next_auto_run' => LocalBackupService::nextAutoRun($config),
             'last_run' => is_array($summary) ? $summary : null,
             'users' => $users,
         ]);

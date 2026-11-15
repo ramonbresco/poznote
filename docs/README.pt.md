@@ -1129,7 +1129,7 @@ Configure em **Configurações > Backups no servidor** (somente administradores)
 - **Pasta de backup**: um caminho absoluto no servidor (dentro do contêiner com Docker). Se ficar vazio, os arquivos vão para `data/backups`, que já faz parte do volume de dados. A pasta é criada se necessário e o usuário do servidor web precisa ter permissão de escrita nela.
 - **Seleção de usuários**: caixas de seleção escolhem quais usuários são cobertos pelos backups. Todos vêm marcados por padrão e, enquanto todos estiverem marcados, as novas contas são incluídas automaticamente.
 - **Backups manuais**: um botão "Fazer backup agora" salva um novo arquivo para cada usuário selecionado, um usuário por vez, com progresso por usuário. Funciona mesmo com os backups automáticos desativados.
-- **Backups automáticos**: quando ativados, um worker em segundo plano faz o backup dos usuários selecionados na frequência escolhida (diária, semanal ou mensal). A primeira execução ocorre poucos minutos após a ativação, as seguintes após o intervalo escolhido. A página mostra o resultado da última execução e a data da próxima.
+- **Backups automáticos**: quando ativados, um worker em segundo plano faz o backup dos usuários selecionados na frequência escolhida (diária, semanal ou mensal). É possível escolher um horário (por exemplo 03:00, no fuso horário do administrador que o define): cada backup começa então nos primeiros minutos após esse horário, e um horário perdido (servidor parado) é recuperado uma vez na inicialização seguinte. Sem horário, a primeira execução ocorre poucos minutos após a ativação, as seguintes após o intervalo escolhido. A página mostra o resultado da última execução e a data da próxima.
 - **Retenção**: apenas os N arquivos mais recentes são mantidos por usuário, os mais antigos são excluídos da pasta após cada backup (0 mantém tudo).
 - **Navegação**: a página lista os arquivos presentes na pasta, com ações de download e exclusão.
 - **Restauração**: os arquivos são armazenados sob `{id do usuário}/` na pasta de backup e podem ser restaurados com a página padrão [Restaurar / Importar](#restaurar--importar).
@@ -1216,7 +1216,7 @@ Configure isso em **Configurações > Backups S3** (somente administradores).
 - **Configuração**: URL do endpoint, região, bucket, chave de acesso, chave secreta e endereçamento path-style, com um teste de conexão integrado.
 - **Seleção de usuários**: caixas de seleção definem quais usuários são cobertos pelos backups. Todos vêm marcados por padrão e, enquanto todos estiverem marcados, as novas contas são incluídas automaticamente.
 - **Backups manuais**: um botão "Fazer backup agora" envia um arquivo novo para cada usuário selecionado, um usuário por vez, com o progresso de cada um. Ele funciona assim que a conexão estiver configurada, mesmo com os backups automáticos desligados.
-- **Backups automáticos**: quando ativados, um processo em segundo plano faz o backup dos usuários selecionados na frequência escolhida (diária, semanal ou mensal). A primeira execução acontece poucos minutos após a ativação, e as seguintes depois do intervalo escolhido.
+- **Backups automáticos**: quando ativados, um processo em segundo plano faz o backup dos usuários selecionados na frequência escolhida (diária, semanal ou mensal). É possível escolher um horário (por exemplo 03:00, no fuso horário do administrador que o define): cada backup começa então nos primeiros minutos após esse horário, e um horário perdido (servidor parado) é recuperado uma vez na inicialização seguinte. Sem horário, a primeira execução ocorre poucos minutos após a ativação, as seguintes após o intervalo escolhido.
 - **Retenção**: apenas os N arquivos mais recentes são mantidos por usuário; os mais antigos são excluídos do bucket após cada backup (0 mantém tudo).
 - **Navegação**: a página lista os arquivos que estão no bucket no momento, com ações de download e exclusão.
 - **Restauração**: os arquivos ficam em `backups/{user id}/` no bucket e podem ser restaurados pela página padrão de [Restaurar / Importar](#restaurar--importar).
@@ -1234,51 +1234,54 @@ Quando os anexos estão armazenados no S3 (Armazenamento de anexos no S3), eles 
 
 Para backups automatizados e programados pela API, você pode usar o script incluído `backup-poznote.sh`.
 
-**IMPORTANTE:** apenas administradores podem criar backups pela API.
-Use a senha atual do perfil de administrador com o qual você se autentica. Em uma instalação nova, essa é a senha padrão do administrador (`admin`) até ser alterada no Poznote. Depois que uma senha personalizada é definida, é ela que as chamadas de API exigem.
+Qualquer conta pode fazer backup do próprio perfil, com a senha da conta ou com uma senha de aplicativo. Fazer backup do perfil de outro usuário exige a senha de uma conta de administrador. Quando a autenticação de dois fatores está ativada, a senha da conta sozinha é recusada. Crie então uma senha de aplicativo em **Configurações > Minha conta > Senhas de aplicativo** e use-a no lugar dela. Uma senha de aplicativo só pode fazer backup do próprio perfil, nunca do de outro usuário, mesmo que pertença a um administrador. Para fazer backups agendados de outros perfis com a autenticação de dois fatores ativada, use os [Backups agendados em uma pasta do servidor](#local-backups).
 
 **Local do script:** `backup-poznote.sh` na pasta `tools` do repositório do Poznote
 
-**Uso por administradores:**
+**Uso:**
+```bash
+bash backup-poznote.sh '<poznote_url>' '<username>' '<password>' '<target_username>' '<backup_directory>' '<retention_count>'
+```
 
-Os administradores podem fazer backup de qualquer perfil de usuário, **sem precisar saber os IDs de usuário**, apenas o nome de usuário:
+**Exemplos:**
 
 ```bash
 # Fazer backup do seu próprio perfil
 bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
 
-# Fazer backup do perfil de outro usuário (Nina)
+# Administrador fazendo backup do perfil de outro usuário (Nina), basta o nome de usuário
 bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
+
+# Senha de aplicativo fazendo backup do próprio perfil (funciona com a autenticação de dois fatores)
+bash backup-poznote.sh 'https://poznote.example.com' 'Nina' 'pzn_...' 'Nina' '/backups' '30'
 ```
 
-**Uso:**
-```bash
-bash backup-poznote.sh '<poznote_url>' '<admin_username>' '<admin_password>' '<target_username>' '<backup_directory>' '<retention_count>'
-```
+**Mantendo a senha fora da linha de comando:**
+
+Uma senha escrita na linha de comando pode ser lida por qualquer usuário da máquina na lista de processos, e fica no crontab e no histórico do shell. Passe `-` no lugar dela e o script a lê da primeira linha do arquivo indicado por `POZNOTE_PASSWORD_FILE` (legível só por você, `chmod 600`), ou da variável de ambiente `POZNOTE_PASSWORD`.
 
 **Exemplo com crontab (administrador fazendo backup da Nina):**
 
 ```bash
 # Adicionar ao crontab para backups automatizados duas vezes por dia
-0 0,12 * * * bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/root/backups' '30'
+0 0,12 * * * POZNOTE_PASSWORD_FILE=/root/.poznote-password bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' '-' 'Nina' '/root/backups' '30'
 ```
 
 **Parâmetros explicados:**
 - `'https://poznote.example.com'`: URL da sua instância do Poznote
-- `'admin'`: nome de usuário do administrador para autenticação (precisa ser administrador)
-- `'admin_password'`: senha atual do administrador para o perfil da API (padrão `admin` até ser alterada, depois a senha personalizada)
+- `'admin'`: nome de usuário para a autenticação (precisa ser administrador para fazer backup de outro perfil)
+- `'-'`: a senha. `-` a lê de `POZNOTE_PASSWORD_FILE` ou `POZNOTE_PASSWORD`; caso contrário, escreva diretamente a senha da conta ou uma senha de aplicativo (`pzn_...`). Fazer backup de outro perfil exige a senha da conta de um administrador
 - `'Nina'`: nome de usuário de quem será feito o backup
 - `'/root/backups'`: diretório pai onde os backups serão armazenados (cria a pasta `backups-poznote-<username>`)
 - `'30'`: número de backups a manter (os mais antigos são excluídos automaticamente)
 
 **Como funciona o processo de backup:**
 
-1. O script se autentica com as credenciais de administrador
-2. Busca automaticamente o ID do usuário a partir do nome de usuário
-3. Cria um backup pela API
-4. Chama a API REST v1 do Poznote (`POST /api/v1/backups` com o cabeçalho `X-User-ID`)
-5. Baixa o ZIP do backup localmente em `backups-poznote-<username>/`
-6. Gerencia a retenção automaticamente (mantém apenas o número especificado de backups recentes)
+1. O script se autentica com a senha da conta ou a senha de aplicativo informada
+2. Para o seu próprio perfil, usa o ID do perfil autenticado; para outro perfil, procura o ID do usuário a partir do nome de usuário (somente administradores)
+3. Cria um backup pela API REST v1 do Poznote (`POST /api/v1/backups` com o cabeçalho `X-User-ID`)
+4. Baixa o ZIP do backup localmente em `backups-poznote-<username>/`
+5. Gerencia a retenção automaticamente (mantém apenas o número especificado de backups recentes)
 
 **Observação:** os backups de cada usuário ficam em pastas separadas (`backups-poznote-Nina`, `backups-poznote-Tim` etc.)
 
