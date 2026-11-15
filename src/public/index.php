@@ -580,11 +580,6 @@ if (!poznoteSettingEnabled($settings['markdown_editor_word_wrap'], true)) {
 if (poznoteSettingEnabled($settings['attachments_single_line'], false)) {
     $extra_body_classes .= ' attachments-single-line';
 }
-// "Attachment links as cards": a link to an attachment that cannot be a card,
-// in a sentence, gets a small paperclip instead (css/components/attachment-card.css)
-if (poznoteSettingEnabled($settings['attachment_links_as_cards'], false)) {
-    $extra_body_classes .= ' attachment-links-as-cards';
-}
 // Empty room under the last line of a note (discussion 1564), css/notes/noteentry.css
 if (poznoteSettingEnabled($settings['note_virtual_space'], true)) {
     $extra_body_classes .= ' note-virtual-space';
