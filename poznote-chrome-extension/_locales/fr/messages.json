@@ -47,9 +47,6 @@
   "modeAppendTitle": {
     "message": "Ajouter la page à la fin d'une note"
   },
-  "change": {
-    "message": "Modifier"
-  },
   "searchNotes": {
     "message": "Rechercher des notes"
   },
@@ -241,5 +238,62 @@
   },
   "pageScreenshot": {
     "message": "Capture de la page"
+  },
+  "menuSaveSelection": {
+    "message": "Enregistrer la sélection dans Poznote"
+  },
+  "menuSaveLink": {
+    "message": "Enregistrer le lien dans Poznote"
+  },
+  "menuSaveImage": {
+    "message": "Enregistrer l'image dans Poznote"
+  },
+  "menuSavePage": {
+    "message": "Enregistrer le lien de la page dans Poznote"
+  },
+  "menuSavePageText": {
+    "message": "Enregistrer le texte de la page dans Poznote"
+  },
+  "cmdOpenPopup": {
+    "message": "Ouvrir l'extension"
+  },
+  "cmdSaveLink": {
+    "message": "Enregistrer le lien de la page"
+  },
+  "cmdSaveText": {
+    "message": "Enregistrer la sélection, ou le texte de la page"
+  },
+  "noteTitle": {
+    "message": "Titre"
+  },
+  "tags": {
+    "message": "Tags"
+  },
+  "tagsPlaceholder": {
+    "message": "Séparés par des virgules"
+  },
+  "image": {
+    "message": "Image"
+  },
+  "imageCannotBeSaved": {
+    "message": "Cette image ne peut pas être enregistrée."
+  },
+  "connectFirst": {
+    "message": "Connectez d'abord l'extension à Poznote."
+  },
+  "saving": {
+    "message": "Enregistrement..."
+  },
+  "shortcutsTitle": {
+    "message": "Raccourcis clavier et menu du clic droit"
+  },
+  "rightClickHint": {
+    "message": "Faites un clic droit sur une page, un lien, une image ou une sélection pour l'enregistrer sans ouvrir l'extension. Il va là où l'extension a servi la dernière fois : la note existante choisie, ou une nouvelle note dans l'espace de travail et le dossier ci-dessus."
+  },
+  "shortcutNotSet": {
+    "message": "Non défini"
+  },
+  "changeShortcuts": {
+    "message": "Modifier les raccourcis"
   }
 }

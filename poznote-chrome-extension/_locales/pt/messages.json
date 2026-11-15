@@ -47,9 +47,6 @@
   "modeAppendTitle": {
     "message": "Adicionar a página ao final de uma nota"
   },
-  "change": {
-    "message": "Alterar"
-  },
   "searchNotes": {
     "message": "Pesquisar notas"
   },
@@ -241,5 +238,62 @@
   },
   "pageScreenshot": {
     "message": "Captura da página"
+  },
+  "menuSaveSelection": {
+    "message": "Salvar a seleção no Poznote"
+  },
+  "menuSaveLink": {
+    "message": "Salvar o link no Poznote"
+  },
+  "menuSaveImage": {
+    "message": "Salvar a imagem no Poznote"
+  },
+  "menuSavePage": {
+    "message": "Salvar o link da página no Poznote"
+  },
+  "menuSavePageText": {
+    "message": "Salvar o texto da página no Poznote"
+  },
+  "cmdOpenPopup": {
+    "message": "Abrir a extensão"
+  },
+  "cmdSaveLink": {
+    "message": "Salvar o link da página"
+  },
+  "cmdSaveText": {
+    "message": "Salvar a seleção ou o texto da página"
+  },
+  "noteTitle": {
+    "message": "Título"
+  },
+  "tags": {
+    "message": "Tags"
+  },
+  "tagsPlaceholder": {
+    "message": "Separadas por vírgulas"
+  },
+  "image": {
+    "message": "Imagem"
+  },
+  "imageCannotBeSaved": {
+    "message": "Esta imagem não pode ser salva."
+  },
+  "connectFirst": {
+    "message": "Conecte primeiro a extensão ao Poznote."
+  },
+  "saving": {
+    "message": "Salvando..."
+  },
+  "shortcutsTitle": {
+    "message": "Atalhos de teclado e menu de contexto"
+  },
+  "rightClickHint": {
+    "message": "Clique com o botão direito em uma página, um link, uma imagem ou uma seleção para salvá-lo sem abrir a extensão. Ele vai para onde a extensão foi usada por último: a nota existente escolhida lá, ou uma nova nota no espaço de trabalho e na pasta acima."
+  },
+  "shortcutNotSet": {
+    "message": "Não definido"
+  },
+  "changeShortcuts": {
+    "message": "Alterar os atalhos"
   }
 }

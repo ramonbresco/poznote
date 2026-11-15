@@ -47,9 +47,6 @@
   "modeAppendTitle": {
     "message": "ページをノートの末尾に追加"
   },
-  "change": {
-    "message": "変更"
-  },
   "searchNotes": {
     "message": "ノートを検索"
   },
@@ -241,5 +238,62 @@
   },
   "pageScreenshot": {
     "message": "ページのスクリーンショット"
+  },
+  "menuSaveSelection": {
+    "message": "選択範囲をPoznoteに保存"
+  },
+  "menuSaveLink": {
+    "message": "リンクをPoznoteに保存"
+  },
+  "menuSaveImage": {
+    "message": "画像をPoznoteに保存"
+  },
+  "menuSavePage": {
+    "message": "ページのリンクをPoznoteに保存"
+  },
+  "menuSavePageText": {
+    "message": "ページの本文をPoznoteに保存"
+  },
+  "cmdOpenPopup": {
+    "message": "拡張機能を開く"
+  },
+  "cmdSaveLink": {
+    "message": "ページのリンクを保存"
+  },
+  "cmdSaveText": {
+    "message": "選択範囲またはページの本文を保存"
+  },
+  "noteTitle": {
+    "message": "タイトル"
+  },
+  "tags": {
+    "message": "タグ"
+  },
+  "tagsPlaceholder": {
+    "message": "カンマ区切り"
+  },
+  "image": {
+    "message": "画像"
+  },
+  "imageCannotBeSaved": {
+    "message": "この画像は保存できません。"
+  },
+  "connectFirst": {
+    "message": "先に拡張機能をPoznoteに接続してください。"
+  },
+  "saving": {
+    "message": "保存しています..."
+  },
+  "shortcutsTitle": {
+    "message": "キーボードショートカットと右クリックメニュー"
+  },
+  "rightClickHint": {
+    "message": "ページ、リンク、画像、選択範囲を右クリックすると、拡張機能を開かずに保存できます。保存先は最後に拡張機能を使ったときと同じです。そこで選んだ既存のノート、または上のワークスペースとフォルダーの新しいノートに保存されます。"
+  },
+  "shortcutNotSet": {
+    "message": "未設定"
+  },
+  "changeShortcuts": {
+    "message": "ショートカットを変更"
   }
 }

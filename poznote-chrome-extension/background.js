@@ -1,7 +1,11 @@
 /**
  * Background script for Poznote URL Saver extension
- * Handles API communication with Poznote backend
+ * Handles API communication with Poznote backend, the right-click menu and
+ * the keyboard shortcuts
  */
+
+// The stored connection, t(), escapeHtml(), readPageText()... shared with the popup
+importScripts('common.js');
 
 /**
  * Message listener for extension communication
@@ -43,6 +47,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message.type === 'listTags') {
+    listTags(message.config, message.workspace)
+      .then(sendResponse)
+      .catch(err => sendResponse({ error: err.message }));
+    return true;
+  }
+
   if (message.type === 'listProfiles') {
     listProfiles(message.config)
       .then(sendResponse)
@@ -50,13 +61,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 });
-
-/**
- * A sentence in the browser's language, from _locales/<lang>/messages.json
- */
-function t(key, substitutions) {
-  return chrome.i18n.getMessage(key, substitutions) || key;
-}
 
 /**
  * Build HTTP headers for API requests
@@ -179,25 +183,31 @@ async function createNote(config, noteData) {
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    let errorMsg = t('errorStatus', [String(response.status), response.statusText]);
-    
-    // Try to extract error message from JSON response
-    try {
-      const errorJson = JSON.parse(text);
-      if (errorJson.error) {
-        errorMsg += ` – ${errorJson.error}`;
-      }
-    } catch (e) {
-      if (text) {
-        errorMsg += ` – ${text}`;
-      }
-    }
-    
-    throw new Error(errorMsg);
+    throw await apiError(response);
   }
-  
+
   return await response.json();
+}
+
+/**
+ * Every tag already used in a workspace, for the suggestions of the tags field
+ * @param {Object} config - Configuration object
+ * @param {string} workspace - Workspace whose tags are listed
+ * @returns {Promise<Array<string>>}
+ */
+async function listTags(config, workspace) {
+  const params = new URLSearchParams();
+  if (workspace) {
+    params.set('workspace', workspace);
+  }
+  const response = await apiFetch(`${config.appUrl}/api/v1/tags?${params}`, {
+    headers: getHeaders(config)
+  });
+  if (!response.ok) {
+    throw await apiError(response);
+  }
+  const data = await response.json();
+  return Array.isArray(data.tags) ? data.tags : [];
 }
 
 /**
@@ -214,7 +224,9 @@ async function apiError(response) {
       errorMsg += ` – ${errorJson.error || errorJson.message}`;
     }
   } catch (e) {
-    // Not JSON, keep the status line
+    if (text && text.length < 300) {
+      errorMsg += ` – ${text}`;
+    }
   }
   return new Error(errorMsg);
 }
@@ -313,12 +325,16 @@ async function appendToNote(config, noteId, entry) {
 
   let block;
   if (note.type === 'markdown') {
-    // Markdown has no room for a data: image, so the screenshot becomes an attachment first
-    let screenshotSrc = '';
-    if (entry.screenshot) {
-      screenshotSrc = await uploadImageAttachment(config, noteId, entry.screenshot, 'screenshot.png');
+    // Markdown has no room for a data: image, so a screenshot or a saved
+    // image becomes an attachment first; an image left on its site keeps its address
+    const picture = entryPicture(entry);
+    let pictureSrc = '';
+    if (picture) {
+      pictureSrc = picture.src.startsWith('data:')
+        ? await uploadImageAttachment(config, noteId, picture.src, picture.fileName)
+        : picture.src;
     }
-    block = buildMarkdownEntry(entry, screenshotSrc);
+    block = buildMarkdownEntry(entry, pictureSrc);
   } else {
     // The server turns data: images of an HTML note into attachments by itself
     block = buildHtmlEntry(entry);
@@ -361,14 +377,6 @@ async function appendToNote(config, noteId, entry) {
   throw new Error(t('noteKeepsChanging'));
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
 /**
  * One saved page in an HTML note: its address as a link and, for a
  * screenshot, an empty line then the picture. For the text of the page, the
@@ -382,25 +390,254 @@ function buildHtmlEntry(entry) {
     return `<p><a href="${url}" target="_blank">${url}</a>${when}</p><p><br></p>${entry.clip.html}`;
   }
   let html = `<p><a href="${url}" target="_blank">${url}</a></p>`;
-  if (entry.screenshot) {
-    html += `<p><br></p><p><img src="${entry.screenshot}" alt="${escapeHtml(t('pageScreenshot'))}" style="max-width: 100%; height: auto;" /></p>`;
+  const picture = entryPicture(entry);
+  if (picture) {
+    html += `<p><br></p><p><img src="${escapeHtml(picture.src)}" alt="${escapeHtml(picture.alt)}" style="max-width: 100%; height: auto;" /></p>`;
   }
   return html;
 }
 
 /**
+ * The picture an entry carries: a screenshot of the page, an image saved from
+ * the right-click menu (a data: URL), or, when its bytes could not be read,
+ * the image's own address. null for a plain link or a text clip.
+ */
+function entryPicture(entry) {
+  if (entry.screenshot) {
+    return { src: entry.screenshot, alt: t('pageScreenshot'), fileName: 'screenshot.png' };
+  }
+  if (entry.image) {
+    const match = entry.image.match(/^data:image\/(png|jpeg|gif|webp)/);
+    const extension = match ? match[1].replace('jpeg', 'jpg') : 'png';
+    return { src: entry.image, alt: t('image'), fileName: `image.${extension}` };
+  }
+  if (entry.imageUrl) {
+    return { src: entry.imageUrl, alt: t('image') };
+  }
+  return null;
+}
+
+/**
+ * An address Poznote's Markdown parser reads as one link target: it ends a
+ * link at the first ")" and has no <url> form
+ */
+function markdownTarget(url) {
+  return url.replace(/[\s()<>]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0'));
+}
+
+/**
  * The same entry in Markdown
  */
-function buildMarkdownEntry(entry, screenshotSrc) {
-  // Poznote's parser ends a link at the first ")" and has no <url> form
-  const target = entry.url.replace(/[\s()<>]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0'));
+function buildMarkdownEntry(entry, pictureSrc) {
   const label = entry.url.replace(/([\\[\]])/g, '\\$1');
-  let md = `[${label}](${target})`;
+  let md = `[${label}](${markdownTarget(entry.url)})`;
   if (entry.clip) {
     return md + (entry.savedAt ? ` · ${entry.savedAt}` : '') + '\n\n' + entry.clip.markdown;
   }
-  if (screenshotSrc) {
-    md += `\n\n<br>\n\n![${t('pageScreenshot')}](${screenshotSrc})`;
+  const picture = entryPicture(entry);
+  if (picture && pictureSrc) {
+    md += `\n\n<br>\n\n![${picture.alt}](${markdownTarget(pictureSrc)})`;
   }
   return md;
+}
+
+// --- Right-click menu and keyboard shortcuts ---------------------------------
+//
+// Both save without opening the popup, to the destination the popup was last
+// left on: the note picked under "Existing note" when that tab was the one
+// in use, a new note in the workspace and folder of the settings otherwise.
+// The outcome shows on the extension's icon: a badge, and the message in its
+// tooltip.
+
+const MENU_ITEMS = [
+  { id: 'save-selection', contexts: ['selection'], title: 'menuSaveSelection' },
+  { id: 'save-link', contexts: ['link'], title: 'menuSaveLink' },
+  { id: 'save-image', contexts: ['image'], title: 'menuSaveImage' },
+  { id: 'save-page', contexts: ['page'], title: 'menuSavePage' },
+  { id: 'save-page-text', contexts: ['page'], title: 'menuSavePageText' }
+];
+
+const MENU_KINDS = {
+  'save-selection': 'text',
+  'save-page-text': 'text',
+  'save-link': 'link',
+  'save-image': 'image',
+  'save-page': 'page'
+};
+
+/**
+ * Menu entries live as long as the extension; they are rebuilt on install,
+ * on update and when Chrome starts, so a new browser language reaches them.
+ */
+function createMenus() {
+  chrome.contextMenus.removeAll(() => {
+    MENU_ITEMS.forEach(item => chrome.contextMenus.create({
+      id: item.id,
+      title: t(item.title),
+      contexts: item.contexts,
+      documentUrlPatterns: ['http://*/*', 'https://*/*', 'file:///*']
+    }));
+  });
+}
+
+chrome.runtime.onInstalled.addListener(createMenus);
+chrome.runtime.onStartup.addListener(createMenus);
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  const kind = MENU_KINDS[info.menuItemId];
+  if (kind && tab && tab.id >= 0) {
+    quickSave(tab, kind, info);
+  }
+});
+
+chrome.commands.onCommand.addListener(async (command, tab) => {
+  const kind = { 'save-link': 'page', 'save-text': 'text' }[command];
+  if (!kind) {
+    return;
+  }
+  if (!tab) {
+    [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  }
+  if (tab && tab.id >= 0) {
+    quickSave(tab, kind, {});
+  }
+});
+
+const BADGES = {
+  busy: { text: '…', color: '#6b7280' },
+  success: { text: '✓', color: '#15803d' },
+  error: { text: '!', color: '#b42318' }
+};
+const badgeTimers = new Map();
+
+/**
+ * Show where a save stands on the extension's icon, for this tab only.
+ * A success clears itself after a few seconds, an error stays a little longer
+ * so its tooltip can be read.
+ */
+function flagTab(tabId, state, message) {
+  const badge = BADGES[state];
+  clearTimeout(badgeTimers.get(tabId));
+  chrome.action.setBadgeBackgroundColor({ tabId, color: badge.color }).catch(() => {});
+  if (chrome.action.setBadgeTextColor) {
+    chrome.action.setBadgeTextColor({ tabId, color: '#ffffff' }).catch(() => {});
+  }
+  chrome.action.setBadgeText({ tabId, text: badge.text }).catch(() => {});
+  chrome.action.setTitle({ tabId, title: message ? `Poznote: ${message}` : t('extName') }).catch(() => {});
+  if (state !== 'busy') {
+    badgeTimers.set(tabId, setTimeout(() => {
+      badgeTimers.delete(tabId);
+      chrome.action.setBadgeText({ tabId, text: '' }).catch(() => {});
+      chrome.action.setTitle({ tabId, title: t('extName') }).catch(() => {});
+    }, state === 'error' ? 10000 : 4000));
+  }
+}
+
+/**
+ * The bytes of an image of the page, read from inside the page so the site's
+ * cookies and same-origin rules apply, as a data: URL. An image the page
+ * cannot read (another site that does not allow it, too large, not a format
+ * every browser shows) keeps its address instead, and the note shows it from
+ * its site.
+ */
+async function readImage(tabId, frameId, srcUrl) {
+  if (/^data:image\/(png|jpeg|gif|webp);/.test(srcUrl)) {
+    return { image: srcUrl };
+  }
+  if (!/^https?:/.test(srcUrl || '')) {
+    throw new Error(t('imageCannotBeSaved'));
+  }
+  try {
+    const [frame] = await chrome.scripting.executeScript({
+      target: { tabId, frameIds: [frameId || 0] },
+      args: [srcUrl],
+      func: async (src) => {
+        const response = await fetch(src);
+        if (!response.ok) {
+          return null;
+        }
+        const blob = await response.blob();
+        if (!/^image\/(png|jpeg|gif|webp)$/.test(blob.type) || blob.size > 10 * 1024 * 1024) {
+          return null;
+        }
+        return await new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(blob);
+        });
+      }
+    });
+    if (frame && typeof frame.result === 'string') {
+      return { image: frame.result };
+    }
+  } catch (e) {
+    // Blocked by the site: keep the address
+  }
+  return { imageUrl: srcUrl };
+}
+
+/**
+ * Save from the right-click menu or a keyboard shortcut.
+ * @param {chrome.tabs.Tab} tab - The tab the menu or the shortcut was used in
+ * @param {string} kind - 'page' (its link), 'link', 'image' or 'text' (the selection, else the page text)
+ * @param {Object} info - The menu's click data (linkUrl, srcUrl, frameId...), empty for a shortcut
+ */
+async function quickSave(tab, kind, info) {
+  const config = await loadConfig();
+  if (!isConnected(config) || !(await hasHostPermission(config.appUrl))) {
+    flagTab(tab.id, 'error', t('connectFirst'));
+    chrome.runtime.openOptionsPage();
+    return;
+  }
+
+  const pageUrl = info.pageUrl || tab.url || '';
+  if (!/^https?:|^file:/.test(pageUrl)) {
+    flagTab(tab.id, 'error', t('pageCannotBeSaved'));
+    return;
+  }
+
+  flagTab(tab.id, 'busy', t('saving'));
+  try {
+    const entry = { url: pageUrl, screenshot: null, clip: null };
+    let heading = tab.title || t('untitledPage');
+
+    if (kind === 'link') {
+      entry.url = info.linkUrl;
+      heading = info.linkUrl;
+    } else if (kind === 'image') {
+      Object.assign(entry, await readImage(tab.id, info.frameId, info.srcUrl));
+    } else if (kind === 'text') {
+      let clip = null;
+      try {
+        clip = await readPageText(tab.id, info.frameId);
+      } catch (error) {
+        console.error(error);
+        throw new Error(t('pageTextFailed'));
+      }
+      if (!clip || !clip.markdown) {
+        throw new Error(t('noTextFound'));
+      }
+      entry.clip = clip;
+      entry.savedAt = savedAtNow();
+    }
+
+    const { poznoteAppend } = await chrome.storage.local.get(['poznoteAppend']);
+    const target = poznoteAppend && poznoteAppend.mode === 'append' ? poznoteAppend.note : null;
+    if (target && target.id) {
+      const note = await appendToNote(config, target.id, entry);
+      flagTab(tab.id, 'success', t('addedTo', [note.heading]));
+      return;
+    }
+
+    await createNote(config, {
+      heading: `🌐 ${heading}`,
+      entry,
+      workspace: config.workspace || 'Poznote',
+      folder_id: config.folder_id || ''
+    });
+    flagTab(tab.id, 'success', t('noteCreated'));
+  } catch (error) {
+    flagTab(tab.id, 'error', error.message);
+  }
 }

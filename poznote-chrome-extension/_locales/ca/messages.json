@@ -47,9 +47,6 @@
   "modeAppendTitle": {
     "message": "Afegeix la pàgina al final d'una nota"
   },
-  "change": {
-    "message": "Canvia"
-  },
   "searchNotes": {
     "message": "Cerca a les notes"
   },
@@ -241,5 +238,62 @@
   },
   "pageScreenshot": {
     "message": "Captura de pantalla de la pàgina"
+  },
+  "menuSaveSelection": {
+    "message": "Desa la selecció al Poznote"
+  },
+  "menuSaveLink": {
+    "message": "Desa l'enllaç al Poznote"
+  },
+  "menuSaveImage": {
+    "message": "Desa la imatge al Poznote"
+  },
+  "menuSavePage": {
+    "message": "Desa l'enllaç de la pàgina al Poznote"
+  },
+  "menuSavePageText": {
+    "message": "Desa el text de la pàgina al Poznote"
+  },
+  "cmdOpenPopup": {
+    "message": "Obre l'extensió"
+  },
+  "cmdSaveLink": {
+    "message": "Desa l'enllaç de la pàgina"
+  },
+  "cmdSaveText": {
+    "message": "Desa la selecció o el text de la pàgina"
+  },
+  "noteTitle": {
+    "message": "Títol"
+  },
+  "tags": {
+    "message": "Etiquetes"
+  },
+  "tagsPlaceholder": {
+    "message": "Separades per comes"
+  },
+  "image": {
+    "message": "Imatge"
+  },
+  "imageCannotBeSaved": {
+    "message": "Aquesta imatge no es pot desar."
+  },
+  "connectFirst": {
+    "message": "Primer connecteu l'extensió al Poznote."
+  },
+  "saving": {
+    "message": "S'està desant..."
+  },
+  "shortcutsTitle": {
+    "message": "Dreceres de teclat i menú contextual"
+  },
+  "rightClickHint": {
+    "message": "Feu clic amb el botó dret en una pàgina, un enllaç, una imatge o una selecció per desar-los sense obrir l'extensió. Es desen on es va fer servir l'extensió per última vegada: a la nota existent que s'hi va triar, o en una nota nova a l'espai de treball i la carpeta de dalt."
+  },
+  "shortcutNotSet": {
+    "message": "Sense definir"
+  },
+  "changeShortcuts": {
+    "message": "Canvia les dreceres"
   }
 }

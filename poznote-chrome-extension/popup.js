@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const saveNoteBtn = $('saveNote');
   const saveScreenshotBtn = $('saveScreenshot');
   const saveTextBtn = $('saveText');
+  const noteTitle = $('noteTitle');
+  const noteTags = $('noteTags');
+  const tagSuggestions = $('tagSuggestions');
+  const destWorkspace = $('destWorkspace');
+  const destFolder = $('destFolder');
 
   let config = null;
   let tab = null;
@@ -33,7 +38,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
   $('openSettings').addEventListener('click', openSettings);
   $('connectBtn').addEventListener('click', openSettings);
-  $('changeDest').addEventListener('click', openSettings);
 
   const ICONS = { success: 'i-success', error: 'i-alert' };
 
@@ -97,11 +101,114 @@ document.addEventListener('DOMContentLoaded', async () => {
     chrome.tabs.create({ url: hostLink.href });
     window.close();
   });
-  $('destLabel').textContent = [config.workspace || 'Poznote', config.folder].filter(Boolean).join(' / ');
   mainView.hidden = false;
 
   [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   refreshTextButton();
+  // The title a new note gets, which can be changed before saving
+  noteTitle.value = `🌐 ${(tab && tab.title) || t('untitledPage')}`;
+
+  // --- Where a new note goes ------------------------------------------------
+  //
+  // The same setting as the settings page: what is picked here is where the
+  // next new notes go, from the popup, the right-click menu or a shortcut.
+
+  let knownTags = [];
+
+  async function loadTags() {
+    const response = await chrome.runtime.sendMessage({ type: 'listTags', config, workspace: destinationWorkspace() });
+    knownTags = Array.isArray(response) ? response : [];
+    suggestTags();
+  }
+
+  /**
+   * The suggestions complete the tag being typed: each one is the text before
+   * it, then a known tag not used yet in the field
+   */
+  function suggestTags() {
+    const value = noteTags.value;
+    const cut = Math.max(value.lastIndexOf(','), value.lastIndexOf(' '));
+    const before = value.slice(0, cut + 1);
+    const typed = value.slice(cut + 1).trim().toLowerCase();
+    const used = new Set(before.split(/[,\s]+/).map(tag => tag.toLowerCase()).filter(Boolean));
+    const options = knownTags
+      .filter(tag => !used.has(tag.toLowerCase()) && tag.toLowerCase().startsWith(typed))
+      .slice(0, 50)
+      .map(tag => {
+        const option = document.createElement('option');
+        option.value = before + (before && !/\s$/.test(before) ? ' ' : '') + tag;
+        return option;
+      });
+    tagSuggestions.replaceChildren(...options);
+  }
+
+  noteTags.addEventListener('input', suggestTags);
+
+  async function loadFolders() {
+    destFolder.replaceChildren(new Option(t('loading'), ''));
+    destFolder.disabled = true;
+    const response = await chrome.runtime.sendMessage({ type: 'loadFolders', config });
+    destFolder.disabled = false;
+
+    const options = [new Option(t('noFolder'), '')];
+    if (!response.error) {
+      flattenFolders(response).forEach(folder => {
+        const option = new Option(folder.path, folder.id);
+        option.dataset.path = folder.path;
+        options.push(option);
+      });
+    } else if (config.folder_id) {
+      // Unreachable: keep showing the saved folder
+      const option = new Option(config.folder, config.folder_id);
+      option.dataset.path = config.folder;
+      options.push(option);
+    }
+    destFolder.replaceChildren(...options);
+    destFolder.value = String(config.folder_id || '');
+    if (destFolder.value !== String(config.folder_id || '')) {
+      destFolder.value = '';
+    }
+  }
+
+  async function loadDestination() {
+    const response = await chrome.runtime.sendMessage({ type: 'listWorkspaces', config });
+    const names = !response.error && Array.isArray(response)
+      ? response.map(ws => ws.name || ws).filter(Boolean)
+      : [];
+    if (!names.length) {
+      names.push(destinationWorkspace());
+    }
+    if (!names.includes(destinationWorkspace())) {
+      // The saved workspace was deleted or renamed
+      config.workspace = names[0];
+      config.folder = '';
+      config.folder_id = '';
+      await storeConfig(config);
+    }
+    destWorkspace.replaceChildren(...names.map(name => new Option(name, name)));
+    destWorkspace.value = destinationWorkspace();
+    destWorkspace.hidden = names.length < 2;
+    await Promise.all([loadFolders(), loadTags()]);
+  }
+
+  destWorkspace.addEventListener('change', async () => {
+    config.workspace = destWorkspace.value;
+    config.folder = '';
+    config.folder_id = '';
+    await storeConfig(config);
+    dropHiddenTarget();
+    rememberAppend();
+    await Promise.all([loadFolders(), loadTags()]);
+  });
+
+  destFolder.addEventListener('change', async () => {
+    const option = destFolder.options[destFolder.selectedIndex];
+    config.folder_id = destFolder.value;
+    config.folder = destFolder.value ? (option.dataset.path || option.text) : '';
+    await storeConfig(config);
+  });
+
+  loadDestination();
 
   // --- New note or existing note --------------------------------------------
 
@@ -299,30 +406,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * The selection, or the main text of the page, as Markdown and as HTML (clip.js)
-   */
-  async function readPageText(tabId) {
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      files: ['vendor/Readability.js', 'vendor/turndown.js', 'vendor/turndown-plugin-gfm.js', 'clip.js']
-    });
-    const [frame] = await chrome.scripting.executeScript({
-      target: { tabId },
-      func: () => globalThis.poznoteClipPage()
-    });
-    return frame && frame.result;
-  }
-
-  /**
-   * Local date and time, "2026-11-11 14:32": the same reading in every language
-   */
-  function savedAtNow() {
-    const now = new Date();
-    const pad = n => String(n).padStart(2, '0');
-    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  }
-
-  /**
    * Save current page to Poznote, as a new note or at the end of the picked one
    * @param {string} contentType - 'url', 'screenshot' or 'text'
    * @param {HTMLElement} button - The button that was clicked
@@ -390,8 +473,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         type: 'createNote',
         config,
         noteData: {
-          heading: `🌐 ${tab.title || t('untitledPage')}`,
+          heading: noteTitle.value.trim() || `🌐 ${tab.title || t('untitledPage')}`,
           entry,
+          tags: noteTags.value.trim(),
           workspace: config.workspace || 'Poznote',
           folder_id: config.folder_id || ''
         }

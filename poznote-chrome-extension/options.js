@@ -114,19 +114,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const options = [new Option(t('noFolder'), '')];
     if (!response.error) {
-      const addFolders = (folders) => {
-        const list = Array.isArray(folders) ? folders : Object.values(folders || {});
-        list.forEach(folder => {
-          const path = folder.path || folder.name;
-          const option = new Option(path, folder.id);
-          option.dataset.path = path;
-          options.push(option);
-          if (folder.children) {
-            addFolders(folder.children);
-          }
-        });
-      };
-      addFolders(response);
+      flattenFolders(response).forEach(folder => {
+        const option = new Option(folder.path, folder.id);
+        option.dataset.path = folder.path;
+        options.push(option);
+      });
     } else if (config.folder_id) {
       // Offline: keep showing the saved folder
       const option = new Option(config.folder, config.folder_id);
@@ -166,6 +158,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     await storeConfig(config);
     flashSaved();
   });
+
+  // --- Keyboard shortcuts ---------------------------------------------------
+
+  // Chrome owns the keys: they are set, or changed, on its own shortcuts page
+  const COMMAND_LABELS = {
+    _execute_action: 'cmdOpenPopup',
+    'save-link': 'cmdSaveLink',
+    'save-text': 'cmdSaveText'
+  };
+
+  async function renderShortcuts() {
+    const commands = await chrome.commands.getAll();
+    $('shortcutList').replaceChildren(...commands
+      .filter(command => COMMAND_LABELS[command.name])
+      .map(command => {
+        const li = document.createElement('li');
+        const label = document.createElement('span');
+        label.textContent = t(COMMAND_LABELS[command.name]);
+        const keys = document.createElement(command.shortcut ? 'kbd' : 'span');
+        keys.className = command.shortcut ? '' : 'unset';
+        keys.textContent = command.shortcut || t('shortcutNotSet');
+        li.append(label, keys);
+        return li;
+      }));
+  }
+
+  $('changeShortcuts').addEventListener('click', () => {
+    chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+  });
+  // Back from Chrome's shortcuts page with new keys
+  window.addEventListener('focus', renderShortcuts);
+  renderShortcuts();
 
   // --- Connection -----------------------------------------------------------
 

@@ -47,9 +47,6 @@
   "modeAppendTitle": {
     "message": "Добавить страницу в конец заметки"
   },
-  "change": {
-    "message": "Изменить"
-  },
   "searchNotes": {
     "message": "Поиск заметок"
   },
@@ -241,5 +238,62 @@
   },
   "pageScreenshot": {
     "message": "Снимок страницы"
+  },
+  "menuSaveSelection": {
+    "message": "Сохранить выделенное в Poznote"
+  },
+  "menuSaveLink": {
+    "message": "Сохранить ссылку в Poznote"
+  },
+  "menuSaveImage": {
+    "message": "Сохранить изображение в Poznote"
+  },
+  "menuSavePage": {
+    "message": "Сохранить ссылку на страницу в Poznote"
+  },
+  "menuSavePageText": {
+    "message": "Сохранить текст страницы в Poznote"
+  },
+  "cmdOpenPopup": {
+    "message": "Открыть расширение"
+  },
+  "cmdSaveLink": {
+    "message": "Сохранить ссылку на страницу"
+  },
+  "cmdSaveText": {
+    "message": "Сохранить выделенное или текст страницы"
+  },
+  "noteTitle": {
+    "message": "Заголовок"
+  },
+  "tags": {
+    "message": "Теги"
+  },
+  "tagsPlaceholder": {
+    "message": "Через запятую"
+  },
+  "image": {
+    "message": "Изображение"
+  },
+  "imageCannotBeSaved": {
+    "message": "Это изображение нельзя сохранить."
+  },
+  "connectFirst": {
+    "message": "Сначала подключите расширение к Poznote."
+  },
+  "saving": {
+    "message": "Сохранение..."
+  },
+  "shortcutsTitle": {
+    "message": "Сочетания клавиш и контекстное меню"
+  },
+  "rightClickHint": {
+    "message": "Щёлкните правой кнопкой мыши по странице, ссылке, изображению или выделенному тексту, чтобы сохранить их, не открывая расширение. Сохранение идёт туда, где расширение использовалось в последний раз: в выбранную там существующую заметку или в новую заметку в рабочем пространстве и папке, указанных выше."
+  },
+  "shortcutNotSet": {
+    "message": "Не задано"
+  },
+  "changeShortcuts": {
+    "message": "Изменить сочетания клавиш"
   }
 }

@@ -47,9 +47,6 @@
   "modeAppendTitle": {
     "message": "De pagina aan het einde van een notitie toevoegen"
   },
-  "change": {
-    "message": "Wijzigen"
-  },
   "searchNotes": {
     "message": "Notities zoeken"
   },
@@ -241,5 +238,62 @@
   },
   "pageScreenshot": {
     "message": "Schermafbeelding van de pagina"
+  },
+  "menuSaveSelection": {
+    "message": "Selectie bewaren in Poznote"
+  },
+  "menuSaveLink": {
+    "message": "Link bewaren in Poznote"
+  },
+  "menuSaveImage": {
+    "message": "Afbeelding bewaren in Poznote"
+  },
+  "menuSavePage": {
+    "message": "Link van de pagina bewaren in Poznote"
+  },
+  "menuSavePageText": {
+    "message": "Paginatekst bewaren in Poznote"
+  },
+  "cmdOpenPopup": {
+    "message": "De extensie openen"
+  },
+  "cmdSaveLink": {
+    "message": "De link van de pagina bewaren"
+  },
+  "cmdSaveText": {
+    "message": "De selectie of de paginatekst bewaren"
+  },
+  "noteTitle": {
+    "message": "Titel"
+  },
+  "tags": {
+    "message": "Tags"
+  },
+  "tagsPlaceholder": {
+    "message": "Gescheiden door komma's"
+  },
+  "image": {
+    "message": "Afbeelding"
+  },
+  "imageCannotBeSaved": {
+    "message": "Deze afbeelding kan niet worden bewaard."
+  },
+  "connectFirst": {
+    "message": "Verbind de extensie eerst met Poznote."
+  },
+  "saving": {
+    "message": "Bewaren..."
+  },
+  "shortcutsTitle": {
+    "message": "Sneltoetsen en rechtermuisknopmenu"
+  },
+  "rightClickHint": {
+    "message": "Klik met de rechtermuisknop op een pagina, een link, een afbeelding of een selectie om die te bewaren zonder de extensie te openen. Het komt terecht waar de extensie het laatst is gebruikt: in de bestaande notitie die daar is gekozen, of in een nieuwe notitie in de werkruimte en map hierboven."
+  },
+  "shortcutNotSet": {
+    "message": "Niet ingesteld"
+  },
+  "changeShortcuts": {
+    "message": "Sneltoetsen wijzigen"
   }
 }

@@ -142,3 +142,53 @@ function escapeHtml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
+
+/**
+ * The folders of a workspace as a flat list, each with its full path
+ * ("Projects/Alpha"), in the order of the tree
+ * @param {Array|Object} folders - The folder tree the API returns
+ * @returns {Array<{id: number, path: string}>}
+ */
+function flattenFolders(folders) {
+  const flat = [];
+  const walk = (list) => {
+    (Array.isArray(list) ? list : Object.values(list || {})).forEach(folder => {
+      const path = folder.path || folder.name;
+      flat.push({ id: folder.id, path });
+      if (folder.children) {
+        walk(folder.children);
+      }
+    });
+  };
+  walk(folders);
+  return flat;
+}
+
+/**
+ * The selection, or the main text of the page, as Markdown and as HTML (clip.js).
+ * Used by the popup and by the right-click menu, which can name the frame
+ * the selection is in.
+ * @param {number} tabId
+ * @param {number} [frameId] - 0, the page itself, when omitted
+ */
+async function readPageText(tabId, frameId) {
+  const target = { tabId, frameIds: [frameId || 0] };
+  await chrome.scripting.executeScript({
+    target,
+    files: ['vendor/Readability.js', 'vendor/turndown.js', 'vendor/turndown-plugin-gfm.js', 'clip.js']
+  });
+  const [frame] = await chrome.scripting.executeScript({
+    target,
+    func: () => globalThis.poznoteClipPage()
+  });
+  return frame && frame.result;
+}
+
+/**
+ * Local date and time, "2026-11-11 14:32": the same reading in every language
+ */
+function savedAtNow() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
