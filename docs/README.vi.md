@@ -10,6 +10,7 @@
   <a href="README.ko.md">한국어</a> ·
   <a href="README.ja.md">日本語</a> ·
   <a href="README.ca.md">Català</a> ·
+  <a href="README.nl.md">Nederlands</a> ·
   <b>Tiếng Việt</b>
 </p>
 <!-- /lang-selector -->
@@ -690,7 +691,7 @@ Poznote có nhiều loại ghi chú khác nhau, mỗi loại phù hợp với m�
 &nbsp;
 
 *   **Chức năng:** Tái sử dụng nội dung viết sẵn để chuẩn hóa tài liệu, từ một ghi chú hoàn chỉnh đến một đoạn mẫu ngắn.
-*   **Thiết lập:** Đặt các ghi chú muốn tái sử dụng vào một thư mục tên `Templates` (có thể chia thêm thư mục con). Một workspace tên `Templates` cũng hoạt động tương tự và xuất hiện ở mọi workspace khác. Tên này cũng được nhận diện theo ngôn ngữ giao diện (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`).
+*   **Thiết lập:** Đặt các ghi chú muốn tái sử dụng vào một thư mục tên `Templates` (có thể chia thêm thư mục con). Một workspace tên `Templates` cũng hoạt động tương tự và xuất hiện ở mọi workspace khác. Tên này cũng được nhận diện theo ngôn ngữ giao diện (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`, `Sjablonen`).
 *   **Chèn vào ghi chú:** Gõ `/template` (hoặc `/` kèm tiêu đề mẫu) trong ghi chú rich text hoặc Markdown rồi chọn mẫu: nội dung mẫu sẽ được dán tại vị trí con trỏ và tự động chuyển đổi định dạng nếu mẫu khác loại với ghi chú đang mở.
 *   **Tạo ghi chú mới từ mẫu:** Nhân bản ghi chú mẫu, hoặc nhân bản cả thư mục `Templates` để khởi đầu một dự án với cấu trúc thư mục dựng sẵn.
 </details>

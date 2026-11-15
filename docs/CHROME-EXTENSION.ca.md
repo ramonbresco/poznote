@@ -10,6 +10,7 @@
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
   <b>Català</b> ·
+  <a href="CHROME-EXTENSION.nl.md">Nederlands</a> ·
   <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -35,7 +36,7 @@ Per canviar-ho més endavant, feu clic a la icona de l'engranatge de la part sup
 
 L'adreça de la instància, que es mostra al costat, és un enllaç: feu-hi clic per obrir el Poznote en una pestanya nova, amb http o https tal com l'heu escrita als paràmetres.
 
-L'extensió es mostra en la llengua del Chrome si és l'anglès, el francès, l'alemany, el castellà, el portuguès, el rus, el coreà, el xinès simplificat, el japonès o el català, i en anglès en els altres casos.
+L'extensió es mostra en la llengua del Chrome si és l'anglès, el francès, l'alemany, el castellà, el portuguès, el rus, el coreà, el xinès simplificat, el japonès, el català o el neerlandès, i en anglès en els altres casos.
 
 La contrasenya del compte també funciona aquí, però una contrasenya d'aplicació és la millor credencial per a una extensió: només dona accés a l'API, mai a la interfície web ni als paràmetres del compte, es limita al vostre perfil i, si la revoqueu al Poznote, l'extensió queda desconnectada sense canviar res més. Vegeu [Contrasenyes d'aplicació](README.ca.md#contrasenyes-daplicació) per a la llista completa de límits.
 

@@ -10,6 +10,7 @@
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
   <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.nl.md">Nederlands</a> ·
   <b>Tiếng Việt</b>
 </p>
 <!-- /lang-selector -->
@@ -35,7 +36,7 @@ Cài đặt trực tiếp tiện ích từ Chrome Web Store: [Cài đặt tiện
 
 Địa chỉ instance hiển thị bên cạnh cũng là một liên kết: nhấp vào đó để mở Poznote trong tab mới, qua giao thức http hoặc https đúng như bạn đã nhập trong cài đặt.
 
-Tiện ích sử dụng ngôn ngữ của Chrome nếu đó là tiếng Anh, tiếng Pháp, tiếng Đức, tiếng Tây Ban Nha, tiếng Bồ Đào Nha, tiếng Nga, tiếng Hàn, tiếng Trung giản thể, tiếng Nhật hoặc tiếng Catalan, và mặc định dùng tiếng Anh cho các ngôn ngữ khác.
+Tiện ích sử dụng ngôn ngữ của Chrome nếu đó là tiếng Anh, tiếng Pháp, tiếng Đức, tiếng Tây Ban Nha, tiếng Bồ Đào Nha, tiếng Nga, tiếng Hàn, tiếng Trung giản thể, tiếng Nhật, tiếng Catalan hoặc tiếng Hà Lan, và mặc định dùng tiếng Anh cho các ngôn ngữ khác.
 
 Mật khẩu tài khoản của bạn cũng dùng được tại đây, nhưng mật khẩu ứng dụng (app password) là lựa chọn an toàn hơn cho tiện ích: nó chỉ gọi được API, không bao giờ mở được giao diện web hay cài đặt tài khoản, chỉ giới hạn trong hồ sơ của riêng bạn, và việc thu hồi mật khẩu này trong Poznote sẽ ngắt kết nối tiện ích ngay mà không ảnh hưởng tới phần còn lại. Xem [Mật khẩu ứng dụng](README.vi.md#mật-khẩu-ứng-dụng) để biết danh sách đầy đủ các giới hạn.
 

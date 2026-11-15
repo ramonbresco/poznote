@@ -10,6 +10,7 @@
   <a href="README.ko.md">한국어</a> ·
   <a href="README.ja.md">日本語</a> ·
   <b>Català</b> ·
+  <a href="README.nl.md">Nederlands</a> ·
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -689,7 +690,7 @@ El Poznote té diversos tipus de nota, cadascun pensat per a una manera de treba
 &nbsp;
 
 *   **Funcionalitat:** reutilitzeu contingut ja escrit per estandarditzar la documentació, des d'una nota completa fins a un fragment curt.
-*   **Configuració:** poseu les notes que voleu reutilitzar en una carpeta anomenada `Templates` (les subcarpetes també valen). Un espai de treball anomenat `Templates` també funciona i s'ofereix des de tots els espais de treball. El nom també es reconeix en la llengua de la interfície (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`).
+*   **Configuració:** poseu les notes que voleu reutilitzar en una carpeta anomenada `Templates` (les subcarpetes també valen). Un espai de treball anomenat `Templates` també funciona i s'ofereix des de tots els espais de treball. El nom també es reconeix en la llengua de la interfície (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`, `Sjablonen`).
 *   **Inserció en una nota:** escriviu `/template` (o `/` seguit del títol de la plantilla) en una nota de text enriquit o Markdown i trieu una plantilla: el contingut s'enganxa al cursor, convertit si la plantilla i la nota no són del mateix tipus.
 *   **Nota nova a partir d'una plantilla:** dupliqueu la nota de plantilla, o dupliqueu tota una carpeta `Templates` per començar un projecte amb una estructura de carpetes ja preparada.
 </details>

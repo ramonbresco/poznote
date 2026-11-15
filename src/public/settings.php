@@ -645,6 +645,7 @@ if ($canUseUserWebhooks) {
                             <?php foreach ([
                                 'ca' => 'settings.language.catalan',
                                 'zh-cn' => 'settings.language.chinese_simplified',
+                                'nl' => 'settings.language.dutch',
                                 'en' => 'settings.language.english',
                                 'fr' => 'settings.language.french',
                                 'ja' => 'settings.language.japanese',

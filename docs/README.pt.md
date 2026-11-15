@@ -10,6 +10,7 @@
   <a href="README.ko.md">한국어</a> ·
   <a href="README.ja.md">日本語</a> ·
   <a href="README.ca.md">Català</a> ·
+  <a href="README.nl.md">Nederlands</a> ·
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -690,7 +691,7 @@ O Poznote tem vários tipos de nota, cada um pensado para uma forma de trabalhar
 &nbsp;
 
 *   **Funcionalidade:** reutilize conteúdo já escrito para padronizar sua documentação, de uma nota inteira a um pequeno trecho.
-*   **Configuração:** coloque as notas que deseja reutilizar em uma pasta chamada `Templates` (subpastas são aceitas). Um espaço de trabalho chamado `Templates` também funciona e fica disponível a partir de todos os espaços de trabalho. O nome também é reconhecido no idioma da interface (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`).
+*   **Configuração:** coloque as notas que deseja reutilizar em uma pasta chamada `Templates` (subpastas são aceitas). Um espaço de trabalho chamado `Templates` também funciona e fica disponível a partir de todos os espaços de trabalho. O nome também é reconhecido no idioma da interface (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`, `Sjablonen`).
 *   **Inserir em uma nota:** digite `/template` (ou `/` seguido do título do modelo) em uma nota de texto formatado ou Markdown e escolha um modelo: o conteúdo dele é colado no cursor, convertido se o modelo e a nota não forem do mesmo tipo.
 *   **Nova nota a partir de um modelo:** duplique a nota do modelo, ou duplique uma pasta `Templates` inteira para começar um projeto com uma estrutura de pastas pronta.
 </details>

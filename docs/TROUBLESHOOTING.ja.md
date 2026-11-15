@@ -10,6 +10,7 @@
   <a href="TROUBLESHOOTING.ko.md">한국어</a> ·
   <b>日本語</b> ·
   <a href="TROUBLESHOOTING.ca.md">Català</a> ·
+  <a href="TROUBLESHOOTING.nl.md">Nederlands</a> ·
   <a href="TROUBLESHOOTING.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->

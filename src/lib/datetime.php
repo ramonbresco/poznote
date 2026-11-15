@@ -163,6 +163,15 @@ function getDateNameLocales(): array {
             'short'          => ['gen.', 'febr.', 'març', 'abr.', 'maig', 'juny', 'jul.', 'ag.', 'set.', 'oct.', 'nov.', 'des.'],
             'months_in_date' => ['de gener', 'de febrer', 'de març', "d'abril", 'de maig', 'de juny', 'de juliol', "d'agost", 'de setembre', "d'octubre", 'de novembre', 'de desembre'],
         ],
+        'nl' => [
+            // Dutch writes day and month names in lower case; the weekday is
+            // capitalized here because it opens a title ("Zaterdag 5 september 2026").
+            'layout'     => '{wd} {d} {month} {y}',
+            'days'       => ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'],
+            'days_short' => ['Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'],
+            'months'     => ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
+            'short'      => ['jan.', 'feb.', 'mrt.', 'apr.', 'mei', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.'],
+        ],
     ];
 }
 

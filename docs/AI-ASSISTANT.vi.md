@@ -10,6 +10,7 @@
   <a href="AI-ASSISTANT.ko.md">한국어</a> ·
   <a href="AI-ASSISTANT.ja.md">日本語</a> ·
   <a href="AI-ASSISTANT.ca.md">Català</a> ·
+  <a href="AI-ASSISTANT.nl.md">Nederlands</a> ·
   <b>Tiếng Việt</b>
 </p>
 <!-- /lang-selector -->

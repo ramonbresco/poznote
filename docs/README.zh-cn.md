@@ -10,6 +10,7 @@
   <a href="README.ko.md">한국어</a> ·
   <a href="README.ja.md">日本語</a> ·
   <a href="README.ca.md">Català</a> ·
+  <a href="README.nl.md">Nederlands</a> ·
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -690,7 +691,7 @@ Poznote 有多种笔记类型，分别适用于不同的工作方式。富文本
 &nbsp;
 
 *   **功能：** 重复使用预先写好的内容来统一文档格式，既可以是完整的笔记，也可以是一小段文字。
-*   **设置：** 把要重复使用的笔记放进名为 `Templates` 的文件夹（可以包含子文件夹）。名为 `Templates` 的工作区同样有效，并且在所有工作区中都可以使用。该名称也支持界面语言中的对应名称（`Modèles`、`Vorlagen`、`Plantillas`、`Modelos`、`Шаблоны`、`模板`、`템플릿`、`テンプレート`）。
+*   **设置：** 把要重复使用的笔记放进名为 `Templates` 的文件夹（可以包含子文件夹）。名为 `Templates` 的工作区同样有效，并且在所有工作区中都可以使用。该名称也支持界面语言中的对应名称（`Modèles`、`Vorlagen`、`Plantillas`、`Modelos`、`Шаблоны`、`模板`、`템플릿`、`テンプレート`、`Plantilles`、`Sjablonen`）。
 *   **插入到笔记中：** 在富文本或 Markdown 笔记中输入 `/template`（或 `/` 加模板标题），然后选择一个模板：其内容会粘贴到光标处，如果模板与笔记类型不同，还会自动转换。
 *   **从模板新建笔记：** 复制模板笔记，或者复制整个 `Templates` 文件夹，以现成的文件夹结构开始一个项目。
 </details>

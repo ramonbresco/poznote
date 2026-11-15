@@ -1,0 +1,245 @@
+{
+  "extName": {
+    "message": "Poznote URL Saver"
+  },
+  "extDescription": {
+    "message": "Bewaart de huidige pagina in Poznote als link, schermafbeelding of Markdown-tekst, in een nieuwe of een bestaande notitie."
+  },
+  "optionsTitle": {
+    "message": "Instellingen van Poznote URL Saver"
+  },
+  "settings": {
+    "message": "Instellingen"
+  },
+  "connectTitle": {
+    "message": "Verbinden met Poznote"
+  },
+  "connectText": {
+    "message": "Koppel de extensie één keer aan je Poznote-instantie en bewaar daarna elke pagina met één klik."
+  },
+  "connect": {
+    "message": "Verbinden"
+  },
+  "reconnect": {
+    "message": "Opnieuw verbinden"
+  },
+  "lostAccessText": {
+    "message": "De extensie heeft geen toegang meer tot je Poznote-instantie. Verbind opnieuw om pagina's te blijven bewaren."
+  },
+  "openPoznote": {
+    "message": "Poznote openen"
+  },
+  "openPoznoteTitle": {
+    "message": "Poznote openen ($1 op $2)"
+  },
+  "destination": {
+    "message": "Bestemming"
+  },
+  "modeNew": {
+    "message": "Nieuwe notitie"
+  },
+  "modeNewTitle": {
+    "message": "De pagina als nieuwe notitie bewaren"
+  },
+  "modeAppend": {
+    "message": "Bestaande notitie"
+  },
+  "modeAppendTitle": {
+    "message": "De pagina aan het einde van een notitie toevoegen"
+  },
+  "change": {
+    "message": "Wijzigen"
+  },
+  "searchNotes": {
+    "message": "Notities zoeken"
+  },
+  "allWorkspaces": {
+    "message": "Alle werkruimtes"
+  },
+  "notes": {
+    "message": "Notities"
+  },
+  "saveLink": {
+    "message": "Link bewaren"
+  },
+  "saveLinkTitle": {
+    "message": "Het adres van de pagina bewaren"
+  },
+  "screenshot": {
+    "message": "Schermafbeelding"
+  },
+  "screenshotTitle": {
+    "message": "De link bewaren met een schermafbeelding van het zichtbare deel van de pagina"
+  },
+  "savePageText": {
+    "message": "Paginatekst bewaren"
+  },
+  "savePageTextTitle": {
+    "message": "De hoofdtekst van de pagina als Markdown bewaren. Selecteer eerst tekst om alleen dat deel te bewaren."
+  },
+  "saveSelection": {
+    "message": "Selectie bewaren"
+  },
+  "saveSelectionTitle": {
+    "message": "De geselecteerde tekst als Markdown bewaren"
+  },
+  "readingPage": {
+    "message": "Pagina lezen..."
+  },
+  "pageTextFailed": {
+    "message": "De tekst van deze pagina kan niet worden gelezen."
+  },
+  "noTextFound": {
+    "message": "Geen tekst gevonden op deze pagina."
+  },
+  "loadingNotes": {
+    "message": "Notities laden..."
+  },
+  "notesLoadFailed": {
+    "message": "Kan de notities niet laden."
+  },
+  "noNoteMatches": {
+    "message": "Geen notitie gevonden."
+  },
+  "noNoteYet": {
+    "message": "Nog geen notities."
+  },
+  "pageCannotBeSaved": {
+    "message": "Deze pagina kan niet worden bewaard."
+  },
+  "pickNote": {
+    "message": "Kies de notitie waaraan je de pagina wilt toevoegen."
+  },
+  "capturing": {
+    "message": "Pagina vastleggen..."
+  },
+  "screenshotFailed": {
+    "message": "Schermafbeelding mislukt: $1"
+  },
+  "addingTo": {
+    "message": "Toevoegen aan $1..."
+  },
+  "addedTo": {
+    "message": "Toegevoegd aan $1."
+  },
+  "open": {
+    "message": "Openen"
+  },
+  "creatingNote": {
+    "message": "Notitie aanmaken..."
+  },
+  "untitledPage": {
+    "message": "Pagina zonder titel"
+  },
+  "noteCreated": {
+    "message": "Notitie aangemaakt."
+  },
+  "optionsIntro": {
+    "message": "Bewaar de pagina's die je bezoekt in je Poznote-instantie."
+  },
+  "connection": {
+    "message": "Verbinding"
+  },
+  "disconnect": {
+    "message": "Verbinding verbreken"
+  },
+  "poznoteAddress": {
+    "message": "Poznote-adres"
+  },
+  "username": {
+    "message": "Gebruikersnaam"
+  },
+  "appPassword": {
+    "message": "App-wachtwoord"
+  },
+  "appPasswordHint": {
+    "message": "Maak er een aan in Poznote via $1. Het geeft alleen toegang tot de API en kan op elk moment worden ingetrokken. Het wachtwoord van je account werkt ook."
+  },
+  "appPasswordsPath": {
+    "message": "Instellingen > Mijn account > App-wachtwoorden"
+  },
+  "whereNewNotesGo": {
+    "message": "Waar nieuwe notities terechtkomen"
+  },
+  "workspace": {
+    "message": "Werkruimte"
+  },
+  "folder": {
+    "message": "Map"
+  },
+  "footerConnected": {
+    "message": "Alles is klaar: klik op elke pagina op het Poznote-pictogram in de werkbalk om haar te bewaren."
+  },
+  "footerNotConnected": {
+    "message": "Klik na het verbinden op elke pagina op het Poznote-pictogram in de werkbalk om haar te bewaren."
+  },
+  "saved": {
+    "message": "Opgeslagen"
+  },
+  "connectedAs": {
+    "message": "Verbonden als $1"
+  },
+  "wrongCredentials": {
+    "message": "Onjuiste gebruikersnaam of onjuist wachtwoord."
+  },
+  "unreachable": {
+    "message": "Kan $1 niet bereiken. Controleer het adres en of de instantie draait."
+  },
+  "noInstance": {
+    "message": "Er antwoordt geen Poznote-instantie op $1. Controleer het adres."
+  },
+  "loading": {
+    "message": "Laden..."
+  },
+  "noFolder": {
+    "message": "Geen map"
+  },
+  "fillAddressFirst": {
+    "message": "Vul eerst je Poznote-adres in."
+  },
+  "fillAllFields": {
+    "message": "Vul het adres, je gebruikersnaam en het app-wachtwoord in."
+  },
+  "invalidAddress": {
+    "message": "Dit adres is niet geldig."
+  },
+  "waitingAccess": {
+    "message": "Wachten op toegang tot je instantie..."
+  },
+  "accessDenied": {
+    "message": "De extensie heeft toegang tot $1 nodig om pagina's te bewaren. Klik opnieuw op Verbinden en kies Toestaan."
+  },
+  "checkingCredentials": {
+    "message": "Je gegevens controleren..."
+  },
+  "noAccount": {
+    "message": "Er is geen account met de naam $1 op deze instantie."
+  },
+  "loadingWorkspaces": {
+    "message": "Je werkruimtes laden..."
+  },
+  "lostAccessOptions": {
+    "message": "De extensie heeft geen toegang meer tot je instantie. Klik op Verbinden om weer toegang te geven."
+  },
+  "errorStatus": {
+    "message": "Fout $1: $2"
+  },
+  "untitled": {
+    "message": "Zonder titel"
+  },
+  "uploadFailed": {
+    "message": "Uploaden mislukt"
+  },
+  "unsupportedNoteType": {
+    "message": "Pagina's kunnen alleen aan HTML- of Markdown-notities worden toegevoegd."
+  },
+  "noteChanged": {
+    "message": "De notitie is intussen gewijzigd, probeer het opnieuw."
+  },
+  "noteKeepsChanging": {
+    "message": "De notitie blijft veranderen, probeer het zo opnieuw."
+  },
+  "pageScreenshot": {
+    "message": "Schermafbeelding van de pagina"
+  }
+}
