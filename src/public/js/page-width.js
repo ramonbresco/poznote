@@ -1,14 +1,15 @@
 /**
- * Page width slider, in a popover of the toolbar of the speed dial and the
- * dashboard (speed_dial.php, dashboard.php), rendered by
- * poznoteRenderPageWidthSlider().
+ * Page width slider, in a popover of the toolbar of the speed dial, the
+ * dashboard and the attachments page (speed_dial.php, dashboard.php,
+ * attachments_list.php), rendered by poznoteRenderPageWidthSlider().
  *
- * The width of the page's content (the grid, the cards: not the title nor
- * the toolbar), as a percentage of the room beside the icon
- * rail, saved in an account setting (speed_dial_width, dashboard_width) once
- * the slider stops. The page renders the stored width on <body> as a CSS
- * variable (lib/page-width.php), which its stylesheet reads; without one the
- * page keeps its own layout.
+ * The width of the page's content (the grid, the cards, the list: not the
+ * title nor the toolbar), as a percentage of the room beside the icon rail,
+ * kept in this browser (__poznoteUserStorage, one key per page). It is a CSS
+ * variable on <html>, which js/theme-init.js sets before the page paints and
+ * which the page's stylesheet reads; without one the page keeps its own
+ * layout. A browser that has never stored a width starts from the former
+ * account setting (data-legacy-value).
  */
 document.addEventListener('DOMContentLoaded', function () {
     'use strict';
@@ -16,20 +17,18 @@ document.addEventListener('DOMContentLoaded', function () {
     var row = document.querySelector('[data-page-width]');
     if (!row) return;
 
-    var SAVE_DEBOUNCE = 400;
-
     var input = row.querySelector('.page-more-menu-slider-input');
     var output = row.querySelector('.page-more-menu-slider-value');
     // The popover the slider sits in, and its button
     var toggle = document.querySelector('[data-page-width-toggle]');
     var popup = toggle ? document.getElementById(toggle.getAttribute('aria-controls')) : null;
-    var setting = row.getAttribute('data-setting');
+    var storageKey = row.getAttribute('data-storage-key');
+    var storage = window.__poznoteUserStorage;
     var cssVar = row.getAttribute('data-css-var');
     var column = document.querySelector(row.getAttribute('data-column'));
     var min = parseInt(input.min, 10);
     var max = parseInt(input.max, 10);
     var step = parseInt(input.step, 10);
-    var saveTimeout = null;
 
     function readWidth(raw) {
         var width = parseInt(raw, 10);
@@ -39,8 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // The width the page has without a setting: the dashboard's is full
     // width, the speed dial's is a column of its own, null here
     var defaultWidth = readWidth(row.getAttribute('data-default-width'));
-    var width = readWidth(row.getAttribute('data-value'));
-    var saved = width;
+    // Stored as '' for the page's own layout; absent (null) until this
+    // browser first stores a width, when the former account setting is used
+    var stored = storage ? storage.getItem(storageKey) : null;
+    var width = readWidth(stored === null ? row.getAttribute('data-legacy-value') : stored);
 
     // Without a setting, the dashboard says "Full width" like the slider at 100
     function label(value) {
@@ -72,36 +73,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function apply() {
+        var root = document.documentElement;
         if (width === null) {
-            document.body.style.removeProperty(cssVar);
+            root.style.removeProperty(cssVar);
         } else {
-            document.body.style.setProperty(cssVar, width + '%');
+            root.style.setProperty(cssVar, width + '%');
         }
     }
 
-    // Debounced: dragging the slider must not fire one PUT per step
     function save() {
-        clearTimeout(saveTimeout);
-        saveTimeout = setTimeout(function () {
-            var value = width;
-            fetch('api/v1/settings/' + encodeURIComponent(setting), {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                credentials: 'same-origin',
-                body: JSON.stringify({ value: value === null ? '' : String(value) })
-            }).then(function (response) {
-                if (!response.ok) throw new Error('HTTP ' + response.status);
-                saved = value;
-            }).catch(function (error) {
-                console.error('Error saving page width:', error);
-                width = saved;
-                apply();
-                show();
-                if (window.modalAlert && typeof window.modalAlert.alert === 'function') {
-                    window.modalAlert.alert(row.getAttribute('data-txt-error') || 'Could not save the width.', 'error');
-                }
-            });
-        }, SAVE_DEBOUNCE);
+        if (storage) storage.setItem(storageKey, width === null ? '' : String(width));
+    }
+
+    // The former account setting, taken over by this browser: applied (the
+    // head script had nothing to read yet) and stored, so it is read before
+    // the page paints from now on
+    if (stored === null && width !== null) {
+        apply();
+        save();
     }
 
     // The page follows the thumb as it moves. The width the page has anyway

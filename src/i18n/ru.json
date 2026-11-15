@@ -5493,7 +5493,6 @@
     "page_width": "Ширина страницы",
     "width_default": "По умолчанию",
     "width_reset": "Сбросить по умолчанию",
-    "width_error": "Не удалось сохранить ширину.",
     "note_width_settings_hint": "Задать значение по умолчанию для всех заметок в настройках"
   },
   "keyboard_shortcuts": {

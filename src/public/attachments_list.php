@@ -11,8 +11,6 @@ $attachmentsPerPage = getSetting('attachments_list_per_page');
 $attachmentsPerPage = (ctype_digit((string)$attachmentsPerPage) && in_array((int)$attachmentsPerPage, $attachmentsPageSizeOptions, true))
     ? (int)$attachmentsPerPage
     : 50;
-// Width of the list, from the slider of the toolbar (js/page-width.js)
-$pageWidthStyle = poznotePageWidthStyle('attachments');
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars($currentLang, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
@@ -29,7 +27,7 @@ $pageWidthStyle = poznotePageWidthStyle('attachments');
 	<?php poznoteRenderBrandIcons(); ?>
 	<?php poznoteRenderUiCustomizationBootstrap(); ?>
 </head>
-<body class="shared-page has-icon-sidebar"<?php if ($pageWidthStyle !== ''): ?> style="<?php echo $pageWidthStyle; ?>"<?php endif; ?> data-per-page="<?php echo (int)$attachmentsPerPage; ?>" data-show-inserted-images="<?php echo in_array((string) getSetting('attachments_show_inserted_images', '0'), ['1', 'true'], true) ? '1' : '0'; ?>" data-workspace="<?php echo htmlspecialchars($pageWorkspace, ENT_QUOTES, 'UTF-8'); ?>" data-txt-untitled="<?php echo t_h('common.untitled', [], 'Untitled'); ?>" data-txt-no-results="<?php echo t_h('attachments.list.no_filter_results', [], 'No results.'); ?>" data-txt-all-file-types="<?php echo t_h('attachments.list.all_file_types', [], 'All types'); ?>">
+<body class="shared-page has-icon-sidebar" data-per-page="<?php echo (int)$attachmentsPerPage; ?>" data-show-inserted-images="<?php echo in_array((string) getSetting('attachments_show_inserted_images', '0'), ['1', 'true'], true) ? '1' : '0'; ?>" data-workspace="<?php echo htmlspecialchars($pageWorkspace, ENT_QUOTES, 'UTF-8'); ?>" data-txt-untitled="<?php echo t_h('common.untitled', [], 'Untitled'); ?>" data-txt-no-results="<?php echo t_h('attachments.list.no_filter_results', [], 'No results.'); ?>" data-txt-all-file-types="<?php echo t_h('attachments.list.all_file_types', [], 'All types'); ?>">
 	<?php include __DIR__ . '/../icon_sidebar.php'; ?>
 	<div class="shared-container">
 		<h1 class="poznote-page-title"><span class="poznote-page-title-name"><i class="lucide lucide-paperclip"></i> <?php echo t_h('notes_list.system_folders.attachments', [], 'Attachments'); ?></span> <?php echo poznoteRenderPageTitleWorkspace($pageWorkspace); ?></h1>
@@ -55,7 +53,7 @@ $pageWidthStyle = poznotePageWidthStyle('attachments');
 				data-label-large="<?php echo t_h('dashboard.view.size_large', [], 'Large'); ?>"
 				data-label-wide="<?php echo t_h('dashboard.view.size_wide', [], 'Wide'); ?>"
 				title="<?php echo t_h('dashboard.view.layout_list', [], 'List'); ?>" aria-label="<?php echo t_h('dashboard.view.layout_list', [], 'List'); ?>"><i class="lucide lucide-layout-list" aria-hidden="true"></i><span class="attachments-view-letter" aria-hidden="true"></span></button>
-			<?php // Width of the list: a slider in a popover (js/page-width.js), an account setting ?>
+			<?php // Width of the list: a slider in a popover (js/page-width.js), kept in this browser ?>
 			<?php if (isActiveAccountOwnedByAuthenticatedUser()): ?>
 			<div class="attachments-width-wrap">
 				<button type="button" id="attachmentsWidthBtn" class="pz-toolbar-btn" data-page-width-toggle aria-haspopup="true" aria-expanded="false" aria-controls="attachmentsWidthPopover" title="<?php echo t_h('page_menu.page_width', [], 'Page width'); ?>" aria-label="<?php echo t_h('page_menu.page_width', [], 'Page width'); ?>"><i class="lucide lucide-move-horizontal" aria-hidden="true"></i></button>

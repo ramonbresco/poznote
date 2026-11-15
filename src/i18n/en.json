@@ -5499,7 +5499,6 @@
     "page_width": "Page width",
     "width_default": "Default",
     "width_reset": "Reset to default",
-    "width_error": "Could not save the width.",
     "note_width_settings_hint": "Set the default for all notes in Settings"
   },
   "keyboard_shortcuts": {

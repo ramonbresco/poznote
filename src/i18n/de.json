@@ -5663,7 +5663,6 @@
     "page_width": "Seitenbreite",
     "width_default": "Standard",
     "width_reset": "Auf Standard zurücksetzen",
-    "width_error": "Die Breite konnte nicht gespeichert werden.",
     "note_width_settings_hint": "Standard für alle Notizen in den Einstellungen festlegen"
   },
   "keyboard_shortcuts": {

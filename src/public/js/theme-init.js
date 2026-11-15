@@ -63,6 +63,24 @@ window.__poznoteApplyIconRailScale = function () {
 };
 window.__poznoteApplyIconRailScale();
 
+// Page width of the speed dial, the dashboard and the attachments page
+// (js/page-width.js, lib/page-width.php): kept in this browser, so put on
+// <html> here, before the page paints. Each page's stylesheet reads only its
+// own variable, so all three can be set on every page.
+(function () {
+    var pages = [
+        ['page_width_speed_dial', '--speed-dial-width'],
+        ['page_width_dashboard', '--dashboard-width'],
+        ['page_width_attachments', '--attachments-list-width']
+    ];
+    for (var i = 0; i < pages.length; i++) {
+        var raw = window.__poznoteUserStorage.getItem(pages[i][0]);
+        if (!raw || !/^\d+$/.test(raw)) continue;
+        var width = Math.min(100, Math.max(10, parseInt(raw, 10)));
+        document.documentElement.style.setProperty(pages[i][1], width + '%');
+    }
+})();
+
 // The theme is a per-user display preference like the others, but the pages
 // that need it first are pre-auth: logout clears the poznote_uid cookie, so
 // login.php has no user to read the scoped key for and used to fall back to
