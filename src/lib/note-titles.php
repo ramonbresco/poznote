@@ -28,6 +28,7 @@ const POZNOTE_DEFAULT_NOTE_TITLES = [
     'Nouvelle note',  // fr
     '新規ノート',      // ja
     '새 노트',         // ko
+    'Nieuwe notitie', // nl
     'Nova nota',      // pt
     'Новая заметка',  // ru
     '新笔记',          // zh-cn

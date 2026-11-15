@@ -645,6 +645,7 @@ if ($canUseUserWebhooks) {
                             <?php foreach ([
                                 'ca' => 'settings.language.catalan',
                                 'zh-cn' => 'settings.language.chinese_simplified',
+                                'nl' => 'settings.language.dutch',
                                 'en' => 'settings.language.english',
                                 'fr' => 'settings.language.french',
                                 'ja' => 'settings.language.japanese',
@@ -1452,7 +1453,7 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
 
                 <!-- "Link to attachment" inserts a card instead of a plain link -->
                 <div class="home-card" id="attachment-links-as-cards-card">
-                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.attachment_links_as_cards', [], 'When you insert an attachment into a note with "Link to attachment", show it as a card (an icon for its type, its name and a download arrow) on a line of its own, instead of a link in the text.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.attachment_links_as_cards', [], 'Show attachment links that are alone on their line as cards; in a sentence they get a small paperclip. Notes are not changed.'); ?>"><i class="lucide lucide-help-circle"></i></span>
                     <div class="home-card-icon"><i class="lucide lucide-file-text"></i></div>
                     <div class="home-card-content">
                         <span class="home-card-title"><?php echo t_h('display.cards.attachment_links_as_cards', [], 'Attachment links as cards'); ?></span>

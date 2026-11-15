@@ -10,6 +10,7 @@
   <a href="README.ko.md">한국어</a> ·
   <a href="README.ja.md">日本語</a> ·
   <b>Català</b> ·
+  <a href="README.nl.md">Nederlands</a> ·
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -689,7 +690,7 @@ El Poznote té diversos tipus de nota, cadascun pensat per a una manera de treba
 &nbsp;
 
 *   **Funcionalitat:** reutilitzeu contingut ja escrit per estandarditzar la documentació, des d'una nota completa fins a un fragment curt.
-*   **Configuració:** poseu les notes que voleu reutilitzar en una carpeta anomenada `Templates` (les subcarpetes també valen). Un espai de treball anomenat `Templates` també funciona i s'ofereix des de tots els espais de treball. El nom també es reconeix en la llengua de la interfície (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`).
+*   **Configuració:** poseu les notes que voleu reutilitzar en una carpeta anomenada `Templates` (les subcarpetes també valen). Un espai de treball anomenat `Templates` també funciona i s'ofereix des de tots els espais de treball. El nom també es reconeix en la llengua de la interfície (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`, `Sjablonen`).
 *   **Inserció en una nota:** escriviu `/template` (o `/` seguit del títol de la plantilla) en una nota de text enriquit o Markdown i trieu una plantilla: el contingut s'enganxa al cursor, convertit si la plantilla i la nota no són del mateix tipus.
 *   **Nota nova a partir d'una plantilla:** dupliqueu la nota de plantilla, o dupliqueu tota una carpeta `Templates` per començar un projecte amb una estructura de carpetes ja preparada.
 </details>
@@ -1129,7 +1130,7 @@ Configureu-ho a **Paràmetres > Còpies de seguretat al servidor** (només admin
 - **Carpeta de còpies de seguretat**: un camí absolut al servidor (dins del contenidor, amb Docker). Si es deixa buit, els arxius van a `data/backups`, que ja forma part del volum de dades. La carpeta es crea si cal, i l'usuari del servidor web hi ha de poder escriure.
 - **Selecció d'usuaris**: unes caselles trien quins usuaris inclouen les còpies de seguretat. Per defecte estan tots marcats, i mentre estan tots marcats, els comptes nous s'inclouen automàticament.
 - **Còpies de seguretat manuals**: un botó «Fes ara la còpia de seguretat» desa un arxiu nou per a cada usuari seleccionat, un usuari cada vegada, amb el progrés de cada usuari. Funciona fins i tot quan les còpies de seguretat automàtiques estan desactivades.
-- **Còpies de seguretat automàtiques**: quan estan activades, un procés en segon pla fa la còpia de seguretat dels usuaris seleccionats amb la freqüència triada (diària, setmanal o mensual). La primera execució es fa uns minuts després d'activar-les, i les següents, després de l'interval triat. La pàgina mostra el resultat de l'última execució i la data de la següent.
+- **Còpies de seguretat automàtiques**: quan estan activades, un procés en segon pla fa la còpia de seguretat dels usuaris seleccionats amb la freqüència triada (diària, setmanal o mensual). Es pot triar una hora del dia (per exemple les 03:00, al fus horari de l'administrador que la defineix): cada còpia comença llavors en els primers minuts després d'aquesta hora, i una hora perduda (servidor aturat) es recupera una vegada al següent inici. Sense hora, la primera execució es fa uns minuts després d'activar-les, i les següents, després de l'interval triat. La pàgina mostra el resultat de l'última execució i la data de la següent.
 - **Retenció**: només es conserven els N arxius més recents per usuari, i els més antics se suprimeixen de la carpeta després de cada còpia de seguretat (0 ho conserva tot).
 - **Navegació**: la pàgina llista els arxius que hi ha a la carpeta, amb accions per baixar-los i suprimir-los.
 - **Restauració**: els arxius s'emmagatzemen a `{user id}/` a la carpeta de còpies de seguretat i es poden restaurar amb la pàgina estàndard [Restauració / Importació](#restauració--importació).
@@ -1216,7 +1217,7 @@ Configureu-ho a **Paràmetres > Còpies de seguretat a S3** (només administrado
 - **Configuració**: URL del punt final, regió, cubell, clau d'accés, clau secreta i adreçament d'estil de camí, amb una prova de connexió integrada.
 - **Selecció d'usuaris**: unes caselles trien quins usuaris inclouen les còpies de seguretat. Per defecte estan tots marcats, i mentre estan tots marcats, els comptes nous s'inclouen automàticament.
 - **Còpies de seguretat manuals**: un botó «Fes ara la còpia de seguretat» puja un arxiu nou per a cada usuari seleccionat, un usuari cada vegada, amb el progrés de cada usuari. Funciona tan bon punt la connexió està configurada, fins i tot quan les còpies de seguretat automàtiques estan desactivades.
-- **Còpies de seguretat automàtiques**: quan estan activades, un procés en segon pla fa la còpia de seguretat dels usuaris seleccionats amb la freqüència triada (diària, setmanal o mensual). La primera execució es fa uns minuts després d'activar-les, i les següents, després de l'interval triat.
+- **Còpies de seguretat automàtiques**: quan estan activades, un procés en segon pla fa la còpia de seguretat dels usuaris seleccionats amb la freqüència triada (diària, setmanal o mensual). Es pot triar una hora del dia (per exemple les 03:00, al fus horari de l'administrador que la defineix): cada còpia comença llavors en els primers minuts després d'aquesta hora, i una hora perduda (servidor aturat) es recupera una vegada al següent inici. Sense hora, la primera execució es fa uns minuts després d'activar-les, i les següents, després de l'interval triat.
 - **Retenció**: només es conserven els N arxius més recents per usuari, i els més antics se suprimeixen del cubell després de cada còpia de seguretat (0 ho conserva tot).
 - **Navegació**: la pàgina llista els arxius que hi ha al cubell, amb accions per baixar-los i suprimir-los.
 - **Restauració**: els arxius s'emmagatzemen a `backups/{user id}/` al cubell i es poden restaurar amb la pàgina estàndard [Restauració / Importació](#restauració--importació).
@@ -1234,51 +1235,54 @@ Quan els fitxers adjunts s'emmagatzemen a S3 (emmagatzematge de fitxers adjunts 
 
 Per a còpies de seguretat planificades i automatitzades amb l'API, podeu fer servir l'script `backup-poznote.sh` inclòs.
 
-**IMPORTANT:** només els administradors poden crear còpies de seguretat amb l'API.
-Feu servir la contrasenya actual del perfil d'administrador amb què us autentiqueu. En una instal·lació nova, és la contrasenya d'administrador per defecte (`admin`) fins que no es canvia al Poznote. Un cop definida una contrasenya personalitzada, cal aquesta contrasenya per a les crides a l'API.
+Qualsevol compte pot fer la còpia de seguretat del seu propi perfil, amb la contrasenya del compte o amb una contrasenya d'aplicació. Fer la còpia de seguretat del perfil d'un altre usuari requereix la contrasenya d'un compte d'administrador. Quan l'autenticació de dos factors està activada, la contrasenya del compte sola es rebutja. Creeu llavors una contrasenya d'aplicació a **Paràmetres > El meu compte > Contrasenyes d'aplicació** i feu-la servir en lloc seu. Una contrasenya d'aplicació només pot fer la còpia de seguretat del seu propi perfil, mai la d'un altre usuari, encara que pertanyi a un administrador. Per fer còpies de seguretat planificades d'altres perfils amb l'autenticació de dos factors activada, feu servir les [Còpies de seguretat planificades a una carpeta del servidor](#local-backups).
 
 **Ubicació de l'script:** `backup-poznote.sh` a la carpeta `tools` del repositori del Poznote
 
-**Ús per a administradors:**
-
-Els administradors poden fer una còpia de seguretat de qualsevol perfil d'usuari, **sense necessitat de conèixer els ID d'usuari**, només amb el nom d'usuari:
-
-```bash
-# Backup your own profile
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
-
-# Backup another user's profile (Nina)
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
-```
-
 **Ús:**
 ```bash
-bash backup-poznote.sh '<poznote_url>' '<admin_username>' '<admin_password>' '<target_username>' '<backup_directory>' '<retention_count>'
+bash backup-poznote.sh '<poznote_url>' '<username>' '<password>' '<target_username>' '<backup_directory>' '<retention_count>'
 ```
+
+**Exemples:**
+
+```bash
+# Fer la còpia de seguretat del vostre propi perfil
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
+
+# Un administrador fent la còpia de seguretat del perfil d'un altre usuari (Nina), només cal el nom d'usuari
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
+
+# Una contrasenya d'aplicació fent la còpia de seguretat del seu propi perfil (funciona amb l'autenticació de dos factors)
+bash backup-poznote.sh 'https://poznote.example.com' 'Nina' 'pzn_...' 'Nina' '/backups' '30'
+```
+
+**Mantenir la contrasenya fora de la línia d'ordres:**
+
+Una contrasenya escrita a la línia d'ordres la pot llegir qualsevol usuari de la màquina a la llista de processos, i queda a la crontab i a l'historial del shell. Passeu `-` en el seu lloc i l'script la llegeix de la primera línia del fitxer indicat per `POZNOTE_PASSWORD_FILE` (llegible només per vós, `chmod 600`), o de la variable d'entorn `POZNOTE_PASSWORD`.
 
 **Exemple amb crontab (un administrador fent la còpia de seguretat de la Nina):**
 
 ```bash
 # Add to crontab for automated backups twice daily
-0 0,12 * * * bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/root/backups' '30'
+0 0,12 * * * POZNOTE_PASSWORD_FILE=/root/.poznote-password bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' '-' 'Nina' '/root/backups' '30'
 ```
 
 **Explicació dels paràmetres:**
 - `'https://poznote.example.com'` - URL de la vostra instància del Poznote
-- `'admin'` - Nom d'usuari d'administrador per a l'autenticació (ha de ser administrador)
-- `'admin_password'` - Contrasenya actual de l'administrador per al perfil de l'API (`admin` per defecte fins que es canvia; després, la contrasenya personalitzada)
+- `'admin'` - Nom d'usuari per a l'autenticació (ha de ser administrador per fer la còpia de seguretat d'un altre perfil)
+- `'-'` - La contrasenya. `-` la llegeix de `POZNOTE_PASSWORD_FILE` o `POZNOTE_PASSWORD`; si no, escriviu directament la contrasenya del compte o una contrasenya d'aplicació (`pzn_...`). Fer la còpia de seguretat d'un altre perfil requereix la contrasenya del compte d'un administrador
 - `'Nina'` - Nom d'usuari de qui es fa la còpia de seguretat
 - `'/root/backups'` - Directori pare on s'emmagatzemaran les còpies de seguretat (crea la carpeta `backups-poznote-<username>`)
 - `'30'` - Nombre de còpies de seguretat que es conserven (les més antigues se suprimeixen automàticament)
 
 **Com funciona el procés de còpia de seguretat:**
 
-1. L'script s'autentica amb credencials d'administrador
-2. Cerca automàticament l'ID d'usuari a partir del nom d'usuari
-3. Crea una còpia de seguretat amb l'API
-4. Crida l'API REST v1 del Poznote (`POST /api/v1/backups` amb la capçalera `X-User-ID`)
-5. Baixa localment el ZIP de la còpia de seguretat a `backups-poznote-<username>/`
-6. Gestiona automàticament la retenció (només conserva el nombre indicat de còpies de seguretat recents)
+1. L'script s'autentica amb la contrasenya del compte o la contrasenya d'aplicació indicada
+2. Per al vostre propi perfil, fa servir l'ID del perfil autenticat; per a un altre perfil, cerca l'ID de l'usuari a partir del nom d'usuari (només administradors)
+3. Crea una còpia de seguretat mitjançant l'API REST v1 del Poznote (`POST /api/v1/backups` amb la capçalera `X-User-ID`)
+4. Baixa localment el ZIP de la còpia de seguretat a `backups-poznote-<username>/`
+5. Gestiona automàticament la retenció (només conserva el nombre indicat de còpies de seguretat recents)
 
 **Nota:** les còpies de seguretat de cada usuari es desen en carpetes separades (`backups-poznote-Nina`, `backups-poznote-Tim`, etc.)
 

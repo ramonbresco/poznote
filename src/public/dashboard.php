@@ -458,8 +458,6 @@ if ($dashboardScope['mode'] === 'tag' && empty($dashboardScope['workspaces'])) {
 // stayed one level up, so this fell back to time() and changed the asset
 // URL on every single page load.
 $cache_v = urlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
-// Width of the board, from the slider of its toolbar (js/page-width.js)
-$pageWidthStyle = poznotePageWidthStyle('dashboard');
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars($currentLang, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
@@ -513,7 +511,7 @@ $pageWidthStyle = poznotePageWidthStyle('dashboard');
 <?php if ($aiPanelWorkspaces !== []): ?>
       data-ai-workspaces="<?php echo htmlspecialchars(json_encode($aiPanelWorkspaces, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8'); ?>"
 <?php endif; ?>
-      data-scope="<?php echo htmlspecialchars($dashboardScope['key'], ENT_QUOTES, 'UTF-8'); ?>"<?php if ($pageWidthStyle !== ''): ?> style="<?php echo $pageWidthStyle; ?>"<?php endif; ?>>
+      data-scope="<?php echo htmlspecialchars($dashboardScope['key'], ENT_QUOTES, 'UTF-8'); ?>">
     <?php
     // The AI assistant toggle lives in the floating stack at the bottom-right
     // of the page (ui_customization_panel.php), like on index.php.

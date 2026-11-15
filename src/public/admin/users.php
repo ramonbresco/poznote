@@ -453,6 +453,7 @@ function usersLanguageName(string $code): string {
         'ko' => ['settings.language.korean', 'Korean'],
         'ja' => ['settings.language.japanese', 'Japanese'],
         'ca' => ['settings.language.catalan', 'Catalan'],
+        'nl' => ['settings.language.dutch', 'Dutch'],
     ];
     if (!isset($names[$code])) {
         return $code;

@@ -572,7 +572,7 @@
       "sessions": "Ver los navegadores y dispositivos conectados ahora mismo a tu cuenta, y cerrar la sesión de los que ya no uses.",
       "session_lifetime": "Cuánto dura un inicio de sesión sin actividad. Se configura con POZNOTE_SESSION_LIFETIME_DAYS en el archivo .env, así que aquí solo se muestra y no se puede cambiar desde esta página. Iniciar sesión con «Recordarme» dura más; iniciar sesión por SSO, no.",
       "attachments_single_line": "Muestra los adjuntos de la nota en una sola línea en lugar de repartirlos en varias. Desliza la línea con el dedo o el ratón; cuando está cortada, termina con «…».",
-      "attachment_links_as_cards": "Al insertar un adjunto en una nota con «Enlace a adjunto», se muestra como una tarjeta (un icono según su tipo, su nombre y una flecha de descarga) en su propia línea, en lugar de un enlace en el texto.",
+      "attachment_links_as_cards": "Muestra como tarjeta los enlaces a adjuntos que están solos en su línea; dentro de una frase llevan un pequeño clip. Las notas no se modifican.",
       "remember_me_days": "Cuánto tiempo mantiene la sesión abierta marcar «Recordarme» en la página de inicio de sesión. Solo vale para los inicios de sesión con contraseña. Un inicio de sesión SSO dura lo que indica la tarjeta Duración de las sesiones, en Ajustes > Acerca de, que se configura en el archivo .env. Cambiar una contraseña, o cerrar la sesión de un dispositivo desde Dispositivos conectados, la cierra de inmediato, sea cual sea la duración configurada aquí."
     },
     "card_notes": {
@@ -640,6 +640,7 @@
       "korean": "Coreano",
       "japanese": "Japonés",
       "catalan": "Catalán",
+      "dutch": "Neerlandés",
       "login_page": "Idioma de la página de inicio de sesión:",
       "saved": "Idioma guardado",
       "save_error": "No se pudo guardar el idioma",
@@ -5045,7 +5046,9 @@
       "medium": "Medio",
       "high": "Alto",
       "xhigh": "Muy alto (xhigh)"
-    }
+    },
+    "show_value": "Mostrar el valor",
+    "hide_value": "Ocultar el valor"
   },
   "ai_settings_user": {
     "title": "Mi asistente de IA",
@@ -5477,7 +5480,10 @@
     "frequency_daily_inline": "todos los días",
     "frequency_weekly_inline": "cada semana",
     "frequency_monthly_inline": "cada 30 días",
-    "frequency_description": "La primera copia automática se ejecuta pocos minutos después de activarla, las siguientes tras el intervalo elegido.",
+    "frequency_description": "Con qué frecuencia se ejecuta la copia automática.",
+    "hour_label": "Hora",
+    "hour_any": "A cualquier hora",
+    "hour_description": "Las copias empiezan en los primeros minutos después de esta hora, en la zona horaria {{timezone}}. Con A cualquier hora, la primera empieza pocos minutos después de activarla, y cada una de las siguientes un intervalo después de la anterior.",
     "retention_label": "Copias a conservar por usuario",
     "retention_description": "Los archivos más antiguos se eliminan del bucket tras cada copia. 0 lo conserva todo.",
     "skip_s3_label": "Omitir adjuntos ya almacenados en S3",
@@ -5659,7 +5665,6 @@
     "page_width": "Ancho de la página",
     "width_default": "Predeterminado",
     "width_reset": "Restablecer valor predeterminado",
-    "width_error": "No se pudo guardar el ancho.",
     "note_width_settings_hint": "Definir el valor predeterminado de todas las notas en Ajustes"
   },
   "keyboard_shortcuts": {

@@ -61,6 +61,16 @@ if ($postAction === 'save_config') {
     if (!isset(LocalBackupService::FREQUENCIES[$frequency])) {
         $frequency = 'daily';
     }
+    // Hour of the day (empty = any time). The timezone it is read in stays
+    // the stored one while the hour does not change (#1780).
+    $previousConfig = LocalBackupService::getConfig();
+    $backupHour = poznoteNormalizeBackupHour($_POST['local_backup_hour'] ?? '');
+    $backupTimezone = poznoteBackupTimezoneToStore(
+        $backupHour,
+        $previousConfig['hour'],
+        (string)getGlobalSetting('local_backup_timezone', ''),
+        getUserTimezone()
+    );
 
     // Checked users; when every existing user is checked, store an empty
     // selection so future accounts are covered automatically
@@ -68,16 +78,22 @@ if ($postAction === 'save_config') {
     $selectedIds = is_array($postedUsers) ? array_values(array_unique(array_map('intval', $postedUsers))) : [];
     $allUserIds = array_map(function ($user) { return (int)$user['id']; }, listAllUserProfiles());
     $selectedIds = array_values(array_intersect($selectedIds, $allUserIds));
-    $userIdsSetting = count($selectedIds) === count($allUserIds) ? '' : implode(',', $selectedIds);
+    if (empty($selectedIds)) {
+        $userIdsSetting = LocalBackupService::NO_USERS;
+    } else {
+        $userIdsSetting = count($selectedIds) === count($allUserIds) ? '' : implode(',', $selectedIds);
+    }
 
     if (empty($selectedIds) && $autoEnabled === '1') {
         $error = t('s3_backup.messages.no_user_selected', [], 'Select at least one user to back up.');
     } else {
         $saved = setGlobalSetting('local_backup_auto_enabled', $autoEnabled)
             && setGlobalSetting('local_backup_frequency', $frequency)
-            // Nothing checked with the schedule off: the stored selection
-            // stays (an empty setting would mean "every user")
-            && (empty($selectedIds) || setGlobalSetting('local_backup_user_ids', $userIdsSetting));
+            && setGlobalSetting('local_backup_hour', $backupHour === null ? '' : (string)$backupHour)
+            && setGlobalSetting('local_backup_timezone', $backupTimezone)
+            // Nothing checked (only accepted with the schedule off) is stored
+            // as NO_USERS, so the page shows what was saved
+            && setGlobalSetting('local_backup_user_ids', $userIdsSetting);
         if ($saved) {
             $message = t('s3_backup.messages.saved', [], 'Configuration saved successfully.');
         } else {
@@ -343,8 +359,10 @@ function localBackupRenderUsersPicker(array $users, string $prefix, string $inpu
                             <option value="weekly" <?php echo $backupConfig['frequency'] === 'weekly' ? 'selected' : ''; ?>><?php echo t_h('s3_backup.frequency_weekly', [], 'Weekly'); ?></option>
                             <option value="monthly" <?php echo $backupConfig['frequency'] === 'monthly' ? 'selected' : ''; ?>><?php echo t_h('s3_backup.frequency_monthly', [], 'Monthly (every 30 days)'); ?></option>
                         </select>
-                        <span class="label-desc"><?php echo t_h('s3_backup.frequency_description', [], 'The first automatic backup runs within a few minutes of enabling, the next ones after the chosen interval.'); ?></span>
+                        <span class="label-desc"><?php echo t_h('s3_backup.frequency_description', [], 'How often the automatic backup runs.'); ?></span>
                     </div>
+
+                    <?php poznoteRenderBackupHourField('local_backup_hour', $backupConfig['hour'], $backupConfig['hour'] !== null ? $backupConfig['timezone'] : getUserTimezone()); ?>
 
                     <div class="git-field-group">
                         <label class="git-field-label" for="local-backup-auto-users-filter"><?php echo t_h('local_backup.auto_users_label', [], 'Users backed up automatically'); ?></label>

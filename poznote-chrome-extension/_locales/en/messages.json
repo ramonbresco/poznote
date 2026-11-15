@@ -47,9 +47,6 @@
   "modeAppendTitle": {
     "message": "Add the page at the end of a note"
   },
-  "change": {
-    "message": "Change"
-  },
   "searchNotes": {
     "message": "Search notes"
   },
@@ -241,5 +238,62 @@
   },
   "pageScreenshot": {
     "message": "Page screenshot"
+  },
+  "menuSaveSelection": {
+    "message": "Save selection to Poznote"
+  },
+  "menuSaveLink": {
+    "message": "Save link to Poznote"
+  },
+  "menuSaveImage": {
+    "message": "Save image to Poznote"
+  },
+  "menuSavePage": {
+    "message": "Save page link to Poznote"
+  },
+  "menuSavePageText": {
+    "message": "Save page text to Poznote"
+  },
+  "cmdOpenPopup": {
+    "message": "Open the extension"
+  },
+  "cmdSaveLink": {
+    "message": "Save the page link"
+  },
+  "cmdSaveText": {
+    "message": "Save the selection, or the page text"
+  },
+  "noteTitle": {
+    "message": "Title"
+  },
+  "tags": {
+    "message": "Tags"
+  },
+  "tagsPlaceholder": {
+    "message": "Separated by commas"
+  },
+  "image": {
+    "message": "Image"
+  },
+  "imageCannotBeSaved": {
+    "message": "This image cannot be saved."
+  },
+  "connectFirst": {
+    "message": "Connect the extension to Poznote first."
+  },
+  "saving": {
+    "message": "Saving..."
+  },
+  "shortcutsTitle": {
+    "message": "Keyboard shortcuts and right-click menu"
+  },
+  "rightClickHint": {
+    "message": "Right-click a page, a link, an image or a selection to save it without opening the extension. It goes where the extension was last used: the existing note picked there, or a new note in the workspace and folder above."
+  },
+  "shortcutNotSet": {
+    "message": "Not set"
+  },
+  "changeShortcuts": {
+    "message": "Change the shortcuts"
   }
 }

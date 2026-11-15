@@ -129,3 +129,25 @@ test('sanitizeHtml drops the controls drawn around a code block', function () {
 test('sanitizeHtml keeps a class that only looks like a code block control', function () {
     assertContains('my-code-block-copy-btn-notes', sanitizeHtml('<span class="my-code-block-copy-btn-notes">kept</span>'));
 });
+
+test('sanitizeHtml gives back the plain link of an attachment link drawn as a card', function () {
+    // "Attachment links as cards" draws a plain attachment link as a card on
+    // screen only (js/attachments.js): the note keeps its link
+    $clean = sanitizeHtml('<p><a href="/api/v1/notes/4/attachments/abc" class="attachment-card attachment-card-pdf attachment-card-auto" contenteditable="false">r.pdf</a></p>');
+    assertSame('<p><a href="/api/v1/notes/4/attachments/abc">r.pdf</a></p>', $clean);
+});
+
+test('sanitizeHtml keeps an attachment card inserted as a card', function () {
+    $clean = sanitizeHtml('<p><a class="attachment-card attachment-card-pdf" contenteditable="false" href="/api/v1/notes/4/attachments/abc">r.pdf</a></p>');
+    assertContains('class="attachment-card attachment-card-pdf"', $clean);
+    assertContains('contenteditable="false"', $clean);
+});
+
+test('sanitizeHtml puts back an attachment card drawn as a plain link', function () {
+    // The setting off draws a card as a plain link on screen only
+    // (js/attachments.js): the note keeps its card
+    $clean = sanitizeHtml('<p><a href="/api/v1/notes/4/attachments/abc" class="attachment-card-off attachment-card-off-pdf">r.pdf</a></p>');
+    assertContains('class="attachment-card attachment-card-pdf"', $clean);
+    assertContains('contenteditable="false"', $clean);
+    assertNotContains('attachment-card-off', $clean);
+});

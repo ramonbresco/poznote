@@ -677,3 +677,61 @@ function poznoteBacklinkTaskTexts(array $task): array
     }
     return $texts;
 }
+
+/**
+ * Links to a diary day written as links to the entry they open
+ * (discussion #1776).
+ *
+ * The slash menu's "Link to diary entry" writes diary.php?date=YYYY-MM-DD,
+ * not ?note={id}: the entry may not exist yet when the link is written (a
+ * link to tomorrow), and diary.php creates it on the first visit. Such a link
+ * carries no note id, so the backlink detection never saw it. Every one that
+ * resolves to the target entry is rewritten here as index.php?note={id}, and
+ * the content then goes through the ordinary detection and snippet
+ * extraction unchanged, the label and the text around the link included.
+ *
+ * $resolves decides, for the workspace and the diary a link names, whether
+ * that link lands on the target: diary.php opens the entry of that date in
+ * the diary given by ?diary= (0 = the first one), which only the database
+ * knows. A link that names no workspace is read in $defaultWorkspace, the
+ * workspace of the note it is written in.
+ *
+ * @param callable(string, int): bool $resolves
+ */
+function poznoteRewriteDiaryLinksToNote(
+    string $content,
+    string $date,
+    int $noteId,
+    string $defaultWorkspace,
+    callable $resolves
+): string {
+    if ($date === '' || strpos($content, 'diary.php?') === false) {
+        return $content;
+    }
+
+    // The query stops where the link does: a quote (HTML attribute, JSON
+    // string), a closing parenthesis (Markdown), a space or a tag bracket.
+    $rewritten = preg_replace_callback(
+        '/(?<![\w\-.])diary\.php\?([^"\'\s()<>\\\\\]]*)/',
+        static function (array $m) use ($date, $noteId, $defaultWorkspace, $resolves): string {
+            $params = [];
+            parse_str(html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'), $params);
+            if (!isset($params['date']) || !is_string($params['date']) || $params['date'] !== $date) {
+                return $m[0];
+            }
+            $workspace = (isset($params['workspace']) && is_string($params['workspace']))
+                ? trim($params['workspace'])
+                : '';
+            if ($workspace === '') {
+                $workspace = $defaultWorkspace;
+            }
+            $diary = (isset($params['diary']) && is_string($params['diary']) && ctype_digit($params['diary']))
+                ? (int) $params['diary']
+                : 0;
+            return $resolves($workspace, $diary) ? 'index.php?note=' . $noteId : $m[0];
+        },
+        $content
+    );
+
+    return is_string($rewritten) ? $rewritten : $content;
+}

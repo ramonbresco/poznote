@@ -281,6 +281,85 @@ function getMarkdownSplitPaneBottomGap(noteEntry) {
     return bottomGap;
 }
 
+/**
+ * Height taken by the rows placed under the note (backlinks and attachments
+ * set to show at the bottom, the passages the backlinks row unfolds).
+ *
+ * The split view sizes its panes to end at the bottom of the screen and clips
+ * the column (css/markdown.css), so anything after the note was cut off and
+ * never seen (discussion 1776): the panes give that height back instead.
+ * The fixed scroll arrows and the room below the note (height 0 in split
+ * mode) take no space in the flow and are left out.
+ */
+function getMarkdownSplitRowsBelowHeight(noteEntry) {
+    var entryBottom = noteEntry.getBoundingClientRect().bottom;
+    var lowest = entryBottom;
+
+    for (var row = noteEntry.nextElementSibling; row; row = row.nextElementSibling) {
+        if (row.classList.contains('note-bottom-space')) {
+            continue;
+        }
+        var style;
+        try {
+            style = window.getComputedStyle(row);
+        } catch (e) {
+            continue;
+        }
+        if (style.display === 'none' || style.position === 'fixed' || style.position === 'absolute') {
+            continue;
+        }
+        var rect = row.getBoundingClientRect();
+        if (rect.height <= 0) {
+            continue;
+        }
+        var marginBottom = parseFloat(style.marginBottom) || 0;
+        lowest = Math.max(lowest, rect.bottom + marginBottom);
+    }
+
+    return Math.max(0, Math.ceil(lowest - entryBottom));
+}
+
+/**
+ * The rows under the note come and go after the panes were sized: the
+ * backlinks row is fetched once the note is shown, its passages unfold on a
+ * click, attachment tiles grow as their images load. Each of them changes the
+ * height of the note's column, so watching the column is enough. Setting the
+ * pane height resizes the column too, but to a value the next pass computes
+ * again unchanged, so the loop stops there.
+ */
+var markdownSplitRowsObserver = null;
+var markdownSplitObservedColumns = typeof WeakSet === 'function' ? new WeakSet() : null;
+
+function observeMarkdownSplitRowsBelow(noteEntry) {
+    if (typeof ResizeObserver !== 'function' || !markdownSplitObservedColumns) {
+        return;
+    }
+    var column = noteEntry.parentElement;
+    if (!column || markdownSplitObservedColumns.has(column)) {
+        return;
+    }
+    if (!markdownSplitRowsObserver) {
+        markdownSplitRowsObserver = new ResizeObserver(function (entries) {
+            var stillSplit = false;
+            entries.forEach(function (entry) {
+                var target = entry.target;
+                if (target.isConnected && target.querySelector(':scope > .noteentry.markdown-split-mode')) {
+                    stillSplit = true;
+                } else {
+                    // The note was closed or left the split view
+                    markdownSplitRowsObserver.unobserve(target);
+                    markdownSplitObservedColumns.delete(target);
+                }
+            });
+            if (stillSplit) {
+                scheduleMarkdownSplitPaneHeightUpdate();
+            }
+        });
+    }
+    markdownSplitObservedColumns.add(column);
+    markdownSplitRowsObserver.observe(column);
+}
+
 function clearMarkdownSplitPaneHeight(noteEntryOrId) {
     var noteEntry = null;
     if (typeof noteEntryOrId === 'string' || typeof noteEntryOrId === 'number') {
@@ -342,8 +421,10 @@ function updateMarkdownSplitPaneHeight(noteEntryOrId) {
         paneTop = noteEntry.getBoundingClientRect().top;
     }
 
+    observeMarkdownSplitRowsBelow(noteEntry);
+
     var viewportHeight = getMarkdownSplitViewportHeight();
-    var bottomGap = getMarkdownSplitPaneBottomGap(noteEntry);
+    var bottomGap = getMarkdownSplitPaneBottomGap(noteEntry) + getMarkdownSplitRowsBelowHeight(noteEntry);
     var availableHeight = Math.floor(viewportHeight - Math.max(0, paneTop) - bottomGap);
 
     if (!isFinite(availableHeight) || availableHeight <= 0) {

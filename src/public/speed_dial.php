@@ -114,8 +114,6 @@ $rows = array_filter($stmt->fetchAll(PDO::FETCH_ASSOC), static fn($note) => pozn
 usort($rows, static fn($a, $b) => poznoteComparePlacedOrder($a, $b, 'speed_dial_order'));
 $items = array_map(static fn($note) => speedDialBuildItem($note, $workspace), $rows);
 $tileSize = poznoteSpeedDialTileSize(getSetting('speed_dial_tile_size', POZNOTE_SPEED_DIAL_TILE_DEFAULT));
-// Width of the column, from the slider of its toolbar (js/page-width.js)
-$pageWidthStyle = poznotePageWidthStyle('speed-dial');
 $labelColors = poznoteSpeedDialNormalizeLabelColors((array)json_decode((string)getSetting('speed_dial_label_colors', '{}'), true));
 
 // The view's own image, api_upload_background.php?scope=speed_dial. In the page
@@ -149,7 +147,7 @@ $cache_v = rawurlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 	<?php poznoteRenderBrandIcons(); ?>
 	<?php poznoteRenderUiCustomizationBootstrap(); ?>
 </head>
-<body class="speed-dial-page has-icon-sidebar<?php echo $backgroundUrl !== null ? ' has-speed-dial-background' : ''; ?>" data-board="<?php echo htmlspecialchars($board, ENT_QUOTES, 'UTF-8'); ?>" data-board-key="<?php echo $boardKey; ?>" style="--speed-dial-tile-width: <?php echo $tileSize; ?>px<?php echo $pageWidthStyle !== '' ? '; ' . $pageWidthStyle : ''; ?>" data-workspace="<?php echo htmlspecialchars($workspace, ENT_QUOTES, 'UTF-8'); ?>">
+<body class="speed-dial-page has-icon-sidebar<?php echo $backgroundUrl !== null ? ' has-speed-dial-background' : ''; ?>" data-board="<?php echo htmlspecialchars($board, ENT_QUOTES, 'UTF-8'); ?>" data-board-key="<?php echo $boardKey; ?>" style="--speed-dial-tile-width: <?php echo $tileSize; ?>px" data-workspace="<?php echo htmlspecialchars($workspace, ENT_QUOTES, 'UTF-8'); ?>">
 	<?php if ($backgroundUrl !== null): ?>
 	<div class="speed-dial-background" style="background-image: url('<?php echo htmlspecialchars($backgroundUrl, ENT_QUOTES, 'UTF-8'); ?>'); opacity: <?php echo $backgroundOpacity / 100; ?>;"></div>
 	<?php endif; ?>

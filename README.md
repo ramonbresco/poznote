@@ -10,6 +10,7 @@
   <a href="docs/README.ko.md">한국어</a> ·
   <a href="docs/README.ja.md">日本語</a> ·
   <a href="docs/README.ca.md">Català</a> ·
+  <a href="docs/README.nl.md">Nederlands</a> ·
   <a href="docs/README.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -690,7 +691,7 @@ Poznote has several note types, each tailored for a different way of working. Ri
 &nbsp;
 
 *   **Functionality:** Reuse pre-written content to standardize your documentation, from a full note to a short snippet.
-*   **Setup:** Put the notes you want to reuse in a folder named `Templates` (sub-folders are fine). A workspace named `Templates` works too and is offered from every workspace. The name is also recognized in the language of the interface (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`).
+*   **Setup:** Put the notes you want to reuse in a folder named `Templates` (sub-folders are fine). A workspace named `Templates` works too and is offered from every workspace. The name is also recognized in the language of the interface (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`, `Sjablonen`).
 *   **Insert into a note:** Type `/template` (or `/` followed by the template's title) in a rich text or Markdown note and pick a template: its content is pasted at the cursor, converted if the template and the note are not of the same type.
 *   **New note from a template:** Duplicate the template note, or duplicate a whole `Templates` folder to start a project with a ready-made folder structure.
 </details>
@@ -1130,7 +1131,7 @@ Configure it in **Settings > Server Backups** (administrators only).
 - **Configuration**: The backup folder and the retention, shared by the automatic and the manual backups.
   - **Backup folder**: An absolute path on the server (inside the container with Docker). Left empty, the archives go to `data/backups`, which is already part of the data volume. The folder is created if needed and must be writable by the web server user.
   - **Retention**: Only the most recent N archives are kept per user, older ones are deleted from the folder after each backup (0 keeps everything).
-- **Automatic backups**: When enabled, a background worker backs up the users checked in this box on the chosen frequency (daily, weekly, or monthly). Everyone is checked by default, and while everyone is checked, new accounts are included automatically. The first run happens within a few minutes of enabling, the next ones after the chosen interval. The box shows the result of the last automatic run and the date of the next one.
+- **Automatic backups**: When enabled, a background worker backs up the users checked in this box on the chosen frequency (daily, weekly, or monthly). Everyone is checked by default, and while everyone is checked, new accounts are included automatically. A time of day can be chosen (for example 03:00, in the timezone of the administrator who sets it): each backup then starts in the first minutes after that hour, and a missed hour (server stopped) is caught up once at the next start. Without a time, the first run happens within a few minutes of enabling, the next ones after the chosen interval. The box shows the result of the last automatic run and the date of the next one.
 - **Manual backups**: The manual backup box has its own user checkboxes, nothing checked by default, and a "Back up now" button that saves a fresh archive for each checked user, one user at a time, with per-user progress. This selection is not saved and does not change the automatic backups, which may even be off.
 - **Browsing**: The page lists the archives currently in the folder. The actions menu of each archive downloads it, restores it into the account it belongs to, or deletes it.
 - **Access for users**: Archives are stored under `{user id}/` in the backup folder. Three switches, all off by default, open the folder to the users:
@@ -1221,7 +1222,7 @@ Configure it in **Settings > S3 Backups** (administrators only).
 - **Configuration**: Endpoint URL, region, bucket, access key, secret key, and path-style addressing, with a built-in connection test.
 - **User selection**: Checkboxes choose which users are covered by the backups. Everyone is checked by default, and while everyone is checked, new accounts are included automatically.
 - **Manual backups**: A "Back up now" button uploads a fresh archive for each selected user, one user at a time, with per-user progress. It works as soon as the connection is configured, even when automatic backups are off.
-- **Automatic backups**: When enabled, a background worker backs up the selected users on the chosen frequency (daily, weekly, or monthly). The first run happens within a few minutes of enabling, the next ones after the chosen interval.
+- **Automatic backups**: When enabled, a background worker backs up the selected users on the chosen frequency (daily, weekly, or monthly). A time of day can be chosen (for example 03:00, in the timezone of the administrator who sets it): each backup then starts in the first minutes after that hour, and a missed hour (server stopped) is caught up once at the next start. Without a time, the first run happens within a few minutes of enabling, the next ones after the chosen interval.
 - **Retention**: Only the most recent N archives are kept per user, older ones are deleted from the bucket after each backup (0 keeps everything).
 - **Browsing**: The page lists the archives currently in the bucket, with download and delete actions.
 - **Restore**: Archives are stored under `backups/{user id}/` in the bucket and can be restored with the standard [Restore / Import](#restore--import) page.
@@ -1239,51 +1240,54 @@ When attachments are stored in S3 (S3 Attachment Storage), they are included in 
 
 For automated scheduled backups via API, you can use the included `backup-poznote.sh` script.
 
-**IMPORTANT:** Only administrators can create backups via the API.
-Use the current password of the admin profile you authenticate with. On a fresh installation, that is the default admin password (`admin`) until it is changed in Poznote. Once a custom password is set, that custom password is required for API calls.
+Any account can back up its own profile, with its account password or with an app password. Backing up another user's profile requires an administrator's account password. When two-factor authentication is enabled, the account password alone is refused. Create an app password in **Settings > My Account > App passwords** and use it instead. An app password can back up only its own profile, never another user's, even when it belongs to an administrator. To back up other profiles on a schedule with two-factor authentication enabled, use [Scheduled backups to a folder on the server](#local-backups) instead.
 
 **Script location:** `backup-poznote.sh` in the `tools` folder of the Poznote repository
 
-**Administrator Usage:**
-
-Admins can backup any user profile - **no need to know user IDs**, just the username:
-
-```bash
-# Backup your own profile
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
-
-# Backup another user's profile (Nina)
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
-```
-
 **Usage:**
 ```bash
-bash backup-poznote.sh '<poznote_url>' '<admin_username>' '<admin_password>' '<target_username>' '<backup_directory>' '<retention_count>'
+bash backup-poznote.sh '<poznote_url>' '<username>' '<password>' '<target_username>' '<backup_directory>' '<retention_count>'
 ```
+
+**Examples:**
+
+```bash
+# Back up your own profile
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
+
+# Administrator backing up another user's profile (Nina), only the username is needed
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
+
+# App password backing up its own profile (works with two-factor authentication)
+bash backup-poznote.sh 'https://poznote.example.com' 'Nina' 'pzn_...' 'Nina' '/backups' '30'
+```
+
+**Keeping the password off the command line:**
+
+A password written on the command line can be read by any user of the machine in the process list, and it stays in the crontab and the shell history. Pass `-` in its place and the script reads it from the first line of the file named by `POZNOTE_PASSWORD_FILE` (readable only by you, `chmod 600`), or from the `POZNOTE_PASSWORD` environment variable.
 
 **Example with crontab (admin backing up Nina):**
 
 ```bash
 # Add to crontab for automated backups twice daily
-0 0,12 * * * bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/root/backups' '30'
+0 0,12 * * * POZNOTE_PASSWORD_FILE=/root/.poznote-password bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' '-' 'Nina' '/root/backups' '30'
 ```
 
 **Parameters explained:**
 - `'https://poznote.example.com'` - Your Poznote instance URL
-- `'admin'` - Admin username for authentication (must be an admin)
-- `'admin_password'` - Current admin password for the API profile (default `admin` until changed, then the custom password)
+- `'admin'` - Username for authentication (must be an administrator to back up another profile)
+- `'-'` - The password. `-` reads it from `POZNOTE_PASSWORD_FILE` or `POZNOTE_PASSWORD`, otherwise write the account password or an app password (`pzn_...`) directly. Backing up another profile requires an administrator's account password
 - `'Nina'` - Target username to backup
 - `'/root/backups'` - Parent directory where backups will be stored (creates `backups-poznote-<username>` folder)
 - `'30'` - Number of backups to keep (older ones are automatically deleted)
 
 **How the backup process works:**
 
-1. The script authenticates with admin credentials
-2. Automatically looks up the user ID from the username
-3. Creates a backup via the API
-4. Calls the Poznote REST API v1 (`POST /api/v1/backups` with `X-User-ID` header)
-5. Downloads the backup ZIP locally to `backups-poznote-<username>/`
-6. Automatically manages retention (keeps only the specified number of recent backups)
+1. The script authenticates with the supplied account password or app password
+2. For your own profile it uses the authenticated profile ID; for another profile it looks up the user ID from the username (administrators only)
+3. Creates a backup through the Poznote REST API v1 (`POST /api/v1/backups` with the `X-User-ID` header)
+4. Downloads the backup ZIP locally to `backups-poznote-<username>/`
+5. Automatically manages retention (keeps only the specified number of recent backups)
 
 **Note:** Each user's backups are stored in separate folders (`backups-poznote-Nina`, `backups-poznote-Tim`, etc.)
 

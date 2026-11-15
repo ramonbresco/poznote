@@ -10,6 +10,7 @@
   <a href="MCP-SERVER.ko.md">한국어</a> ·
   <b>日本語</b> ·
   <a href="MCP-SERVER.ca.md">Català</a> ·
+  <a href="MCP-SERVER.nl.md">Nederlands</a> ·
   <a href="MCP-SERVER.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->

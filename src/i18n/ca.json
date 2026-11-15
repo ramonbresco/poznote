@@ -223,7 +223,7 @@
       "sessions": "Mireu els navegadors i dispositius que ara mateix tenen la sessió iniciada al vostre compte, i tanqueu la sessió dels que ja no feu servir.",
       "session_lifetime": "Quant dura un inici de sessió sense activitat. Es configura amb POZNOTE_SESSION_LIFETIME_DAYS al fitxer .env, de manera que aquí només es mostra i no es pot canviar des d’aquesta pàgina. Iniciar la sessió amb «Recorda’m» dura més; iniciar-la amb SSO, no.",
       "attachments_single_line": "Mostra els adjunts de la nota en una sola línia en lloc de repartir-los en diverses. Llisca la línia amb el dit o el ratolí; quan està tallada, acaba amb «…».",
-      "attachment_links_as_cards": "Quan inseriu un adjunt en una nota amb «Enllaç a fitxer adjunt», es mostra com una targeta (una icona segons el tipus, el nom i una fletxa de baixada) en una línia pròpia, en lloc d'un enllaç dins del text.",
+      "attachment_links_as_cards": "Mostra com a targeta els enllaços a un adjunt que són sols a la seva línia; dins d'una frase, porten un clip petit. Les notes no es modifiquen.",
       "remember_me_days": "Quant de temps manté la sessió iniciada marcar «Recorda'm» a la pàgina d'inici de sessió. Només val per als inicis de sessió amb contrasenya. Un inici de sessió SSO dura el que indica la targeta Durada de les sessions, a Configuració > Quant a, que es configura al fitxer .env. Canviar una contrasenya, o tancar la sessió d'un dispositiu des de Dispositius connectats, la tanca de seguida, sigui quina sigui la durada configurada aquí."
     },
     "card_notes": {
@@ -366,6 +366,7 @@
       "korean": "Coreà",
       "japanese": "Japonès",
       "catalan": "Català",
+      "dutch": "Neerlandès",
       "login_page": "Llengua de la pàgina d'inici de sessió:",
       "saved": "S'ha desat la llengua",
       "save_error": "No s'ha pogut desar la llengua",
@@ -4701,7 +4702,9 @@
       "medium": "Mitjà",
       "high": "Alt",
       "xhigh": "Molt alt (xhigh)"
-    }
+    },
+    "show_value": "Mostra el valor",
+    "hide_value": "Amaga el valor"
   },
   "ai_settings_user": {
     "title": "El meu assistent d'IA",
@@ -5149,7 +5152,10 @@
     "frequency_daily_inline": "cada dia",
     "frequency_weekly_inline": "cada setmana",
     "frequency_monthly_inline": "cada 30 dies",
-    "frequency_description": "La primera còpia de seguretat automàtica s'executa uns minuts després d'activar-la, i les següents, després de l'interval triat.",
+    "frequency_description": "Amb quina freqüència s'executa la còpia de seguretat automàtica.",
+    "hour_label": "Hora",
+    "hour_any": "A qualsevol hora",
+    "hour_description": "Les còpies de seguretat comencen en els primers minuts després d'aquesta hora, al fus horari {{timezone}}. Amb A qualsevol hora, la primera comença uns minuts després d'activar-la, i cadascuna de les següents un interval després de l'anterior.",
     "retention_label": "Còpies de seguretat que es conserven per usuari",
     "retention_description": "Els arxius més antics se suprimeixen del cubell després de cada còpia de seguretat. 0 ho conserva tot.",
     "skip_s3_label": "Omet els fitxers adjunts que ja són a S3",
@@ -5494,7 +5500,6 @@
     "page_width": "Amplada de la pàgina",
     "width_default": "Per defecte",
     "width_reset": "Restableix el valor per defecte",
-    "width_error": "No s'ha pogut desar l'amplada.",
     "note_width_settings_hint": "Defineix el valor per defecte de totes les notes a Configuració"
   },
   "keyboard_shortcuts": {

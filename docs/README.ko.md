@@ -10,6 +10,7 @@
   <b>한국어</b> ·
   <a href="README.ja.md">日本語</a> ·
   <a href="README.ca.md">Català</a> ·
+  <a href="README.nl.md">Nederlands</a> ·
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -690,7 +691,7 @@ curl -u 'username:pzn_2f7c…' https://YOUR_SERVER/api/v1/notes
 &nbsp;
 
 *   **기능:** 전체 노트부터 짧은 문구까지 미리 작성한 내용을 재사용해 문서 형식 통일
-*   **설정:** `Templates` 폴더나 하위 폴더에 재사용할 노트를 넣으세요. `Templates`라는 이름의 작업 공간도 지원하며 모든 공간에서 사용할 수 있습니다. UI 언어별 이름도 인식합니다(`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`).
+*   **설정:** `Templates` 폴더나 하위 폴더에 재사용할 노트를 넣으세요. `Templates`라는 이름의 작업 공간도 지원하며 모든 공간에서 사용할 수 있습니다. UI 언어별 이름도 인식합니다(`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`, `Sjablonen`).
 *   **노트에 삽입:** 서식 있는 텍스트나 마크다운 노트에 `/template` 또는 `/` 뒤 템플릿 제목을 입력하고 선택하세요. 커서에 붙여 넣으며 형식이 다르면 변환합니다.
 *   **템플릿으로 새 노트:** 템플릿 노트를 복제하거나 `Templates` 폴더 전체를 복제해 준비된 구조로 프로젝트 시작
 </details>
@@ -1129,7 +1130,7 @@ tar -czvf poznote-full-backup.tar.gz data/
 - **백업 폴더:** 서버의 절대 경로입니다(Docker를 사용하는 경우 컨테이너 내부 경로). 비워 두면 아카이브는 이미 데이터 볼륨에 포함된 `data/backups`에 저장됩니다. 폴더는 필요하면 자동으로 만들어지며 웹 서버 사용자가 쓸 수 있어야 합니다.
 - **사용자 선택:** 체크박스로 백업 대상 사용자를 고릅니다. 기본으로 모두 선택되어 있으며, 모두 선택된 동안에는 새 계정도 자동으로 포함됩니다.
 - **수동 백업:** "지금 백업" 버튼은 선택한 사용자마다 새 아카이브를 한 명씩 저장하고 사용자별 진행 상황을 보여 줍니다. 자동 백업이 꺼져 있어도 동작합니다.
-- **자동 백업:** 켜면 백그라운드 worker가 선택한 주기(매일, 매주, 매월)로 선택한 사용자를 백업합니다. 첫 실행은 켠 뒤 몇 분 안에, 이후 실행은 선택한 간격마다 이루어집니다. 페이지에는 마지막 실행 결과와 다음 실행 날짜가 표시됩니다.
+- **자동 백업:** 켜면 백그라운드 worker가 선택한 주기(매일, 매주, 매월)로 선택한 사용자를 백업합니다. 실행 시간도 고를 수 있습니다(예: 03:00, 설정한 관리자의 시간대 기준). 이 경우 각 백업은 그 시간이 지난 뒤 몇 분 안에 시작되고, 놓친 시간(서버 중지 등)은 다음 시작 때 한 번만 실행됩니다. 시간을 지정하지 않으면 첫 실행은 켠 뒤 몇 분 안에, 이후 실행은 선택한 간격마다 이루어집니다. 페이지에는 마지막 실행 결과와 다음 실행 날짜가 표시됩니다.
 - **보관:** 사용자별로 최신 아카이브 N개만 보관하고, 더 오래된 것은 백업할 때마다 폴더에서 삭제합니다(0은 모두 보관).
 - **탐색:** 페이지에 폴더에 있는 아카이브가 나열되며 다운로드와 삭제를 할 수 있습니다.
 - **복원:** 아카이브는 백업 폴더의 `{user id}/` 아래에 저장되며 표준 [복원 / 가져오기](#복원--가져오기) 페이지에서 복원할 수 있습니다.
@@ -1216,7 +1217,7 @@ docker compose up -d
 - **설정:** 엔드포인트 URL, 리전, 버킷, 액세스 키, 비밀 키, 경로 방식 주소 지정 및 연결 시험
 - **사용자 선택:** 기본은 전체 선택이며 전체 선택 상태에서는 새 계정도 자동 포함
 - **수동 백업:** “지금 백업”으로 선택한 사용자별 새 백업을 순서대로 올리고 진행률 표시. 연결만 설정되면 자동 백업이 꺼져 있어도 사용 가능
-- **자동 백업:** 백그라운드 작업자가 일·주·월 간격으로 실행. 최초는 활성화 후 몇 분 안에, 이후는 선택한 간격마다 실행
+- **자동 백업:** 백그라운드 작업자가 일·주·월 간격으로 실행. 실행 시간 선택 가능(예: 03:00, 설정한 관리자의 시간대 기준): 그 시간이 지난 뒤 몇 분 안에 시작하며 놓친 시간은 다음 시작 때 한 번만 실행. 시간을 지정하지 않으면 최초는 활성화 후 몇 분 안에, 이후는 선택한 간격마다 실행
 - **보관:** 사용자별 최근 N개만 유지하고 매 백업 후 오래된 파일 삭제. 0은 모두 유지
 - **목록:** 버킷의 백업 조회·다운로드·삭제
 - **복원:** `backups/{user id}/`에 저장하며 일반 [복원 / 가져오기](#복원--가져오기) 페이지에서 복원
@@ -1234,51 +1235,54 @@ docker compose up -d
 
 API 예약 백업에는 포함된 `backup-poznote.sh`를 사용할 수 있습니다.
 
-**중요:** API 백업 생성은 관리자만 가능합니다.
-인증할 관리자 프로필의 현재 비밀번호를 사용하세요. 새 설치는 변경 전 `admin`이며 변경 후에는 지정한 비밀번호가 필요합니다.
+모든 계정은 계정 비밀번호나 앱 비밀번호로 자신의 프로필을 백업할 수 있습니다. 다른 사용자의 프로필을 백업하려면 관리자 계정 비밀번호가 필요합니다. 2단계 인증이 켜져 있으면 계정 비밀번호만으로는 거부됩니다. 이때는 **설정 > 내 계정 > 앱 비밀번호**에서 앱 비밀번호를 만들어 대신 사용하세요. 앱 비밀번호는 관리자의 것이라도 자신의 프로필만 백업할 수 있으며 다른 사용자의 프로필은 백업할 수 없습니다. 2단계 인증을 켠 상태로 다른 프로필을 예약 백업하려면 [서버의 폴더로 예약 백업](#local-backups)을 사용하세요.
 
 **위치:** 저장소 `tools` 폴더의 `backup-poznote.sh`
 
-**관리자 사용 방법:**
-
-관리자는 사용자 ID를 몰라도 **사용자 이름만으로** 모든 프로필을 백업할 수 있습니다.
-
-```bash
-# 본인 프로필 백업
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
-
-# 다른 사용자 프로필(Nina) 백업
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
-```
-
 **사용법:**
 ```bash
-bash backup-poznote.sh '<poznote_url>' '<admin_username>' '<admin_password>' '<target_username>' '<backup_directory>' '<retention_count>'
+bash backup-poznote.sh '<poznote_url>' '<username>' '<password>' '<target_username>' '<backup_directory>' '<retention_count>'
 ```
+
+**예시:**
+
+```bash
+# 자신의 프로필 백업
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
+
+# 관리자가 다른 사용자(Nina)의 프로필 백업. 사용자 이름만 있으면 됨
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
+
+# 앱 비밀번호로 자신의 프로필 백업(2단계 인증에서도 동작)
+bash backup-poznote.sh 'https://poznote.example.com' 'Nina' 'pzn_...' 'Nina' '/backups' '30'
+```
+
+**비밀번호를 명령줄에 쓰지 않기:**
+
+명령줄에 쓴 비밀번호는 시스템의 모든 사용자가 프로세스 목록에서 볼 수 있고 crontab과 셸 기록에도 남습니다. 대신 `-`를 넘기면 스크립트가 `POZNOTE_PASSWORD_FILE`이 가리키는 파일의 첫 줄(본인만 읽을 수 있게 `chmod 600`) 또는 환경 변수 `POZNOTE_PASSWORD`에서 비밀번호를 읽습니다.
 
 **crontab 예시(관리자가 Nina 백업):**
 
 ```bash
 # 하루 두 번 자동 백업하도록 crontab에 추가
-0 0,12 * * * bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/root/backups' '30'
+0 0,12 * * * POZNOTE_PASSWORD_FILE=/root/.poznote-password bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' '-' 'Nina' '/root/backups' '30'
 ```
 
 **매개변수:**
 - `'https://poznote.example.com'`: 인스턴스 URL
-- `'admin'`: 관리자 사용자 이름
-- `'admin_password'`: 현재 관리자 비밀번호. 변경 전 `admin`, 이후 지정한 값
+- `'admin'`: 인증용 사용자 이름. 다른 프로필을 백업하려면 관리자여야 함
+- `'-'`: 비밀번호. `-`는 `POZNOTE_PASSWORD_FILE` 또는 `POZNOTE_PASSWORD`에서 읽음. 그 외에는 계정 비밀번호나 앱 비밀번호(`pzn_...`)를 직접 입력. 다른 프로필 백업에는 관리자 계정 비밀번호 필요
 - `'Nina'`: 백업할 사용자 이름
 - `'/root/backups'`: 백업 상위 경로. `backups-poznote-<username>` 폴더 생성
 - `'30'`: 유지할 개수. 오래된 백업 자동 삭제
 
 **처리 순서:**
 
-1. 관리자 인증
-2. 사용자 이름으로 ID 자동 조회
-3. API로 백업 생성
-4. `X-User-ID` 헤더를 포함해 REST API v1의 `POST /api/v1/backups` 호출
-5. 로컬 `backups-poznote-<username>/`에 ZIP 다운로드
-6. 지정한 최근 개수만 유지하도록 자동 관리
+1. 입력한 계정 비밀번호나 앱 비밀번호로 인증
+2. 자신의 프로필이면 인증된 프로필 ID를 사용하고, 다른 프로필이면 사용자 이름으로 사용자 ID 조회(관리자만)
+3. Poznote REST API v1(`X-User-ID` 헤더와 함께 `POST /api/v1/backups`)로 백업 생성
+4. 로컬 `backups-poznote-<username>/`에 ZIP 다운로드
+5. 지정한 최근 개수만 유지하도록 자동 관리
 
 **참고:** 사용자별 별도 폴더에 저장합니다(`backups-poznote-Nina`, `backups-poznote-Tim` 등).
 

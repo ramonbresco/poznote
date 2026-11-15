@@ -10,6 +10,7 @@
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
   <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.nl.md">Nederlands</a> ·
   <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -35,7 +36,7 @@ Para mudar essas configurações depois, clique na engrenagem no topo da extens�
 
 O endereço da sua instância, exibido ao lado, é um link: clique nele para abrir o Poznote em uma nova aba, por http ou https, como você o digitou nas configurações.
 
-A extensão usa o idioma do Chrome quando ele é inglês, francês, alemão, espanhol, português, russo, coreano, chinês simplificado, japonês ou catalão, e inglês nos demais casos.
+A extensão usa o idioma do Chrome quando ele é inglês, francês, alemão, espanhol, português, russo, coreano, chinês simplificado, japonês, catalão ou holandês, e inglês nos demais casos.
 
 A senha da sua conta também funciona aqui, mas uma senha de aplicativo é a credencial mais adequada para uma extensão: ela só acessa a API, nunca a interface web nem as configurações da sua conta, fica limitada ao seu próprio perfil, e revogá-la no Poznote desconecta a extensão sem alterar mais nada. Veja [Senhas de aplicativo](README.pt.md#senhas-de-aplicativo) para a lista completa de limites.
 
@@ -45,9 +46,11 @@ A senha da sua conta também funciona aqui, mas uma senha de aplicativo é a cre
 
 Clique no ícone da extensão na página que você quer guardar e escolha o destino:
 
-- **New note** cria uma nota com o nome da página, no espaço de trabalho e na pasta escolhidos nas configurações.
+- **New note** cria uma nota com o nome da página. Antes de salvar, você pode mudar o **Title**, adicionar **Tags** (separadas por vírgulas, as tags que você já usa são sugeridas enquanto digita) e escolher o espaço de trabalho e a pasta de destino, direto na janela da extensão. Essa escolha é lembrada: as próximas notas novas também vão para lá.
 - **Existing note** adiciona a página no fim de uma nota escolhida na lista, que mostra as suas notas mais recentes e as pesquisa enquanto você digita. Ela mostra as notas do espaço de trabalho escolhido nas configurações; ative **All workspaces** para escolher uma nota de qualquer espaço. A extensão lembra dessa nota para a próxima página, então juntar links em uma mesma lista de leitura leva um clique por página. Notas HTML e Markdown podem receber páginas.
 
 Depois clique em **Save link** para salvar o endereço da página, ou em **Screenshot** para salvar o endereço seguido de uma imagem da parte visível da página. A confirmação traz um link que abre a nota no Poznote.
 
 **Save page text** salva o texto da própria página, convertido em Markdown, abaixo do endereço e da data em que foi salvo: só o conteúdo principal, sem menus, barras laterais nem rodapés, com títulos, listas, links, tabelas, blocos de código e imagens (as imagens continuam sendo links para o site). Selecione um texto antes e o botão vira **Save selection**, que salva só essa parte. Uma nova nota criada assim é uma nota Markdown; adicionado a uma nota existente, o texto é escrito no formato dessa nota. Como o texto é lido no seu navegador, funciona com páginas que exigem login, continua na nota se a página sumir, e a busca do Poznote, a API e o servidor MCP podem trabalhar com ele.
+
+**Sem abrir a extensão:** clique com o botão direito em uma página, um link, uma imagem ou um texto selecionado e escolha a entrada **Save … to Poznote** correspondente. Ela salva o link da página, o link clicado, a imagem (guardada na nota quando o site permite que a extensão a leia, senão exibida a partir do site) ou a seleção em Markdown. O atalho de teclado **Alt+Shift+S** salva o link da página e **Alt+Shift+O** abre a extensão; um terceiro atalho, que salva a seleção ou o texto da página, não tem tecla por padrão. Altere-os na página `chrome://extensions/shortcuts` do Chrome, acessível também por **Change the shortcuts** nas configurações da extensão. Esses salvamentos vão para onde a extensão foi usada por último: a nota escolhida em **Existing note** quando essa era a aba em uso, senão uma nova nota no espaço de trabalho e na pasta das configurações. O ícone da extensão mostra o resultado, um ✓ quando deu certo e um ! quando não deu, com o motivo na dica.

@@ -571,7 +571,7 @@
       "sessions": "查看当前登录到您账户的浏览器和设备，并退出不再使用的设备。",
       "session_lifetime": "没有任何操作时登录状态能保持多久。通过 .env 文件中的 POZNOTE_SESSION_LIFETIME_DAYS 设置，所以这里只显示，不能在本页面修改。使用“保持登录”登录会保持更久，通过 SSO 登录则不会。",
       "attachments_single_line": "将笔记的附件显示在一行中，而不是换成多行。可用手指或鼠标滑动该行；被截断时以“…”结尾。",
-      "attachment_links_as_cards": "通过“链接到附件”在笔记中插入附件时，将其显示为单独一行的卡片（类型图标、名称和下载箭头），而不是正文中的链接。",
+      "attachment_links_as_cards": "将单独占一行的附件链接显示为卡片；句子中的链接带有一个小回形针。笔记内容不会被修改。",
       "remember_me_days": "在登录页面勾选“保持登录”后，登录状态保持多久。仅适用于密码登录。通过 SSO 登录的会话时长以“设置 > 关于”中“会话有效期”卡片显示的为准，该值在 .env 文件中设置。无论此处设置的时长为何，更改密码或在“已连接的设备”中退出某台设备，都会让该设备立即退出登录。"
     },
     "card_notes": {
@@ -639,6 +639,7 @@
       "korean": "韩语",
       "japanese": "日语",
       "catalan": "加泰罗尼亚语",
+      "dutch": "荷兰语",
       "login_page": "登录页面语言:",
       "saved": "语言已保存",
       "save_error": "无法保存语言",
@@ -5141,7 +5142,9 @@
       "medium": "中",
       "high": "高",
       "xhigh": "极高（xhigh）"
-    }
+    },
+    "show_value": "显示值",
+    "hide_value": "隐藏值"
   },
   "ai_settings_user": {
     "title": "我的 AI 助手",
@@ -5573,7 +5576,10 @@
     "frequency_daily_inline": "每天",
     "frequency_weekly_inline": "每周",
     "frequency_monthly_inline": "每 30 天",
-    "frequency_description": "首次自动备份在启用后几分钟内运行,之后按所选间隔运行。",
+    "frequency_description": "自动备份的运行频率。",
+    "hour_label": "时间",
+    "hour_any": "任意时间",
+    "hour_description": "备份会在该整点之后的几分钟内开始，时区为 {{timezone}}。选择任意时间时，首次备份在启用后几分钟内开始，之后每次在上一次之后间隔所选时长开始。",
     "retention_label": "每个用户保留的备份数",
     "retention_description": "每次备份后,较旧的归档会从存储桶中删除。0 表示全部保留。",
     "skip_s3_label": "跳过已存储在 S3 中的附件",
@@ -5755,7 +5761,6 @@
     "page_width": "页面宽度",
     "width_default": "默认",
     "width_reset": "恢复默认",
-    "width_error": "无法保存宽度。",
     "note_width_settings_hint": "在设置中为所有笔记设置默认值"
   },
   "keyboard_shortcuts": {

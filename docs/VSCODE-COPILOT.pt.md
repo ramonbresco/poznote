@@ -10,6 +10,7 @@
   <a href="VSCODE-COPILOT.ko.md">한국어</a> ·
   <a href="VSCODE-COPILOT.ja.md">日本語</a> ·
   <a href="VSCODE-COPILOT.ca.md">Català</a> ·
+  <a href="VSCODE-COPILOT.nl.md">Nederlands</a> ·
   <a href="VSCODE-COPILOT.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->

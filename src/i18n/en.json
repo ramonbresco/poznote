@@ -223,7 +223,7 @@
       "sessions": "See the browsers and devices currently signed in to your account, and sign out the ones you no longer use.",
       "session_lifetime": "How long a sign-in lasts without activity. Set with POZNOTE_SESSION_LIFETIME_DAYS in the .env file, so it is shown here but cannot be changed from this page. Signing in with \"Remember me\" lasts longer; signing in through SSO does not.",
       "attachments_single_line": "Show the note's attachments on a single line instead of wrapping them onto several lines. Slide the line with a finger or the mouse; when it is cut, it ends with \"…\".",
-      "attachment_links_as_cards": "When you insert an attachment into a note with \"Link to attachment\", show it as a card (an icon for its type, its name and a download arrow) on a line of its own, instead of a link in the text.",
+      "attachment_links_as_cards": "Show attachment links that are alone on their line as cards; in a sentence they get a small paperclip. Notes are not changed.",
       "remember_me_days": "How long ticking \"Remember me\" on the login page keeps someone signed in. It only applies to password sign-ins. An SSO sign-in lasts as long as the Session lifetime shown in Settings > About, which is set in the .env file. Changing a password, or signing a device out from Connected devices, signs it out right away, whatever the duration set here."
     },
     "card_notes": {
@@ -366,6 +366,7 @@
       "korean": "Korean",
       "japanese": "Japanese",
       "catalan": "Catalan",
+      "dutch": "Dutch",
       "login_page": "Login page language:",
       "saved": "Language saved",
       "save_error": "Could not save language",
@@ -4701,7 +4702,9 @@
       "medium": "Medium",
       "high": "High",
       "xhigh": "Very high (xhigh)"
-    }
+    },
+    "show_value": "Show the value",
+    "hide_value": "Hide the value"
   },
   "ai_settings_user": {
     "title": "My AI Assistant",
@@ -5149,7 +5152,10 @@
     "frequency_daily_inline": "every day",
     "frequency_weekly_inline": "every week",
     "frequency_monthly_inline": "every 30 days",
-    "frequency_description": "The first automatic backup runs within a few minutes of enabling, the next ones after the chosen interval.",
+    "frequency_description": "How often the automatic backup runs.",
+    "hour_label": "Time",
+    "hour_any": "Any time",
+    "hour_description": "Backups start in the first minutes after this hour, in the {{timezone}} timezone. With Any time, the first one starts a few minutes after enabling, and each next one an interval after the previous one.",
     "retention_label": "Backups to keep per user",
     "retention_description": "Older archives are deleted from the bucket after each backup. 0 keeps everything.",
     "skip_s3_label": "Skip attachments already stored in S3",
@@ -5494,7 +5500,6 @@
     "page_width": "Page width",
     "width_default": "Default",
     "width_reset": "Reset to default",
-    "width_error": "Could not save the width.",
     "note_width_settings_hint": "Set the default for all notes in Settings"
   },
   "keyboard_shortcuts": {

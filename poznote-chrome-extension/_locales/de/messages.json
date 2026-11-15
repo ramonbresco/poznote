@@ -47,9 +47,6 @@
   "modeAppendTitle": {
     "message": "Seite am Ende einer Notiz hinzufügen"
   },
-  "change": {
-    "message": "Ändern"
-  },
   "searchNotes": {
     "message": "Notizen durchsuchen"
   },
@@ -241,5 +238,62 @@
   },
   "pageScreenshot": {
     "message": "Screenshot der Seite"
+  },
+  "menuSaveSelection": {
+    "message": "Auswahl in Poznote speichern"
+  },
+  "menuSaveLink": {
+    "message": "Link in Poznote speichern"
+  },
+  "menuSaveImage": {
+    "message": "Bild in Poznote speichern"
+  },
+  "menuSavePage": {
+    "message": "Link der Seite in Poznote speichern"
+  },
+  "menuSavePageText": {
+    "message": "Seitentext in Poznote speichern"
+  },
+  "cmdOpenPopup": {
+    "message": "Erweiterung öffnen"
+  },
+  "cmdSaveLink": {
+    "message": "Link der Seite speichern"
+  },
+  "cmdSaveText": {
+    "message": "Auswahl oder Seitentext speichern"
+  },
+  "noteTitle": {
+    "message": "Titel"
+  },
+  "tags": {
+    "message": "Tags"
+  },
+  "tagsPlaceholder": {
+    "message": "Durch Kommas getrennt"
+  },
+  "image": {
+    "message": "Bild"
+  },
+  "imageCannotBeSaved": {
+    "message": "Dieses Bild kann nicht gespeichert werden."
+  },
+  "connectFirst": {
+    "message": "Verbinden Sie die Erweiterung zuerst mit Poznote."
+  },
+  "saving": {
+    "message": "Wird gespeichert..."
+  },
+  "shortcutsTitle": {
+    "message": "Tastenkürzel und Kontextmenü"
+  },
+  "rightClickHint": {
+    "message": "Klicken Sie mit der rechten Maustaste auf eine Seite, einen Link, ein Bild oder eine Auswahl, um sie zu speichern, ohne die Erweiterung zu öffnen. Gespeichert wird dort, wo die Erweiterung zuletzt verwendet wurde: in der dort gewählten vorhandenen Notiz oder als neue Notiz im Arbeitsbereich und Ordner oben."
+  },
+  "shortcutNotSet": {
+    "message": "Nicht festgelegt"
+  },
+  "changeShortcuts": {
+    "message": "Tastenkürzel ändern"
   }
 }

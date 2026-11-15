@@ -10,6 +10,7 @@
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
   <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.nl.md">Nederlands</a> ·
   <b>Tiếng Việt</b>
 </p>
 <!-- /lang-selector -->
@@ -35,7 +36,7 @@ Cài đặt trực tiếp tiện ích từ Chrome Web Store: [Cài đặt tiện
 
 Địa chỉ instance hiển thị bên cạnh cũng là một liên kết: nhấp vào đó để mở Poznote trong tab mới, qua giao thức http hoặc https đúng như bạn đã nhập trong cài đặt.
 
-Tiện ích sử dụng ngôn ngữ của Chrome nếu đó là tiếng Anh, tiếng Pháp, tiếng Đức, tiếng Tây Ban Nha, tiếng Bồ Đào Nha, tiếng Nga, tiếng Hàn, tiếng Trung giản thể, tiếng Nhật hoặc tiếng Catalan, và mặc định dùng tiếng Anh cho các ngôn ngữ khác.
+Tiện ích sử dụng ngôn ngữ của Chrome nếu đó là tiếng Anh, tiếng Pháp, tiếng Đức, tiếng Tây Ban Nha, tiếng Bồ Đào Nha, tiếng Nga, tiếng Hàn, tiếng Trung giản thể, tiếng Nhật, tiếng Catalan hoặc tiếng Hà Lan, và mặc định dùng tiếng Anh cho các ngôn ngữ khác.
 
 Mật khẩu tài khoản của bạn cũng dùng được tại đây, nhưng mật khẩu ứng dụng (app password) là lựa chọn an toàn hơn cho tiện ích: nó chỉ gọi được API, không bao giờ mở được giao diện web hay cài đặt tài khoản, chỉ giới hạn trong hồ sơ của riêng bạn, và việc thu hồi mật khẩu này trong Poznote sẽ ngắt kết nối tiện ích ngay mà không ảnh hưởng tới phần còn lại. Xem [Mật khẩu ứng dụng](README.vi.md#mật-khẩu-ứng-dụng) để biết danh sách đầy đủ các giới hạn.
 
@@ -45,9 +46,11 @@ Mật khẩu tài khoản của bạn cũng dùng được tại đây, nhưng m
 
 Nhấp vào biểu tượng tiện ích trên trang bạn muốn lưu, rồi chọn nơi lưu:
 
-- **New note** tạo một ghi chú mới đặt tên theo tiêu đề trang, trong workspace và thư mục đã chọn trong cài đặt.
+- **New note** tạo một ghi chú đặt tên theo tiêu đề trang. Trước khi lưu, bạn có thể đổi **Title**, thêm **Tags** (phân tách bằng dấu phẩy, các tag bạn đã dùng sẽ được gợi ý khi gõ) và chọn workspace cùng thư mục đích ngay trong cửa sổ tiện ích. Lựa chọn này được ghi nhớ: các ghi chú mới tiếp theo cũng sẽ được lưu vào đó.
 - **Existing note** chèn trang vào cuối một ghi chú bạn chọn từ danh sách; danh sách này hiển thị các ghi chú mới nhất và lọc tìm ngay khi bạn gõ. Mặc định danh sách hiển thị các ghi chú trong workspace đã chọn ở cài đặt; bật **All workspaces** để chọn ghi chú ở bất kỳ đâu. Tiện ích ghi nhớ ghi chú đó cho lần lưu tiếp theo, giúp việc gom liên kết vào một danh sách đọc chỉ mất một cú nhấp cho mỗi trang. Cả ghi chú HTML và Markdown đều có thể nhận trang lưu.
 
 Sau đó nhấp **Save link** để lưu địa chỉ trang, hoặc **Screenshot** để lưu địa chỉ kèm ảnh chụp phần đang hiển thị của trang. Thông báo xác nhận có kèm liên kết để mở ngay ghi chú đó trong Poznote.
 
 **Save page text** lưu chính văn bản của trang, đã chuyển sang Markdown, bên dưới địa chỉ trang và ngày lưu: chỉ phần nội dung chính, không có menu, thanh bên hay chân trang, giữ nguyên tiêu đề, danh sách, liên kết, bảng, khối mã và hình ảnh (hình ảnh vẫn là liên kết tới trang web). Nếu bạn chọn một đoạn văn bản trước, nút sẽ đổi thành **Save selection** và chỉ lưu phần đó. Ghi chú mới tạo theo cách này là ghi chú Markdown; khi thêm vào một ghi chú có sẵn, văn bản được viết theo định dạng của ghi chú đó. Vì văn bản được đọc ngay trong trình duyệt, tính năng này hoạt động cả với các trang cần đăng nhập, văn bản vẫn còn trong ghi chú nếu trang biến mất, và tính năng tìm kiếm của Poznote, API cũng như máy chủ MCP đều có thể xử lý nó.
+
+**Không cần mở tiện ích:** nhấp chuột phải vào một trang, một liên kết, một hình ảnh hoặc đoạn văn bản đã chọn rồi chọn mục **Save … to Poznote** tương ứng. Tiện ích sẽ lưu liên kết của trang, liên kết bạn đã nhấp, hình ảnh (được lưu trong ghi chú nếu trang web cho phép tiện ích đọc, nếu không thì hiển thị từ trang web) hoặc đoạn đã chọn dưới dạng Markdown. Phím tắt **Alt+Shift+S** lưu liên kết của trang và **Alt+Shift+O** mở tiện ích; phím tắt thứ ba, dùng để lưu đoạn đã chọn hoặc văn bản của trang, mặc định chưa gán phím. Bạn có thể đổi chúng ở trang `chrome://extensions/shortcuts` của Chrome, cũng mở được từ **Change the shortcuts** trong phần cài đặt của tiện ích. Các lần lưu này đi đến nơi tiện ích được dùng lần cuối: ghi chú đã chọn trong **Existing note** nếu lúc đó bạn dùng thẻ này, nếu không thì một ghi chú mới trong workspace và thư mục của phần cài đặt. Biểu tượng tiện ích hiển thị kết quả, dấu ✓ khi thành công và dấu ! khi thất bại, kèm lý do trong chú thích.

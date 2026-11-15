@@ -616,6 +616,52 @@ select.git-field-input {
     padding-right: 36px;
 }
 
+/* Masked field with an eye button (AI settings: API key, custom headers) */
+.git-field-secret {
+    position: relative;
+}
+
+.git-field-secret .git-field-input {
+    padding-right: 44px;
+}
+
+.git-field-secret-toggle {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--pz-radius-sm);
+    background: transparent;
+    color: var(--pz-text-muted);
+    cursor: pointer;
+}
+
+/* A textarea grows: the eye stays on its first line */
+.git-field-secret-multiline .git-field-secret-toggle {
+    top: 4px;
+    transform: none;
+}
+
+/* No hover colour: the icon itself (eye / eye-off) is the state */
+.git-field-secret-toggle:focus-visible {
+    color: var(--pz-accent-text);
+    outline: 2px solid var(--pz-accent);
+    outline-offset: 1px;
+}
+
+.git-field-secret-toggle .lucide {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
 .git-field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;

@@ -141,23 +141,47 @@
       box-shadow: 0 0 0 3px var(--focus);
     }
 
+    /* New note: its title, its tags and where it goes */
+    .new-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .new-panel input {
+      height: 32px;
+    }
+
+    /* The suggestions open as the user types; Chrome's arrow would read as a menu */
+    .new-panel input::-webkit-calendar-picker-indicator {
+      display: none !important;
+    }
+
     .destination {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       color: var(--text-muted);
-      font-size: 12.5px;
     }
 
-    .destination span {
+    .destination .icon {
+      flex-shrink: 0;
+    }
+
+    .destination select {
       flex: 1;
       min-width: 0;
-      overflow: hidden;
+      height: 32px;
+      font-size: 12.5px;
       text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
-    .destination[hidden],
+    /* A single workspace leaves the whole row to the folder */
+    .destination select[hidden] {
+      display: none;
+    }
+
+    .new-panel[hidden],
     .append-panel[hidden] {
       display: none;
     }
@@ -378,10 +402,21 @@
       </button>
     </div>
 
-    <div class="destination" id="newPanel">
-      <svg class="icon"><use href="#i-folder"/></svg>
-      <span id="destLabel"></span>
-      <button class="link-btn" id="changeDest" data-i18n="change"></button>
+    <div class="new-panel" id="newPanel">
+      <div class="field">
+        <label for="noteTitle" data-i18n="noteTitle"></label>
+        <input type="text" id="noteTitle" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="noteTags" data-i18n="tags"></label>
+        <input type="text" id="noteTags" list="tagSuggestions" data-i18n-placeholder="tagsPlaceholder" autocomplete="off" spellcheck="false">
+        <datalist id="tagSuggestions"></datalist>
+      </div>
+      <div class="destination">
+        <svg class="icon"><use href="#i-folder"/></svg>
+        <select id="destWorkspace" data-i18n-aria-label="workspace" data-i18n-title="workspace"></select>
+        <select id="destFolder" data-i18n-aria-label="folder" data-i18n-title="folder"></select>
+      </div>
     </div>
 
     <div class="append-panel" id="appendPanel" hidden>

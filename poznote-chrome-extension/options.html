@@ -166,6 +166,43 @@
       color: var(--success);
     }
 
+    /* Shortcuts and right-click menu */
+    .card p.hint {
+      margin: 0;
+    }
+
+    .shortcuts {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .shortcuts li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .shortcuts kbd {
+      flex-shrink: 0;
+      padding: 2px 8px;
+      border: 1px solid var(--border-strong);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      background: var(--surface);
+      font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      white-space: nowrap;
+    }
+
+    .shortcuts .unset {
+      color: var(--text-subtle);
+      font-size: 12.5px;
+    }
+
     .footer {
       color: var(--text-muted);
       font-size: 13px;
@@ -235,6 +272,15 @@
           <select id="folderSelect"></select>
         </div>
         <div class="saved-note" id="savedNote" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="card" id="shortcutsCard">
+      <h2><span data-i18n="shortcutsTitle"></span></h2>
+      <p class="hint" data-i18n="rightClickHint"></p>
+      <ul class="shortcuts" id="shortcutList"></ul>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="changeShortcuts" data-i18n="changeShortcuts"></button>
       </div>
     </section>
 

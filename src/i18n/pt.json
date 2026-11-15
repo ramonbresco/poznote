@@ -572,7 +572,7 @@
       "sessions": "Veja os navegadores e dispositivos conectados à sua conta agora e encerre a sessão dos que você não usa mais.",
       "session_lifetime": "Quanto tempo um login dura sem atividade. Definido com POZNOTE_SESSION_LIFETIME_DAYS no arquivo .env, por isso aparece aqui mas não pode ser alterado nesta página. Entrar com \"Lembrar-me\" dura mais; entrar por SSO, não.",
       "attachments_single_line": "Mostra os anexos da nota numa única linha em vez de os repartir por várias. Deslize a linha com o dedo ou o rato; quando está cortada, termina com «…».",
-      "attachment_links_as_cards": "Ao inserir um anexo numa nota com «Link para anexo», mostra-o como um cartão (um ícone conforme o tipo, o nome e uma seta de transferência) numa linha própria, em vez de uma ligação no texto.",
+      "attachment_links_as_cards": "Mostra como cartão as ligações para anexos sozinhas na sua linha; numa frase, recebem um pequeno clipe. As notas não são alteradas.",
       "remember_me_days": "Por quanto tempo marcar \"Lembrar-me\" na página de login mantém alguém conectado. Vale apenas para os logins com senha. Um login SSO dura o tempo indicado pelo cartão Duração das sessões, em Configurações > Sobre, que é definido no arquivo .env. Mudar uma senha, ou desconectar um dispositivo em Dispositivos conectados, o desconecta na hora, seja qual for a duração definida aqui."
     },
     "card_notes": {
@@ -640,6 +640,7 @@
       "korean": "Coreano",
       "japanese": "Japonês",
       "catalan": "Catalão",
+      "dutch": "Holandês",
       "login_page": "Idioma da página de login:",
       "saved": "Idioma salvo",
       "save_error": "Não foi possível salvar o idioma",
@@ -5045,7 +5046,9 @@
       "medium": "Médio",
       "high": "Alto",
       "xhigh": "Muito alto (xhigh)"
-    }
+    },
+    "show_value": "Mostrar o valor",
+    "hide_value": "Ocultar o valor"
   },
   "ai_settings_user": {
     "title": "O meu assistente de IA",
@@ -5477,7 +5480,10 @@
     "frequency_daily_inline": "todos os dias",
     "frequency_weekly_inline": "toda semana",
     "frequency_monthly_inline": "a cada 30 dias",
-    "frequency_description": "O primeiro backup automático é executado poucos minutos após a ativação, os próximos após o intervalo escolhido.",
+    "frequency_description": "Com que frequência o backup automático é executado.",
+    "hour_label": "Horário",
+    "hour_any": "Qualquer horário",
+    "hour_description": "Os backups começam nos primeiros minutos após este horário, no fuso horário {{timezone}}. Com Qualquer horário, o primeiro começa poucos minutos após a ativação, e cada um dos seguintes um intervalo após o anterior.",
     "retention_label": "Backups a manter por usuário",
     "retention_description": "Arquivos mais antigos são excluídos do bucket após cada backup. 0 mantém tudo.",
     "skip_s3_label": "Ignorar anexos já armazenados no S3",
@@ -5659,7 +5665,6 @@
     "page_width": "Largura da página",
     "width_default": "Predefinido",
     "width_reset": "Repor o valor predefinido",
-    "width_error": "Não foi possível guardar a largura.",
     "note_width_settings_hint": "Definir o padrão para todas as notas nas Configurações"
   },
   "keyboard_shortcuts": {

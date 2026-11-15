@@ -10,6 +10,7 @@
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
   <b>Català</b> ·
+  <a href="CHROME-EXTENSION.nl.md">Nederlands</a> ·
   <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -35,7 +36,7 @@ Per canviar-ho més endavant, feu clic a la icona de l'engranatge de la part sup
 
 L'adreça de la instància, que es mostra al costat, és un enllaç: feu-hi clic per obrir el Poznote en una pestanya nova, amb http o https tal com l'heu escrita als paràmetres.
 
-L'extensió es mostra en la llengua del Chrome si és l'anglès, el francès, l'alemany, el castellà, el portuguès, el rus, el coreà, el xinès simplificat, el japonès o el català, i en anglès en els altres casos.
+L'extensió es mostra en la llengua del Chrome si és l'anglès, el francès, l'alemany, el castellà, el portuguès, el rus, el coreà, el xinès simplificat, el japonès, el català o el neerlandès, i en anglès en els altres casos.
 
 La contrasenya del compte també funciona aquí, però una contrasenya d'aplicació és la millor credencial per a una extensió: només dona accés a l'API, mai a la interfície web ni als paràmetres del compte, es limita al vostre perfil i, si la revoqueu al Poznote, l'extensió queda desconnectada sense canviar res més. Vegeu [Contrasenyes d'aplicació](README.ca.md#contrasenyes-daplicació) per a la llista completa de límits.
 
@@ -45,9 +46,11 @@ La contrasenya del compte també funciona aquí, però una contrasenya d'aplicac
 
 Feu clic a la icona de l'extensió a la pàgina que voleu conservar i trieu on va:
 
-- **Nota nova** crea una nota amb el nom de la pàgina, a l'espai de treball i la carpeta triats als paràmetres.
+- **Nota nova** crea una nota amb el nom de la pàgina. Abans de desar, podeu canviar-ne el **Títol**, afegir-hi **Etiquetes** (separades per comes, mentre escriviu se us proposen les etiquetes que ja feu servir) i triar l'espai de treball i la carpeta de destinació, directament a la finestra de l'extensió. Aquesta tria es recorda: les notes noves següents també hi van.
 - **Nota existent** afegeix la pàgina al final d'una nota que trieu a la llista, que mostra les notes més recents i les cerca a mesura que escriviu. Llista les notes de l'espai de treball triat als paràmetres; activeu **Tots els espais de treball** per triar una nota de qualsevol lloc. L'extensió recorda aquesta nota per a la pàgina següent, de manera que recollir enllaços en una sola llista de lectura costa un clic per pàgina. Les notes HTML i Markdown poden rebre pàgines.
 
 Després, feu clic a **Desa l'enllaç** per desar l'adreça de la pàgina, o a **Captura de pantalla** per desar l'adreça seguida d'una imatge de la part visible de la pàgina. La confirmació inclou un enllaç que obre la nota al Poznote.
 
 **Desa el text** desa el text de la mateixa pàgina, convertit a Markdown, sota la seva adreça i la data en què s'ha desat: només el contingut principal, sense menús, barres laterals ni peus de pàgina, amb els títols, les llistes, els enllaços, les taules, els blocs de codi i les imatges (les imatges continuen sent enllaços al lloc). Si abans seleccioneu un text, el botó passa a ser **Desa la selecció** i desa només aquesta part. Una nota nova creada així és una nota Markdown; afegit a una nota existent, el text s'escriu en el format d'aquesta nota. Com que el text es llegeix al navegador, funciona amb pàgines que demanen iniciar sessió, es queda a la nota encara que la pàgina desaparegui, i la cerca del Poznote, l'API i el servidor MCP hi poden treballar.
+
+**Sense obrir l'extensió:** feu clic amb el botó dret en una pàgina, un enllaç, una imatge o un text seleccionat i trieu l'entrada **Desa … al Poznote** corresponent. Desa l'enllaç de la pàgina, l'enllaç on heu fet clic, la imatge (guardada a la nota si el lloc deixa que l'extensió la llegeixi, si no es mostra des del lloc) o la selecció en Markdown. La drecera de teclat **Alt+Shift+S** desa l'enllaç de la pàgina i **Alt+Shift+O** obre l'extensió; una tercera drecera, que desa la selecció o el text de la pàgina, no té cap tecla per defecte. Canvieu-les a la pàgina `chrome://extensions/shortcuts` del Chrome, a la qual també s'arriba des de **Canvia les dreceres** als paràmetres de l'extensió. Aquests desaments van on es va fer servir l'extensió per última vegada: a la nota triada a **Nota existent** si era la pestanya en ús, si no en una nota nova a l'espai de treball i la carpeta dels paràmetres. La icona de l'extensió mostra el resultat, un ✓ quan ha funcionat i un ! quan no, amb el motiu al rètol de la icona.

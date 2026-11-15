@@ -20,6 +20,7 @@ require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/users/db_master.php';
 require_once __DIR__ . '/storage/S3Client.php';
 require_once __DIR__ . '/backup_zip.php';
+require_once __DIR__ . '/lib/backup-schedule.php';
 
 class S3BackupService {
     const KEY_PREFIX = 'backups/';
@@ -64,6 +65,10 @@ class S3BackupService {
             'secret_key' => (string)getGlobalSetting('s3_backup_secret_key', ''),
             'path_style' => getGlobalSetting('s3_backup_path_style', '1') === '1',
             'frequency' => $frequency,
+            // Hour of the day the automatic backup starts (null = any time),
+            // read in the timezone of the administrator who chose it (#1780)
+            'hour' => poznoteNormalizeBackupHour(getGlobalSetting('s3_backup_hour', '')),
+            'timezone' => poznoteNormalizeBackupTimezone(getGlobalSetting('s3_backup_timezone', '')),
             'retention' => $retention,
             'skip_s3_attachments' => getGlobalSetting('s3_backup_skip_s3_attachments', '0') === '1',
             'user_ids' => $userIds,
@@ -119,7 +124,21 @@ class S3BackupService {
         }
         $lastRun = (int)getGlobalSetting('s3_backup_last_auto_run', '0');
         $interval = self::FREQUENCIES[$config['frequency']];
-        return time() >= $lastRun + $interval - 150;
+        return poznoteBackupScheduleIsDue(time(), $lastRun, $interval, $config['hour'], $config['timezone']);
+    }
+
+    /**
+     * When the next automatic backup starts, for the settings page, or null
+     * when it cannot be told (schedule off, or never run without a chosen hour).
+     */
+    public static function nextAutoRun(?array $config = null): ?int {
+        $config = $config ?? self::getConfig();
+        if (!$config['enabled'] || !$config['auto_enabled'] || !self::isConfigured($config)) {
+            return null;
+        }
+        $lastRun = (int)getGlobalSetting('s3_backup_last_auto_run', '0');
+        $interval = self::FREQUENCIES[$config['frequency']];
+        return poznoteBackupScheduleNextRun(time(), $lastRun, $interval, $config['hour'], $config['timezone']);
     }
 
     /**

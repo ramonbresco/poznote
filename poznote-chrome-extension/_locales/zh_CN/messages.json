@@ -47,9 +47,6 @@
   "modeAppendTitle": {
     "message": "将页面添加到笔记末尾"
   },
-  "change": {
-    "message": "更改"
-  },
   "searchNotes": {
     "message": "搜索笔记"
   },
@@ -241,5 +238,62 @@
   },
   "pageScreenshot": {
     "message": "页面截图"
+  },
+  "menuSaveSelection": {
+    "message": "将所选内容保存到 Poznote"
+  },
+  "menuSaveLink": {
+    "message": "将链接保存到 Poznote"
+  },
+  "menuSaveImage": {
+    "message": "将图片保存到 Poznote"
+  },
+  "menuSavePage": {
+    "message": "将页面链接保存到 Poznote"
+  },
+  "menuSavePageText": {
+    "message": "将页面正文保存到 Poznote"
+  },
+  "cmdOpenPopup": {
+    "message": "打开扩展"
+  },
+  "cmdSaveLink": {
+    "message": "保存页面链接"
+  },
+  "cmdSaveText": {
+    "message": "保存所选内容或页面正文"
+  },
+  "noteTitle": {
+    "message": "标题"
+  },
+  "tags": {
+    "message": "标签"
+  },
+  "tagsPlaceholder": {
+    "message": "用逗号分隔"
+  },
+  "image": {
+    "message": "图片"
+  },
+  "imageCannotBeSaved": {
+    "message": "无法保存此图片。"
+  },
+  "connectFirst": {
+    "message": "请先将扩展连接到 Poznote。"
+  },
+  "saving": {
+    "message": "正在保存..."
+  },
+  "shortcutsTitle": {
+    "message": "键盘快捷键和右键菜单"
+  },
+  "rightClickHint": {
+    "message": "右键点击页面、链接、图片或所选内容即可保存，无需打开扩展。内容会保存到上次使用扩展时的位置：当时选择的现有笔记，或上方工作区和文件夹中的新笔记。"
+  },
+  "shortcutNotSet": {
+    "message": "未设置"
+  },
+  "changeShortcuts": {
+    "message": "更改快捷键"
   }
 }

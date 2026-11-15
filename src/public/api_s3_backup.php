@@ -187,6 +187,8 @@ switch ($action) {
             'frequency' => $config['frequency'],
             'retention' => $config['retention'],
             'last_auto_run' => (int)getGlobalSetting('s3_backup_last_auto_run', '0'),
+            'hour' => $config['hour'],
+            'next_auto_run' => S3BackupService::nextAutoRun($config),
             'last_run' => is_array($summary) ? $summary : null,
             'users' => $users,
         ]);

@@ -157,3 +157,25 @@ html body a.attachment-card[href]:has(+ .attachment-card-preview) {
     width: min(var(--pz-attachment-preview-size, 180px), 100%);
     margin: 4px 0;
 }
+
+/* A link to an attachment that is shown as a link, whatever the "Attachment
+   links as cards" setting (a link in a sentence, which never becomes a card,
+   and every attachment link once the setting is off, cards included) gets a
+   small paperclip before it, so that it reads as a file and not as a web
+   link. Rich text note and the Markdown preview: the link itself; Live
+   preview and Rich text views of a Markdown note: the mark CodeMirror puts on
+   the link's text (build/markdown-editor/src/live-preview.js). A link around
+   an image or a player, and the links of a preview tile, are left alone.
+   Nothing is added to the note: the icon is drawn here. */
+.noteentry a[href^="/api/v1/notes/"][href*="/attachments/"]:not(.attachment-card, .note-attachment-preview a, :has(img, video, audio, iframe))::before,
+.noteentry .cm-live-link[data-live-href^="/api/v1/notes/"][data-live-href*="/attachments/"]::before {
+    content: "";
+    display: inline-block;
+    width: 0.85em;
+    height: 0.85em;
+    margin-right: 0.2em;
+    vertical-align: -0.08em;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3C!--%20%40license%20lucide-static%20v0.575.0%20-%20ISC%20--%3E%20%3Csvg%20class%3D%27lucide%20lucide-paperclip%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27currentColor%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20%3E%20%3Cpath%20d%3D%27m16%206-8.414%208.586a2%202%200%200%200%202.829%202.829l8.414-8.586a4%204%200%201%200-5.657-5.657l-8.379%208.551a6%206%200%201%200%208.485%208.485l8.379-8.551%27%20%2F%3E%20%3C%2Fsvg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3C!--%20%40license%20lucide-static%20v0.575.0%20-%20ISC%20--%3E%20%3Csvg%20class%3D%27lucide%20lucide-paperclip%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27currentColor%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20%3E%20%3Cpath%20d%3D%27m16%206-8.414%208.586a2%202%200%200%200%202.829%202.829l8.414-8.586a4%204%200%201%200-5.657-5.657l-8.379%208.551a6%206%200%201%200%208.485%208.485l8.379-8.551%27%20%2F%3E%20%3C%2Fsvg%3E") center / contain no-repeat;
+}

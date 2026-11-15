@@ -1140,14 +1140,79 @@ function fillAttachmentCardPreviewSizes(noteId) {
 }
 window.poznoteAttachmentCardPreviewHtml = attachmentCardPreviewHtml;
 
+/**
+ * "Attachment links as cards" also draws the attachment links already in a
+ * note as cards, not only the ones "Link to attachment" inserts from now on.
+ * Only a link alone on its line: one in a sentence stays a link, a card there
+ * would break the line. The link gets the card's classes plus
+ * attachment-card-auto while it is shown; stripSearchHighlights() (js/notes.js)
+ * and the server's sanitizer take them off, so the note keeps its plain link
+ * and turning the setting off gives the links back.
+ */
+var ATTACHMENT_LINK_HREF = /^\/api\/v1\/notes\/\d+\/attachments\/[A-Za-z0-9_-]+$/;
+
+function isLoneAttachmentLink(link) {
+    if (!ATTACHMENT_LINK_HREF.test(link.getAttribute('href') || '')) return false;
+    if (link.children.length || (link.textContent || '').trim() === '') return false;
+    var line = link.parentNode;
+    if (!line || !/^(DIV|P)$/.test(line.nodeName) || line.classList.contains('noteentry')) return false;
+    for (var child = line.firstChild; child; child = child.nextSibling) {
+        if (child === link) continue;
+        if (child.nodeType === 3) {
+            if (child.nodeValue.replace(/[\s​﻿]/g, '') !== '') return false;
+        } else if (child.nodeType === 1) {
+            if (!child.matches('br, .attachment-card-preview')) return false;
+        }
+    }
+    return true;
+}
+
+window.poznoteAttachmentCardKind = attachmentCardKind;
+
 (function () {
     var showPreviews = !!(window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.inlineAttachmentPreviews === true);
+    var linksAsCards = !!(window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.attachmentLinksAsCards === true);
+
+    // The setting off: a card written in a note is drawn as the plain link it
+    // stands for, the way the setting on draws a plain link as a card. The
+    // card's classes become attachment-card-off and attachment-card-off-KIND
+    // while it is shown, so no card rule or behaviour reaches it, and
+    // stripSearchHighlights() (js/notes.js) and the server's sanitizer put the
+    // card back before any save: the note keeps its card.
+    var cardsOff = !!(window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.attachmentLinksAsCards === false);
+
+    function demoteAttachmentCards(root) {
+        if (!cardsOff) return;
+        var cards = (root || document).querySelectorAll('.noteentry[data-note-type="note"] a.attachment-card[href]:not(.attachment-card-auto)');
+        Array.prototype.forEach.call(cards, function (card) {
+            var kind = 'file';
+            Array.prototype.slice.call(card.classList).forEach(function (name) {
+                if (name !== 'attachment-card' && name.indexOf('attachment-card-') !== 0) return;
+                if (name !== 'attachment-card') kind = name.slice('attachment-card-'.length);
+                card.classList.remove(name);
+            });
+            card.classList.add('attachment-card-off', 'attachment-card-off-' + kind);
+            card.removeAttribute('contenteditable');
+        });
+    }
+
+    function promoteAttachmentLinks(root) {
+        if (!linksAsCards) return;
+        var links = (root || document).querySelectorAll('.noteentry[data-note-type="note"] a[href^="/api/v1/notes/"]:not(.attachment-card)');
+        Array.prototype.forEach.call(links, function (link) {
+            if (link.closest('.attachment-card-preview, .note-attachment-preview')) return;
+            if (!isLoneAttachmentLink(link)) return;
+            link.classList.add('attachment-card', 'attachment-card-' + attachmentCardKind(link.textContent.trim()), 'attachment-card-auto');
+        });
+    }
 
     // Rich text notes. Every card is one block the caret never enters: a card
     // written before the cards carried contenteditable="false" gets it here,
     // otherwise a click on its line puts the caret in its name. Then, with
     // the previews on, the preview goes right after each card that has one.
     function decorate(root) {
+        demoteAttachmentCards(root);
+        promoteAttachmentLinks(root);
         var cards = (root || document).querySelectorAll('.noteentry[data-note-type="note"] a.attachment-card[href]');
         Array.prototype.forEach.call(cards, function (card) {
             if (card.getAttribute('contenteditable') !== 'false') card.setAttribute('contenteditable', 'false');

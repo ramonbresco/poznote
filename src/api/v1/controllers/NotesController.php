@@ -3128,6 +3128,7 @@ class NotesController {
         '템플릿',
         'テンプレート',
         'plantilles',
+        'sjablonen', 'sjabloon',
     ];
 
     private static function isTemplateContainerName(string $name): bool {

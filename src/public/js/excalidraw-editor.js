@@ -42,7 +42,8 @@
         'zh-cn': 'zh-CN',
         'ko': 'ko-KR',
         'ja': 'ja-JP',
-        'ca': 'ca-ES'
+        'ca': 'ca-ES',
+        'nl': 'nl-NL'
     };
 
     // Translation texts

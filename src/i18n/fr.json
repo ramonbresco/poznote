@@ -571,7 +571,7 @@
       "sessions": "Voir les navigateurs et les appareils actuellement connectés à votre compte, et déconnecter ceux que vous n’utilisez plus.",
       "session_lifetime": "Combien de temps une connexion dure sans activité. Réglée avec POZNOTE_SESSION_LIFETIME_DAYS dans le fichier .env, donc affichée ici sans pouvoir être modifiée depuis cette page. Une connexion avec « Se souvenir de moi » dure plus longtemps ; une connexion par SSO, non.",
       "attachments_single_line": "Affiche les pièces jointes de la note sur une seule ligne au lieu de les répartir sur plusieurs lignes. Faites glisser la ligne avec le doigt ou la souris ; quand elle est coupée, elle se termine par « … ».",
-      "attachment_links_as_cards": "Quand vous insérez une pièce jointe dans une note avec « Lien vers une pièce jointe », l'affiche en carte (une icône selon son type, son nom et une flèche de téléchargement) sur sa propre ligne, au lieu d'un lien dans le texte.",
+      "attachment_links_as_cards": "Affiche en carte les liens vers une pièce jointe seuls sur leur ligne ; dans une phrase, ils reçoivent un petit trombone. Les notes ne sont pas modifiées.",
       "remember_me_days": "Combien de temps cocher « Se souvenir de moi » sur la page de connexion garde quelqu'un connecté. Ne vaut que pour les connexions par mot de passe. Une connexion SSO dure le temps indiqué par la carte Durée des sessions, dans Paramètres > À propos, qui se règle dans le fichier .env. Changer un mot de passe, ou déconnecter un appareil depuis Appareils connectés, le déconnecte tout de suite, quelle que soit la durée réglée ici."
     },
     "card_notes": {
@@ -639,6 +639,7 @@
       "korean": "Coréen",
       "japanese": "Japonais",
       "catalan": "Catalan",
+      "dutch": "Néerlandais",
       "login_page": "Langue de la page de connexion :",
       "saved": "Langue enregistrée",
       "save_error": "Impossible d'enregistrer la langue",
@@ -5149,7 +5150,9 @@
       "medium": "Moyen",
       "high": "Élevé",
       "xhigh": "Très élevé (xhigh)"
-    }
+    },
+    "show_value": "Afficher la valeur",
+    "hide_value": "Masquer la valeur"
   },
   "ai_settings_user": {
     "title": "Mon assistant IA",
@@ -5581,7 +5584,10 @@
     "frequency_daily_inline": "tous les jours",
     "frequency_weekly_inline": "toutes les semaines",
     "frequency_monthly_inline": "tous les 30 jours",
-    "frequency_description": "La première sauvegarde automatique démarre quelques minutes après l'activation, les suivantes après l'intervalle choisi.",
+    "frequency_description": "Fréquence de la sauvegarde automatique.",
+    "hour_label": "Heure",
+    "hour_any": "N'importe quand",
+    "hour_description": "Les sauvegardes démarrent dans les premières minutes après cette heure, dans le fuseau horaire {{timezone}}. Avec N'importe quand, la première démarre quelques minutes après l'activation, et chaque suivante un intervalle après la précédente.",
     "retention_label": "Sauvegardes à conserver par utilisateur",
     "retention_description": "Les archives plus anciennes sont supprimées du bucket après chaque sauvegarde. 0 conserve tout.",
     "skip_s3_label": "Ignorer les pièces jointes déjà stockées dans S3",
@@ -5763,7 +5769,6 @@
     "page_width": "Largeur de la page",
     "width_default": "Par défaut",
     "width_reset": "Revenir à la valeur par défaut",
-    "width_error": "Impossible d'enregistrer la largeur.",
     "note_width_settings_hint": "Définir la largeur par défaut de toutes les notes dans les paramètres"
   },
   "keyboard_shortcuts": {

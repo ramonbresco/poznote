@@ -10,6 +10,7 @@
   <a href="README.ko.md">한국어</a> ·
   <a href="README.ja.md">日本語</a> ·
   <a href="README.ca.md">Català</a> ·
+  <a href="README.nl.md">Nederlands</a> ·
   <b>Tiếng Việt</b>
 </p>
 <!-- /lang-selector -->
@@ -690,7 +691,7 @@ Poznote có nhiều loại ghi chú khác nhau, mỗi loại phù hợp với m�
 &nbsp;
 
 *   **Chức năng:** Tái sử dụng nội dung viết sẵn để chuẩn hóa tài liệu, từ một ghi chú hoàn chỉnh đến một đoạn mẫu ngắn.
-*   **Thiết lập:** Đặt các ghi chú muốn tái sử dụng vào một thư mục tên `Templates` (có thể chia thêm thư mục con). Một workspace tên `Templates` cũng hoạt động tương tự và xuất hiện ở mọi workspace khác. Tên này cũng được nhận diện theo ngôn ngữ giao diện (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`).
+*   **Thiết lập:** Đặt các ghi chú muốn tái sử dụng vào một thư mục tên `Templates` (có thể chia thêm thư mục con). Một workspace tên `Templates` cũng hoạt động tương tự và xuất hiện ở mọi workspace khác. Tên này cũng được nhận diện theo ngôn ngữ giao diện (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`, `Sjablonen`).
 *   **Chèn vào ghi chú:** Gõ `/template` (hoặc `/` kèm tiêu đề mẫu) trong ghi chú rich text hoặc Markdown rồi chọn mẫu: nội dung mẫu sẽ được dán tại vị trí con trỏ và tự động chuyển đổi định dạng nếu mẫu khác loại với ghi chú đang mở.
 *   **Tạo ghi chú mới từ mẫu:** Nhân bản ghi chú mẫu, hoặc nhân bản cả thư mục `Templates` để khởi đầu một dự án với cấu trúc thư mục dựng sẵn.
 </details>
@@ -1130,7 +1131,7 @@ Cấu hình tại **Settings > Server Backups** (chỉ dành cho quản trị vi
 - **Cấu hình:** Thư mục lưu sao lưu và thời hạn lưu giữ, dùng chung cho cả sao lưu tự động và thủ công.
   - **Backup folder:** Đường dẫn tuyệt đối trên server (tức bên trong container nếu dùng Docker). Nếu để trống, tệp nén sẽ được lưu vào `data/backups`, vốn đã nằm trong volume dữ liệu. Thư mục sẽ được tự tạo nếu cần và phải có quyền ghi cho user chạy web server.
   - **Retention:** Chỉ giữ lại N bản nén gần nhất cho mỗi người dùng, các bản cũ hơn sẽ bị xóa khỏi thư mục sau mỗi lượt sao lưu (nhập 0 để giữ tất cả).
-- **Sao lưu tự động:** Khi bật, một worker chạy nền sẽ sao lưu các người dùng được đánh dấu trong ô này theo chu kỳ đã chọn (hằng ngày, hằng tuần hoặc hằng tháng). Mặc định tất cả đều được đánh dấu, và khi toàn bộ đang được đánh dấu thì các tài khoản mới tạo về sau cũng tự động được đưa vào. Lượt chạy đầu tiên diễn ra trong vài phút sau khi bật, các lượt tiếp theo chạy đúng theo chu kỳ đã chọn. Khung hiển thị kết quả lượt chạy tự động gần nhất và thời điểm lượt kế tiếp.
+- **Sao lưu tự động:** Khi bật, một worker chạy nền sẽ sao lưu các người dùng được đánh dấu trong ô này theo chu kỳ đã chọn (hằng ngày, hằng tuần hoặc hằng tháng). Mặc định tất cả đều được đánh dấu, và khi toàn bộ đang được đánh dấu thì các tài khoản mới tạo về sau cũng tự động được đưa vào. Có thể chọn một giờ trong ngày (ví dụ 03:00, theo múi giờ của quản trị viên đặt nó): khi đó mỗi lượt sao lưu bắt đầu trong vài phút đầu sau giờ đó, và một giờ bị lỡ (server dừng) sẽ được chạy bù một lần ở lần khởi động tiếp theo. Nếu không chọn giờ, lượt chạy đầu tiên diễn ra trong vài phút sau khi bật, các lượt tiếp theo chạy đúng theo chu kỳ đã chọn. Khung hiển thị kết quả lượt chạy tự động gần nhất và thời điểm lượt kế tiếp.
 - **Sao lưu thủ công:** Khung sao lưu thủ công có bộ hộp kiểm người dùng riêng (mặc định không chọn ai) và nút "Back up now" để lưu ngay một bản nén mới cho từng người dùng đã chọn, lần lượt từng người kèm thanh tiến độ riêng. Lựa chọn này không được lưu lại và không làm thay đổi cấu hình sao lưu tự động (kể cả khi sao lưu tự động đang tắt).
 - **Duyệt danh sách:** Trang liệt kê các bản nén hiện có trong thư mục. Menu thao tác trên từng bản nén cho phép tải về, khôi phục vào đúng tài khoản sở hữu nó, hoặc xóa bỏ.
 - **Quyền truy cập cho người dùng:** Các bản nén nằm trong thư mục con `{user id}/` bên trong thư mục sao lưu. Ba công tắc (mặc định đều tắt) giúp mở tính năng này cho người dùng:
@@ -1221,7 +1222,7 @@ Cấu hình tại **Settings > S3 Backups** (chỉ dành cho quản trị viên)
 - **Cấu hình:** Endpoint URL, region, bucket, access key, secret key và kiểu địa chỉ path-style, kèm nút kiểm tra kết nối tích hợp sẵn.
 - **Chọn người dùng:** Các hộp kiểm quyết định những người dùng nào được đưa vào danh sách sao lưu. Mặc định tất cả đều được chọn, và khi toàn bộ đang được chọn thì các tài khoản mới tạo sau này cũng tự động được bao gồm.
 - **Sao lưu thủ công:** Nút "Back up now" tải lên ngay một bản nén mới cho từng người dùng đã chọn, lần lượt từng người kèm tiến độ riêng. Tính năng này chạy được ngay khi kết nối đã cấu hình xong, kể cả khi sao lưu tự động đang tắt.
-- **Sao lưu tự động:** Khi bật, worker chạy nền sẽ sao lưu các người dùng đã chọn theo chu kỳ thiết lập (hằng ngày, hằng tuần hoặc hằng tháng). Lượt chạy đầu tiên diễn ra trong vài phút sau khi bật, các lượt tiếp theo theo đúng chu kỳ đã chọn.
+- **Sao lưu tự động:** Khi bật, worker chạy nền sẽ sao lưu các người dùng đã chọn theo chu kỳ thiết lập (hằng ngày, hằng tuần hoặc hằng tháng). Có thể chọn một giờ trong ngày (ví dụ 03:00, theo múi giờ của quản trị viên đặt nó): khi đó mỗi lượt sao lưu bắt đầu trong vài phút đầu sau giờ đó, và một giờ bị lỡ (server dừng) sẽ được chạy bù một lần ở lần khởi động tiếp theo. Nếu không chọn giờ, lượt chạy đầu tiên diễn ra trong vài phút sau khi bật, các lượt tiếp theo chạy đúng theo chu kỳ đã chọn.
 - **Lưu giữ (Retention):** Chỉ giữ lại N bản nén gần nhất cho mỗi người dùng, các bản cũ hơn bị xóa khỏi bucket sau mỗi lượt sao lưu (nhập 0 để giữ tất cả).
 - **Duyệt danh sách:** Trang hiển thị các bản nén đang nằm trên bucket kèm thao tác tải về và xóa.
 - **Khôi phục:** Các bản nén nằm tại `backups/{user id}/` trong bucket và có thể khôi phục trực tiếp qua trang [Khôi phục / Nhập dữ liệu](#khôi-phục--nhập-dữ-liệu) thông thường.
@@ -1239,51 +1240,54 @@ Khi tệp đính kèm được lưu trên S3 (Lưu trữ tệp đính kèm S3), 
 
 Để tự động lên lịch sao lưu qua API, bạn có thể dùng script `backup-poznote.sh` đi kèm sẵn.
 
-**QUAN TRỌNG:** Chỉ quản trị viên mới có thể tạo bản sao lưu qua API.
-Hãy dùng mật khẩu hiện tại của hồ sơ quản trị mà bạn dùng để xác thực. Trên bản cài mới, đó là mật khẩu quản trị mặc định (`admin`) cho đến khi được đổi trong Poznote. Một khi đã đặt mật khẩu tùy chỉnh, bạn bắt buộc phải dùng mật khẩu đó cho các lệnh gọi API.
+Mọi tài khoản đều có thể sao lưu hồ sơ của chính mình, bằng mật khẩu tài khoản hoặc bằng mật khẩu ứng dụng. Muốn sao lưu hồ sơ của người dùng khác thì cần mật khẩu của một tài khoản quản trị. Khi xác thực hai yếu tố được bật, chỉ mật khẩu tài khoản sẽ bị từ chối. Khi đó hãy tạo một mật khẩu ứng dụng trong **Settings > My Account > App passwords** và dùng nó thay thế. Mật khẩu ứng dụng chỉ sao lưu được hồ sơ của chính nó, không bao giờ sao lưu được hồ sơ của người dùng khác, kể cả khi nó thuộc về quản trị viên. Để sao lưu theo lịch các hồ sơ khác khi đã bật xác thực hai yếu tố, hãy dùng [Sao lưu định kỳ vào một thư mục trên server](#local-backups).
 
 **Vị trí script:** `backup-poznote.sh` nằm trong thư mục `tools` của kho mã nguồn Poznote.
 
-**Cách dùng dành cho quản trị viên:**
-
-Quản trị viên có thể sao lưu bất kỳ hồ sơ người dùng nào mà **không cần biết user ID**, chỉ cần tên đăng nhập:
-
-```bash
-# Backup your own profile
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
-
-# Backup another user's profile (Nina)
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
-```
-
 **Cú pháp sử dụng:**
 ```bash
-bash backup-poznote.sh '<poznote_url>' '<admin_username>' '<admin_password>' '<target_username>' '<backup_directory>' '<retention_count>'
+bash backup-poznote.sh '<poznote_url>' '<username>' '<password>' '<target_username>' '<backup_directory>' '<retention_count>'
 ```
+
+**Ví dụ:**
+
+```bash
+# Sao lưu hồ sơ của chính bạn
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
+
+# Quản trị viên sao lưu hồ sơ của người dùng khác (Nina), chỉ cần tên đăng nhập
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
+
+# Mật khẩu ứng dụng sao lưu hồ sơ của chính nó (dùng được với xác thực hai yếu tố)
+bash backup-poznote.sh 'https://poznote.example.com' 'Nina' 'pzn_...' 'Nina' '/backups' '30'
+```
+
+**Không để mật khẩu trên dòng lệnh:**
+
+Mật khẩu viết trên dòng lệnh có thể bị bất kỳ người dùng nào của máy đọc được trong danh sách tiến trình, và còn lưu lại trong crontab và lịch sử shell. Hãy truyền `-` thay cho mật khẩu, script sẽ đọc nó từ dòng đầu tiên của tệp do `POZNOTE_PASSWORD_FILE` chỉ định (chỉ mình bạn đọc được, `chmod 600`), hoặc từ biến môi trường `POZNOTE_PASSWORD`.
 
 **Ví dụ với crontab (quản trị viên sao lưu cho Nina):**
 
 ```bash
 # Add to crontab for automated backups twice daily
-0 0,12 * * * bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/root/backups' '30'
+0 0,12 * * * POZNOTE_PASSWORD_FILE=/root/.poznote-password bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' '-' 'Nina' '/root/backups' '30'
 ```
 
 **Giải thích tham số:**
 - `'https://poznote.example.com'` - URL instance Poznote của bạn
-- `'admin'` - Tên đăng nhập quản trị để xác thực (bắt buộc phải là quản trị viên)
-- `'admin_password'` - Mật khẩu quản trị hiện tại của hồ sơ API (mặc định là `admin` cho đến khi đổi, sau đó dùng mật khẩu mới)
+- `'admin'` - Tên đăng nhập để xác thực (phải là quản trị viên để sao lưu hồ sơ khác)
+- `'-'` - Mật khẩu. `-` đọc nó từ `POZNOTE_PASSWORD_FILE` hoặc `POZNOTE_PASSWORD`, nếu không thì ghi trực tiếp mật khẩu tài khoản hoặc mật khẩu ứng dụng (`pzn_...`). Sao lưu hồ sơ khác cần mật khẩu tài khoản của quản trị viên
 - `'Nina'` - Tên đăng nhập mục tiêu cần sao lưu
 - `'/root/backups'` - Thư mục gốc nơi lưu các bản sao lưu (sẽ tạo thư mục con `backups-poznote-<username>`)
 - `'30'` - Số lượng bản sao lưu cần giữ lại (các bản cũ hơn tự động bị xóa)
 
 **Quy trình sao lưu hoạt động ra sao:**
 
-1. Script xác thực bằng thông tin quản trị
-2. Tự động tra cứu user ID từ tên đăng nhập
-3. Tạo một bản sao lưu thông qua API
-4. Gọi Poznote REST API v1 (`POST /api/v1/backups` kèm header `X-User-ID`)
-5. Tải tệp ZIP sao lưu về máy cục bộ vào `backups-poznote-<username>/`
-6. Tự động quản lý thời hạn lưu giữ (chỉ giữ lại đúng số lượng bản mới nhất đã chỉ định)
+1. Script xác thực bằng mật khẩu tài khoản hoặc mật khẩu ứng dụng được cung cấp
+2. Với hồ sơ của chính bạn, script dùng ID của hồ sơ đã xác thực; với hồ sơ khác, script tra ID người dùng từ tên đăng nhập (chỉ quản trị viên)
+3. Tạo bản sao lưu qua REST API v1 của Poznote (`POST /api/v1/backups` với header `X-User-ID`)
+4. Tải tệp ZIP sao lưu về máy cục bộ vào `backups-poznote-<username>/`
+5. Tự động quản lý thời hạn lưu giữ (chỉ giữ lại đúng số lượng bản mới nhất đã chỉ định)
 
 **Lưu ý:** Bản sao lưu của mỗi người dùng được lưu trong các thư mục riêng biệt (`backups-poznote-Nina`, `backups-poznote-Tim`, v.v.)
 

@@ -207,16 +207,24 @@ $aiLocalHost = aiChatLocalDefaultHost();
 
                     <div class="git-field-group" id="ai-key-group">
                         <label class="git-field-label" for="ai_api_key" id="ai-key-label"><?php echo t_h('ai_settings.api_key_label', [], 'API key (optional)'); ?></label>
-                        <input type="password" name="ai_api_key" id="ai_api_key" class="git-field-input"
-                               value="<?php echo $aiConfig['ai_chat_api_key'] !== '' ? '••••••••' : ''; ?>"
-                               placeholder="sk-..." autocomplete="off">
+                        <div class="git-field-secret">
+                            <input type="password" name="ai_api_key" id="ai_api_key" class="git-field-input"
+                                   value="<?php echo $aiConfig['ai_chat_api_key'] !== '' ? '••••••••' : ''; ?>"
+                                   data-secret-value="<?php echo htmlspecialchars($aiConfig['ai_chat_api_key'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"
+                                   placeholder="sk-..." autocomplete="off" spellcheck="false">
+                            <?php echo poznoteAiSecretToggleButton('ai_api_key'); ?>
+                        </div>
                         <span class="label-desc" id="ai-key-desc"><?php echo t_h('ai_settings.api_key_description', [], 'Leave empty for a local Ollama server. Required for cloud providers.'); ?></span>
                     </div>
 
                     <div class="git-field-group" id="ai-headers-group">
                         <label class="git-field-label" for="ai_headers"><?php echo t_h('ai_settings.headers_label', [], 'Custom headers (optional)'); ?></label>
-                        <textarea name="ai_headers" id="ai_headers" class="git-field-input" rows="3" spellcheck="false" autocomplete="off"
-                                  placeholder="x-litellm-customer-id: poznote"><?php echo htmlspecialchars($aiHeadersText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></textarea>
+                        <div class="git-field-secret git-field-secret-multiline">
+                            <textarea name="ai_headers" id="ai_headers" class="git-field-input" rows="3" spellcheck="false" autocomplete="off"
+                                      data-secret-headers="<?php echo poznoteAiSecretHeadersAttr(poznoteAiInstanceConfig()['headers']); ?>"
+                                      placeholder="x-litellm-customer-id: poznote"><?php echo htmlspecialchars($aiHeadersText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></textarea>
+                            <?php echo poznoteAiSecretToggleButton('ai_headers'); ?>
+                        </div>
                         <span class="label-desc"><?php echo t_h('ai_settings.headers_description', [], 'One header per line, written as Name: value, sent with every request to this server. Useful behind a gateway such as LiteLLM or OpenRouter, or for an Anthropic organization key that needs anthropic-workspace-id. Saved values are hidden: leave a line as it is to keep its value.'); ?></span>
                     </div>
 

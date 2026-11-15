@@ -10,6 +10,7 @@
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
   <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.nl.md">Nederlands</a> ·
   <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -35,7 +36,7 @@ Pour modifier ces réglages plus tard, cliquez sur la roue dentée en haut de l'
 
 L'adresse de votre instance, affichée juste à côté, est un lien : cliquez dessus pour ouvrir Poznote dans un nouvel onglet, en http ou en https comme vous l'avez saisie dans les réglages.
 
-L'extension s'affiche dans la langue de Chrome si c'est l'anglais, le français, l'allemand, l'espagnol, le portugais, le russe, le coréen, le chinois simplifié, le japonais ou le catalan, et en anglais sinon.
+L'extension s'affiche dans la langue de Chrome si c'est l'anglais, le français, l'allemand, l'espagnol, le portugais, le russe, le coréen, le chinois simplifié, le japonais, le catalan ou le néerlandais, et en anglais sinon.
 
 Le mot de passe de votre compte fonctionne aussi ici, mais un mot de passe d'application est un meilleur choix pour une extension : il n'atteint que l'API, jamais l'interface web ni les paramètres de votre compte, il est limité à votre propre profil, et le révoquer dans Poznote coupe l'accès de l'extension sans rien changer d'autre. Consultez [Mots de passe d'application](README.fr.md#mots-de-passe-dapplication) pour la liste complète des limites.
 
@@ -45,9 +46,11 @@ Le mot de passe de votre compte fonctionne aussi ici, mais un mot de passe d'app
 
 Cliquez sur l'icône de l'extension sur la page à garder, puis choisissez sa destination :
 
-- **New note** crée une note qui porte le nom de la page, dans l'espace de travail et le dossier choisis dans les réglages.
+- **New note** crée une note qui porte le nom de la page. Avant d'enregistrer, vous pouvez modifier son **Title**, ajouter des **Tags** (séparés par des virgules, les tags que vous utilisez déjà sont proposés pendant la saisie) et choisir l'espace de travail et le dossier où elle va, directement dans la fenêtre de l'extension. Ce choix est retenu : les nouvelles notes suivantes y vont aussi.
 - **Existing note** ajoute la page à la fin d'une note choisie dans la liste, qui affiche vos dernières notes et les recherche au fil de la frappe. Elle montre les notes de l'espace de travail choisi dans les réglages ; activez **All workspaces** pour choisir une note dans n'importe quel espace. L'extension retient cette note pour la page suivante : rassembler des liens dans une même liste de lecture ne demande qu'un clic par page. Les notes HTML et Markdown peuvent recevoir des pages.
 
 Cliquez ensuite sur **Save link** pour enregistrer l'adresse de la page, ou sur **Screenshot** pour enregistrer l'adresse suivie d'une image de la partie visible de la page. La confirmation contient un lien qui ouvre la note dans Poznote.
 
 **Save page text** enregistre le texte de la page elle-même, converti en Markdown, sous son adresse et la date d'enregistrement : le contenu principal seulement, sans menus, colonnes latérales ni pied de page, avec ses titres, listes, liens, tableaux, blocs de code et images (les images restent des liens vers le site). Sélectionnez d'abord du texte et le bouton devient **Save selection**, qui n'enregistre que cette partie. Une nouvelle note créée ainsi est une note Markdown ; ajouté à une note existante, le texte est écrit dans le format de cette note. Le texte étant lu dans votre navigateur, cela marche pour les pages qui demandent une connexion, il reste dans la note si la page disparaît, et la recherche de Poznote, l'API et le serveur MCP peuvent l'exploiter.
+
+**Sans ouvrir l'extension :** faites un clic droit sur une page, un lien, une image ou un texte sélectionné et choisissez l'entrée **Save … to Poznote** correspondante. Elle enregistre le lien de la page, le lien cliqué, l'image (stockée dans la note quand le site laisse l'extension la lire, sinon affichée depuis le site) ou la sélection en Markdown. Le raccourci clavier **Alt+Shift+S** enregistre le lien de la page et **Alt+Shift+O** ouvre l'extension ; un troisième raccourci, qui enregistre la sélection ou le texte de la page, n'a pas de touche par défaut. Modifiez-les sur la page `chrome://extensions/shortcuts` de Chrome, accessible aussi depuis **Change the shortcuts** dans les paramètres de l'extension. Ces enregistrements vont là où l'extension a servi la dernière fois : la note choisie sous **Existing note** quand c'était cet onglet qui était actif, sinon une nouvelle note dans l'espace de travail et le dossier des paramètres. L'icône de l'extension indique le résultat, un ✓ quand c'est réussi et un ! sinon, avec la raison dans son infobulle.

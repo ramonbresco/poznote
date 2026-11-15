@@ -216,13 +216,20 @@ const TASKLIST_EMBED_LINE_REGEX = /^\s*<div\s+class="tasklist-embed"[^>]*>.*<\/d
 // An attachment card ("Attachment links as cards", js/attachments.js): the
 // parser rebuilds it, or leaves the line as text when it is not one
 const ATTACHMENT_CARD_LINE_REGEX = /^\s*<a\s+class="attachment-card[^"]*"\s+href="[^"]*"\s*>[^<]*<\/a>\s*$/i
+// A plain link to an attachment alone on its line, drawn as a card too while
+// "Attachment links as cards" is on (the rule of _MD_ATTACHMENT_LINK_LINE in
+// js/markdown-parser.js, which builds the card); the source keeps its link
+const ATTACHMENT_LINK_LINE_REGEX = /^ {0,3}\[(?:[^\]\n\\]|\\.)+\]\(\/api\/v1\/notes\/\d+\/attachments\/[A-Za-z0-9_-]+\)[ \t]*$/
+const attachmentLinksAsCards = () => !!(window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.attachmentLinksAsCards === true)
 
 function renderMediaLine(text) {
   if (typeof window.parseMarkdown !== 'function') return null
   try {
     const template = document.createElement('template')
     template.innerHTML = window.parseMarkdown(text)
-    return template.content.querySelector('iframe, audio, video, .tasklist-embed, .embed-blocked, .attachment-card-line')
+    // A card drawn as a plain link, "Attachment links as cards" off: the link
+    // alone, the paragraph around it is the preview's
+    return template.content.querySelector('iframe, audio, video, .tasklist-embed, .embed-blocked, .attachment-card-line, .attachment-card-line-off > a')
   } catch (error) {
     return null
   }
@@ -1194,6 +1201,12 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
   }
 
   function decorateLink(node) {
+    // A link drawn as an attachment card: the whole line is the card's widget
+    // (decorateMedia), nothing to decorate inside it
+    if (attachmentLinksAsCards()) {
+      const line = doc.lineAt(node.from)
+      if (ATTACHMENT_LINK_LINE_REGEX.test(line.text) && !touchesLines(line.from, line.to)) return
+    }
     const marks = node.node.getChildren('LinkMark')
     const url = node.node.getChild('URL')
     if (marks.length < 4 || !url) return
@@ -1236,7 +1249,11 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
   // <u>, <span style> and ==highlight== are not part of the Markdown grammar:
   // they are paired here, one line at a time. Other tags stay as text, which
   // is also how the preview shows them.
-  function decorateInlineHtml(line) {
+  // keepSource: a row of a table shown as its source. The text keeps its
+  // colour, but the tags stay in sight: the row is monospace text whose pipes
+  // line up, and hiding 50 characters of tag pulled the rest of the row out
+  // of its column (#1781).
+  function decorateInlineHtml(line, keepSource) {
     const text = line.text
     if (text.indexOf('<') === -1 && text.indexOf('==') === -1) return
 
@@ -1274,7 +1291,7 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
         if (from > opening.to) decorations.push(decoration.range(opening.to, from))
         // An empty pair just written around the caret is handled as one, below
         if (emptyPair && opening.from === emptyPair.from) continue
-        if (!touches(opening.from, to)) {
+        if (!keepSource && !touches(opening.from, to)) {
           hide(opening.from, opening.to)
           hide(from, to)
         }
@@ -1289,7 +1306,7 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
         const to = from + match[0].length
         if (isInsideCode(from)) continue
         decorations.push(highlightDecoration.range(from + 2, to - 2))
-        if (!touches(from, to)) {
+        if (!keepSource && !touches(from, to)) {
           hide(from, from + 2)
           hide(to - 2, to)
         }
@@ -1482,8 +1499,9 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
   }
 
   function decorateMedia(line) {
-    if (line.text.indexOf('<') === -1) return
-    if (!MEDIA_LINE_REGEX.test(line.text) && !TASKLIST_EMBED_LINE_REGEX.test(line.text) &&
+    const attachmentLink = attachmentLinksAsCards() && ATTACHMENT_LINK_LINE_REGEX.test(line.text)
+    if (!attachmentLink && line.text.indexOf('<') === -1) return
+    if (!attachmentLink && !MEDIA_LINE_REGEX.test(line.text) && !TASKLIST_EMBED_LINE_REGEX.test(line.text) &&
       !ATTACHMENT_CARD_LINE_REGEX.test(line.text)) return
     if (isInsideCodeBlock(line.from) || touchesLines(line.from, line.to)) return
     if (!renderMediaLine(line.text)) return
@@ -1547,8 +1565,9 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
   }
 
   // [[Title]]: the title reads as a link to the note of that name, struck
-  // through when there is none (a click then offers to create it)
-  function decorateNoteReferences(line) {
+  // through when there is none (a click then offers to create it). In a
+  // table shown as its source, the brackets stay (keepSource, see above).
+  function decorateNoteReferences(line, keepSource) {
     const text = line.text
     if (text.indexOf('[[') === -1) return
     NOTE_REFERENCE_REGEX.lastIndex = 0
@@ -1578,7 +1597,7 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
         mark = Decoration.mark({ class: 'cm-live-link' })
       }
       decorations.push(mark.range(from + 2, to - 2))
-      if (!touches(from, to)) {
+      if (!keepSource && !touches(from, to)) {
         hide(from, from + 2)
         hide(to - 2, to)
       }
@@ -1587,6 +1606,12 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
 
   const decoratedToggleLines = new Set()
   let lastHtmlLine = -1
+  // The lines that are drawn as a table (renderedBlocksField) while the caret
+  // is away, and are its source while it is in it. As source, nothing in
+  // them may change width: the Markdown inside a cell is left raw already
+  // (the Table node is not entered below), the per-line pieces follow.
+  const tableBlocks = getRenderedBlocks(doc).filter(block => block.kind === 'table')
+  const isTableLine = line => tableBlocks.some(block => line.from >= block.from && line.from <= block.to)
 
   for (const visible of view.visibleRanges) {
     tree.iterate({
@@ -1774,12 +1799,18 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
     for (let pos = visible.from; pos <= visible.to;) {
       const line = doc.lineAt(pos)
       if (line.number > lastHtmlLine) {
-        decorateAlignment(line)
-        decorateMedia(line)
-        decorateMath(line)
-        decorateInlineHtml(line)
-        decorateBareUrls(line)
-        decorateNoteReferences(line)
+        if (isTableLine(line)) {
+          decorateInlineHtml(line, true)
+          decorateBareUrls(line)
+          decorateNoteReferences(line, true)
+        } else {
+          decorateAlignment(line)
+          decorateMedia(line)
+          decorateMath(line)
+          decorateInlineHtml(line, false)
+          decorateBareUrls(line)
+          decorateNoteReferences(line, false)
+        }
         lastHtmlLine = line.number
       }
       pos = line.to + 1
@@ -4147,6 +4178,30 @@ export function wrapSelectionChanges(state, from, to, prefix, suffix) {
   return wrapped
 }
 
+// A row of a table: the text of each of its cells, as the Markdown parser
+// reads them (an escaped pipe stays in its cell). The separator row has none.
+// null when the line is not part of a table.
+function tableCellRanges(state, line) {
+  const tree = syntaxTree(state)
+  let inTable = false
+  for (let node = tree.resolveInner(line.from, 1); node; node = node.parent) {
+    if (node.name === 'Table') {
+      inTable = true
+      break
+    }
+  }
+  if (!inTable) return null
+  const cells = []
+  tree.iterate({
+    from: line.from,
+    to: line.to,
+    enter(node) {
+      if (node.name === 'TableCell' && node.from >= line.from && node.to <= line.to) cells.push({ from: node.from, to: node.to })
+    }
+  })
+  return cells
+}
+
 function wrapSelectionLines(state, from, to, prefix, suffix, onOnly) {
   let off = 0
   let on = 0
@@ -4162,114 +4217,129 @@ function wrapSelectionLines(state, from, to, prefix, suffix, onOnly) {
 
   for (let number = firstLine; number <= lastLine; number++) {
     const line = state.doc.line(number)
-    if (!line.text.trim() || UNWRAPPABLE_LINE_REGEX.test(line.text)) continue
+    if (!line.text.trim()) continue
+    // A table row is formatted cell by cell, around the text of each cell the
+    // selection covers: wrapped whole, the row would lose its pipes (#1781)
+    const cells = tableCellRanges(state, line)
+    if (!cells && UNWRAPPABLE_LINE_REGEX.test(line.text)) continue
     let inCode = false
     for (let node = syntaxTree(state).resolveInner(line.from, 1); node; node = node.parent) {
       if (node.name === 'FencedCode' || node.name === 'CodeBlock') inCode = true
     }
     if (inCode) continue
 
-    let contentFrom = line.from + LINE_BLOCK_PREFIX_REGEX.exec(line.text)[0].length
-    let contentTo = line.to
-    const aligned = ALIGNED_LINE_REGEX.exec(line.text)
-    if (aligned) {
-      contentFrom = line.from + aligned[1].length
-      contentTo = line.to - aligned[4].length
-    }
-    let start = Math.max(from, contentFrom)
-    let end = Math.min(to, contentTo)
-    while (start < end && /\s/.test(state.sliceDoc(start, start + 1))) start++
-    while (end > start && /\s/.test(state.sliceDoc(end - 1, end))) end--
-    if (start >= end) continue
-
-    const constructs = findInlineConstructs(state, line)
-    let handled = false
-    // A colour over text that already has one replaces it: the spans of the
-    // same kind that lie inside the selection go
-    // (a highlight is one thing, whether ==yellow== or a span of another
-    // colour: either replaces the other. And the piece goes too when the
-    // selection is its text, between markers that are not shown.)
-    const family = spanProperty || (prefix === '==' ? 'background-color' : '')
-    if (family) {
-      for (const construct of constructs) {
-        if (spanFamilyOf(state, construct) !== family) continue
-        if (prefix === '==' && state.sliceDoc(construct.from, construct.openTo) === '==') continue
-        const whole = selectsWholeConstruct(construct, start, end)
-        if (!whole && (construct.from < start || construct.to > end)) continue
-        if (whole) {
-          start = construct.from
-          end = construct.to
-        }
-        changes.push({ from: construct.from, to: construct.openTo }, { from: construct.closeFrom, to: construct.to })
-        construct.melted = true
+    let segments = cells
+    if (!segments) {
+      let contentFrom = line.from + LINE_BLOCK_PREFIX_REGEX.exec(line.text)[0].length
+      let contentTo = line.to
+      const aligned = ALIGNED_LINE_REGEX.exec(line.text)
+      if (aligned) {
+        contentFrom = line.from + aligned[1].length
+        contentTo = line.to - aligned[4].length
       }
+      segments = [{ from: contentFrom, to: contentTo }]
     }
-    if (isMarker) {
-      const same = constructs.filter(construct =>
-        state.sliceDoc(construct.from, construct.openTo).toLowerCase() === prefix && state.sliceDoc(construct.closeFrom, construct.to).toLowerCase() === suffix)
-      // The selection with its own markers, or text inside the format: off
-      // (its markers are not shown: the selection may start or end on either
-      // side of them, it is the whole piece all the same)
-      const exact = same.find(construct =>
-        start >= construct.from && start <= construct.openTo && end >= construct.closeFrom && end <= construct.to)
-      const inside = exact || same.find(construct => construct.openTo <= start && end <= construct.closeFrom)
-      if (inside && onOnly) {
-        stretches.push({ from: start, to: end })
-        handled = true
-      } else if (inside) {
-        off++
-        const innerStart = exact ? inside.openTo : start
-        const innerEnd = exact ? inside.closeFrom : end
-        if (innerStart === inside.openTo) changes.push({ from: inside.from, to: inside.openTo })
-        else changes.push({ from: innerStart, insert: suffix })
-        if (innerEnd === inside.closeFrom) changes.push({ from: inside.closeFrom, to: inside.to })
-        else changes.push({ from: innerEnd, insert: prefix })
-        stretches.push({ from: innerStart, to: innerEnd })
-        handled = true
-      } else {
-        // Overlapping pieces of the same format melt into the new one
-        for (const construct of same) {
-          if (construct.from >= end || construct.to <= start) continue
-          start = Math.min(start, construct.from)
-          end = Math.max(end, construct.to)
+    const lineConstructs = findInlineConstructs(state, line)
+
+    for (const segment of segments) {
+      let start = Math.max(from, segment.from)
+      let end = Math.min(to, segment.to)
+      while (start < end && /\s/.test(state.sliceDoc(start, start + 1))) start++
+      while (end > start && /\s/.test(state.sliceDoc(end - 1, end))) end--
+      if (start >= end) continue
+
+      // (in a table, what lies in another cell is no business of this one)
+      const constructs = cells
+        ? lineConstructs.filter(construct => construct.from >= segment.from && construct.to <= segment.to)
+        : lineConstructs
+      let handled = false
+      // A colour over text that already has one replaces it: the spans of the
+      // same kind that lie inside the selection go
+      // (a highlight is one thing, whether ==yellow== or a span of another
+      // colour: either replaces the other. And the piece goes too when the
+      // selection is its text, between markers that are not shown.)
+      const family = spanProperty || (prefix === '==' ? 'background-color' : '')
+      if (family) {
+        for (const construct of constructs) {
+          if (spanFamilyOf(state, construct) !== family) continue
+          if (prefix === '==' && state.sliceDoc(construct.from, construct.openTo) === '==') continue
+          const whole = selectsWholeConstruct(construct, start, end)
+          if (!whole && (construct.from < start || construct.to > end)) continue
+          if (whole) {
+            start = construct.from
+            end = construct.to
+          }
           changes.push({ from: construct.from, to: construct.openTo }, { from: construct.closeFrom, to: construct.to })
           construct.melted = true
         }
       }
-    }
-    if (handled) continue
-
-    // A piece of another format the selection only cuts into is taken whole,
-    // or the two formats would cross instead of nesting
-    for (let widened = true; widened;) {
-      widened = false
-      for (const construct of constructs) {
-        if (construct.melted) continue
-        const startsInside = start > construct.from && start < construct.to
-        const endsInside = end > construct.from && end < construct.to
-        if (startsInside && endsInside) {
-          // Inside the piece: kept between its markers
-          if (start < construct.openTo) {
-            start = construct.openTo
-            widened = true
+      if (isMarker) {
+        const same = constructs.filter(construct =>
+          state.sliceDoc(construct.from, construct.openTo).toLowerCase() === prefix && state.sliceDoc(construct.closeFrom, construct.to).toLowerCase() === suffix)
+        // The selection with its own markers, or text inside the format: off
+        // (its markers are not shown: the selection may start or end on either
+        // side of them, it is the whole piece all the same)
+        const exact = same.find(construct =>
+          start >= construct.from && start <= construct.openTo && end >= construct.closeFrom && end <= construct.to)
+        const inside = exact || same.find(construct => construct.openTo <= start && end <= construct.closeFrom)
+        if (inside && onOnly) {
+          stretches.push({ from: start, to: end })
+          handled = true
+        } else if (inside) {
+          off++
+          const innerStart = exact ? inside.openTo : start
+          const innerEnd = exact ? inside.closeFrom : end
+          if (innerStart === inside.openTo) changes.push({ from: inside.from, to: inside.openTo })
+          else changes.push({ from: innerStart, insert: suffix })
+          if (innerEnd === inside.closeFrom) changes.push({ from: inside.closeFrom, to: inside.to })
+          else changes.push({ from: innerEnd, insert: prefix })
+          stretches.push({ from: innerStart, to: innerEnd })
+          handled = true
+        } else {
+          // Overlapping pieces of the same format melt into the new one
+          for (const construct of same) {
+            if (construct.from >= end || construct.to <= start) continue
+            start = Math.min(start, construct.from)
+            end = Math.max(end, construct.to)
+            changes.push({ from: construct.from, to: construct.openTo }, { from: construct.closeFrom, to: construct.to })
+            construct.melted = true
           }
-          if (end > construct.closeFrom) {
-            end = construct.closeFrom
-            widened = true
-          }
-        } else if (startsInside) {
-          // (from its text to past its end, "**[word**]": the whole piece)
-          start = construct.from
-          widened = true
-        } else if (endsInside) {
-          end = construct.to
-          widened = true
         }
       }
+      if (handled) continue
+
+      // A piece of another format the selection only cuts into is taken whole,
+      // or the two formats would cross instead of nesting
+      for (let widened = true; widened;) {
+        widened = false
+        for (const construct of constructs) {
+          if (construct.melted) continue
+          const startsInside = start > construct.from && start < construct.to
+          const endsInside = end > construct.from && end < construct.to
+          if (startsInside && endsInside) {
+            // Inside the piece: kept between its markers
+            if (start < construct.openTo) {
+              start = construct.openTo
+              widened = true
+            }
+            if (end > construct.closeFrom) {
+              end = construct.closeFrom
+              widened = true
+            }
+          } else if (startsInside) {
+            // (from its text to past its end, "**[word**]": the whole piece)
+            start = construct.from
+            widened = true
+          } else if (endsInside) {
+            end = construct.to
+            widened = true
+          }
+        }
+      }
+      changes.push({ from: start, insert: prefix }, { from: end, insert: suffix })
+      stretches.push({ from: start, to: end })
+      on++
     }
-    changes.push({ from: start, insert: prefix }, { from: end, insert: suffix })
-    stretches.push({ from: start, to: end })
-    on++
   }
   if (!stretches.length) return null
   changes.sort((a, b) => a.from - b.from || (a.to || a.from) - (b.to || b.from))

@@ -10,6 +10,7 @@
   <a href="README.ko.md">한국어</a> ·
   <a href="README.ja.md">日本語</a> ·
   <a href="README.ca.md">Català</a> ·
+  <a href="README.nl.md">Nederlands</a> ·
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -690,7 +691,7 @@ Poznote bietet mehrere Notiztypen, die jeweils auf eine andere Arbeitsweise zuge
 &nbsp;
 
 *   **Funktion:** Verwenden Sie vorformulierte Inhalte wieder, um Ihre Dokumentation zu vereinheitlichen, von der vollständigen Notiz bis zum kurzen Textbaustein.
-*   **Einrichtung:** Legen Sie die Notizen, die Sie wiederverwenden möchten, in einen Ordner namens `Templates` (Unterordner sind erlaubt). Ein Arbeitsbereich namens `Templates` funktioniert ebenfalls und steht in jedem Arbeitsbereich zur Verfügung. Der Name wird auch in der Sprache der Oberfläche erkannt (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`).
+*   **Einrichtung:** Legen Sie die Notizen, die Sie wiederverwenden möchten, in einen Ordner namens `Templates` (Unterordner sind erlaubt). Ein Arbeitsbereich namens `Templates` funktioniert ebenfalls und steht in jedem Arbeitsbereich zur Verfügung. Der Name wird auch in der Sprache der Oberfläche erkannt (`Modèles`, `Vorlagen`, `Plantillas`, `Modelos`, `Шаблоны`, `模板`, `템플릿`, `テンプレート`, `Plantilles`, `Sjablonen`).
 *   **In eine Notiz einfügen:** Tippen Sie in einer Rich-Text- oder Markdown-Notiz `/template` (oder `/` gefolgt vom Titel der Vorlage) und wählen Sie eine Vorlage aus: Ihr Inhalt wird an der Cursorposition eingefügt und umgewandelt, falls Vorlage und Notiz nicht vom selben Typ sind.
 *   **Neue Notiz aus einer Vorlage:** Duplizieren Sie die Vorlagennotiz, oder duplizieren Sie einen ganzen `Templates`-Ordner, um ein Projekt mit einer fertigen Ordnerstruktur zu beginnen.
 </details>
@@ -1129,7 +1130,7 @@ Konfigurieren Sie sie unter **Einstellungen > Sicherungen auf dem Server** (nur 
 - **Sicherungsordner**: Ein absoluter Pfad auf dem Server (mit Docker: im Container). Bleibt das Feld leer, landen die Archive in `data/backups`, das bereits zum Daten-Volume gehört. Der Ordner wird bei Bedarf angelegt und muss für den Benutzer des Webservers beschreibbar sein.
 - **Benutzerauswahl**: Kontrollkästchen legen fest, welche Benutzer gesichert werden. Standardmäßig sind alle ausgewählt, und solange alle ausgewählt sind, werden neue Konten automatisch einbezogen.
 - **Manuelle Sicherungen**: Die Schaltfläche „Jetzt sichern“ speichert für jeden ausgewählten Benutzer ein neues Archiv, einen Benutzer nach dem anderen, mit Fortschritt pro Benutzer. Sie funktioniert auch, wenn die automatischen Sicherungen aus sind.
-- **Automatische Sicherungen**: Sind sie aktiviert, sichert ein Hintergrund-Worker die ausgewählten Benutzer in der gewählten Häufigkeit (täglich, wöchentlich oder monatlich). Der erste Lauf erfolgt wenige Minuten nach dem Aktivieren, die nächsten nach dem gewählten Intervall. Die Seite zeigt das Ergebnis des letzten Laufs und das Datum des nächsten.
+- **Automatische Sicherungen**: Sind sie aktiviert, sichert ein Hintergrund-Worker die ausgewählten Benutzer in der gewählten Häufigkeit (täglich, wöchentlich oder monatlich). Es lässt sich eine Uhrzeit wählen (zum Beispiel 03:00, in der Zeitzone des Administrators, der sie festlegt): Jede Sicherung startet dann in den ersten Minuten nach dieser Uhrzeit, und eine verpasste Uhrzeit (Server gestoppt) wird beim nächsten Start einmal nachgeholt. Ohne Uhrzeit erfolgt der erste Lauf wenige Minuten nach dem Aktivieren, die nächsten nach dem gewählten Intervall. Die Seite zeigt das Ergebnis des letzten Laufs und das Datum des nächsten.
 - **Aufbewahrung**: Pro Benutzer werden nur die N neuesten Archive behalten, ältere werden nach jeder Sicherung aus dem Ordner gelöscht (0 behält alles).
 - **Durchsuchen**: Die Seite listet die Archive im Ordner auf, mit Aktionen zum Herunterladen und Löschen.
 - **Wiederherstellung**: Archive werden im Sicherungsordner unter `{Benutzer-ID}/` gespeichert und können mit der Standardseite [Wiederherstellen / Importieren](#wiederherstellen--importieren) wiederhergestellt werden.
@@ -1216,7 +1217,7 @@ Konfigurieren Sie sie unter **Einstellungen > S3-Sicherungen** (nur Administrato
 - **Konfiguration**: Endpunkt-URL, Region, Bucket, Access Key, Secret Key und Path-Style-Adressierung, mit integriertem Verbindungstest.
 - **Benutzerauswahl**: Über Kontrollkästchen wählen Sie, welche Benutzer gesichert werden. Standardmäßig sind alle ausgewählt, und solange alle ausgewählt sind, werden neue Konten automatisch einbezogen.
 - **Manuelle Sicherungen**: Die Schaltfläche „Jetzt sichern“ lädt für jeden ausgewählten Benutzer ein neues Archiv hoch, einen Benutzer nach dem anderen, mit Fortschrittsanzeige pro Benutzer. Sie funktioniert, sobald die Verbindung konfiguriert ist, auch wenn die automatischen Sicherungen ausgeschaltet sind.
-- **Automatische Sicherungen**: Wenn aktiviert, sichert ein Hintergrundprozess die ausgewählten Benutzer im gewählten Rhythmus (täglich, wöchentlich oder monatlich). Der erste Durchlauf erfolgt wenige Minuten nach dem Aktivieren, die folgenden nach dem gewählten Intervall.
+- **Automatische Sicherungen**: Wenn aktiviert, sichert ein Hintergrundprozess die ausgewählten Benutzer im gewählten Rhythmus (täglich, wöchentlich oder monatlich). Es lässt sich eine Uhrzeit wählen (zum Beispiel 03:00, in der Zeitzone des Administrators, der sie festlegt): Jede Sicherung startet dann in den ersten Minuten nach dieser Uhrzeit, und eine verpasste Uhrzeit (Server gestoppt) wird beim nächsten Start einmal nachgeholt. Ohne Uhrzeit erfolgt der erste Lauf wenige Minuten nach dem Aktivieren, die nächsten nach dem gewählten Intervall.
 - **Aufbewahrung**: Pro Benutzer werden nur die N neuesten Archive aufbewahrt, ältere werden nach jeder Sicherung aus dem Bucket gelöscht (0 bewahrt alles auf).
 - **Durchsuchen**: Die Seite listet die aktuell im Bucket vorhandenen Archive mit Aktionen zum Herunterladen und Löschen auf.
 - **Wiederherstellung**: Archive werden im Bucket unter `backups/{user id}/` gespeichert und können über die normale Seite [Wiederherstellen / Importieren](#wiederherstellen--importieren) wiederhergestellt werden.
@@ -1234,51 +1235,54 @@ Werden Anhänge in S3 gespeichert (S3-Speicher für Anhänge), sind sie standard
 
 Für automatisierte, zeitgesteuerte Sicherungen über die API können Sie das mitgelieferte Skript `backup-poznote.sh` verwenden.
 
-**WICHTIG:** Nur Administratoren können über die API Sicherungen erstellen.
-Verwenden Sie das aktuelle Passwort des Administratorprofils, mit dem Sie sich authentifizieren. Bei einer Neuinstallation ist das das Standard-Administratorpasswort (`admin`), bis es in Poznote geändert wird. Sobald ein eigenes Passwort festgelegt ist, wird dieses für API-Aufrufe benötigt.
+Jedes Konto kann sein eigenes Profil sichern, mit dem Kontopasswort oder mit einem App-Passwort. Um das Profil eines anderen Benutzers zu sichern, ist das Kontopasswort eines Administrators nötig. Ist die Zwei-Faktor-Authentifizierung aktiviert, wird das Kontopasswort allein abgelehnt. Erstellen Sie dann unter **Einstellungen > Mein Konto > App-Passwörter** ein App-Passwort und verwenden Sie es stattdessen. Ein App-Passwort kann nur sein eigenes Profil sichern, nie das eines anderen Benutzers, auch wenn es einem Administrator gehört. Um andere Profile mit aktivierter Zwei-Faktor-Authentifizierung nach Zeitplan zu sichern, verwenden Sie stattdessen [Geplante Sicherungen in einen Ordner auf dem Server](#local-backups).
 
 **Speicherort des Skripts:** `backup-poznote.sh` im Ordner `tools` des Poznote-Repositorys
 
-**Verwendung durch Administratoren:**
-
-Administratoren können jedes Benutzerprofil sichern, **ohne Benutzer-IDs kennen zu müssen**, der Benutzername genügt:
-
-```bash
-# Eigenes Profil sichern
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
-
-# Profil eines anderen Benutzers sichern (Nina)
-bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
-```
-
 **Verwendung:**
 ```bash
-bash backup-poznote.sh '<poznote_url>' '<admin_username>' '<admin_password>' '<target_username>' '<backup_directory>' '<retention_count>'
+bash backup-poznote.sh '<poznote_url>' '<username>' '<password>' '<target_username>' '<backup_directory>' '<retention_count>'
 ```
+
+**Beispiele:**
+
+```bash
+# Das eigene Profil sichern
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'admin' '/backups' '30'
+
+# Ein Administrator sichert das Profil eines anderen Benutzers (Nina), der Benutzername genügt
+bash backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/backups' '30'
+
+# Ein App-Passwort sichert sein eigenes Profil (funktioniert mit Zwei-Faktor-Authentifizierung)
+bash backup-poznote.sh 'https://poznote.example.com' 'Nina' 'pzn_...' 'Nina' '/backups' '30'
+```
+
+**Das Passwort aus der Befehlszeile heraushalten:**
+
+Ein Passwort auf der Befehlszeile kann jeder Benutzer des Rechners in der Prozessliste lesen, und es bleibt in der crontab und im Shell-Verlauf. Geben Sie stattdessen `-` an, dann liest das Skript es aus der ersten Zeile der Datei, die `POZNOTE_PASSWORD_FILE` nennt (nur für Sie lesbar, `chmod 600`), oder aus der Umgebungsvariablen `POZNOTE_PASSWORD`.
 
 **Beispiel mit crontab (Administrator sichert Nina):**
 
 ```bash
 # In die crontab eintragen, um zweimal täglich automatisch zu sichern
-0 0,12 * * * bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' 'admin_password' 'Nina' '/root/backups' '30'
+0 0,12 * * * POZNOTE_PASSWORD_FILE=/root/.poznote-password bash /root/backup-poznote.sh 'https://poznote.example.com' 'admin' '-' 'Nina' '/root/backups' '30'
 ```
 
 **Die Parameter im Einzelnen:**
 - `'https://poznote.example.com'`: URL Ihrer Poznote-Instanz
-- `'admin'`: Administrator-Benutzername für die Authentifizierung (muss ein Administrator sein)
-- `'admin_password'`: Aktuelles Administratorpasswort des API-Profils (`admin`, bis es geändert wird, danach das eigene Passwort)
+- `'admin'`: Benutzername für die Authentifizierung (muss ein Administrator sein, um ein anderes Profil zu sichern)
+- `'-'`: Das Passwort. `-` liest es aus `POZNOTE_PASSWORD_FILE` oder `POZNOTE_PASSWORD`, sonst tragen Sie direkt das Kontopasswort oder ein App-Passwort (`pzn_...`) ein. Ein anderes Profil zu sichern erfordert das Kontopasswort eines Administrators
 - `'Nina'`: Benutzername des zu sichernden Benutzers
 - `'/root/backups'`: Übergeordnetes Verzeichnis, in dem die Sicherungen gespeichert werden (legt den Ordner `backups-poznote-<username>` an)
 - `'30'`: Anzahl der aufzubewahrenden Sicherungen (ältere werden automatisch gelöscht)
 
 **So läuft die Sicherung ab:**
 
-1. Das Skript authentifiziert sich mit den Administrator-Zugangsdaten
-2. Es ermittelt automatisch die Benutzer-ID anhand des Benutzernamens
-3. Es erstellt eine Sicherung über die API
-4. Es ruft die Poznote-REST-API v1 auf (`POST /api/v1/backups` mit dem Header `X-User-ID`)
-5. Es lädt die Sicherungs-ZIP lokal nach `backups-poznote-<username>/` herunter
-6. Es verwaltet die Aufbewahrung automatisch (bewahrt nur die angegebene Anzahl neuester Sicherungen auf)
+1. Das Skript authentifiziert sich mit dem angegebenen Kontopasswort oder App-Passwort
+2. Für das eigene Profil verwendet es die ID des authentifizierten Profils, für ein anderes Profil ermittelt es die Benutzer-ID aus dem Benutzernamen (nur Administratoren)
+3. Es erstellt eine Sicherung über die Poznote REST API v1 (`POST /api/v1/backups` mit dem Header `X-User-ID`)
+4. Es lädt die Sicherungs-ZIP lokal nach `backups-poznote-<username>/` herunter
+5. Es verwaltet die Aufbewahrung automatisch (bewahrt nur die angegebene Anzahl neuester Sicherungen auf)
 
 **Hinweis:** Die Sicherungen jedes Benutzers werden in separaten Ordnern abgelegt (`backups-poznote-Nina`, `backups-poznote-Tim` usw.)
 

@@ -10,6 +10,7 @@
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
   <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.nl.md">Nederlands</a> ·
   <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -35,7 +36,7 @@ Para cambiar estos ajustes más adelante, haz clic en el engranaje de la parte s
 
 La dirección de tu instancia, que aparece al lado, es un enlace: haz clic en ella para abrir Poznote en una pestaña nueva, por http o https tal como la escribiste en los ajustes.
 
-La extensión usa el idioma de Chrome si es inglés, francés, alemán, español, portugués, ruso, coreano, chino simplificado, japonés o catalán, y el inglés en los demás casos.
+La extensión usa el idioma de Chrome si es inglés, francés, alemán, español, portugués, ruso, coreano, chino simplificado, japonés, catalán o neerlandés, y el inglés en los demás casos.
 
 La contraseña de tu cuenta también funciona aquí, pero una contraseña de aplicación es la mejor credencial para una extensión: solo accede a la API, nunca a la interfaz web ni a los ajustes de tu cuenta, está limitada a tu propio perfil, y revocarla en Poznote desconecta la extensión sin cambiar nada más. Consulta [Contraseñas de aplicación](README.es.md#contraseñas-de-aplicación) para ver la lista completa de límites.
 
@@ -45,9 +46,11 @@ La contraseña de tu cuenta también funciona aquí, pero una contraseña de apl
 
 Haz clic en el icono de la extensión en la página que quieres conservar y elige su destino:
 
-- **New note** crea una nota con el nombre de la página, en el espacio de trabajo y la carpeta elegidos en los ajustes.
+- **New note** crea una nota con el nombre de la página. Antes de guardar, puedes cambiar su **Title**, añadir **Tags** (separadas por comas, las etiquetas que ya usas se sugieren mientras escribes) y elegir el espacio de trabajo y la carpeta de destino, directamente en la ventana de la extensión. Esa elección se recuerda: las siguientes notas nuevas también van allí.
 - **Existing note** añade la página al final de una nota que eliges en la lista, que muestra tus últimas notas y las busca mientras escribes. Muestra las notas del espacio de trabajo elegido en los ajustes; activa **All workspaces** para elegir una nota de cualquier espacio. La extensión recuerda esa nota para la siguiente página, así que reunir enlaces en una misma lista de lectura cuesta un clic por página. Las notas HTML y Markdown pueden recibir páginas.
 
 Después haz clic en **Save link** para guardar la dirección de la página, o en **Screenshot** para guardar la dirección seguida de una imagen de la parte visible de la página. La confirmación incluye un enlace que abre la nota en Poznote.
 
 **Save page text** guarda el texto de la propia página, convertido a Markdown, debajo de su dirección y de la fecha en que se guardó: solo el contenido principal, sin menús, barras laterales ni pies de página, con sus títulos, listas, enlaces, tablas, bloques de código e imágenes (las imágenes siguen siendo enlaces al sitio). Si seleccionas antes un texto, el botón pasa a ser **Save selection** y guarda solo esa parte. Una nota nueva creada así es una nota Markdown; añadido a una nota existente, el texto se escribe en el formato de esa nota. Como el texto se lee en tu navegador, funciona con páginas que requieren iniciar sesión, se queda en la nota aunque la página desaparezca, y la búsqueda de Poznote, la API y el servidor MCP pueden trabajar con él.
+
+**Sin abrir la extensión:** haz clic derecho en una página, un enlace, una imagen o un texto seleccionado y elige la entrada **Save … to Poznote** correspondiente. Guarda el enlace de la página, el enlace en el que hiciste clic, la imagen (almacenada en la nota cuando el sitio permite que la extensión la lea, si no se muestra desde el sitio) o la selección en Markdown. El atajo de teclado **Alt+Shift+S** guarda el enlace de la página y **Alt+Shift+O** abre la extensión; un tercer atajo, que guarda la selección o el texto de la página, no tiene tecla por defecto. Cámbialos en la página `chrome://extensions/shortcuts` de Chrome, a la que también se llega desde **Change the shortcuts** en los ajustes de la extensión. Estos guardados van donde se usó la extensión por última vez: la nota elegida en **Existing note** cuando esa era la pestaña activa, o si no una nota nueva en el espacio de trabajo y la carpeta de los ajustes. El icono de la extensión muestra el resultado, un ✓ cuando funcionó y un ! cuando no, con el motivo en su descripción emergente.

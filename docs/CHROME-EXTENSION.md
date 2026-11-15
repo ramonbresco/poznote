@@ -10,6 +10,7 @@
   <a href="CHROME-EXTENSION.ko.md">한국어</a> ·
   <a href="CHROME-EXTENSION.ja.md">日本語</a> ·
   <a href="CHROME-EXTENSION.ca.md">Català</a> ·
+  <a href="CHROME-EXTENSION.nl.md">Nederlands</a> ·
   <a href="CHROME-EXTENSION.vi.md">Tiếng Việt</a>
 </p>
 <!-- /lang-selector -->
@@ -35,7 +36,7 @@ To change any of this later, click the gear icon at the top of the extension.
 
 The address of your instance, shown next to it, is a link: click it to open Poznote in a new tab, over http or https as you typed it in the settings.
 
-The extension speaks Chrome's language when it is English, French, German, Spanish, Portuguese, Russian, Korean, Simplified Chinese, Japanese or Catalan, and English otherwise.
+The extension speaks Chrome's language when it is English, French, German, Spanish, Portuguese, Russian, Korean, Simplified Chinese, Japanese, Catalan or Dutch, and English otherwise.
 
 Your account password works here too, but an app password is the better credential for an extension: it reaches the API only, never the web interface or your account settings, it is limited to your own profile, and revoking it in Poznote cuts the extension off without changing anything else. See [App Passwords](../README.md#app-passwords) for the full list of limits.
 
@@ -45,9 +46,11 @@ Your account password works here too, but an app password is the better credenti
 
 Click the extension's icon on the page you want to keep, then choose where it goes:
 
-- **New note** creates a note named after the page, in the workspace and folder picked in the settings.
+- **New note** creates a note named after the page. Before saving, you can change its **Title**, add **Tags** (separated by commas, the tags you already use are suggested as you type) and pick the workspace and folder it goes to, right in the popup. That choice is remembered: the next new notes go there too.
 - **Existing note** adds the page at the end of a note you pick in the list, which shows your latest notes and searches them as you type. It lists the notes of the workspace picked in the settings; turn on **All workspaces** to pick a note anywhere. The extension remembers that note for the next page, so collecting links in a single reading list takes one click per page. HTML and Markdown notes can receive pages.
 
 Then click **Save link** to save the page's address, or **Screenshot** to save the address followed by a picture of the visible part of the page. The confirmation has a link that opens the note in Poznote.
 
 **Save page text** saves the text of the page itself, converted to Markdown, below its address and the date it was saved: the main content only, without menus, sidebars or footers, with its headings, lists, links, tables, code blocks and images (images stay links to the site). Select some text first and the button becomes **Save selection**, which saves only that part. A new note made this way is a Markdown note; added to an existing note, the text is written in that note's format. Because the text is read in your browser, it works for pages behind a login, it stays in the note if the page disappears, and Poznote's search, the API and the MCP server can work on it.
+
+**Without opening the extension:** right-click a page, a link, an image or some selected text and choose the matching **Save … to Poznote** entry. It saves the page's link, the link you clicked, the image (stored in the note when the site lets the extension read it, otherwise shown from the site) or the selection as Markdown. The keyboard shortcut **Alt+Shift+S** saves the page's link and **Alt+Shift+O** opens the extension; a third shortcut, which saves the selection or the page text, has no key by default. Change them on Chrome's `chrome://extensions/shortcuts` page, also reachable from **Change the shortcuts** in the extension's settings. These saves go where the extension was last used: the note picked under **Existing note** when that tab was the one in use, a new note in the workspace and folder of the settings otherwise. The extension's icon shows the outcome, a ✓ when it worked and a ! when it did not, with the reason in its tooltip.

@@ -6,6 +6,7 @@
  * window.poznoteAiLocalHost before loading this file.
  */
 document.addEventListener('DOMContentLoaded', function() {
+    setupSecretToggles();
     setupUserFilter();
     setupMcpSwitches();
 
@@ -240,4 +241,74 @@ function setupUserFilter() {
     // A search input clears itself with Escape or its native cross
     input.addEventListener('search', apply);
     apply();
+}
+
+/**
+ * Eye buttons of the API key and custom headers fields. The server renders
+ * saved secrets as a mask (the key as ••••••••, each header value
+ * as "Name: ••••••••") and reads that mask back as "keep the stored
+ * value", so the stored values travel in a data attribute and the eye swaps
+ * them in and out of the field.
+ *
+ * Only what still equals the stored value goes back under the mask when the
+ * eye is closed: an edited key or header line stays as typed, otherwise
+ * hiding it would throw the edit away on save.
+ */
+function setupSecretToggles() {
+    var MASK = '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022';
+
+    function storedHeaders(field) {
+        var map = {};
+        try {
+            var pairs = JSON.parse(field.getAttribute('data-secret-headers') || '[]');
+            pairs.forEach(function(pair) {
+                if (Array.isArray(pair) && pair.length === 2) map[String(pair[0]).toLowerCase()] = String(pair[1]);
+            });
+        } catch (e) { /* nothing stored to reveal */ }
+        return map;
+    }
+
+    // Rewrite each "Name: value" line whose name is a stored header
+    function mapHeaderLines(text, stored, reveal) {
+        return text.split('\n').map(function(line) {
+            var colon = line.indexOf(':');
+            if (colon <= 0) return line;
+            var name = line.slice(0, colon).trim();
+            var value = line.slice(colon + 1).trim();
+            var key = name.toLowerCase();
+            if (!Object.prototype.hasOwnProperty.call(stored, key)) return line;
+            if (reveal && value === MASK) return name + ': ' + stored[key];
+            if (!reveal && value === stored[key]) return name + ': ' + MASK;
+            return line;
+        }).join('\n');
+    }
+
+    function setRevealed(field, button, reveal) {
+        if (field.tagName === 'TEXTAREA') {
+            field.value = mapHeaderLines(field.value, storedHeaders(field), reveal);
+        } else {
+            var secret = field.getAttribute('data-secret-value') || '';
+            if (reveal && secret !== '' && field.value === MASK) field.value = secret;
+            if (!reveal && secret !== '' && field.value === secret) field.value = MASK;
+            field.setAttribute('type', reveal ? 'text' : 'password');
+        }
+        field.classList.toggle('is-revealed', reveal);
+        var label = button.getAttribute(reveal ? 'data-hide-label' : 'data-show-label') || '';
+        button.setAttribute('title', label);
+        button.setAttribute('aria-label', label);
+        button.setAttribute('aria-pressed', reveal ? 'true' : 'false');
+        var icon = button.querySelector('i');
+        if (icon) {
+            icon.classList.toggle('lucide-eye', !reveal);
+            icon.classList.toggle('lucide-eye-off', reveal);
+        }
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-secret-toggle]'), function(button) {
+        var field = document.getElementById(button.getAttribute('data-secret-toggle'));
+        if (!field) return;
+        button.addEventListener('click', function() {
+            setRevealed(field, button, !field.classList.contains('is-revealed'));
+        });
+    });
 }
