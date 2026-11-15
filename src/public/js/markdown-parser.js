@@ -573,6 +573,14 @@ function _mdSanitizeExcalidrawContainerHtml(html, markdownExcalidrawIndex) {
 // same rules as sanitizeMarkdownAttachmentCard() of markdown_parser.php
 var _MD_ATTACHMENT_CARD_LINE = /^[ \t]*<a\s+class="attachment-card(?:\s+attachment-card-([a-z]+))?"\s+href="([^"\n]*)"\s*>([^<\n]*)<\/a>[ \t]*$/gm;
 var _MD_ATTACHMENT_CARD_KINDS = ['pdf', 'doc', 'sheet', 'slides', 'archive', 'image', 'audio', 'video', 'code', 'text', 'file'];
+// A plain link to an attachment alone on its line, drawn as a card while
+// "Attachment links as cards" is on (build/markdown-editor/src/live-preview.js
+// has the same rule for the Live preview and Rich text views)
+var _MD_ATTACHMENT_LINK_LINE = /^ {0,3}\[((?:[^\]\n\\]|\\.)+)\]\((\/api\/v1\/notes\/\d+\/attachments\/[A-Za-z0-9_-]+)\)[ \t]*$/gm;
+
+function _mdAttachmentLinksAsCards() {
+    return !!(window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.attachmentLinksAsCards === true);
+}
 
 function _mdDecodeEntities(text) {
     var template = document.createElement('textarea');
@@ -584,6 +592,14 @@ function _mdSanitizeAttachmentCard(match, kind, href, label) {
     var url = _mdDecodeEntities(href);
     if (!/^\/api\/v1\/notes\/\d+\/attachments\/[A-Za-z0-9_-]+$/.test(url)) return null;
     var safeKind = _MD_ATTACHMENT_CARD_KINDS.indexOf(kind) !== -1 ? kind : 'file';
+    // The setting off (and only where the page says so: elsewhere the flag is
+    // absent): the card is drawn as the plain link it stands for, the source
+    // keeping its card. The Live preview and Rich text views show the link
+    // alone (renderMediaLine() of build/markdown-editor/src/live-preview.js).
+    if (window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.attachmentLinksAsCards === false) {
+        return '<p class="attachment-card-line-off"><a href="' + _mdEscapeHtml(url) + '" target="_blank" rel="noopener">' +
+            _mdEscapeHtml(_mdDecodeEntities(label)) + '</a></p>';
+    }
     // "Attachment previews" on: the preview of the file in place of the card
     // (window.poznoteAttachmentCardPreviewHtml(), js/attachments.js), when it
     // has one; the source keeps the card
@@ -1209,6 +1225,23 @@ function parseMarkdown(text) {
     let protectedElements = [];
     let protectedIndex = 0;
 
+    // "Attachment links as cards" on: a plain link to an attachment alone on
+    // its line ([name](/api/v1/notes/N/attachments/ID)) is drawn as a card
+    // too, the source keeping its link. One in a sentence stays a link.
+    if (_mdAttachmentLinksAsCards()) {
+        text = text.replace(_MD_ATTACHMENT_LINK_LINE, function (match, rawLabel, href) {
+            // Its backslash escapes are placeholders by now, HTML once restored
+            let label = restoreMarkdownBackslashEscapes(rawLabel);
+            let kind = typeof window.poznoteAttachmentCardKind === 'function' ? window.poznoteAttachmentCardKind(_mdDecodeEntities(label)) : 'file';
+            let card = _mdSanitizeAttachmentCard(match, kind, href, label);
+            if (!card) return match;
+            let placeholder = '\x00PATTCARD' + protectedIndex + '\x00';
+            protectedElements[protectedIndex] = card;
+            protectedIndex++;
+            return blockPlaceholder(placeholder, match);
+        });
+    }
+
     let markdownImageIndex = 0;
 
     // Protect images first ![alt](url "title") with optional {.img-with-border} attributes
@@ -1309,6 +1342,7 @@ function parseMarkdown(text) {
         protectedIndex++;
         return blockPlaceholder(placeholder, match);
     });
+
 
     // Protect inline span tags with style attributes (for colors, backgrounds, etc.)
     // Match: <span style="...">content</span>
@@ -1825,7 +1859,7 @@ function parseMarkdown(text) {
         if (attachmentCardMatch) {
             flushParagraph();
             let cardHtml = protectedElements[parseInt(attachmentCardMatch[1], 10)] || line;
-            result.push(cardHtml.replace(/^(<div\b)/, '$1 data-line="' + sourceLineOf(i) + '"'));
+            result.push(cardHtml.replace(/^(<(?:div|p)\b)/, '$1 data-line="' + sourceLineOf(i) + '"'));
             continue;
         }
 

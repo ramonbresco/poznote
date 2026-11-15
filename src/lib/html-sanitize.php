@@ -342,6 +342,43 @@ function sanitizeHtml($html) {
     // (lib/code-block-controls.php)
     poznoteRemoveCodeBlockControls($xpath);
 
+    // A plain attachment link drawn as a card ("Attachment links as cards",
+    // js/attachments.js) is runtime UI too: the note holds the plain link,
+    // so turning the setting off gives the link back
+    $runtimeAutoCards = $xpath->query('//a[contains(concat(" ", normalize-space(@class), " "), " attachment-card-auto ")]');
+    foreach ($runtimeAutoCards as $autoCard) {
+        $kept = array_filter(
+            preg_split('/\s+/', trim($autoCard->getAttribute('class'))) ?: [],
+            static fn ($name) => $name !== '' && $name !== 'attachment-card' && strpos($name, 'attachment-card-') !== 0
+        );
+        if ($kept) {
+            $autoCard->setAttribute('class', implode(' ', $kept));
+        } else {
+            $autoCard->removeAttribute('class');
+        }
+        $autoCard->removeAttribute('contenteditable');
+    }
+
+    // A card drawn as a plain link while the setting is off: the note holds
+    // the card
+    $runtimeOffCards = $xpath->query('//a[contains(concat(" ", normalize-space(@class), " "), " attachment-card-off ")]');
+    foreach ($runtimeOffCards as $offCard) {
+        $kind = 'file';
+        $kept = [];
+        foreach (preg_split('/\s+/', trim($offCard->getAttribute('class'))) ?: [] as $name) {
+            if ($name === '' || $name === 'attachment-card-off') continue;
+            if (strpos($name, 'attachment-card-off-') === 0) {
+                $candidate = substr($name, strlen('attachment-card-off-'));
+                if (preg_match('/^[a-z]+$/', $candidate)) $kind = $candidate;
+                continue;
+            }
+            $kept[] = $name;
+        }
+        array_unshift($kept, 'attachment-card', 'attachment-card-' . $kind);
+        $offCard->setAttribute('class', implode(' ', array_unique($kept)));
+        $offCard->setAttribute('contenteditable', 'false');
+    }
+
     // The preview shown in place of an attachment card is runtime UI too
     // (js/attachments.js): the card link is what the note holds
     $runtimeCardPreviews = $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " attachment-card-preview ")]');

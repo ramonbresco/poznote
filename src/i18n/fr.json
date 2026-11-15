@@ -571,7 +571,7 @@
       "sessions": "Voir les navigateurs et les appareils actuellement connectés à votre compte, et déconnecter ceux que vous n’utilisez plus.",
       "session_lifetime": "Combien de temps une connexion dure sans activité. Réglée avec POZNOTE_SESSION_LIFETIME_DAYS dans le fichier .env, donc affichée ici sans pouvoir être modifiée depuis cette page. Une connexion avec « Se souvenir de moi » dure plus longtemps ; une connexion par SSO, non.",
       "attachments_single_line": "Affiche les pièces jointes de la note sur une seule ligne au lieu de les répartir sur plusieurs lignes. Faites glisser la ligne avec le doigt ou la souris ; quand elle est coupée, elle se termine par « … ».",
-      "attachment_links_as_cards": "Quand vous insérez une pièce jointe dans une note avec « Lien vers une pièce jointe », l'affiche en carte (une icône selon son type, son nom et une flèche de téléchargement) sur sa propre ligne, au lieu d'un lien dans le texte.",
+      "attachment_links_as_cards": "Affiche en carte les liens vers une pièce jointe seuls sur leur ligne ; dans une phrase, ils reçoivent un petit trombone. Les notes ne sont pas modifiées.",
       "remember_me_days": "Combien de temps cocher « Se souvenir de moi » sur la page de connexion garde quelqu'un connecté. Ne vaut que pour les connexions par mot de passe. Une connexion SSO dure le temps indiqué par la carte Durée des sessions, dans Paramètres > À propos, qui se règle dans le fichier .env. Changer un mot de passe, ou déconnecter un appareil depuis Appareils connectés, le déconnecte tout de suite, quelle que soit la durée réglée ici."
     },
     "card_notes": {

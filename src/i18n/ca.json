@@ -223,7 +223,7 @@
       "sessions": "Mireu els navegadors i dispositius que ara mateix tenen la sessió iniciada al vostre compte, i tanqueu la sessió dels que ja no feu servir.",
       "session_lifetime": "Quant dura un inici de sessió sense activitat. Es configura amb POZNOTE_SESSION_LIFETIME_DAYS al fitxer .env, de manera que aquí només es mostra i no es pot canviar des d’aquesta pàgina. Iniciar la sessió amb «Recorda’m» dura més; iniciar-la amb SSO, no.",
       "attachments_single_line": "Mostra els adjunts de la nota en una sola línia en lloc de repartir-los en diverses. Llisca la línia amb el dit o el ratolí; quan està tallada, acaba amb «…».",
-      "attachment_links_as_cards": "Quan inseriu un adjunt en una nota amb «Enllaç a fitxer adjunt», es mostra com una targeta (una icona segons el tipus, el nom i una fletxa de baixada) en una línia pròpia, en lloc d'un enllaç dins del text.",
+      "attachment_links_as_cards": "Mostra com a targeta els enllaços a un adjunt que són sols a la seva línia; dins d'una frase, porten un clip petit. Les notes no es modifiquen.",
       "remember_me_days": "Quant de temps manté la sessió iniciada marcar «Recorda'm» a la pàgina d'inici de sessió. Només val per als inicis de sessió amb contrasenya. Un inici de sessió SSO dura el que indica la targeta Durada de les sessions, a Configuració > Quant a, que es configura al fitxer .env. Canviar una contrasenya, o tancar la sessió d'un dispositiu des de Dispositius connectats, la tanca de seguida, sigui quina sigui la durada configurada aquí."
     },
     "card_notes": {

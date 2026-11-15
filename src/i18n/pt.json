@@ -572,7 +572,7 @@
       "sessions": "Veja os navegadores e dispositivos conectados à sua conta agora e encerre a sessão dos que você não usa mais.",
       "session_lifetime": "Quanto tempo um login dura sem atividade. Definido com POZNOTE_SESSION_LIFETIME_DAYS no arquivo .env, por isso aparece aqui mas não pode ser alterado nesta página. Entrar com \"Lembrar-me\" dura mais; entrar por SSO, não.",
       "attachments_single_line": "Mostra os anexos da nota numa única linha em vez de os repartir por várias. Deslize a linha com o dedo ou o rato; quando está cortada, termina com «…».",
-      "attachment_links_as_cards": "Ao inserir um anexo numa nota com «Link para anexo», mostra-o como um cartão (um ícone conforme o tipo, o nome e uma seta de transferência) numa linha própria, em vez de uma ligação no texto.",
+      "attachment_links_as_cards": "Mostra como cartão as ligações para anexos sozinhas na sua linha; numa frase, recebem um pequeno clipe. As notas não são alteradas.",
       "remember_me_days": "Por quanto tempo marcar \"Lembrar-me\" na página de login mantém alguém conectado. Vale apenas para os logins com senha. Um login SSO dura o tempo indicado pelo cartão Duração das sessões, em Configurações > Sobre, que é definido no arquivo .env. Mudar uma senha, ou desconectar um dispositivo em Dispositivos conectados, o desconecta na hora, seja qual for a duração definida aqui."
     },
     "card_notes": {

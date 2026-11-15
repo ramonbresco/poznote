@@ -216,13 +216,20 @@ const TASKLIST_EMBED_LINE_REGEX = /^\s*<div\s+class="tasklist-embed"[^>]*>.*<\/d
 // An attachment card ("Attachment links as cards", js/attachments.js): the
 // parser rebuilds it, or leaves the line as text when it is not one
 const ATTACHMENT_CARD_LINE_REGEX = /^\s*<a\s+class="attachment-card[^"]*"\s+href="[^"]*"\s*>[^<]*<\/a>\s*$/i
+// A plain link to an attachment alone on its line, drawn as a card too while
+// "Attachment links as cards" is on (the rule of _MD_ATTACHMENT_LINK_LINE in
+// js/markdown-parser.js, which builds the card); the source keeps its link
+const ATTACHMENT_LINK_LINE_REGEX = /^ {0,3}\[(?:[^\]\n\\]|\\.)+\]\(\/api\/v1\/notes\/\d+\/attachments\/[A-Za-z0-9_-]+\)[ \t]*$/
+const attachmentLinksAsCards = () => !!(window.POZNOTE_CONFIG && window.POZNOTE_CONFIG.attachmentLinksAsCards === true)
 
 function renderMediaLine(text) {
   if (typeof window.parseMarkdown !== 'function') return null
   try {
     const template = document.createElement('template')
     template.innerHTML = window.parseMarkdown(text)
-    return template.content.querySelector('iframe, audio, video, .tasklist-embed, .embed-blocked, .attachment-card-line')
+    // A card drawn as a plain link, "Attachment links as cards" off: the link
+    // alone, the paragraph around it is the preview's
+    return template.content.querySelector('iframe, audio, video, .tasklist-embed, .embed-blocked, .attachment-card-line, .attachment-card-line-off > a')
   } catch (error) {
     return null
   }
@@ -1194,6 +1201,12 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
   }
 
   function decorateLink(node) {
+    // A link drawn as an attachment card: the whole line is the card's widget
+    // (decorateMedia), nothing to decorate inside it
+    if (attachmentLinksAsCards()) {
+      const line = doc.lineAt(node.from)
+      if (ATTACHMENT_LINK_LINE_REGEX.test(line.text) && !touchesLines(line.from, line.to)) return
+    }
     const marks = node.node.getChildren('LinkMark')
     const url = node.node.getChild('URL')
     if (marks.length < 4 || !url) return
@@ -1486,8 +1499,9 @@ function buildLivePreviewDecorations(view, armedPair, pendingFormat) {
   }
 
   function decorateMedia(line) {
-    if (line.text.indexOf('<') === -1) return
-    if (!MEDIA_LINE_REGEX.test(line.text) && !TASKLIST_EMBED_LINE_REGEX.test(line.text) &&
+    const attachmentLink = attachmentLinksAsCards() && ATTACHMENT_LINK_LINE_REGEX.test(line.text)
+    if (!attachmentLink && line.text.indexOf('<') === -1) return
+    if (!attachmentLink && !MEDIA_LINE_REGEX.test(line.text) && !TASKLIST_EMBED_LINE_REGEX.test(line.text) &&
       !ATTACHMENT_CARD_LINE_REGEX.test(line.text)) return
     if (isInsideCodeBlock(line.from) || touchesLines(line.from, line.to)) return
     if (!renderMediaLine(line.text)) return

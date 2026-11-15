@@ -1070,6 +1070,33 @@ function stripSearchHighlights(element) {
         cardPreviews[cp].remove();
     }
 
+    // A plain attachment link drawn as a card ("Attachment links as cards",
+    // js/attachments.js): the note holds the plain link
+    var autoCards = clonedElement.querySelectorAll('a.attachment-card-auto');
+    for (var ac = 0; ac < autoCards.length; ac++) {
+        var autoCard = autoCards[ac];
+        Array.prototype.slice.call(autoCard.classList).forEach(function (name) {
+            if (name === 'attachment-card' || name.indexOf('attachment-card-') === 0) autoCard.classList.remove(name);
+        });
+        if (!autoCard.classList.length) autoCard.removeAttribute('class');
+        autoCard.removeAttribute('contenteditable');
+    }
+
+    // A card drawn as a plain link, the setting off (js/attachments.js): the
+    // note holds the card
+    var offCards = clonedElement.querySelectorAll('a.attachment-card-off');
+    for (var oc = 0; oc < offCards.length; oc++) {
+        var offCard = offCards[oc];
+        var offKind = 'file';
+        Array.prototype.slice.call(offCard.classList).forEach(function (name) {
+            if (name.indexOf('attachment-card-off') !== 0) return;
+            if (name.indexOf('attachment-card-off-') === 0) offKind = name.slice('attachment-card-off-'.length);
+            offCard.classList.remove(name);
+        });
+        offCard.classList.add('attachment-card', 'attachment-card-' + offKind);
+        offCard.setAttribute('contenteditable', 'false');
+    }
+
     var blockedFrames = clonedElement.querySelectorAll('iframe[data-embed-blocked], iframe[data-embed-settled]');
     for (var f = 0; f < blockedFrames.length; f++) {
         blockedFrames[f].removeAttribute('data-embed-blocked');

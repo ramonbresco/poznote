@@ -572,7 +572,7 @@
       "sessions": "Die Browser und Geräte ansehen, die gerade in Ihrem Konto angemeldet sind, und die abmelden, die Sie nicht mehr nutzen.",
       "session_lifetime": "Wie lange eine Anmeldung ohne Aktivität gilt. Wird mit POZNOTE_SESSION_LIFETIME_DAYS in der .env-Datei gesetzt, hier also nur angezeigt und auf dieser Seite nicht änderbar. Eine Anmeldung mit „Angemeldet bleiben“ hält länger, eine Anmeldung über SSO nicht.",
       "attachments_single_line": "Zeigt die Anhänge der Notiz in einer einzigen Zeile statt auf mehrere Zeilen verteilt. Die Zeile lässt sich mit dem Finger oder der Maus verschieben; ist sie abgeschnitten, endet sie mit „…“.",
-      "attachment_links_as_cards": "Wenn Sie einen Anhang mit „Link zum Anhang“ in eine Notiz einfügen, wird er als Karte (ein Symbol für den Typ, der Name und ein Download-Pfeil) in einer eigenen Zeile angezeigt statt als Link im Text.",
+      "attachment_links_as_cards": "Zeigt Links zu Anhängen, die allein in ihrer Zeile stehen, als Karte; im Satz erhalten sie eine kleine Büroklammer. Die Notizen werden nicht geändert.",
       "remember_me_days": "Wie lange das Ankreuzen von „Angemeldet bleiben“ auf der Anmeldeseite jemanden angemeldet lässt. Gilt nur für Anmeldungen mit Passwort. Eine SSO-Anmeldung dauert so lange, wie die Karte Sitzungsdauer unter Einstellungen > Über anzeigt; dieser Wert wird in der .env-Datei festgelegt. Ein geändertes Passwort oder das Abmelden eines Geräts unter Verbundene Geräte meldet es sofort ab, unabhängig von der hier eingestellten Dauer."
     },
     "card_notes": {

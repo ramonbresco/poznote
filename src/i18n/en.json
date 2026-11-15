@@ -223,7 +223,7 @@
       "sessions": "See the browsers and devices currently signed in to your account, and sign out the ones you no longer use.",
       "session_lifetime": "How long a sign-in lasts without activity. Set with POZNOTE_SESSION_LIFETIME_DAYS in the .env file, so it is shown here but cannot be changed from this page. Signing in with \"Remember me\" lasts longer; signing in through SSO does not.",
       "attachments_single_line": "Show the note's attachments on a single line instead of wrapping them onto several lines. Slide the line with a finger or the mouse; when it is cut, it ends with \"…\".",
-      "attachment_links_as_cards": "When you insert an attachment into a note with \"Link to attachment\", show it as a card (an icon for its type, its name and a download arrow) on a line of its own, instead of a link in the text.",
+      "attachment_links_as_cards": "Show attachment links that are alone on their line as cards; in a sentence they get a small paperclip. Notes are not changed.",
       "remember_me_days": "How long ticking \"Remember me\" on the login page keeps someone signed in. It only applies to password sign-ins. An SSO sign-in lasts as long as the Session lifetime shown in Settings > About, which is set in the .env file. Changing a password, or signing a device out from Connected devices, signs it out right away, whatever the duration set here."
     },
     "card_notes": {
