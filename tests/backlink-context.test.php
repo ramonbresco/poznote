@@ -258,3 +258,42 @@ test('an accented snippet is cut on characters, not bytes', function () {
     assertTrue(mb_strlen($mention['preview']) <= POZNOTE_BACKLINK_PREVIEW_MAX + 2, 'bounded in characters');
     assertContains('Alpha', $mention['preview'], 'the link is still there');
 });
+
+// --- Links to a diary day (discussion #1776) ----------------------------------
+
+/** Resolver that accepts the given workspace and diary only. */
+function diaryResolver(string $ws = 'Poznote', int $diary = 0): callable
+{
+    return static fn(string $w, int $d): bool => $w === $ws && $d === $diary;
+}
+
+test('a diary link of that day becomes a link to the entry', function () {
+    $html = '<p>see <a href="diary.php?date=2026-11-14&amp;workspace=Poznote">Nov 14</a> then</p>';
+    $out = poznoteRewriteDiaryLinksToNote($html, '2026-11-14', 77, 'Other', diaryResolver());
+    assertSame('<p>see <a href="index.php?note=77">Nov 14</a> then</p>', $out);
+    assertSame(['see Nov 14 then'], backlinkPreviews($out, 'note', 77, 'November 14'));
+});
+
+test('a markdown diary link with an encoded workspace is read', function () {
+    $md = 'plan: [tomorrow](diary.php?date=2026-11-14&workspace=My%20Notes) ok';
+    $out = poznoteRewriteDiaryLinksToNote($md, '2026-11-14', 5, 'Poznote', diaryResolver('My Notes'));
+    assertSame('plan: [tomorrow](index.php?note=5) ok', $out);
+});
+
+test('another day, another workspace or another diary is left alone', function () {
+    $html = '<a href="diary.php?date=2026-11-15&amp;workspace=Poznote">x</a>'
+        . '<a href="diary.php?date=2026-11-14&amp;workspace=Work">y</a>'
+        . '<a href="diary.php?date=2026-11-14&amp;workspace=Poznote&amp;diary=9">z</a>';
+    assertSame($html, poznoteRewriteDiaryLinksToNote($html, '2026-11-14', 5, 'Poznote', diaryResolver()));
+});
+
+test('a diary link without workspace is read in the workspace of its note', function () {
+    $md = '[d](diary.php?date=2026-11-14)';
+    assertSame('[d](index.php?note=5)', poznoteRewriteDiaryLinksToNote($md, '2026-11-14', 5, 'Poznote', diaryResolver()));
+    assertSame($md, poznoteRewriteDiaryLinksToNote($md, '2026-11-14', 5, 'Work', diaryResolver()));
+});
+
+test('a file merely ending in diary.php is not a diary link', function () {
+    $md = '[d](mydiary.php?date=2026-11-14)';
+    assertSame($md, poznoteRewriteDiaryLinksToNote($md, '2026-11-14', 5, 'Poznote', diaryResolver()));
+});

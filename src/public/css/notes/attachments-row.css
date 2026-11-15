@@ -30,6 +30,25 @@
     margin-bottom: 10px;
 }
 
+/* A Markdown note showing its preview ends on its last paragraph, with none
+   of the room the editor views keep under their last line: the separator sat
+   12px under the text, which read as cramped. The preview keeps 12px more,
+   so the line sits 24px under the text. It is the only view where the
+   preview shows outside the split view (the editor hides it otherwise,
+   display: none). */
+.noteentry:not(.markdown-split-mode):has(~ .note-attachments-row, ~ .note-attachment-previews, ~ .backlinks-row) > .markdown-preview {
+    padding-bottom: 12px;
+}
+
+/* The split view ends on its two panes, each with its own frame: a line
+   under them only repeats their bottom edge. */
+.noteentry.markdown-split-mode ~ .note-attachments-row,
+.noteentry.markdown-split-mode ~ .note-attachment-previews,
+.noteentry.markdown-split-mode ~ .backlinks-row {
+    border-top: 0;
+    padding-top: 0;
+}
+
 .lucide-paperclip.icon_attachment {
     font-size: 14px;
     margin-right: 14px;

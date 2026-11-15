@@ -67,7 +67,7 @@ class BacklinksController
             $withContext = ($contextMode === '1');
             $checkContext = ($contextMode === 'check');
 
-            $targetSql = 'SELECT id, heading, workspace FROM entries WHERE id = ? AND trash = 0';
+            $targetSql = 'SELECT id, heading, workspace, folder_id FROM entries WHERE id = ? AND trash = 0';
             $targetParams = [$noteId];
             if ($workspace !== '') {
                 $targetSql .= ' AND workspace = ?';
@@ -86,6 +86,7 @@ class BacklinksController
 
             $targetHeading = (string) ($targetNote['heading'] ?? '');
             $targetWorkspace = (string) ($targetNote['workspace'] ?? '');
+            $diaryLinks = $this->diaryLinkResolver($noteId, $targetHeading, $targetWorkspace, $targetNote['folder_id'] ?? null);
 
             $candidateSql = "SELECT id, heading, type, workspace
                    FROM entries
@@ -116,6 +117,19 @@ class BacklinksController
                 $content = @file_get_contents($filePath);
                 if ($content === false || $content === '') {
                     continue;
+                }
+
+                // 0. A link to the diary day this note is the entry of
+                //    (diary.php?date=…, discussion #1776) is read as a link
+                //    to the note itself, for detection and snippets alike.
+                if ($diaryLinks !== null) {
+                    $content = poznoteRewriteDiaryLinksToNote(
+                        $content,
+                        $diaryLinks['date'],
+                        $noteId,
+                        (string) $note['workspace'],
+                        $diaryLinks['resolves']
+                    );
                 }
 
                 $found = false;
@@ -188,6 +202,48 @@ class BacklinksController
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
+
+    /**
+     * When the target is a diary entry, the day it is the entry of and the
+     * test that tells whether a diary.php?date= link lands on it; null for
+     * any other note, which costs the candidates loop nothing.
+     *
+     * A link lands on the target when diary.php would open it: the entry of
+     * that date in the diary the link names (the first diary when it names
+     * none), in the target's workspace. Two entries titled with the same day
+     * in one diary resolve to the oldest, as diary.php does.
+     *
+     * @return array{date: string, resolves: callable(string, int): bool}|null
+     */
+    private function diaryLinkResolver(int $noteId, string $heading, string $workspace, $folderId): ?array
+    {
+        if ($folderId === null || $folderId === '' || $workspace === ''
+            || !function_exists('parseDiaryEntryTitle')) {
+            return null;
+        }
+        $date = parseDiaryEntryTitle($heading);
+        if ($date === null) {
+            return null;
+        }
+        $roots = getDiaryRoots($this->con, $workspace);
+        if ($roots === [] || findDiaryRootForFolder($this->con, $workspace, (int) $folderId) === null) {
+            return null;
+        }
+        $rootIds = array_column($roots, 'id');
+        $con = $this->con;
+        $memo = [];
+        $resolves = static function (string $linkWorkspace, int $diary) use ($con, $workspace, $date, $noteId, $rootIds, &$memo): bool {
+            if ($linkWorkspace !== $workspace) {
+                return false;
+            }
+            $rootId = in_array($diary, $rootIds, true) ? $diary : $rootIds[0];
+            if (!array_key_exists($rootId, $memo)) {
+                $memo[$rootId] = findDiaryEntryIdForDate($con, $workspace, $date, $rootId) === $noteId;
+            }
+            return $memo[$rootId];
+        };
+        return ['date' => $date, 'resolves' => $resolves];
+    }
 
     private function sendSuccess(array $data): void
     {

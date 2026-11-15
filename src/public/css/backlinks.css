@@ -135,6 +135,15 @@
     padding-left: 52px;
 }
 
+/* The markdown split view fills the screen with its two panes and gives back
+   only the height of the rows under the note (js/markdown-editor.js): passages
+   unfolded there scroll in a band of their own rather than squeezing the
+   panes down to nothing. */
+.innernote:has(> .noteentry.markdown-split-mode) .backlinks-mentions {
+    max-height: 30vh;
+    overflow-y: auto;
+}
+
 /* One passage, on one line. It is a link to the note that wrote it, so a
    passage worth reading is one click from its context. */
 .backlinks-mention {
