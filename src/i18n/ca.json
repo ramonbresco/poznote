@@ -4701,7 +4701,9 @@
       "medium": "Mitjà",
       "high": "Alt",
       "xhigh": "Molt alt (xhigh)"
-    }
+    },
+    "show_value": "Mostra el valor",
+    "hide_value": "Amaga el valor"
   },
   "ai_settings_user": {
     "title": "El meu assistent d'IA",

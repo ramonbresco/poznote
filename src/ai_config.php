@@ -139,6 +139,35 @@ function poznoteAiLoadHeaders(string $stored): array {
 }
 
 /**
+ * Eye button next to a masked field of the AI settings forms (API key,
+ * custom headers). The field itself carries what the eye reveals, see
+ * setupSecretToggles() in js/ai-settings-form.js. Both pages that use it are
+ * reserved to the owner of the configuration (admin for the instance one,
+ * the account owner for a personal one), the only people who may read it.
+ */
+function poznoteAiSecretToggleButton(string $targetId): string {
+    $show = t('ai_settings.show_value', [], 'Show the value');
+    $hide = t('ai_settings.hide_value', [], 'Hide the value');
+    $attr = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    return '<button type="button" class="git-field-secret-toggle" data-secret-toggle="' . $attr($targetId) . '"'
+        . ' title="' . $attr($show) . '" aria-label="' . $attr($show) . '" aria-pressed="false"'
+        . ' data-show-label="' . $attr($show) . '" data-hide-label="' . $attr($hide) . '">'
+        . '<i class="lucide lucide-eye" aria-hidden="true"></i></button>';
+}
+
+/**
+ * Stored custom headers as the data attribute the eye of the headers field
+ * reads: [[name, value], ...].
+ */
+function poznoteAiSecretHeadersAttr(array $headers): string {
+    $pairs = [];
+    foreach ($headers as $header) {
+        $pairs[] = [(string)$header['name'], (string)$header['value']];
+    }
+    return htmlspecialchars((string)json_encode($pairs, JSON_UNESCAPED_UNICODE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/**
  * Parse the custom headers field of a settings form or of a connection
  * test, for the server at $serverUrl. Every provider takes them: Anthropic
  * wants anthropic-workspace-id with an organization key that is not scoped

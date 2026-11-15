@@ -4701,7 +4701,9 @@
       "medium": "중간",
       "high": "높음",
       "xhigh": "매우 높음(xhigh)"
-    }
+    },
+    "show_value": "값 표시",
+    "hide_value": "값 숨기기"
   },
   "ai_settings_user": {
     "title": "내 AI 어시스턴트",

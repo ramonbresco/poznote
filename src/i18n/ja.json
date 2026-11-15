@@ -4701,7 +4701,9 @@
       "medium": "中",
       "high": "高",
       "xhigh": "最高（xhigh）"
-    }
+    },
+    "show_value": "値を表示",
+    "hide_value": "値を隠す"
   },
   "ai_settings_user": {
     "title": "自分のAIアシスタント",

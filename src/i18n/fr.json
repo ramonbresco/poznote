@@ -5149,7 +5149,9 @@
       "medium": "Moyen",
       "high": "Élevé",
       "xhigh": "Très élevé (xhigh)"
-    }
+    },
+    "show_value": "Afficher la valeur",
+    "hide_value": "Masquer la valeur"
   },
   "ai_settings_user": {
     "title": "Mon assistant IA",

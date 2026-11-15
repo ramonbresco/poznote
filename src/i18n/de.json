@@ -5044,7 +5044,9 @@
       "medium": "Mittel",
       "high": "Hoch",
       "xhigh": "Sehr hoch (xhigh)"
-    }
+    },
+    "show_value": "Wert anzeigen",
+    "hide_value": "Wert ausblenden"
   },
   "ai_settings_user": {
     "title": "Mein KI-Assistent",

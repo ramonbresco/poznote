@@ -5141,7 +5141,9 @@
       "medium": "中",
       "high": "高",
       "xhigh": "极高（xhigh）"
-    }
+    },
+    "show_value": "显示值",
+    "hide_value": "隐藏值"
   },
   "ai_settings_user": {
     "title": "我的 AI 助手",
