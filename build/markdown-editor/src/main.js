@@ -31,7 +31,7 @@ const filteredSearchKeymap = searchKeymap.filter(binding => binding.key !== 'Mod
 import { Annotation, CharCategory, Compartment, EditorSelection, EditorState, MapMode, Prec, RangeSet, RangeSetBuilder, RangeValue, StateEffect, StateField } from '@codemirror/state'
 import { Decoration, EditorView, ViewPlugin, WidgetType, drawSelection, highlightActiveLine, keymap, placeholder } from '@codemirror/view'
 import { tags as syntaxTags } from '@lezer/highlight'
-import { armPendingFormat, dropPendingFormat, insertTabSpacesInText, swallowShiftTabInText, clearSpanChanges, leavePendingSpace, isFormatActiveAt, findInlineFormatEnd, findInlineFormatExit, findUntypedPair, wrapSelectionChanges, leaveInlineFormat, livePreview, refreshLivePreviewEffect, sourceLinkClicks, getEditingTableRange, getTableCellAt, getTableCellAtSelection, getTableCellTarget, getTableBlockElement, finishTableCellEdit, focusTableCell, moveTableCell, insertTableLineBreak, openNoteReferenceAtCaret } from './live-preview.js'
+import { armPendingFormat, dropPendingFormat, insertTabSpacesInText, swallowShiftTabInText, clearSpanChanges, leavePendingSpace, isFormatActiveAt, findInlineFormatEnd, findInlineFormatExit, findUntypedPair, wrapSelectionChanges, leaveInlineFormat, livePreview, refreshLivePreviewEffect, sourceLinkClicks, getEditingTableRange, getTableCellAt, getTableCellAtSelection, getTableCellTarget, getTableBlockElement, finishTableCellEdit, formatEditingTableCell, focusTableCell, moveTableCell, insertTableLineBreak, openNoteReferenceAtCaret } from './live-preview.js'
 
 const instances = new WeakMap()
 let lastActiveHost = null
@@ -1418,6 +1418,12 @@ function leaveInlineFormatAt(host, marker) {
 function wrapSelectionAt(host, prefix, suffix) {
   const instance = getInstance(host)
   if (!instance) return false
+  // Text selected in a table cell being typed in (rich text): the format
+  // goes around it in that cell, not at the editor's own caret (#1781)
+  if (formatEditingTableCell(instance.view, (state, from, to) => wrapSelectionChanges(state, from, to, prefix, suffix))) {
+    notifyFormatStateChanged()
+    return true
+  }
   wrapSelection(prefix, suffix)(instance.view)
   instance.view.focus()
   notifyFormatStateChanged()
@@ -1429,6 +1435,10 @@ function wrapSelectionAt(host, prefix, suffix) {
 function clearSpanFormatAt(host, property) {
   const instance = getInstance(host)
   if (!instance) return false
+  if (formatEditingTableCell(instance.view, (state, from, to) => clearSpanChanges(state, from, to, property))) {
+    notifyFormatStateChanged()
+    return true
+  }
   const cleared = clearSpanFormatInView(instance.view, property)
   instance.view.focus()
   notifyFormatStateChanged()

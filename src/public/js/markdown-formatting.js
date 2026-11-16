@@ -1170,10 +1170,31 @@
         replaceMarkdownRangeAndSelect(editor, lineStart, lineEnd, updated, newStart, newEnd);
     }
 
+    // Text selected in a table cell being typed in (rich text view, #1781):
+    // the editor whose cell it is, null otherwise. The editor's own selection
+    // is out of the table then, so the palettes must not read it: they hand
+    // the format to the editor, which puts it around the text of the cell.
+    function getEditingTableCellEditor() {
+        var sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return null;
+        var range = sel.getRangeAt(0);
+        var node = range.commonAncestorContainer;
+        var element = node.nodeType === 3 ? node.parentElement : node;
+        if (!element || !element.closest || !element.closest('.cm-live-cell-editing')) return null;
+        var editor = getMarkdownEditorElement(range);
+        var api = window.PoznoteMarkdownCodeMirror;
+        return editor && api && api.isCodeMirrorEditor(editor) ? editor : null;
+    }
+
     // "None" in the colour or the highlight palette: the colour leaves the
     // selection (kind 'color' or 'background-color', the latter covering
     // ==text== too); at a bare caret, the caret leaves the coloured text.
     function clearMarkdownSpanFormat(kind) {
+        var cellEditor = getEditingTableCellEditor();
+        if (cellEditor) {
+            window.PoznoteMarkdownCodeMirror.clearSpanFormat(cellEditor, kind);
+            return true;
+        }
         var context = getCurrentMarkdownEditContext();
         var editor = context.editor;
         var api = window.PoznoteMarkdownCodeMirror;
@@ -1197,6 +1218,11 @@
         if (!color) return;
         // ("none" used to wrap the text in one more span, color:inherit)
         if ((color === 'none' || color === 'inherit') && clearMarkdownSpanFormat('color')) return;
+        var cellEditor = getEditingTableCellEditor();
+        if (cellEditor) {
+            window.PoznoteMarkdownCodeMirror.wrapSelection(cellEditor, '<span style="color:' + color + '">', '</span>');
+            return;
+        }
 
         leaveMarkdownInlineCodeAtCaret();
         var context = getCurrentMarkdownEditContext();
@@ -1238,6 +1264,11 @@
         // painted with --pz-color-yellow-soft, so both follow the theme.
         var yellow = window.PoznoteColorPalette ? window.PoznoteColorPalette.highlightColor('yellow') : '';
         if (color === 'none' && clearMarkdownSpanFormat('background-color')) return;
+        var cellEditor = getEditingTableCellEditor();
+        if (cellEditor && (!color || color === 'none' || color === yellow)) {
+            window.PoznoteMarkdownCodeMirror.wrapSelection(cellEditor, '==', '==');
+            return;
+        }
         if (color && color !== 'none' && color !== yellow &&
             typeof applyMarkdownBackgroundSpan === 'function') {
             applyMarkdownBackgroundSpan(color);
@@ -1259,6 +1290,11 @@
      * Wrap the current markdown selection in an inline background-color span.
      */
     function applyMarkdownBackgroundSpan(color) {
+        var cellEditor = getEditingTableCellEditor();
+        if (cellEditor) {
+            window.PoznoteMarkdownCodeMirror.wrapSelection(cellEditor, '<span style="background-color:' + color + '">', '</span>');
+            return;
+        }
         leaveMarkdownInlineCodeAtCaret();
         var context = getCurrentMarkdownEditContext();
         var sel = context.selection;
