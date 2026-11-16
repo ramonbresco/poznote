@@ -667,6 +667,15 @@ body[data-markdown-live-syntax='0'] .markdown-codemirror-host .cm-live-preview :
     cursor: text;
 }
 
+/* An empty cell keeps the height of a line of text: a row of empty cells (the
+   one the "+" under a table adds) was a thin strip, hard to click into. Not
+   the cell being typed in, where generated text would get in the caret's way
+   (it has its height from being edited). */
+.markdown-preview table td:empty::before,
+.markdown-codemirror-host .cm-live-preview .cm-live-block-table td:empty:not(.cm-live-cell-editing)::before {
+    content: '\200b';
+}
+
 .markdown-codemirror-host .cm-live-preview .cm-live-block-table .cm-live-cell-editing {
     outline: 2px solid var(--pz-accent);
     outline-offset: -2px;

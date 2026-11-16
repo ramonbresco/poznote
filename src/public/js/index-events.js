@@ -1249,6 +1249,14 @@
         var codeMirror = noteCodeMirrorApi(el);
         if (codeMirror) {
             var end = typeof codeMirror.getLength === 'function' ? codeMirror.getLength(el) : 0;
+            // Rich text, a note that ends with a table: the end of the note is
+            // inside the drawn table, where no caret can stand, and CodeMirror
+            // put it back above the table. A line is opened after the table,
+            // as Arrow down from its last row does.
+            if (endsWithRichTextTable(el, codeMirror) && typeof codeMirror.replaceRange === 'function') {
+                codeMirror.replaceRange(el, end, end, '\n');
+                return;
+            }
             if (typeof codeMirror.setSelection === 'function') {
                 codeMirror.setSelection(el, end, end);
             } else if (typeof codeMirror.focus === 'function') {
@@ -1288,6 +1296,25 @@
         }
         range.collapse(false);
         return range;
+    }
+
+    /**
+     * Is el a Markdown editor in the rich text view whose last line is a row
+     * of a table (drawn there whatever the caret does)?
+     * @param {HTMLElement} el
+     * @param {Object} codeMirror
+     */
+    function endsWithRichTextTable(el, codeMirror) {
+        var body = document.body;
+        if (!body || body.getAttribute('data-markdown-live-editing') !== '1' ||
+            body.getAttribute('data-markdown-live-syntax') !== '0') return false;
+        if (typeof codeMirror.isLivePreview !== 'function' || !codeMirror.isLivePreview(el)) return false;
+        if (typeof codeMirror.getValue !== 'function') return false;
+        var lines = String(codeMirror.getValue(el) || '').split('\n');
+        if (!/^ {0,3}\|/.test(lines[lines.length - 1])) return false;
+        // (a line of a code block left open is not a table)
+        var fences = lines.filter(function (line) { return /^ {0,3}(```|~~~)/.test(line); }).length;
+        return fences % 2 === 0;
     }
 
     /**

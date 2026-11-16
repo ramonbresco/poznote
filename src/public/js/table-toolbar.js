@@ -39,6 +39,10 @@
     let columnHandle = null;
     let hoverTable = null;
     let hoverHideTimer = null;
+    // The "+" buttons follow the size of the table they go around: a row that
+    // grows (the empty row a "+" just added, its cell opened for typing)
+    // would otherwise slide under the row button
+    let hoverTableObserver = null;
     let repositionFrame = 0;
 
     function getApi() {
@@ -589,9 +593,17 @@
         runOnTarget(target, what === 'row' ? 'insertRowBelow' : 'insertColRight', undefined, table);
     }
 
+    function watchHoverTable(table) {
+        if (hoverTableObserver) hoverTableObserver.disconnect();
+        if (!table || typeof ResizeObserver !== 'function') return;
+        if (!hoverTableObserver) hoverTableObserver = new ResizeObserver(() => schedulePosition());
+        hoverTableObserver.observe(table);
+    }
+
     function hideHandles() {
         clearTimeout(hoverHideTimer);
         hoverTable = null;
+        watchHoverTable(null);
         if (rowHandle) rowHandle.hidden = true;
         if (columnHandle) columnHandle.hidden = true;
     }
@@ -653,6 +665,7 @@
         if (table === hoverTable) return;
         createHandles();
         hoverTable = table;
+        watchHoverTable(table);
         positionHandles();
     }
 
