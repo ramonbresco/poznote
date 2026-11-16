@@ -334,6 +334,10 @@ window.savedRanges = {};
     });
 
     popup.appendChild(grid);
+    // A swatch must not take the focus: a table cell being typed in (rich
+    // text view of a Markdown note) is written back when it loses it, and
+    // the selection the colour is for goes with it
+    popup.addEventListener('mousedown', function (e) { e.preventDefault(); });
     return popup;
   }
 

@@ -750,3 +750,50 @@ document.addEventListener('DOMContentLoaded', function () {
         activatePress();
     });
 });
+
+// Help button of the toolbar: what the page is and how to fill it, in a modal.
+// The start page address is written relative in the page and made absolute here.
+document.addEventListener('DOMContentLoaded', function () {
+    var button = document.getElementById('speedDialHelpBtn');
+    var modal = document.getElementById('speedDialHelpModal');
+    if (!button || !modal) return;
+    var closeButton = document.getElementById('speedDialHelpClose');
+    var url = document.getElementById('speedDialHelpStartUrl');
+    if (url) {
+        try {
+            url.textContent = new URL(url.getAttribute('data-path'), window.location.href).href;
+        } catch (e) { /* keep the relative address */ }
+    }
+
+    function isOpen() {
+        return modal.style.display === 'flex';
+    }
+
+    function open() {
+        modal.style.display = 'flex';
+        modal.scrollTop = 0;
+        // Taller than a phone screen: it opens on its first line, not on the button
+        if (closeButton) closeButton.focus({ preventScroll: true });
+    }
+
+    function close() {
+        modal.style.display = 'none';
+        button.focus();
+    }
+
+    button.addEventListener('click', open);
+    if (closeButton) closeButton.addEventListener('click', close);
+
+    // A press that starts on the backdrop and ends there closes it, not a text
+    // selection dragged out of the modal
+    var pressedOnBackdrop = false;
+    modal.addEventListener('mousedown', function (event) {
+        pressedOnBackdrop = event.target === modal;
+    });
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal && pressedOnBackdrop) close();
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && isOpen()) close();
+    });
+});

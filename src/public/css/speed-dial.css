@@ -539,3 +539,54 @@ body.speed-dial-page {
         -webkit-touch-callout: none;
     }
 }
+
+/* Help modal of the toolbar's ? button */
+.speed-dial-help-modal .modal-content {
+    max-width: 560px;
+}
+
+.speed-dial-help-intro {
+    margin: 0 0 16px;
+    color: var(--pz-text);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.speed-dial-help-section {
+    margin-bottom: 14px;
+}
+
+.speed-dial-help-term {
+    margin: 0 0 2px;
+    color: var(--pz-text);
+    font-size: 14px;
+    font-weight: var(--pz-weight-semibold);
+}
+
+.speed-dial-help-text {
+    margin: 0;
+    color: var(--pz-text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* The address to copy: whole on a phone too, selected in one click */
+.speed-dial-help-url {
+    display: block;
+    margin-top: 6px;
+    padding: 6px 10px;
+    border-radius: var(--pz-radius-sm);
+    background: var(--pz-surface);
+    color: var(--pz-text);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+    user-select: all;
+}
+
+.speed-dial-help-modal .modal-buttons {
+    margin-top: 20px;
+}
+
+.speed-dial-help-nowrap {
+    white-space: nowrap;
+}

@@ -2082,6 +2082,191 @@ function readTableCellText(cell) {
     .replace(/\\?\|/g, '\\|')
 }
 
+// The caret under a click in a cell, or null when the click is not on its text
+function caretRangeAtPoint(cell, point) {
+  let range = null
+  if (document.caretPositionFromPoint) {
+    const position = document.caretPositionFromPoint(point.x, point.y)
+    if (position) {
+      range = document.createRange()
+      range.setStart(position.offsetNode, position.offset)
+    }
+  } else if (document.caretRangeFromPoint) {
+    range = document.caretRangeFromPoint(point.x, point.y)
+  }
+  if (!range || !cell.contains(range.startContainer)) return null
+  // (not inside a formula, which is typed in as one piece)
+  const at = range.startContainer.nodeType === Node.TEXT_NODE ? range.startContainer.parentElement : range.startContainer
+  if (at && at.closest && at.closest('.math-inline') && at.closest('.math-inline') !== cell) return null
+  range.collapse(true)
+  return range
+}
+
+// --- A cell typed in as it is drawn --------------------------------------
+// A cell opens in its drawn form, its bold bold and its colours coloured, when
+// what it shows can be written back as exactly the Markdown it came from: the
+// HTML of the cell is turned back into Markdown on opening, and only if that
+// gives its source again is the drawn form kept. Anything else (an escaped
+// star, __bold__ rather than **bold**, a piece of HTML the parser leaves as
+// text) opens as the plain field holding the source, so that nothing in the
+// cell can be lost on the way back.
+
+const CELL_SPAN_STYLE_REGEX = /^\s*(?:background-color|color)\s*:[^;"<>]*;?\s*$/i
+const CELL_MARKER_TAGS = { strong: '**', em: '*', del: '~~', mark: '==', code: '`' }
+
+function richCellTextSource(text) {
+  return text
+    .replace(/ /g, ' ')
+    .replace(/\r\n?/g, '\n')
+    .replace(/[ \t]*\n[ \t]*/g, '<br>')
+    .replace(/\\?\|/g, '\\|')
+}
+
+// What a drawn element of a cell is in the source: { open, close }, or
+// { atom } for what has no inside to type in. null for anything that cannot
+// be written back.
+function richCellPiece(node) {
+  const tag = node.nodeName.toLowerCase()
+  if (tag === 'br') return { atom: '<br>' }
+  if (tag === 'img') {
+    const src = node.getAttribute('src')
+    return src ? { atom: '![' + (node.getAttribute('alt') || '') + '](' + src + ')' } : null
+  }
+  if (node.classList && node.classList.contains('math-inline')) {
+    const math = node.getAttribute('data-math')
+    return math ? { atom: '$' + math + '$' } : null
+  }
+  if (CELL_MARKER_TAGS[tag]) return { open: CELL_MARKER_TAGS[tag], close: CELL_MARKER_TAGS[tag] }
+  if (tag === 'u') return { open: '<u>', close: '</u>' }
+  if (tag === 'span') {
+    const style = node.getAttribute('style') || ''
+    if (node.attributes.length !== 1 || !CELL_SPAN_STYLE_REGEX.test(style)) return null
+    return { open: '<span style="' + style + '">', close: '</span>' }
+  }
+  if (tag === 'a') {
+    const href = node.getAttribute('href')
+    if (!href) return null
+    // (a bare address is drawn as a link to itself)
+    if (/^https?:\/\//i.test(href) && node.textContent === href && node.children.length === 0) return { atom: href }
+    return { open: '[', close: '](' + href + ')' }
+  }
+  return null
+}
+
+// The Markdown of a drawn cell, null when something in it has no Markdown.
+// With stop ({ container, offset }), only what comes before that point:
+// the formats open there are not closed, which gives the place of the point
+// in the source.
+function richCellSource(root, stop) {
+  let out = ''
+  let done = false
+  let ok = true
+  const contains = node => !!stop && (node === stop.container || node.contains(stop.container))
+  const walk = node => {
+    const children = node.childNodes
+    for (let index = 0; index < children.length && !done; index++) {
+      if (stop && stop.container === node && stop.offset === index) {
+        done = true
+        return
+      }
+      emit(children[index])
+    }
+    if (!done && stop && stop.container === node && stop.offset >= children.length) done = true
+  }
+  const emit = node => {
+    if (!ok) return
+    if (node.nodeType === Node.TEXT_NODE) {
+      let data = node.data
+      if (stop && stop.container === node) {
+        data = data.slice(0, stop.offset)
+        done = true
+      }
+      out += richCellTextSource(data)
+      return
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) return
+    const piece = richCellPiece(node)
+    if (!piece) {
+      ok = false
+      return
+    }
+    if (piece.atom !== undefined) {
+      out += piece.atom
+      if (contains(node)) done = true
+      return
+    }
+    if (contains(node)) {
+      out += piece.open
+      walk(node)
+      return
+    }
+    const inner = richCellSource(node)
+    if (inner === null) {
+      ok = false
+      return
+    }
+    // (an emptied format leaves nothing; its markers never against a space
+    // on their inner side, which Markdown would not read as a format)
+    if (!inner.trim()) {
+      out += inner
+      return
+    }
+    const lead = inner.match(/^\s*/)[0]
+    const trail = inner.match(/\s*$/)[0]
+    out += lead + piece.open + inner.trim() + piece.close + trail
+  }
+  walk(root)
+  return ok ? out : null
+}
+
+// The text of a cell being typed in, from its start to a point in it, its
+// line breaks (<br>, or a <div> the browser made) as \n, the way innerText
+// reads the whole cell for readTableCellText()
+function cellTextBefore(cell, container, offset) {
+  const range = document.createRange()
+  range.selectNodeContents(cell)
+  range.setEnd(container, offset)
+  let text = ''
+  const walk = node => {
+    for (const child of node.childNodes) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        text += child.data
+      } else if (child.nodeName === 'BR') {
+        text += '\n'
+      } else {
+        if (/^(?:DIV|P)$/.test(child.nodeName) && text) text += '\n'
+        walk(child)
+      }
+    }
+  }
+  walk(range.cloneContents())
+  return text
+}
+
+// readTableCellText() for the start of a cell's text: how long that start is
+// once written into the source
+function cellSourceLength(text) {
+  return text
+    .replace(/\r\n?/g, '\n')
+    .replace(/^\s+/, '')
+    .replace(/[ \t]*\n[ \t]*/g, '<br>')
+    .replace(/\\?\|/g, '\\|')
+    .length
+}
+
+// A format asked for on text selected in a cell being typed in (rich text):
+// the cell is written back, and the format goes around that text in the
+// source, through the same rules as anywhere else in the note (a colour
+// replaces a colour, the same format again takes it off). The cell stays
+// closed, drawn with its format: open, it would show the format's markers.
+// format(state, from, to) returns { changes } or null. False when no cell
+// is being typed in, or when the selection is not in it.
+export function formatEditingTableCell(view, format) {
+  const cell = view.dom.querySelector('.cm-live-cell-editing')
+  const block = cell ? cell.closest('.cm-live-block-table') : null
+  return !!(block && block._liveFormatCell && block._liveFormatCell(format))
+}
+
 function isPlainArrow(event) {
   return /^Arrow(Up|Down|Left|Right)$/.test(event.key) &&
     !event.shiftKey && !event.ctrlKey && !event.metaKey && !event.altKey && !event.isComposing
@@ -2136,8 +2321,10 @@ function leaveTable(view, blockFrom, after) {
   return true
 }
 
-// select: the cell's text selected, 'start': the caret at its start, at its end otherwise
-function startTableCellEdit(view, block, cell, select) {
+// select: the cell's text selected, 'start': the caret at its start, at its
+// end otherwise; point ({ x, y }, a click): the caret there when the cell
+// opens in its drawn form
+function startTableCellEdit(view, block, cell, select, point) {
   if (block._liveEditingCell === cell || view.state.readOnly) return
   const editing = view.dom.querySelector('.cm-live-cell-editing')
   const editingBlock = editing ? editing.closest('.cm-live-block-table') : null
@@ -2159,9 +2346,29 @@ function startTableCellEdit(view, block, cell, select) {
 
   const raw = located.line.text.slice(located.start, located.stop).trim()
   const originalHtml = cell.innerHTML
-  cell.textContent = raw.replace(/\\\|/g, '|').replace(/<br\s*\/?>/gi, '\n')
-  cell.setAttribute('contenteditable', 'plaintext-only')
-  if (cell.contentEditable !== 'plaintext-only') cell.setAttribute('contenteditable', 'true')
+  // Drawn, when what it shows gives its source back; the source otherwise
+  const drawnSource = richCellSource(cell)
+  const rich = drawnSource !== null && drawnSource.trim() === raw
+  if (rich) {
+    cell.setAttribute('contenteditable', 'true')
+    // (a formula is typed in as one piece: its drawing is KaTeX's)
+    cell.querySelectorAll('.math-inline').forEach(math => math.setAttribute('contenteditable', 'false'))
+    cell.classList.add('cm-live-cell-rich')
+  } else {
+    cell.textContent = raw.replace(/\\\|/g, '|').replace(/<br\s*\/?>/gi, '\n')
+    cell.setAttribute('contenteditable', 'plaintext-only')
+    if (cell.contentEditable !== 'plaintext-only') cell.setAttribute('contenteditable', 'true')
+  }
+  // What the cell holds, as the source of a cell (pipes escaped, line breaks
+  // as <br>); typed in its drawn form, a piece the browser made that has no
+  // Markdown leaves the text alone
+  const readCell = () => {
+    if (rich) {
+      const source = richCellSource(cell)
+      if (source !== null) return source.trim()
+    }
+    return readTableCellText(cell)
+  }
   cell.classList.add('cm-live-cell-editing')
   block._liveEditingCell = cell
 
@@ -2173,13 +2380,14 @@ function startTableCellEdit(view, block, cell, select) {
     cell.removeEventListener('blur', onBlur)
     block._liveEditingCell = null
     block._liveFinishEdit = null
+    block._liveFormatCell = null
     // (the cell's place is looked up again: the note may have moved on, a
     // table above it aligned at save time for one)
     const now = locateTableCell(view, block, cell)
     const blockFrom = now ? now.tableBlock.from : located.tableBlock.from
-    const text = readTableCellText(cell)
+    const text = readCell()
     cell.removeAttribute('contenteditable')
-    cell.classList.remove('cm-live-cell-editing')
+    cell.classList.remove('cm-live-cell-editing', 'cm-live-cell-rich')
 
     let changed = false
     if (commit && text !== raw) {
@@ -2235,9 +2443,65 @@ function startTableCellEdit(view, block, cell, select) {
     // an arrow to the right lands at the start of the next cell)
     requestAnimationFrame(() => editTableCellAt(view, blockFrom, rowIndex, cellIndex, move === 'arrow-right' ? 'start' : false))
   }
+  const formatCell = format => {
+    const selection = window.getSelection()
+    if (!selection || selection.rangeCount === 0) return false
+    const range = selection.getRangeAt(0)
+    if (!cell.contains(range.startContainer) || !cell.contains(range.endContainer)) return false
+    // (a bare caret: nothing to format, and nothing written at the caret of
+    // the editor, which is out of the table)
+    if (range.collapsed) return true
+    const now = locateTableCell(view, block, cell)
+    if (!now) return true
+    const text = readCell()
+    // Where the two ends of the selection fall in that text
+    const inText = (container, offset) => {
+      if (rich) {
+        const whole = richCellSource(cell)
+        const before = richCellSource(cell, { container, offset })
+        if (whole !== null && before !== null) {
+          const lead = whole.length - whole.trimStart().length
+          return Math.max(0, Math.min(before.length - lead, text.length))
+        }
+      }
+      return Math.min(cellSourceLength(cellTextBefore(cell, container, offset)), text.length)
+    }
+    const fromInText = inText(range.startContainer, range.startOffset)
+    const toInText = inText(range.endContainer, range.endOffset)
+    // Where the cell's text starts in the source once written back: finish()
+    // writes " text " between the pipes, or leaves them as they were
+    const stretch = now.line.text.slice(now.start, now.stop)
+    const textFrom = now.line.from + now.start + (text !== raw ? 1 : stretch.length - stretch.trimStart().length)
+    finish(true)
+    // (the selected text left with the cell: nothing is selected now, which
+    // hides the floating format bar)
+    selection.removeAllRanges()
+    if (toInText <= fromInText) return true
+    const result = format(view.state, textFrom + fromInText, textFrom + toInText)
+    if (result && result.changes.length) view.dispatch({ changes: result.changes, userEvent: 'input' })
+    return true
+  }
+  // The format shortcuts of the editor (main.js), and Ctrl + Space (#1753)
+  const cellFormatShortcut = event => {
+    if (!(event.ctrlKey || event.metaKey) || event.altKey) return null
+    if (event.ctrlKey && !event.metaKey && !event.shiftKey && (event.key === ' ' || event.code === 'Space')) {
+      return (state, from, to) => clearSpanChanges(state, from, to, '')
+    }
+    const key = event.key.toLowerCase()
+    const pair = event.shiftKey
+      ? (key === 's' ? ['~~', '~~'] : null)
+      : ({ b: ['**', '**'], i: ['*', '*'], u: ['<u>', '</u>'] })[key]
+    return pair ? (state, from, to) => wrapSelectionChanges(state, from, to, pair[0], pair[1]) : null
+  }
   const onKeyDown = event => {
     // Nothing typed in a cell is for the editor or for the page's shortcuts
     event.stopPropagation()
+    const shortcutFormat = cellFormatShortcut(event)
+    if (shortcutFormat) {
+      event.preventDefault()
+      formatCell(shortcutFormat)
+      return
+    }
     if (event.key === 'Enter' && event.shiftKey && !event.ctrlKey && !event.metaKey && !event.altKey) {
       // A line break in the cell (<br> in the source)
       event.preventDefault()
@@ -2270,6 +2534,7 @@ function startTableCellEdit(view, block, cell, select) {
   }
   const onBlur = () => finish(true)
   block._liveFinishEdit = finish
+  block._liveFormatCell = formatCell
   cell.addEventListener('keydown', onKeyDown)
   cell.addEventListener('blur', onBlur)
 
@@ -2277,10 +2542,13 @@ function startTableCellEdit(view, block, cell, select) {
   // A wide table scrolls in its box (#1701), and focus() leaves a cell half
   // out of it as it is: Tab to the next column would type out of sight
   cell.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-  const range = document.createRange()
-  range.selectNodeContents(cell)
-  if (select === 'start') range.collapse(true)
-  else if (!select) range.collapse(false)
+  let range = rich && point && !select ? caretRangeAtPoint(cell, point) : null
+  if (!range) {
+    range = document.createRange()
+    range.selectNodeContents(cell)
+    if (select === 'start') range.collapse(true)
+    else if (!select) range.collapse(false)
+  }
   const selection = window.getSelection()
   selection.removeAllRanges()
   selection.addRange(range)
@@ -2341,7 +2609,7 @@ function setupTableEditing(view, block) {
     startCellRangeDrag(view, block, cell)
     if (cell === block._liveEditingCell) return
     event.preventDefault()
-    startTableCellEdit(view, block, cell)
+    startTableCellEdit(view, block, cell, false, { x: event.clientX, y: event.clientY })
   })
 
   // The menu opens on the cell being typed in too; Shift + right click leaves
@@ -4289,10 +4557,17 @@ function wrapSelectionLines(state, from, to, prefix, suffix, onOnly) {
           off++
           const innerStart = exact ? inside.openTo : start
           const innerEnd = exact ? inside.closeFrom : end
-          if (innerStart === inside.openTo) changes.push({ from: inside.from, to: inside.openTo })
-          else changes.push({ from: innerStart, insert: suffix })
-          if (innerEnd === inside.closeFrom) changes.push({ from: inside.closeFrom, to: inside.to })
-          else changes.push({ from: innerEnd, insert: prefix })
+          // (the markers that close the format before the selection and open
+          // it again after it never against a space on their inner side:
+          // "**bold** text" made of "**bold text**", not "bold** text**")
+          let closeAt = innerStart
+          while (closeAt > inside.openTo && /\s/.test(state.sliceDoc(closeAt - 1, closeAt))) closeAt--
+          let openAt = innerEnd
+          while (openAt < inside.closeFrom && /\s/.test(state.sliceDoc(openAt, openAt + 1))) openAt++
+          if (closeAt === inside.openTo) changes.push({ from: inside.from, to: inside.openTo })
+          else changes.push({ from: closeAt, insert: suffix })
+          if (openAt === inside.closeFrom) changes.push({ from: inside.closeFrom, to: inside.to })
+          else changes.push({ from: openAt, insert: prefix })
           stretches.push({ from: innerStart, to: innerEnd })
           handled = true
         } else {

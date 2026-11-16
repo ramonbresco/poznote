@@ -210,6 +210,8 @@ $cache_v = rawurlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 			</div>
 		</div>
 		<?php endif; ?>
+		<?php // What the page is and how to fill it, in a modal (js/speed-dial.js) ?>
+		<button type="button" id="speedDialHelpBtn" class="pz-toolbar-btn" aria-haspopup="dialog" aria-controls="speedDialHelpModal" title="<?php echo t_h('speed_dial.help.button', [], 'How the speed dial works'); ?>" aria-label="<?php echo t_h('speed_dial.help.button', [], 'How the speed dial works'); ?>"><i class="lucide lucide-help-circle"></i></button>
 		<?php $toolbarButtons = trim((string)ob_get_clean()); ?>
 
 		<?php if (empty($items)): ?>
@@ -289,6 +291,39 @@ $cache_v = rawurlencode(poznoteBuildAssetCacheVersion(getAppVersion()));
 	include __DIR__ . '/../ui_customization_panel.php';
 	?>
 	<?php include __DIR__ . '/../modals/background_image_modal.php'; ?>
+	<?php
+	// The address of this speed dial as a start page, made absolute by js/speed-dial.js
+	$speedDialStartPath = 'speed_dial.php?workspace=' . rawurlencode($workspace)
+		. (poznoteSpeedDialBoardName($board) !== null ? '&board=' . rawurlencode($board) : '')
+		. '&focus=1';
+	$speedDialHelpSections = [
+		['add', 'Add a tile', 'Choose "Add to speed dial" in the menu of a note or a folder (for a folder, all its notes, subfolders included), or give a note the tag "{{tag}}".'],
+		['tile', 'One link or none', 'The note is a tile that opens this link, or the note itself. Its icon is the first image of the note, otherwise the site\'s icon, otherwise the first letter of the title.'],
+		['group', 'Several links', 'The note becomes a group of tiles under its title, one tile per link, and a horizontal line (----) starts a new row. Clicking the title of the group opens the note, right-clicking it changes its color.'],
+		['boards', 'Several speed dials', 'The + button creates another speed dial, for example Work and Home, and pills switch between them. Each one is a tag, such as "speed-dial-Work". Right-click a pill to rename or delete it: deleting keeps the notes.'],
+		['arrange', 'Arrange the page', 'Drag tiles and groups to move them. The buttons of this row filter the tiles and change their size and the width of the page. The ... menu at the bottom right sets a background image, and the eye button hides what you do not need.'],
+		['start', 'Browser start page', 'Set this address as the start page of your browser. focus=1 also hides the icon rail.'],
+	];
+	?>
+	<div id="speedDialHelpModal" class="modal speed-dial-help-modal" role="dialog" aria-modal="true" aria-labelledby="speedDialHelpTitle">
+		<div class="modal-content">
+			<h3 id="speedDialHelpTitle"><?php echo t_h('speed_dial.help.title', [], 'How the speed dial works'); ?></h3>
+			<p class="speed-dial-help-intro"><?php echo t_h('speed_dial.help.intro', [], 'The speed dial turns notes into a page of link tiles, made to be your browser\'s start page.'); ?></p>
+			<?php foreach ($speedDialHelpSections as [$sectionKey, $sectionTitle, $sectionText]): ?>
+			<div class="speed-dial-help-section">
+				<p class="speed-dial-help-term"><?php echo t_h('speed_dial.help.' . $sectionKey . '_title', [], $sectionTitle); ?></p>
+				<?php // Escaped first: the horizontal line (----) is then kept on one line, it is what is typed ?>
+				<p class="speed-dial-help-text"><?php echo str_replace('----', '<span class="speed-dial-help-nowrap">----</span>', t_h('speed_dial.help.' . $sectionKey, ['tag' => $board], $sectionText)); ?></p>
+				<?php if ($sectionKey === 'start'): ?>
+				<code id="speedDialHelpStartUrl" class="speed-dial-help-url" data-path="<?php echo htmlspecialchars($speedDialStartPath, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($speedDialStartPath, ENT_QUOTES, 'UTF-8'); ?></code>
+				<?php endif; ?>
+			</div>
+			<?php endforeach; ?>
+			<div class="modal-buttons">
+				<button type="button" class="btn-cancel" id="speedDialHelpClose"><?php echo t_h('common.close', [], 'Close'); ?></button>
+			</div>
+		</div>
+	</div>
 
 	<script src="js/globals.js?v=<?php echo $cache_v; ?>"></script>
 	<script src="js/navigation.js?v=<?php echo $cache_v; ?>"></script>

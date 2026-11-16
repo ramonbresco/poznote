@@ -5940,6 +5940,23 @@
     "choose_item": "Toevoegen aan een snelkiezer",
     "folder_added_one": "1 notitie toegevoegd aan de snelkiezer",
     "folder_added_other": "{{count}} notities toegevoegd aan de snelkiezer",
+    "help": {
+      "button": "Zo werkt de snelkiezer",
+      "title": "Zo werkt de snelkiezer",
+      "intro": "De snelkiezer maakt van notities een pagina met linktegels, bedoeld als startpagina van je browser.",
+      "add_title": "Een tegel toevoegen",
+      "add": "Kies \"Toevoegen aan snelkiezer\" in het menu van een notitie of een map (bij een map al zijn notities, submappen inbegrepen), of geef een notitie de tag \"{{tag}}\".",
+      "tile_title": "Eén link of geen",
+      "tile": "De notitie is een tegel die deze link opent, of de notitie zelf. Het pictogram is de eerste afbeelding van de notitie, anders het pictogram van de site, anders de eerste letter van de titel.",
+      "group_title": "Meerdere links",
+      "group": "De notitie wordt een groep tegels onder haar titel, één tegel per link, en een horizontale lijn (----) begint een nieuwe rij. Klikken op de titel van de groep opent de notitie, rechtsklikken verandert de kleur.",
+      "boards_title": "Meerdere snelkiezers",
+      "boards": "De knop + maakt nog een snelkiezer, bijvoorbeeld Werk en Thuis, en met tabjes wissel je tussen ze. Elke snelkiezer is een tag, zoals \"speed-dial-Werk\". Rechtsklik op een tabje om het te hernoemen of te verwijderen: bij verwijderen blijven de notities bewaard.",
+      "arrange_title": "De pagina indelen",
+      "arrange": "Sleep tegels en groepen om ze te verplaatsen. De knoppen in deze rij filteren de tegels en veranderen hun grootte en de breedte van de pagina. Het menu ... rechtsonder stelt een achtergrondafbeelding in, en de oogknop verbergt wat je niet nodig hebt.",
+      "start_title": "Startpagina van de browser",
+      "start": "Stel dit adres in als startpagina van je browser. focus=1 verbergt ook de pictogrambalk."
+    },
     "visibility": {
       "title": "Paginatitel",
       "workspace": "Werkruimtekiezer",
