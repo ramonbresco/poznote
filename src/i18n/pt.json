@@ -6096,6 +6096,23 @@
     "choose_item": "Adicionar a um acesso rápido",
     "folder_added_one": "1 nota adicionada ao acesso rápido",
     "folder_added_other": "{{count}} notas adicionadas ao acesso rápido",
+    "help": {
+      "button": "Como funciona o acesso rápido",
+      "title": "Como funciona o acesso rápido",
+      "intro": "O acesso rápido transforma notas numa página de blocos de links, feita para ser a página inicial do seu navegador.",
+      "add_title": "Adicionar um bloco",
+      "add": "Escolha «Adicionar ao acesso rápido» no menu de uma nota ou de uma pasta (numa pasta, todas as suas notas, subpastas incluídas), ou dê a uma nota a etiqueta «{{tag}}».",
+      "tile_title": "Um link ou nenhum",
+      "tile": "A nota é um bloco que abre esse link, ou a própria nota. O seu ícone é a primeira imagem da nota; se não houver, o ícone do site; se não, a primeira letra do título.",
+      "group_title": "Vários links",
+      "group": "A nota torna-se um grupo de blocos sob o seu título, um bloco por link, e uma linha horizontal (----) começa uma nova fila. Um clique no título do grupo abre a nota, um clique direito muda a sua cor.",
+      "boards_title": "Vários acessos rápidos",
+      "boards": "O botão + cria outro acesso rápido, por exemplo Trabalho e Casa, e pílulas permitem alternar entre eles. Cada um é uma etiqueta, como «speed-dial-Trabalho». Um clique direito numa pílula muda o nome ou elimina-a: eliminá-la mantém as notas.",
+      "arrange_title": "Organizar a página",
+      "arrange": "Arraste os blocos e os grupos para os mover. Os botões desta linha filtram os blocos e mudam o seu tamanho e a largura da página. O menu ... em baixo à direita define uma imagem de fundo, e o botão do olho oculta o que não precisa.",
+      "start_title": "Página inicial do navegador",
+      "start": "Defina este endereço como página inicial do seu navegador. focus=1 também oculta a barra de ícones."
+    },
     "visibility": {
       "title": "Título da página",
       "workspace": "Seletor de espaço de trabalho",

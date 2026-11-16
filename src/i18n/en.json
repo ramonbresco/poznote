@@ -5940,6 +5940,23 @@
     "choose_item": "Add to a speed dial",
     "folder_added_one": "1 note added to the speed dial",
     "folder_added_other": "{{count}} notes added to the speed dial",
+    "help": {
+      "button": "How the speed dial works",
+      "title": "How the speed dial works",
+      "intro": "The speed dial turns notes into a page of link tiles, made to be your browser's start page.",
+      "add_title": "Add a tile",
+      "add": "Choose \"Add to speed dial\" in the menu of a note or a folder (for a folder, all its notes, subfolders included), or give a note the tag \"{{tag}}\".",
+      "tile_title": "One link or none",
+      "tile": "The note is a tile that opens this link, or the note itself. Its icon is the first image of the note, otherwise the site's icon, otherwise the first letter of the title.",
+      "group_title": "Several links",
+      "group": "The note becomes a group of tiles under its title, one tile per link, and a horizontal line (----) starts a new row. Clicking the title of the group opens the note, right-clicking it changes its color.",
+      "boards_title": "Several speed dials",
+      "boards": "The + button creates another speed dial, for example Work and Home, and pills switch between them. Each one is a tag, such as \"speed-dial-Work\". Right-click a pill to rename or delete it: deleting keeps the notes.",
+      "arrange_title": "Arrange the page",
+      "arrange": "Drag tiles and groups to move them. The buttons of this row filter the tiles and change their size and the width of the page. The ... menu at the bottom right sets a background image, and the eye button hides what you do not need.",
+      "start_title": "Browser start page",
+      "start": "Set this address as the start page of your browser. focus=1 also hides the icon rail."
+    },
     "visibility": {
       "title": "Page title",
       "workspace": "Workspace selector",

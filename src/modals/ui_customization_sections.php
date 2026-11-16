@@ -509,6 +509,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:speedDialNewBtn" checked><span><?php echo t_h('speed_dial.new_button', [], 'New speed dial'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:speedDialWidthBtn" checked><span><?php echo t_h('page_menu.page_width', [], 'Page width'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:speedDialSize" checked><span><?php echo t_h('speed_dial.visibility.size', [], 'Tile size button'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:speedDialHelpBtn" checked><span><?php echo t_h('speed_dial.help.button', [], 'How the speed dial works'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="panel:speed-dial-edit" checked><span><?php echo t_h('speed_dial.visibility.edit', [], 'Open the note button'); ?></span></label>
 </div>
 </div>

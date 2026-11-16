@@ -6096,6 +6096,23 @@
     "choose_item": "Añadir a un acceso rápido",
     "folder_added_one": "1 nota añadida al acceso rápido",
     "folder_added_other": "{{count}} notas añadidas al acceso rápido",
+    "help": {
+      "button": "Cómo funciona el acceso rápido",
+      "title": "Cómo funciona el acceso rápido",
+      "intro": "El acceso rápido convierte notas en una página de mosaicos de enlaces, pensada para ser la página de inicio de tu navegador.",
+      "add_title": "Añadir un mosaico",
+      "add": "Elige «Añadir al acceso rápido» en el menú de una nota o de una carpeta (en una carpeta, todas sus notas, subcarpetas incluidas), o pon a una nota la etiqueta «{{tag}}».",
+      "tile_title": "Un enlace o ninguno",
+      "tile": "La nota es un mosaico que abre ese enlace, o la propia nota. Su icono es la primera imagen de la nota; si no hay, el icono del sitio; si no, la primera letra del título.",
+      "group_title": "Varios enlaces",
+      "group": "La nota se convierte en un grupo de mosaicos bajo su título, un mosaico por enlace, y una línea horizontal (----) empieza una fila nueva. Un clic en el título del grupo abre la nota, un clic derecho cambia su color.",
+      "boards_title": "Varios accesos rápidos",
+      "boards": "El botón + crea otro acceso rápido, por ejemplo Trabajo y Casa, y unas pastillas permiten pasar de uno a otro. Cada uno es una etiqueta, como «speed-dial-Trabajo». Un clic derecho en una pastilla la renombra o la elimina: eliminarla conserva las notas.",
+      "arrange_title": "Organizar la página",
+      "arrange": "Arrastra los mosaicos y los grupos para moverlos. Los botones de esta fila filtran los mosaicos y cambian su tamaño y el ancho de la página. El menú ... abajo a la derecha pone una imagen de fondo, y el botón del ojo oculta lo que no necesitas.",
+      "start_title": "Página de inicio del navegador",
+      "start": "Pon esta dirección como página de inicio de tu navegador. focus=1 también oculta la barra de iconos."
+    },
     "visibility": {
       "title": "Título de la página",
       "workspace": "Selector de espacio de trabajo",

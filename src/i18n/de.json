@@ -6095,6 +6095,23 @@
     "choose_item": "Zu einer Schnellwahl hinzufügen",
     "folder_added_one": "1 Notiz zur Schnellwahl hinzugefügt",
     "folder_added_other": "{{count}} Notizen zur Schnellwahl hinzugefügt",
+    "help": {
+      "button": "So funktioniert die Schnellwahl",
+      "title": "So funktioniert die Schnellwahl",
+      "intro": "Die Schnellwahl macht aus Notizen eine Seite mit Link-Kacheln, gedacht als Startseite deines Browsers.",
+      "add_title": "Kachel hinzufügen",
+      "add": "Wähle „Zur Schnellwahl hinzufügen“ im Menü einer Notiz oder eines Ordners (bei einem Ordner alle seine Notizen, Unterordner eingeschlossen), oder gib einer Notiz das Tag „{{tag}}“.",
+      "tile_title": "Ein Link oder keiner",
+      "tile": "Die Notiz ist eine Kachel, die diesen Link öffnet, oder die Notiz selbst. Ihr Symbol ist das erste Bild der Notiz, sonst das Symbol der Website, sonst der erste Buchstabe des Titels.",
+      "group_title": "Mehrere Links",
+      "group": "Die Notiz wird zu einer Gruppe von Kacheln unter ihrem Titel, eine Kachel pro Link, und eine waagerechte Linie (----) beginnt eine neue Reihe. Ein Klick auf den Titel der Gruppe öffnet die Notiz, ein Rechtsklick ändert ihre Farbe.",
+      "boards_title": "Mehrere Schnellwahlen",
+      "boards": "Die Schaltfläche + erstellt eine weitere Schnellwahl, zum Beispiel Arbeit und Zuhause, und Reiter wechseln zwischen ihnen. Jede ist ein Tag, etwa „speed-dial-Arbeit“. Ein Rechtsklick auf einen Reiter benennt ihn um oder löscht ihn: Beim Löschen bleiben die Notizen erhalten.",
+      "arrange_title": "Seite anordnen",
+      "arrange": "Ziehe Kacheln und Gruppen, um sie zu verschieben. Die Schaltflächen dieser Zeile filtern die Kacheln und ändern ihre Größe und die Breite der Seite. Das Menü ... unten rechts legt ein Hintergrundbild fest, und die Augen-Schaltfläche blendet aus, was du nicht brauchst.",
+      "start_title": "Startseite des Browsers",
+      "start": "Lege diese Adresse als Startseite deines Browsers fest. focus=1 blendet zusätzlich die Symbolleiste aus."
+    },
     "visibility": {
       "title": "Seitentitel",
       "workspace": "Arbeitsbereichsauswahl",

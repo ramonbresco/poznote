@@ -6200,6 +6200,23 @@
     "choose_item": "Ajouter à un accès rapide",
     "folder_added_one": "1 note ajoutée à l'accès rapide",
     "folder_added_other": "{{count}} notes ajoutées à l'accès rapide",
+    "help": {
+      "button": "Fonctionnement de l'accès rapide",
+      "title": "Fonctionnement de l'accès rapide",
+      "intro": "L'accès rapide transforme des notes en une page de tuiles de liens, faite pour être la page d'accueil de votre navigateur.",
+      "add_title": "Ajouter une tuile",
+      "add": "Choisissez « Ajouter à l'accès rapide » dans le menu d'une note ou d'un dossier (pour un dossier, toutes ses notes, sous-dossiers compris), ou donnez à une note l'étiquette « {{tag}} ».",
+      "tile_title": "Un lien ou aucun",
+      "tile": "La note est une tuile qui ouvre ce lien, ou la note elle-même. Son icône est la première image de la note, sinon l'icône du site, sinon la première lettre du titre.",
+      "group_title": "Plusieurs liens",
+      "group": "La note devient un groupe de tuiles sous son titre, une tuile par lien, et une ligne horizontale (----) commence une nouvelle rangée. Un clic sur le titre du groupe ouvre la note, un clic droit change sa couleur.",
+      "boards_title": "Plusieurs accès rapides",
+      "boards": "Le bouton + crée un autre accès rapide, par exemple Travail et Maison, et des pastilles permettent de passer de l'un à l'autre. Chacun est une étiquette, comme « speed-dial-Travail ». Un clic droit sur une pastille la renomme ou la supprime : la supprimer garde les notes.",
+      "arrange_title": "Organiser la page",
+      "arrange": "Faites glisser les tuiles et les groupes pour les déplacer. Les boutons de cette ligne filtrent les tuiles et changent leur taille et la largeur de la page. Le menu ... en bas à droite pose une image de fond, et le bouton en forme d'œil masque ce dont vous n'avez pas besoin.",
+      "start_title": "Page d'accueil du navigateur",
+      "start": "Mettez cette adresse comme page d'accueil de votre navigateur. focus=1 masque aussi la barre d'icônes."
+    },
     "visibility": {
       "title": "Titre de la page",
       "workspace": "Sélecteur de workspace",

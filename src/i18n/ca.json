@@ -5940,6 +5940,23 @@
     "choose_item": "Afegeix a un accés ràpid",
     "folder_added_one": "S'ha afegit 1 nota a l'accés ràpid",
     "folder_added_other": "S'han afegit {{count}} notes a l'accés ràpid",
+    "help": {
+      "button": "Com funciona l'accés ràpid",
+      "title": "Com funciona l'accés ràpid",
+      "intro": "L'accés ràpid converteix notes en una pàgina de mosaics d'enllaços, pensada per ser la pàgina d'inici del navegador.",
+      "add_title": "Afegir un mosaic",
+      "add": "Tria «Afegeix a l'accés ràpid» al menú d'una nota o d'una carpeta (per a una carpeta, totes les seves notes, subcarpetes incloses), o posa a una nota l'etiqueta «{{tag}}».",
+      "tile_title": "Un enllaç o cap",
+      "tile": "La nota és un mosaic que obre aquest enllaç, o la mateixa nota. La seva icona és la primera imatge de la nota; si no n'hi ha, la icona del lloc; si no, la primera lletra del títol.",
+      "group_title": "Diversos enllaços",
+      "group": "La nota esdevé un grup de mosaics sota el seu títol, un mosaic per enllaç, i una línia horitzontal (----) comença una fila nova. Un clic al títol del grup obre la nota, un clic dret en canvia el color.",
+      "boards_title": "Diversos accessos ràpids",
+      "boards": "El botó + crea un altre accés ràpid, per exemple Feina i Casa, i unes pastilles permeten passar de l'un a l'altre. Cadascun és una etiqueta, com «speed-dial-Feina». Un clic dret sobre una pastilla la reanomena o la suprimeix: suprimir-la conserva les notes.",
+      "arrange_title": "Organitzar la pàgina",
+      "arrange": "Arrossega els mosaics i els grups per moure'ls. Els botons d'aquesta fila filtren els mosaics i en canvien la mida i l'amplada de la pàgina. El menú ... de baix a la dreta posa una imatge de fons, i el botó de l'ull amaga el que no necessites.",
+      "start_title": "Pàgina d'inici del navegador",
+      "start": "Posa aquesta adreça com a pàgina d'inici del navegador. focus=1 també amaga la barra d'icones."
+    },
     "visibility": {
       "title": "Títol de la pàgina",
       "workspace": "Selector d'espai de treball",
