@@ -486,7 +486,14 @@ function markupStripJsComments(string $body): string
             $prev = $c;
             continue;
         }
-        if ($c === '/' && $prev !== '' && str_contains('(,=:[!&|?{};+-*%~^', $prev)) {
+        // A regex also follows a keyword (return /```/.test(s)): read as a
+        // division, a backtick inside it opened a template literal that
+        // swallowed every comment up to the next backtick.
+        $afterKeyword = $c === '/' && preg_match(
+            '/(?<![\w$.])(?:return|typeof|instanceof|in|of|new|delete|void|throw|case|do|else|yield|await)\s*$/',
+            substr($out, -16)
+        );
+        if ($c === '/' && (($prev !== '' && str_contains('(,=:[!&|?{};+-*%~^', $prev)) || $afterKeyword)) {
             $out .= $c;
             $class = false;  // inside [...], where an unescaped / is literal
             for ($i++; $i < $len; $i++) {

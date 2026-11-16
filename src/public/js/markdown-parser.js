@@ -1349,36 +1349,43 @@ function parseMarkdown(text) {
     // Only the opening/closing tags are protected: the inner content is left in the
     // stream so nested markdown (links, bold, ...) still gets parsed. Protecting the
     // whole span would emit already-protected placeholders (PLNK0) as literal text.
-    text = text.replace(/<span\s+style="([^"]+)">((?:(?!<\/?span\b)[\s\S])*)<\/span>/gi, function (match, styleAttr, content) {
-        let openTag = '<span style="' + styleAttr + '">';
-        let openTagSource = match.slice(0, match.indexOf('>') + 1);
+    // Innermost first, and again until none is left: a span holding another
+    // span (a colour around a coloured word) only matches once the inner one
+    // is placeholders, and a single pass left the outer one as escaped text.
+    const spanTagRegex = /<span\s+style="([^"]+)">((?:(?!<\/?span\b)[\s\S])*)<\/span>/gi;
+    for (let spanPass = 0; spanPass < 16 && spanTagRegex.test(text); spanPass++) {
+        spanTagRegex.lastIndex = 0;
+        text = text.replace(spanTagRegex, function (match, styleAttr, content) {
+            let openTag = '<span style="' + styleAttr + '">';
+            let openTagSource = match.slice(0, match.indexOf('>') + 1);
 
-        function protect(html, source) {
-            let placeholder = '\x00PSPAN' + protectedIndex + '\x00';
-            protectedElements[protectedIndex] = html;
-            protectedIndex++;
-            return rememberPlaceholderSource(placeholder, source);
-        }
+            function protect(html, source) {
+                let placeholder = '\x00PSPAN' + protectedIndex + '\x00';
+                protectedElements[protectedIndex] = html;
+                protectedIndex++;
+                return rememberPlaceholderSource(placeholder, source);
+            }
 
-        // A span whose content spans several markdown blocks must be closed and
-        // reopened around each blank line, otherwise the paragraph builder emits
-        // the opening and closing tags in different <p> elements and the browser
-        // auto-closes the span at the first block boundary.
-        let blocks = content.split(/(\r?\n[ \t]*\r?\n)/);
-        let result = '';
-        blocks.forEach(function (block, i) {
-            if (i % 2 === 1) {
-                result += block; // the blank-line separator itself
-                return;
-            }
-            if (block === '') {
-                return;
-            }
-            result += protect(openTag, openTagSource) + block + protect('</span>', '</span>');
+            // A span whose content spans several markdown blocks must be closed and
+            // reopened around each blank line, otherwise the paragraph builder emits
+            // the opening and closing tags in different <p> elements and the browser
+            // auto-closes the span at the first block boundary.
+            let blocks = content.split(/(\r?\n[ \t]*\r?\n)/);
+            let result = '';
+            blocks.forEach(function (block, i) {
+                if (i % 2 === 1) {
+                    result += block; // the blank-line separator itself
+                    return;
+                }
+                if (block === '') {
+                    return;
+                }
+                result += protect(openTag, openTagSource) + block + protect('</span>', '</span>');
+            });
+
+            return result;
         });
-
-        return result;
-    });
+    }
 
 
     // Protect details, summary, br, and underline tags
