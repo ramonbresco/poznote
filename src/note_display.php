@@ -785,7 +785,7 @@
                     // one block of characters (issue #1498): css/markdown.css keeps
                     // the entry out of sight while it carries this class.
                     $entry_class = 'noteentry' . ($note_type === 'markdown' ? ' markdown-pending' : '');
-                    echo '<div class="'.$entry_class.'" autocomplete="off" autocapitalize="off" spellcheck="'.$spellcheck_attr.'"'.$lang_attr.' id="entry'.$row['id'].'" data-note-id="'.$row['id'].'" data-note-heading="'.htmlspecialchars($row['heading'] ?? '', ENT_QUOTES).'"'.$placeholder_attr.' contenteditable="'.$entry_editable.'" data-note-type="'.$note_type_attr.'"'.$data_attr.$excalidraw_attr.$linked_note_id_attr.'>'.$display_content.'</div>';
+                    echo '<div class="'.$entry_class.'" autocomplete="off" autocapitalize="sentences" spellcheck="'.$spellcheck_attr.'"'.$lang_attr.' id="entry'.$row['id'].'" data-note-id="'.$row['id'].'" data-note-heading="'.htmlspecialchars($row['heading'] ?? '', ENT_QUOTES).'"'.$placeholder_attr.' contenteditable="'.$entry_editable.'" data-note-type="'.$note_type_attr.'"'.$data_attr.$excalidraw_attr.$linked_note_id_attr.'>'.$display_content.'</div>';
                     if ($attachments_at_bottom_setting) {
                         if ($attachment_previews_in_note_setting) {
                             echo poznoteRenderAttachmentPreviews($row['id'], $row['attachments'] ?? '', $workspace_filter, $entryfinal ?? '', !empty($attachments_show_inserted_images_setting));

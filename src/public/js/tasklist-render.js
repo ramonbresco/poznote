@@ -145,7 +145,7 @@ function renderTaskAddRow(noteId) {
                 <form class="task-input-form" id="task-input-form-${noteId}" action="javascript:void(0);">
                     <textarea class="task-input" id="task-input-${noteId}" rows="1"
                         placeholder="${placeholder}" aria-label="${placeholder}" maxlength="4000"
-                        autocomplete="off" enterkeyhint="go"></textarea>
+                        autocomplete="off" autocapitalize="sentences" enterkeyhint="go"></textarea>
                 </form>
             </div>`;
 }

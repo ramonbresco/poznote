@@ -985,7 +985,7 @@
         entry.setAttribute('data-note-heading', note.heading || '');
         entry.setAttribute('data-note-type', type);
         entry.setAttribute('autocomplete', 'off');
-        entry.setAttribute('autocapitalize', 'off');
+        entry.setAttribute('autocapitalize', 'sentences');
         if (type === 'markdown') {
             entry.setAttribute('contenteditable', 'false');
             entry.setAttribute('data-markdown-content', note.content || '');

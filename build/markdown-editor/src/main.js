@@ -2074,7 +2074,6 @@ function createEditor(host, options = {}) {
   // panel opens but selecting an emoji inserts nothing. Re-enabling the
   // attribute restores the panel ("on" matches the default of a plain
   // contenteditable, i.e. the same behavior as Poznote's HTML notes).
-  // autocapitalize="off" was bisected as harmless and is left untouched.
   // Scoped to Windows, the only platform with this panel. Empirically
   // bisected via a standalone repro page, 2026-07 (see git history of
   // src/emoji-test.html).
@@ -2090,6 +2089,11 @@ function createEditor(host, options = {}) {
   const state = EditorState.create({
     doc: String(options.value || ''),
     extensions: [
+      // CodeMirror sets autocapitalize="off" too, which tells a phone keyboard
+      // never to start a sentence or a line with a capital (discussion 1793).
+      // A note is prose: "sentences" is what a plain text field gets, and the
+      // HTML notes carry the same value
+      EditorView.contentAttributes.of({ autocapitalize: 'sentences' }),
       ...(isWindows
         ? [EditorView.contentAttributes.of({ autocorrect: 'on' })]
         : []),
