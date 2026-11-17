@@ -16,6 +16,7 @@ joins, and everything below is rendered from that drawing:
   src/public/pwa/poznote-192.png, poznote-512.png            the tile ("any")
   src/public/pwa/poznote-maskable-192.png, -512.png          full bleed ("maskable")
   src/public/pwa/poznote.png                                 iOS home screen
+  src/public/pwa/manifest.webmanifest                        ?v= of each icon
   src/public/css/components/logo.css                         the in-app mask
 
 The tile is the mark in Poznote blue on a white rounded square: an icon with no
@@ -32,6 +33,7 @@ Needs rsvg-convert (librsvg) and Pillow. Run from the repository root:
     python3 tools/generate-logo.py
 """
 
+import hashlib
 import io
 import math
 import os
@@ -89,11 +91,12 @@ def mark_svg(colour: str, size: int = 512, margin: float = 0) -> str:
 
 # Optical centring in a tile, in grid units to the right. The bounding box of
 # the mark is centred, but its weight is not: the page is a solid block on the
-# left and the pencil only reaches out to the right as a thin diagonal (the ink
-# centre sits 15 units left of the middle), so a box-centred mark looked pushed
-# to the left (#1786). Half of that offset reads as centred; all of it put the
-# pencil against the edge.
-OPTICAL_SHIFT = 8
+# left and the pencil only reaches out to the right as a thin diagonal, so a
+# box-centred mark looked pushed to the left (#1786). The page is what the eye
+# centres on: the middle of its top stroke (x 229.75, between the centrelines
+# at 47 and 412.5) goes to the middle of the tile, and the pencil hangs off to
+# the right. 8 and then 12, measured from the ink centre, still looked left.
+OPTICAL_SHIFT = 256 - (47 + 412.5) / 2
 
 
 def tile_svg(size: int = 512, scale: float = 0.76, radius: float = 104) -> str:
@@ -162,6 +165,30 @@ def patch_text_logo() -> None:
     save_png(logo, rel)
 
 
+def version_manifest_icons() -> None:
+    """Give each icon of the manifest a ?v= taken from its bytes. nginx serves
+    images as immutable for a year, so a redrawn icon under the same URL never
+    reached a browser that had the old one, not even by reinstalling the app:
+    the install reads the icon through the HTTP cache (#1786)."""
+    rel = 'src/public/pwa/manifest.webmanifest'
+    path = os.path.join(ROOT, rel)
+    with open(path, encoding='utf-8') as fh:
+        text = fh.read()
+
+    def versioned(match: re.Match) -> str:
+        name = match.group(2)
+        with open(os.path.join(ROOT, 'src/public/pwa', name), 'rb') as fh:
+            digest = hashlib.md5(fh.read()).hexdigest()[:8]
+        return f'{match.group(1)}{name}?v={digest}"'
+
+    text, count = re.subn(r'("src": "\./)(poznote[\w-]*\.png)(?:\?v=\w+)?"', versioned, text)
+    if count != 4:
+        sys.exit(f'{rel}: expected four icons, found {count}')
+    with open(path, 'w', encoding='utf-8') as fh:
+        fh.write(text)
+    print('wrote', rel)
+
+
 def patch_css_mask() -> None:
     rel = 'src/public/css/components/logo.css'
     path = os.path.join(ROOT, rel)
@@ -202,6 +229,7 @@ def main() -> None:
     # iOS rounds the corners itself and turns transparency into black.
     save_png(render(tile_svg(scale=0.72, radius=0), 180), 'src/public/pwa/poznote.png')
 
+    version_manifest_icons()
     patch_css_mask()
 
 
