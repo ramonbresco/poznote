@@ -44,7 +44,7 @@
                 } catch (Exception $e) {
                     error_log('note_display: failed to prepare shared_folders lookup: ' . $e->getMessage());
                 }
-                $checkExistingLink = $con->prepare("SELECT id FROM entries WHERE linked_note_id = ? AND trash = 0 LIMIT 1");
+                $checkExistingLink = $con->prepare("SELECT id FROM entries WHERE linked_note_id = ? AND trash = 0 ORDER BY id");
 
                 // Labels of the note statistics (js/note-stats.js), one per plural
                 // form the language has: Intl.PluralRules picks the form, and a
@@ -280,12 +280,22 @@
                     // Open in new tab button
                     echo '<button type="button" class="toolbar-btn btn-open-new-tab note-action-btn" title="'.t_h('editor.toolbar.open_in_new_tab', [], 'Open in a tab').'" data-action="open-note-new-tab" data-note-id="'.$row['id'].'"><i class="lucide lucide-external-link"></i></button>';
 
-                    // Check if this note already has a linked note (for toolbar + mobile menu)
-                    $hasLinkedNote = false;
+                    // The shortcuts to this note, in any workspace (toolbar + mobile
+                    // menu): a note that has one offers to delete it instead of
+                    // creating another, which the API refuses anyway
+                    $shortcutIds = [];
                     if ($note_type !== 'linked') {
                         $checkExistingLink->execute([$row['id']]);
-                        $hasLinkedNote = (bool)$checkExistingLink->fetch();
+                        $shortcutIds = array_map('intval', $checkExistingLink->fetchAll(PDO::FETCH_COLUMN));
                     }
+                    $hasLinkedNote = !empty($shortcutIds);
+                    $shortcutCount = count($shortcutIds);
+                    $shortcutLabelCreate = t_h('editor.toolbar.create_linked_note');
+                    $shortcutLabelOne = t_h('notes_list.note_actions.delete_shortcut', [], 'Delete shortcut');
+                    $shortcutLabelMany = t_h('notes_list.note_actions.delete_shortcuts', [], 'Delete the {{count}} shortcuts');
+                    $shortcutLabel = !$hasLinkedNote ? $shortcutLabelCreate
+                        : ($shortcutCount > 1 ? str_replace('{{count}}', (string)$shortcutCount, $shortcutLabelMany) : $shortcutLabelOne);
+                    $shortcutIcon = $hasLinkedNote ? 'lucide-unlink' : 'lucide-link';
                         
                     // Generate dates safely for JavaScript with robust encoding
                     $created_raw = $row['created'] ?? '';
@@ -347,8 +357,15 @@
                     echo '<button type="button" class="toolbar-btn btn-duplicate note-action-btn" data-action="duplicate-note" data-note-id="'.$row['id'].'" title="'.t_h('common.duplicate', [], 'Duplicate').'"><i class="lucide lucide-copy"></i></button>';
                     echo '<button type="button" class="toolbar-btn btn-move note-action-btn" data-action="show-move-folder-dialog" data-note-id="'.$row['id'].'" title="'.t_h('common.move', [], 'Move').'"><i class="lucide lucide-folder-output"></i></button>';
 
-                    if ($note_type !== 'linked' && !$hasLinkedNote) {
-                        echo '<button type="button" class="toolbar-btn btn-create-linked-note note-action-btn" title="' . t_h('editor.toolbar.create_linked_note') . '" data-action="create-linked-note"><i class="lucide lucide-link"></i></button>';
+                    // One button, two states (repainted by paintNoteShortcutButton()
+                    // in js/notes.js once the shortcuts are deleted); the class stays
+                    // so the mobile entry and Element visibility find it either way
+                    if ($note_type !== 'linked') {
+                        echo '<button type="button" class="toolbar-btn btn-create-linked-note note-action-btn" title="' . $shortcutLabel . '"'
+                            . ' data-action="' . ($hasLinkedNote ? 'delete-note-shortcuts' : 'create-linked-note') . '"'
+                            . ' data-note-id="' . (int)$row['id'] . '" data-shortcut-ids="' . implode(',', $shortcutIds) . '"'
+                            . ' data-label-create="' . $shortcutLabelCreate . '" data-label-one="' . $shortcutLabelOne . '" data-label-many="' . $shortcutLabelMany . '">'
+                            . '<i class="lucide ' . $shortcutIcon . '"></i></button>';
                     }
                     
                     // A read-only share has nothing else in the ⋮ menu, so Download
@@ -427,8 +444,8 @@
                         echo '<button type="button" class="dropdown-item mobile-toolbar-item" role="menuitem" data-action="open-tasks-page"><i class="lucide lucide-list-todo"></i> '.t_h('tasklist.open_tasks_page', [], 'View all tasks').'</button>';
                     }
                     
-                    if ($note_type !== 'linked' && !$hasLinkedNote) {
-                        echo '<button type="button" class="dropdown-item mobile-toolbar-item" role="menuitem" data-action="trigger-mobile-action" data-selector=".btn-create-linked-note"><i class="lucide lucide-link"></i> '.t_h('editor.toolbar.create_linked_note').'</button>';
+                    if ($note_type !== 'linked') {
+                        echo '<button type="button" class="dropdown-item mobile-toolbar-item" role="menuitem" data-action="trigger-mobile-action" data-selector=".btn-create-linked-note"><i class="lucide ' . $shortcutIcon . '"></i> ' . $shortcutLabel . '</button>';
                     }
 
                     echo '<button type="button" class="dropdown-item mobile-toolbar-item" role="menuitem" data-action="trigger-mobile-action" data-selector=".btn-duplicate"><i class="lucide lucide-copy"></i> '.t_h('common.duplicate', [], 'Duplicate').'</button>';

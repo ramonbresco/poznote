@@ -368,6 +368,9 @@ window.__poznoteClearUserStorage = function (userId) {
                 r.classList.remove(VARIANT_CLASSES[vi]);
             }
         }
+        // A custom theme is its own palette: lib/workspace-accent.php leaves
+        // the pages it paints alone, by this class (discussion #1788).
+        r.classList.toggle('theme-custom', !!customTheme);
 
         // Add theme class for pages that need it (settings, display)
         if (isDark) {

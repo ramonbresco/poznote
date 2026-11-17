@@ -567,6 +567,7 @@
       "custom_logo": "Das Poznote-Logo für alle Benutzer durch ein eigenes ersetzen: im Browser-Tab, auf der Anmeldeseite, in der Symbolleiste und als Symbol der installierten App.",
       "two_factor_required": "Jedes Konto, das sich mit einem Passwort anmeldet, muss die Zwei-Faktor-Authentifizierung nutzen. Ein Konto ohne sie richtet sie bei der nächsten Anmeldung ein, und ohne sie geöffnete Sitzungen werden beendet. Das Kontopasswort funktioniert nicht mehr über die API: Apps verwenden stattdessen ein App-Passwort. SSO-Anmeldungen sind nicht betroffen, der Identitätsanbieter verwaltet ihren zweiten Faktor.",
       "tab_follows_note": "Benennt den Browser-Tab nach der darin geöffneten Notiz, mit deren Symbol, statt nach Name und Symbol dieser Instanz. So lassen sich mehrere Tabs mit mehreren Notizen unterscheiden.",
+      "workspace_color_accent": "Die Farbe des aktuellen Arbeitsbereichs statt des Poznote-Blaus verwenden: Symbole, Hover, Linie des aktiven Tabs, Links und Schaltflächen. Nur mit den Themes Hell, Dunkel und Schwarz, die anderen Themes behalten ihre eigenen Farben. Ein Arbeitsbereich ohne Farbe und die Einstellungsseiten bleiben blau. Die Farbe eines Arbeitsbereichs legst du oben über den Eintrag Farbe in seinem Menü … fest.",
       "update_badge_level": "Lege fest, welche Versionen den roten Punkt auf den Einstellungen anzeigen. Was du auch wählst, die neue Version wird auf dieser Seite weiterhin angekündigt, nichts wird verborgen.",
       "update_check_interval": "Wie oft Poznote im Hintergrund prüft, ob eine neuere Version verfügbar ist. Der Punkt kann erst nach einer Prüfung erscheinen, ein längerer Abstand verzögert ihn also. Die Karte Version darüber prüft bei jedem Klick weiterhin sofort.",
       "sessions": "Die Browser und Geräte ansehen, die gerade in Ihrem Konto angemeldet sind, und die abmelden, die Sie nicht mehr nutzen.",
@@ -973,6 +974,7 @@
       "diary_template": "Vorlage für Tagebucheinträge",
       "markdown_view_cycle": "Ansichtsmenü",
       "tab_follows_note": "Tab folgt der geöffneten Notiz",
+      "workspace_color_accent": "Arbeitsbereichsfarbe als Akzent",
       "update_badge_level": "Update-Punkt",
       "update_check_interval": "Update-Prüfung",
       "attachments_single_line": "Anhänge in einer Zeile",
@@ -2208,7 +2210,9 @@
       "keep_offline": "Offline behalten",
       "stop_offline": "Nicht mehr offline behalten",
       "available_offline": "In diesem Browser offline verfügbar",
-      "not_available_offline": "In diesem Browser nicht offline verfügbar"
+      "not_available_offline": "In diesem Browser nicht offline verfügbar",
+      "delete_shortcut": "Verknüpfung löschen",
+      "delete_shortcuts": "Die {{count}} Verknüpfungen löschen"
     },
     "favorites_menu": {
       "title": "Favoriten-Aktionen",
@@ -2332,7 +2336,8 @@
   "slash_menu": {
     "plain_block": "Einfacher Block",
     "block_languages": "Block-Sprachen",
-    "back_to_normal": "Zurück zu normalem Text",
+    "clear_formatting_at_cursor": "Formatierung am Cursor entfernen",
+    "normal_text": "Normaler Text",
     "title": "Titel",
     "heading_1": "Überschrift 1",
     "heading_2": "Überschrift 2",
@@ -5542,7 +5547,7 @@
     "description_scope": "Die Einstellung gilt für alle Benutzer dieser Instanz.",
     "enable_description": "Sichert die unten ausgewählten Benutzer im gewählten Intervall in den Ordner.",
     "directory_label": "Sicherungsordner",
-    "directory_description": "Absoluter Pfad auf dem Server (mit Docker: im Container). Leer lassen, um {{default}} zu verwenden. Um die Sicherungen woanders abzulegen, binden Sie ein Volume ein und geben Sie dessen Pfad hier ein.",
+    "directory_description": "Absoluter Pfad auf dem Server (mit Docker: im Container). Leer lassen, um {{default}} zu verwenden. Bei der Standardinstallation mit Docker liegt dieser Ordner auf dem Host in data/backups, neben der Datei docker-compose.yml (zum Beispiel ~/poznote/data/backups). Um die Sicherungen woanders abzulegen, binden Sie ein Volume ein und geben Sie dessen Pfad hier ein.",
     "retention_description": "Ältere Archive werden nach jeder Sicherung aus dem Ordner gelöscht. 0 behält alles.",
     "manual_description": "Sichert die unten ausgewählten Benutzer sofort in den Ordner, einen nach dem anderen. Diese Auswahl wird nicht gespeichert und ändert die automatischen Sicherungen nicht.",
     "confirm_run": "Die {{count}} ausgewählten Benutzer jetzt in den Sicherungsordner sichern?",

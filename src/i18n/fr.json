@@ -566,6 +566,7 @@
       "custom_logo": "Remplacer le logo Poznote par le vôtre, pour tous les utilisateurs : dans l'onglet du navigateur, sur la page de connexion, dans la barre d'icônes et comme icône de l'application installée.",
       "two_factor_required": "Chaque compte qui se connecte avec un mot de passe doit utiliser l'authentification à deux facteurs. Un compte qui ne l'a pas la configure à sa prochaine connexion, et les sessions ouvertes sans elle prennent fin. Son mot de passe ne fonctionne plus via l'API : les applications utilisent un mot de passe d'application. Les connexions SSO ne sont pas concernées, le fournisseur d'identité gère leur second facteur.",
       "tab_follows_note": "Nommer l'onglet du navigateur d'après la note qui y est ouverte, avec l'icône de cette note, au lieu du nom et de l'icône de cette instance. Plusieurs onglets ouverts sur plusieurs notes se distinguent alors.",
+      "workspace_color_accent": "Utiliser la couleur de l'espace de travail où vous êtes à la place du bleu Poznote : icônes, survol, trait de l'onglet actif, liens et boutons. Seulement avec les thèmes Clair, Sombre et Noir, les autres thèmes gardent leurs propres couleurs. Un espace de travail sans couleur, et les pages des Paramètres, restent en bleu. La couleur d'un espace de travail se choisit avec l'entrée Couleur de son menu …, plus haut.",
       "update_badge_level": "Choisissez quelles versions posent la pastille rouge sur les entrées Réglages. Quel que soit le choix, la nouvelle version reste annoncée sur cette page, rien n'est caché.",
       "update_check_interval": "À quelle fréquence Poznote vérifie en arrière-plan s'il existe une version plus récente. La pastille n'apparaît qu'après une vérification, donc un intervalle plus long la retarde. La carte Version ci-dessus vérifie toujours tout de suite quand on clique dessus.",
       "sessions": "Voir les navigateurs et les appareils actuellement connectés à votre compte, et déconnecter ceux que vous n’utilisez plus.",
@@ -973,6 +974,7 @@
       "diary_template": "Modèle d'entrée de journal",
       "markdown_view_cycle": "Menu des vues",
       "tab_follows_note": "L'onglet suit la note ouverte",
+      "workspace_color_accent": "Couleur de l'espace comme accent",
       "update_badge_level": "Pastille de mise à jour",
       "update_check_interval": "Vérification des mises à jour",
       "attachments_single_line": "Pièces jointes sur une ligne",
@@ -2214,7 +2216,9 @@
       "keep_offline": "Garder hors ligne",
       "stop_offline": "Ne plus garder hors ligne",
       "available_offline": "Disponible hors ligne dans ce navigateur",
-      "not_available_offline": "Pas disponible hors ligne dans ce navigateur"
+      "not_available_offline": "Pas disponible hors ligne dans ce navigateur",
+      "delete_shortcut": "Supprimer le raccourci",
+      "delete_shortcuts": "Supprimer les {{count}} raccourcis"
     },
     "favorites_menu": {
       "title": "Actions des favoris",
@@ -2338,7 +2342,8 @@
   "slash_menu": {
     "plain_block": "Bloc simple",
     "block_languages": "Langages de bloc",
-    "back_to_normal": "Retour au texte normal",
+    "clear_formatting_at_cursor": "Effacer la mise en forme au curseur",
+    "normal_text": "Texte normal",
     "title": "Titre",
     "heading_1": "Titre 1",
     "heading_2": "Titre 2",
@@ -5647,7 +5652,7 @@
     "description_scope": "Ce réglage s'applique à tous les utilisateurs de cette instance.",
     "enable_description": "Sauvegarde les utilisateurs cochés ci-dessous dans le dossier selon la fréquence choisie.",
     "directory_label": "Dossier de sauvegarde",
-    "directory_description": "Chemin absolu sur le serveur (dans le conteneur avec Docker). Laissez vide pour utiliser {{default}}. Pour stocker les sauvegardes ailleurs, montez un volume et saisissez son chemin ici.",
+    "directory_description": "Chemin absolu sur le serveur (dans le conteneur avec Docker). Laissez vide pour utiliser {{default}}. Avec l'installation Docker par défaut, ce dossier se trouve sur l'hôte dans data/backups, à côté du fichier docker-compose.yml (par exemple ~/poznote/data/backups). Pour stocker les sauvegardes ailleurs, montez un volume et saisissez son chemin ici.",
     "retention_description": "Les archives plus anciennes sont supprimées du dossier après chaque sauvegarde. 0 conserve tout.",
     "manual_description": "Sauvegarde les utilisateurs cochés ci-dessous dans le dossier immédiatement, un utilisateur à la fois. Cette sélection n'est pas enregistrée et ne modifie pas les sauvegardes automatiques.",
     "confirm_run": "Sauvegarder maintenant les {{count}} utilisateur(s) coché(s) dans le dossier de sauvegarde ?",

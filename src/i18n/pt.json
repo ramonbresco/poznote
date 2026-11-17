@@ -567,6 +567,7 @@
       "custom_logo": "Substituir o logótipo do Poznote pelo seu, para todos os utilizadores: no separador do navegador, na página de início de sessão, na barra de ícones e como ícone da aplicação instalada.",
       "two_factor_required": "Toda conta que entra com senha precisa usar a autenticação em dois fatores. Uma conta sem ela a configura no próximo login, e as sessões abertas sem ela são encerradas. A senha da conta deixa de funcionar pela API: os aplicativos usam uma senha de aplicativo. Os logins por SSO não são afetados, o provedor de identidade cuida do segundo fator deles.",
       "tab_follows_note": "Dá ao separador do navegador o nome da nota nele aberta, com o ícone dessa nota, em vez do nome e do ícone desta instância. Assim distinguem-se vários separadores abertos em várias notas.",
+      "workspace_color_accent": "Usar a cor do espaço de trabalho em que está em vez do azul do Poznote: ícones, passagem do rato, linha do separador ativo, ligações e botões. Apenas com os temas Claro, Escuro e Preto, os outros temas mantêm as suas próprias cores. Um espaço de trabalho sem cor, e as páginas de Configurações, ficam em azul. A cor de um espaço de trabalho define-se com a opção Cor do respetivo menu …, mais acima.",
       "update_badge_level": "Escolha que versões colocam o ponto vermelho nas entradas das Definições. Seja qual for a escolha, a nova versão continua a ser anunciada nesta página, nada fica escondido.",
       "update_check_interval": "Com que frequência o Poznote verifica em segundo plano se existe uma versão mais recente. O ponto só pode aparecer depois de uma verificação, por isso um intervalo maior atrasa-o. O cartão Versão acima continua a verificar logo que clica nele.",
       "sessions": "Veja os navegadores e dispositivos conectados à sua conta agora e encerre a sessão dos que você não usa mais.",
@@ -973,6 +974,7 @@
       "diary_template": "Modelo de entrada do diário",
       "markdown_view_cycle": "Menu de visualizações",
       "tab_follows_note": "O separador segue a nota aberta",
+      "workspace_color_accent": "Cor do espaço como destaque",
       "update_badge_level": "Ponto de atualização",
       "update_check_interval": "Verificação de atualizações",
       "attachments_single_line": "Anexos numa linha",
@@ -2208,7 +2210,9 @@
       "keep_offline": "Manter offline",
       "stop_offline": "Deixar de manter offline",
       "available_offline": "Disponível offline neste navegador",
-      "not_available_offline": "Não disponível offline neste navegador"
+      "not_available_offline": "Não disponível offline neste navegador",
+      "delete_shortcut": "Excluir o atalho",
+      "delete_shortcuts": "Excluir os {{count}} atalhos"
     },
     "favorites_menu": {
       "title": "Ações dos favoritos",
@@ -2332,7 +2336,8 @@
   "slash_menu": {
     "plain_block": "Bloco simples",
     "block_languages": "Linguagens de bloco",
-    "back_to_normal": "Voltar para texto normal",
+    "clear_formatting_at_cursor": "Limpar a formatação no cursor",
+    "normal_text": "Texto normal",
     "title": "Título",
     "heading_1": "Cabeçalho 1",
     "heading_2": "Cabeçalho 2",
@@ -5543,7 +5548,7 @@
     "description_scope": "A configuração se aplica a todos os usuários desta instância.",
     "enable_description": "Copia os utilizadores marcados abaixo para a pasta segundo a frequência escolhida.",
     "directory_label": "Pasta de backup",
-    "directory_description": "Caminho absoluto no servidor (dentro do contêiner com Docker). Deixe vazio para usar {{default}}. Para guardar os backups em outro lugar, monte um volume e informe o caminho aqui.",
+    "directory_description": "Caminho absoluto no servidor (dentro do contêiner com Docker). Deixe vazio para usar {{default}}. Com a instalação padrão do Docker, essa pasta fica no host em data/backups, ao lado do arquivo docker-compose.yml (por exemplo ~/poznote/data/backups). Para guardar os backups em outro lugar, monte um volume e informe o caminho aqui.",
     "retention_description": "Os arquivos mais antigos são excluídos da pasta após cada backup. 0 mantém tudo.",
     "manual_description": "Copia agora os utilizadores marcados abaixo para a pasta, um de cada vez. Esta seleção não é guardada e não altera as cópias automáticas.",
     "confirm_run": "Copiar agora os {{count}} utilizador(es) marcado(s) para a pasta de cópias?",

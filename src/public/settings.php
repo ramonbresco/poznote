@@ -109,6 +109,7 @@ $settingsPageUserKeys = [
     'emoji_icons_enabled',
     'language',
     'tab_follows_note',
+    'workspace_color_accent',
     'show_note_created',
     'show_note_icons',
     'note_color_palette',
@@ -723,6 +724,18 @@ if ($canUseUserWebhooks) {
                         <select id="default-workspace-select" class="settings-inline-control settings-inline-select" data-control="default-workspace-select">
 <?php poznoteRenderDefaultWorkspaceOptions($workspacesSection); ?>
                         </select>
+                    </div>
+                </div>
+
+                <!-- The colour of the workspace replaces the Poznote blue on the
+                     workspace's pages, Light / Dark / Black themes only
+                     (lib/workspace-accent.php, discussion 1788) -->
+                <div class="home-card" id="workspace-accent-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.workspace_color_accent', [], 'Use the color of the workspace you are in instead of the Poznote blue: icons, hover, the line on the active tab, links and buttons. Only with the Light, Dark and Black themes, the other themes keep their own colors. A workspace without a color, and the Settings pages, stay blue. A workspace gets its color from the Color entry of its … menu, above.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon"><i class="lucide lucide-palette"></i></div>
+                    <div class="home-card-content">
+                        <span class="home-card-title"><?php echo t_h('display.cards.workspace_color_accent', [], 'Workspace color as accent'); ?></span>
+                        <span id="workspace-accent-status" class="setting-status enabled"><?php echo t_h('common.enabled'); ?></span>
                     </div>
                 </div>
 

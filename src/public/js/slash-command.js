@@ -3087,7 +3087,7 @@
             {
                 id: 'normal',
                 icon: 'lucide-align-left',
-                label: t('slash_menu.back_to_normal', null, 'Back to normal text'),
+                label: t('slash_menu.clear_formatting_at_cursor', null, 'Clear formatting at cursor'),
                 action: function () {
                     insertNormalText();
                 }
@@ -3436,7 +3436,7 @@
     function getMarkdownSlashCommands() {
         const t = window.t || ((key, params, fallback) => fallback);
         var common = getCommonSlashCommands();
-        // "Back to normal text" comes first, and only while writing in some
+        // "Clear formatting at cursor" comes first, and only while writing in some
         // formatting (bold, a colour, inline code...), as in an HTML note. The
         // editor reads it from the Markdown around the caret, and leaving
         // puts the caret past the closing marker.
@@ -3447,7 +3447,7 @@
         var backToNormal = inFormat ? [{
             id: 'normal',
             icon: 'lucide-align-left',
-            label: t('slash_menu.back_to_normal', null, 'Back to normal text'),
+            label: t('slash_menu.clear_formatting_at_cursor', null, 'Clear formatting at cursor'),
             action: function () {
                 var editor = getCurrentMarkdownEditorFromSelection() || markdownEditor;
                 if (typeof markdownApi.leaveInlineFormat === 'function') markdownApi.leaveInlineFormat(editor);
@@ -4020,7 +4020,7 @@
                 icon: 'lucide-text-height',
                 label: t('slash_menu.title', null, 'Title'),
                 submenu: [
-                    { id: 'normal', label: t('slash_menu.back_to_normal', null, 'Back to normal text'), action: () => applyBlockStyle('normal') },
+                    { id: 'normal', hideId: 'normal-text', label: t('slash_menu.normal_text', null, 'Normal text'), action: () => applyBlockStyle('normal') },
                     { id: 'h1', label: t('slash_menu.heading_1', null, 'Heading 1'), action: () => applyBlockStyle('1') },
                     { id: 'h2', label: t('slash_menu.heading_2', null, 'Heading 2'), action: () => applyBlockStyle('2') },
                     { id: 'h3', label: t('slash_menu.heading_3', null, 'Heading 3'), action: () => applyBlockStyle('3') },
@@ -5805,8 +5805,14 @@
     function handleKeydown(e) {
         if (!slashMenuElement) return;
 
+        // Tab confirms the highlighted entry like Enter (issue #1785), at every
+        // level. Shift+Tab is left alone.
+        const key = (e.key === 'Tab' && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && !e.isComposing)
+            ? 'Enter' : e.key;
+
         // Ensure Enter key doesn't leak to underlying inputs when menu is open
-        if (e.key === 'Enter') {
+        // (nor Tab to the list indent or the Markdown editor's own Tab)
+        if (key === 'Enter') {
             e.preventDefault();
             e.stopPropagation();
         }
@@ -5833,7 +5839,7 @@
 
         // If a sub-submenu is open (level 3)
         if (subSubmenuElement && currentSubSubmenu) {
-            switch (e.key) {
+            switch (key) {
                 case 'ArrowDown':
                     e.preventDefault();
                     if (currentSubSubmenu.length) {
@@ -5880,7 +5886,7 @@
 
         // If a submenu is open (level 2)
         if (submenuElement && currentSubmenu) {
-            switch (e.key) {
+            switch (key) {
                 case 'ArrowDown':
                     e.preventDefault();
                     if (currentSubmenu.length) {
@@ -5938,7 +5944,7 @@
         }
 
         // Navigate in main menu
-        switch (e.key) {
+        switch (key) {
             case 'ArrowDown':
                 e.preventDefault();
                 if (filteredCommands.length) {

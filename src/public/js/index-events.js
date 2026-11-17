@@ -662,7 +662,7 @@
             case 'exec-remove-format': {
                 // Markdown, a bare caret in some formatting (the bar above a
                 // phone's keyboard): out of it, what is typed next is plain.
-                // Same as "Back to normal text" in the command menu.
+                // Same as "Clear formatting at cursor" in the command menu.
                 var clearApi = window.PoznoteMarkdownCodeMirror;
                 var clearSelection = window.getSelection();
                 var clearNode = clearSelection && clearSelection.rangeCount ? clearSelection.getRangeAt(0).startContainer : null;
@@ -926,6 +926,16 @@
                 }
                 if (noteId && typeof window.openLinkedNoteFolderSelectorModal === 'function') {
                     window.openLinkedNoteFolderSelectorModal(noteId, target.dataset.noteTitle || '');
+                }
+                break;
+            case 'delete-note-shortcuts':
+                if (isSharedWorkspaceReadOnly()) {
+                    break;
+                }
+                if (noteId && typeof window.deleteNoteShortcuts === 'function') {
+                    // The toolbar button also carries the ids the server found,
+                    // which reach a shortcut left in another workspace
+                    window.deleteNoteShortcuts(noteId, (target.dataset.shortcutIds || '').split(',').filter(Boolean));
                 }
                 break;
             case 'archive-note':

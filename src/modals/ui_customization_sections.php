@@ -79,6 +79,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:sessions-card" checked><span><?php echo t_h('settings.cards.sessions', [], 'Connected devices'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:delete-account-card" checked><span><?php echo t_h('settings.cards.delete_account', [], 'Delete Account'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:default-workspace-card" checked><span><?php echo t_h('workspaces.default.title', [], 'Default Workspace'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:workspace-accent-card" checked><span><?php echo t_h('display.cards.workspace_color_accent', [], 'Workspace color as accent'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:git-sync-card" checked><span><?php echo t_h('settings.cards.git_sync', [], 'Git Sync'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:backup-export-card" checked><span><?php echo t_h('backup_export.sections.complete_backup.title', [], 'Backup to a Poznote ZIP file'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:structured-export-card" checked><span><?php echo t_h('backup_export.sections.structured_export.title', [], 'Structured Export'); ?></span></label>
@@ -289,7 +290,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
 <?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.slash_menu', [], 'Slash Menu')); ?>
 <div class="ui-custom-items">
 <?php echo poznoteUiCustomizationListToggleAll(); ?>
-    <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:normal" checked><span><?php echo t_h('slash_menu.back_to_normal', [], 'Back to normal text'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:normal" checked><span><?php echo t_h('slash_menu.clear_formatting_at_cursor', [], 'Clear formatting at cursor'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:title" checked><span><?php echo t_h('slash_menu.title', [], 'Title'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:format" checked><span><?php echo t_h('slash_menu.format_text', [], 'Format text'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:align" checked><span><?php echo t_h('slash_menu.align', [], 'Align'); ?></span></label>
@@ -578,6 +579,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:toggle-speed-dial" checked><span><?php echo t_h('speed_dial.add', [], 'Add to speed dial'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:duplicate-note" checked><span><?php echo t_h('common.duplicate', [], 'Duplicate'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:create-note-shortcut" checked><span><?php echo t_h('editor.toolbar.create_linked_note', [], 'Create shortcut'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:delete-note-shortcuts" checked><span><?php echo t_h('notes_list.note_actions.delete_shortcut', [], 'Delete shortcut'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:show-move-folder-dialog" checked><span><?php echo t_h('notes_list.note_actions.move_note', [], 'Move note'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:copy-note" checked><span><?php echo t_h('notes_list.note_actions.copy_note', [], 'Copy'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:cut-note" checked><span><?php echo t_h('notes_list.note_actions.cut_note', [], 'Cut'); ?></span></label>

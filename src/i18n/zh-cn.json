@@ -566,6 +566,7 @@
       "custom_logo": "为所有用户用您自己的标志替换 Poznote 标志：浏览器标签页、登录页面、图标栏以及已安装应用的图标。",
       "two_factor_required": "所有使用密码登录的账户都必须使用双重身份验证。尚未设置的账户会在下次登录时完成设置，未使用双重身份验证打开的会话将结束。账户密码将无法再通过 API 使用：应用需改用应用密码。SSO 登录不受影响，其第二重验证由身份提供商负责。",
       "tab_follows_note": "让浏览器标签页使用其中打开的笔记的标题和图标，而不是本实例的名称和图标。这样可以区分打开了不同笔记的多个标签页。",
+      "workspace_color_accent": "使用当前工作区的颜色代替 Poznote 蓝色：图标、悬停、活动标签页的线条、链接和按钮。仅适用于浅色、深色和纯黑主题，其他主题保留各自的颜色。没有颜色的工作区和设置页面保持蓝色。工作区颜色可通过上方列表中该行 … 菜单里的“颜色”设置。",
       "update_badge_level": "选择哪些版本会在设置项上显示红点。无论如何选择，新版本仍会在本页公布，不会隐藏任何内容。",
       "update_check_interval": "Poznote 在后台检查是否有更新版本的频率。小红点只会在检查之后出现，间隔越长出现得越晚。上面的「版本」卡片仍然会在点击时立即检查。",
       "sessions": "查看当前登录到您账户的浏览器和设备，并退出不再使用的设备。",
@@ -972,6 +973,7 @@
       "diary_template": "日记条目模板",
       "markdown_view_cycle": "视图菜单",
       "tab_follows_note": "标签页跟随打开的笔记",
+      "workspace_color_accent": "以工作区颜色作为强调色",
       "update_badge_level": "更新小红点",
       "update_check_interval": "更新检查",
       "attachments_single_line": "附件单行显示",
@@ -2206,7 +2208,9 @@
       "keep_offline": "离线保留",
       "stop_offline": "停止离线保留",
       "available_offline": "此浏览器中可离线使用",
-      "not_available_offline": "此浏览器中不可离线使用"
+      "not_available_offline": "此浏览器中不可离线使用",
+      "delete_shortcut": "删除快捷方式",
+      "delete_shortcuts": "删除 {{count}} 个快捷方式"
     },
     "favorites_menu": {
       "title": "收藏操作",
@@ -2330,7 +2334,8 @@
   "slash_menu": {
     "plain_block": "普通块",
     "block_languages": "块语言",
-    "back_to_normal": "返回普通文本",
+    "clear_formatting_at_cursor": "清除光标处的格式",
+    "normal_text": "普通文本",
     "title": "标题",
     "heading_1": "一级标题",
     "heading_2": "二级标题",
@@ -5639,7 +5644,7 @@
     "description_scope": "此设置适用于本实例的所有用户。",
     "enable_description": "按所选频率将下方勾选的用户备份到文件夹。",
     "directory_label": "备份文件夹",
-    "directory_description": "服务器上的绝对路径（使用 Docker 时为容器内的路径）。留空则使用 {{default}}。如需将备份存放到其他位置，请挂载一个卷并在此填写其路径。",
+    "directory_description": "服务器上的绝对路径（使用 Docker 时为容器内的路径）。留空则使用 {{default}}。使用默认的 Docker 安装时，该文件夹位于主机上 docker-compose.yml 文件旁边的 data/backups 中（例如 ~/poznote/data/backups）。如需将备份存放到其他位置，请挂载一个卷并在此填写其路径。",
     "retention_description": "每次备份后，较旧的归档会从文件夹中删除。0 表示全部保留。",
     "manual_description": "立即将下方勾选的用户逐个备份到文件夹。此选择不会保存，也不会更改自动备份。",
     "confirm_run": "立即将勾选的 {{count}} 个用户备份到备份文件夹吗？",

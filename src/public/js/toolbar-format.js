@@ -35,7 +35,7 @@ function changeFontSize(triggerButton) {
 
   // Block style options aligned with the slash menu title commands
   const textStyles = [
-    { value: 'normal', key: 'slash_menu.back_to_normal', fallback: 'Back to normal text', preview: 'Text', previewClass: 'style-normal' },
+    { value: 'normal', key: 'slash_menu.normal_text', fallback: 'Normal text', preview: 'Text', previewClass: 'style-normal' },
     { value: '1', key: 'slash_menu.heading_1', fallback: 'Heading 1', preview: 'H1', previewClass: 'style-h1' },
     { value: '2', key: 'slash_menu.heading_2', fallback: 'Heading 2', preview: 'H2', previewClass: 'style-h2' },
     { value: '3', key: 'slash_menu.heading_3', fallback: 'Heading 3', preview: 'H3', previewClass: 'style-h3' },

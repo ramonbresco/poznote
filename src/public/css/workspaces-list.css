@@ -560,6 +560,24 @@ html[data-theme='dark'] .ws-color-swatch {
     color: var(--pz-text-muted);
 }
 
+/* Color modal: Remove color, Cancel and Save on one row whatever the
+   language (the default 420px wrapped Save under the other two in French).
+   Same recipe as #noteColorModal; below 800px modals/responsive.css stacks
+   the buttons full width, so the row rules stay desktop only. */
+#workspaceColorModal {
+    --modal-max-width: 600px;
+}
+
+@media (min-width: 801px) {
+    #workspaceColorModal .modal-buttons {
+        flex-wrap: nowrap;
+    }
+
+    #workspaceColorModal .modal-buttons button {
+        white-space: nowrap;
+    }
+}
+
 /* Tags modal: Poznote button row (right-aligned), spaced from the list */
 #workspaceTagsModal .modal-buttons {
     margin-top: 20px;

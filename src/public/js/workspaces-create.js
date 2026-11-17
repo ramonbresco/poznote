@@ -205,6 +205,25 @@ function updateWorkspaceNameInHeaders(workspaceName) {
     }
 }
 
+// Replace the <style id="poznote-workspace-accent"> config.php writes in the
+// head (lib/workspace-accent.php) with the one of a freshly fetched page.
+function syncWorkspaceAccentStyle(doc) {
+    var current = document.getElementById('poznote-workspace-accent');
+    var next = doc.getElementById('poznote-workspace-accent');
+    if (!next) {
+        if (current) current.remove();
+        return;
+    }
+    if (current) {
+        current.textContent = next.textContent;
+    } else {
+        var style = document.createElement('style');
+        style.id = 'poznote-workspace-accent';
+        style.textContent = next.textContent;
+        document.head.appendChild(style);
+    }
+}
+
 function refreshLeftColumnForWorkspace(workspaceName) {
     var url = new URL(window.location.href);
     url.searchParams.delete('note');
@@ -220,6 +239,11 @@ function refreshLeftColumnForWorkspace(workspaceName) {
 
             if (newLeftCol && currentLeftCol) {
                 currentLeftCol.innerHTML = newLeftCol.innerHTML;
+
+                // The workspace colour as accent (discussion #1788): the head
+                // of this same response carries the new workspace's colours,
+                // or nothing when it has none or the setting is off.
+                syncWorkspaceAccentStyle(doc);
 
                 // No tabs on a phone (js/tabs.js leaves the pane alone there):
                 // open the note this same response landed on, the last one

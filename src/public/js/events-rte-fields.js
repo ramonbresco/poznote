@@ -304,4 +304,63 @@ function setupLinkClickHandling() {
         // External link - open in new tab
         window.open(href, '_blank');
     });
+
+    setupLinkMiddleClickHandling();
+}
+
+/**
+ * Middle click on a link of a note opens it in a new tab (#1784)
+ *
+ * A note is editable, and a browser does not follow a link inside an editing
+ * host: Chrome did nothing, and on Linux Firefox (and Chrome) pasted the
+ * primary selection where the link was, which our own paste handler then
+ * inserted into the note. Covers a rich text note, the preview of a Markdown
+ * note and its Live preview / Rich text views (a drawn link carries
+ * data-live-href there, it is not an <a>), all of which live in .noteentry.
+ */
+function setupLinkMiddleClickHandling() {
+    // When the last middle press on a link happened, for the paste guard
+    var lastMiddlePressOnLink = 0;
+
+    function linkUnderMiddleButton(e) {
+        if (e.button !== 1) return null;
+        var target = e.target && e.target.nodeType === 1 ? e.target : (e.target && e.target.parentElement);
+        if (!target || !target.closest('.noteentry')) return null;
+        return target.closest('a[href], [data-live-href]');
+    }
+
+    // Pressing: no caret move, no autoscroll (Windows), no paste set up
+    document.addEventListener('mousedown', function (e) {
+        if (!linkUnderMiddleButton(e)) return;
+        lastMiddlePressOnLink = Date.now();
+        e.preventDefault();
+    }, true);
+
+    // Releasing: this is where Chrome on Linux pastes the primary selection
+    document.addEventListener('mouseup', function (e) {
+        if (linkUnderMiddleButton(e)) e.preventDefault();
+    }, true);
+
+    document.addEventListener('auxclick', function (e) {
+        var link = linkUnderMiddleButton(e);
+        if (!link) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        var href = link.tagName === 'A' ? link.href : link.getAttribute('data-live-href');
+        if (!href || /^\s*(?:javascript|vbscript|data):/i.test(String(href))) return;
+        // An internal note link opens the note in the new tab too, as the
+        // browser would do with a link outside the editor
+        window.open(href, '_blank', 'noopener');
+    }, true);
+
+    // Belt and braces: a browser that pastes anyway still fires a paste
+    // event, which must not reach the note's paste handlers
+    document.addEventListener('paste', function (e) {
+        if (!lastMiddlePressOnLink || Date.now() - lastMiddlePressOnLink > 1000) return;
+        lastMiddlePressOnLink = 0;
+        if (!e.target || !e.target.closest || !e.target.closest('.noteentry')) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+    }, true);
 }

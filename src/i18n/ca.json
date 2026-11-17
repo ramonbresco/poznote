@@ -218,6 +218,7 @@
       "custom_logo": "Substituïu el logotip del Poznote pel vostre, per a tots els usuaris: a la pestanya del navegador, a la pàgina d'inici de sessió, a la barra lateral d'icones i com a icona de l'aplicació instal·lada.",
       "two_factor_required": "Tots els comptes que inicien la sessió amb contrasenya han de fer servir l'autenticació de dos factors. Un compte que no la té la configura en el proper inici de sessió, i les sessions obertes sense aquesta autenticació es tanquen. La contrasenya del compte deixa de funcionar a través de l'API: les aplicacions han de fer servir una contrasenya d'aplicació. Els inicis de sessió amb SSO no s'hi veuen afectats, ja que el proveïdor d'identitat en gestiona el segon factor.",
       "tab_follows_note": "Anomena la pestanya del navegador segons la nota que hi ha oberta, amb la icona d'aquella nota, en lloc del nom i la icona d'aquesta instància. Així es distingeixen diverses pestanyes obertes en diverses notes.",
+      "workspace_color_accent": "Fes servir el color de l'espai de treball on ets en lloc del blau de Poznote: icones, pas del ratolí, línia de la pestanya activa, enllaços i botons. Només amb els temes Clar, Fosc i Negre, els altres temes conserven els seus propis colors. Un espai de treball sense color, i les pàgines de Paràmetres, es queden en blau. El color d'un espai de treball es tria amb l'entrada Color del seu menú …, més amunt.",
       "update_badge_level": "Tria quines versions posen el punt vermell a les entrades de Configuració. Triïs el que triïs, la nova versió continua anunciant-se en aquesta pàgina, no s'amaga res.",
       "update_check_interval": "Amb quina freqüència Poznote comprova en segon pla si hi ha una versió més recent. El punt només pot aparèixer després d'una comprovació, així que un interval més llarg el retarda. La targeta Versió de dalt continua comprovant-ho de seguida quan hi fas clic.",
       "sessions": "Mireu els navegadors i dispositius que ara mateix tenen la sessió iniciada al vostre compte, i tanqueu la sessió dels que ja no feu servir.",
@@ -589,6 +590,7 @@
       "diary_template": "Plantilla de les entrades del diari",
       "markdown_view_cycle": "Menú de visualització",
       "tab_follows_note": "La pestanya segueix la nota oberta",
+      "workspace_color_accent": "Color de l'espai com a accent",
       "update_badge_level": "Punt d'actualització",
       "update_check_interval": "Comprovació d'actualitzacions",
       "attachments_single_line": "Adjunts en una línia",
@@ -1673,7 +1675,9 @@
       "keep_offline": "Conserva fora de línia",
       "stop_offline": "Deixa de conservar fora de línia",
       "available_offline": "Disponible fora de línia en aquest navegador",
-      "not_available_offline": "No disponible fora de línia en aquest navegador"
+      "not_available_offline": "No disponible fora de línia en aquest navegador",
+      "delete_shortcut": "Suprimeix la drecera",
+      "delete_shortcuts": "Suprimeix les {{count}} dreceres"
     },
     "favorites_menu": {
       "title": "Accions dels preferits",
@@ -1798,7 +1802,8 @@
   "slash_menu": {
     "plain_block": "Bloc sense format",
     "block_languages": "Llenguatges del bloc",
-    "back_to_normal": "Torna al text normal",
+    "clear_formatting_at_cursor": "Esborra el format al cursor",
+    "normal_text": "Text normal",
     "title": "Títol",
     "heading_1": "Títol 1",
     "heading_2": "Títol 2",
@@ -5215,7 +5220,7 @@
     "description_scope": "Aquest paràmetre s'aplica a tots els usuaris d'aquesta instància.",
     "enable_description": "Copia els usuaris marcats a sota a la carpeta segons la freqüència triada.",
     "directory_label": "Carpeta de còpies de seguretat",
-    "directory_description": "Camí absolut al servidor (dins del contenidor, amb Docker). Deixeu-ho buit per fer servir {{default}}. Per emmagatzemar les còpies de seguretat en un altre lloc, munteu un volum i introduïu-ne el camí aquí.",
+    "directory_description": "Camí absolut al servidor (dins del contenidor, amb Docker). Deixeu-ho buit per fer servir {{default}}. Amb la instal·lació de Docker per defecte, aquesta carpeta és a l'amfitrió a data/backups, al costat del fitxer docker-compose.yml (per exemple ~/poznote/data/backups). Per emmagatzemar les còpies de seguretat en un altre lloc, munteu un volum i introduïu-ne el camí aquí.",
     "retention_description": "Els arxius més antics se suprimeixen de la carpeta després de cada còpia de seguretat. 0 ho conserva tot.",
     "manual_description": "Copia ara els usuaris marcats a sota a la carpeta, d'un en un. Aquesta selecció no es desa i no canvia les còpies automàtiques.",
     "confirm_run": "Vols copiar ara els {{count}} usuari(s) marcat(s) a la carpeta de còpies?",

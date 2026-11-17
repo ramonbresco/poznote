@@ -308,7 +308,8 @@
     }
 
     function positionButton() {
-        if (!hoveredHeading || !hoveredHeading.isConnected) {
+        // Gone, or its text deleted: there is no section left to link to
+        if (!hoveredHeading || !hoveredHeading.isConnected || !(hoveredHeading.textContent || '').trim()) {
             hideButton();
             return;
         }

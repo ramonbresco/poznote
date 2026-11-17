@@ -567,6 +567,7 @@
       "custom_logo": "Sustituir el logo de Poznote por el suyo, para todos los usuarios: en la pestaña del navegador, en la página de inicio de sesión, en la barra de iconos y como icono de la aplicación instalada.",
       "two_factor_required": "Toda cuenta que inicie sesión con contraseña debe usar la autenticación en dos pasos. Una cuenta que no la tenga la configura en su próximo inicio de sesión, y las sesiones abiertas sin ella se cierran. Su contraseña deja de funcionar a través de la API: las aplicaciones usan una contraseña de aplicación. Los inicios de sesión SSO no se ven afectados, el proveedor de identidad gestiona su segundo factor.",
       "tab_follows_note": "Nombra la pestaña del navegador según la nota abierta en ella, con el icono de esa nota, en lugar del nombre y el icono de esta instancia. Así se distinguen varias pestañas abiertas en varias notas.",
+      "workspace_color_accent": "Usar el color del espacio de trabajo en el que estás en lugar del azul de Poznote: iconos, efecto al pasar el ratón, línea de la pestaña activa, enlaces y botones. Solo con los temas Claro, Oscuro y Negro, los demás temas conservan sus propios colores. Un espacio de trabajo sin color, y las páginas de Configuración, siguen en azul. El color de un espacio de trabajo se elige con la opción Color de su menú …, más arriba.",
       "update_badge_level": "Elige qué versiones ponen el punto rojo en las entradas de Ajustes. Elijas lo que elijas, la nueva versión se sigue anunciando en esta página, no se oculta nada.",
       "update_check_interval": "Con qué frecuencia Poznote comprueba en segundo plano si hay una versión más reciente. El punto solo puede aparecer después de una comprobación, así que un intervalo más largo lo retrasa. La tarjeta Versión de arriba sigue comprobando al instante cuando la pulsas.",
       "sessions": "Ver los navegadores y dispositivos conectados ahora mismo a tu cuenta, y cerrar la sesión de los que ya no uses.",
@@ -973,6 +974,7 @@
       "diary_template": "Plantilla de entrada del diario",
       "markdown_view_cycle": "Menú de vistas",
       "tab_follows_note": "La pestaña sigue la nota abierta",
+      "workspace_color_accent": "Color del espacio como acento",
       "update_badge_level": "Punto de actualización",
       "update_check_interval": "Comprobación de actualizaciones",
       "attachments_single_line": "Adjuntos en una línea",
@@ -2208,7 +2210,9 @@
       "keep_offline": "Guardar sin conexión",
       "stop_offline": "Dejar de guardar sin conexión",
       "available_offline": "Disponible sin conexión en este navegador",
-      "not_available_offline": "No disponible sin conexión en este navegador"
+      "not_available_offline": "No disponible sin conexión en este navegador",
+      "delete_shortcut": "Eliminar el atajo",
+      "delete_shortcuts": "Eliminar los {{count}} atajos"
     },
     "favorites_menu": {
       "title": "Acciones de favoritos",
@@ -2332,7 +2336,8 @@
   "slash_menu": {
     "plain_block": "Bloque simple",
     "block_languages": "Lenguajes de bloque",
-    "back_to_normal": "Volver a texto normal",
+    "clear_formatting_at_cursor": "Borrar el formato en el cursor",
+    "normal_text": "Texto normal",
     "title": "Título",
     "heading_1": "Encabezado 1",
     "heading_2": "Encabezado 2",
@@ -5543,7 +5548,7 @@
     "description_scope": "El ajuste se aplica a todos los usuarios de esta instancia.",
     "enable_description": "Copia los usuarios marcados abajo en la carpeta según la frecuencia elegida.",
     "directory_label": "Carpeta de copias de seguridad",
-    "directory_description": "Ruta absoluta en el servidor (dentro del contenedor con Docker). Déjala vacía para usar {{default}}. Para guardar las copias en otro lugar, monta un volumen e introduce su ruta aquí.",
+    "directory_description": "Ruta absoluta en el servidor (dentro del contenedor con Docker). Déjala vacía para usar {{default}}. Con la instalación de Docker por defecto, esta carpeta está en el host en data/backups, junto al archivo docker-compose.yml (por ejemplo ~/poznote/data/backups). Para guardar las copias en otro lugar, monta un volumen e introduce su ruta aquí.",
     "retention_description": "Los archivos más antiguos se eliminan de la carpeta después de cada copia. 0 lo conserva todo.",
     "manual_description": "Copia ahora los usuarios marcados abajo en la carpeta, de uno en uno. Esta selección no se guarda y no cambia las copias automáticas.",
     "confirm_run": "¿Copiar ahora los {{count}} usuario(s) marcado(s) en la carpeta de copias?",

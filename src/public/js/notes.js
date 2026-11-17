@@ -1574,6 +1574,98 @@ function deleteLinkedNoteOnly(linkedNoteId) {
 }
 
 /**
+ * Delete every shortcut to a note, keeping the note itself ("Delete
+ * shortcut" of the tree's note menu, offered in place of "Create shortcut"
+ * once the note has one). The shortcuts go to the trash and come back
+ * together with Ctrl+Z.
+ * @param {string|number} targetNoteId - The note the shortcuts point to
+ * @param {Array<string>} [knownIds] - Shortcut ids already known (the note
+ *   toolbar's, from the server, which may sit in another workspace)
+ */
+function deleteNoteShortcuts(targetNoteId, knownIds) {
+    const shortcutIds = (window.PoznoteTreeHistory ? window.PoznoteTreeHistory.linkedNoteIds(targetNoteId) : [])
+        .concat((knownIds || []).map(String))
+        .filter(function (id, index, all) { return id && all.indexOf(id) === index; });
+    if (!shortcutIds.length) return;
+
+    const workspace = (typeof pageWorkspace !== 'undefined' && pageWorkspace) ? pageWorkspace
+        : (typeof getSelectedWorkspace === 'function' ? getSelectedWorkspace() : '');
+
+    // No workspace filter: an id is unique in the account, and a shortcut
+    // left behind in another workspace must go as well
+    const deleteOne = function (id) {
+        const url = "/api/v1/notes/" + encodeURIComponent(id) + "?permanent=false";
+        return fetch(url, { method: "DELETE", headers: { "Content-Type": "application/json" } })
+            .then(window.readApiJson)
+            .then(function (data) {
+                if (!data || !data.success) throw data;
+                return String(id);
+            });
+    };
+
+    Promise.allSettled(shortcutIds.map(deleteOne)).then(function (results) {
+        const deleted = results.filter(function (r) { return r.status === 'fulfilled'; })
+            .map(function (r) { return r.value; });
+        const failed = results.find(function (r) { return r.status === 'rejected'; });
+
+        if (deleted.length) {
+            if (window.PoznoteTreeHistory) {
+                const entries = deleted.map(function (id) {
+                    return { type: 'note-delete', noteId: id, linkedIds: [], workspace: workspace };
+                });
+                window.PoznoteTreeHistory.record(entries.length === 1 ? entries[0] : { type: 'batch', entries: entries });
+            }
+            if (typeof window.invalidateNoteDomCache === 'function') {
+                deleted.forEach(function (id) { window.invalidateNoteDomCache(id); });
+            }
+            paintNoteShortcutButton(targetNoteId, shortcutIds.filter(function (id) {
+                return deleted.indexOf(id) === -1;
+            }));
+            leaveTrashedNotes(deleted);
+        }
+        if (failed) {
+            showNotificationPopup(window.apiErrorMessage(failed.reason, 'The shortcut could not be deleted'), 'error');
+        }
+    });
+}
+
+/**
+ * Repaint the shortcut button of a note's toolbar (note_display.php) and its
+ * entries in the toolbar menus: "Create shortcut" once the note has none
+ * left, "Delete shortcut" otherwise.
+ * @param {string|number} noteId - The note the shortcuts point to
+ * @param {Array<string>} shortcutIds - The shortcuts it still has
+ */
+function paintNoteShortcutButton(noteId, shortcutIds) {
+    const card = document.getElementById('note' + noteId);
+    const button = card ? card.querySelector('.btn-create-linked-note') : null;
+    if (!button) return;
+
+    const count = shortcutIds.length;
+    const label = !count ? (button.getAttribute('data-label-create') || '')
+        : (count > 1 ? (button.getAttribute('data-label-many') || '').replace('{{count}}', String(count))
+            : (button.getAttribute('data-label-one') || ''));
+    const iconClass = 'lucide ' + (count ? 'lucide-unlink' : 'lucide-link');
+
+    button.setAttribute('data-action', count ? 'delete-note-shortcuts' : 'create-linked-note');
+    button.setAttribute('data-shortcut-ids', shortcutIds.join(','));
+    button.setAttribute('title', label);
+    const icon = button.querySelector('i');
+    if (icon) icon.className = iconClass;
+
+    // The ⋮ menu entry (note_display.php) and the one js/toolbar-overflow.js
+    // built when the row ran out of room: an icon followed by the label
+    card.querySelectorAll('[data-selector=".btn-create-linked-note"]').forEach(function (entry) {
+        const entryIcon = entry.querySelector('i');
+        if (entryIcon) entryIcon.className = iconClass;
+        Array.prototype.slice.call(entry.childNodes).forEach(function (node) {
+            if (node.nodeType === 3) node.remove();
+        });
+        entry.appendChild(document.createTextNode(' ' + label));
+    });
+}
+
+/**
  * Delete the target note and all its links
  * The backend automatically deletes all linked notes that reference the target
  * @param {string|number} linkedNoteId - The linked note ID
@@ -1625,6 +1717,7 @@ window.archiveNote = archiveNote;
 window.openNoteInNewTab = openNoteInNewTab;
 window.showDeleteLinkedNoteModal = showDeleteLinkedNoteModal;
 window.deleteLinkedNoteOnly = deleteLinkedNoteOnly;
+window.deleteNoteShortcuts = deleteNoteShortcuts;
 window.deleteLinkedNoteAndTarget = deleteLinkedNoteAndTarget;
 
 // Event listeners for delete linked note modal
