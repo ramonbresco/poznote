@@ -203,6 +203,14 @@ function poznoteListUserSessions(int $userId, string $currentSessionId = '', boo
     }
 
     $lifetime = poznoteSessionLifetimeSeconds();
+    // Cheap pre-filter run on the raw file before the decoder: a session of
+    // this account holds its id as `login_user_id|i:<id>;` (or the string
+    // form). Anonymous sessions and other accounts' sessions, most of the
+    // directory on a busy instance, are skipped without being decoded (the
+    // settings page counts the sessions on every load). A match is only a
+    // candidate: the decoder below still decides, so a look-alike written
+    // inside a string value is still rejected.
+    $candidatePattern = '/login_user_id\|(?:i:' . $userId . ';|s:\d+:"' . $userId . '";)/';
     $wanted = ['login_user_id', 'authenticated', 'auth_method', 'session_client', 'session_created_at'];
     if ($withRememberToken) {
         $wanted[] = 'remember_token';
@@ -217,7 +225,7 @@ function poznoteListUserSessions(int $userId, string $currentSessionId = '', boo
             continue;
         }
         $raw = @file_get_contents($path);
-        if ($raw === false || $raw === '') {
+        if ($raw === false || $raw === '' || !preg_match($candidatePattern, $raw)) {
             continue;
         }
         $data = poznoteDecodeSessionFile($raw, $wanted);

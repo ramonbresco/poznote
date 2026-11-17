@@ -1,7 +1,7 @@
 <?php
 /**
- * Actions of the workspace list: delete, rename, tags, color, order, move
- * notes, share and unshare, posted by js/workspaces-*.js and answered in
+ * Actions of the workspace list: delete, rename, tags, color, diary template,
+ * order, move notes, share and unshare, posted by js/workspaces-*.js and answered in
  * JSON. Creating a workspace is POST /api/v1/workspaces.
  *
  * The list itself is the Workspaces section of settings.php
@@ -320,6 +320,60 @@ if ($_POST) {
             if (!empty($isAjax)) {
                 header('Content-Type: application/json');
                 echo json_encode(['success' => true, 'message' => $message, 'name' => $name, 'color' => $color]);
+                exit;
+            }
+        } elseif (isset($_POST['action']) && $_POST['action'] === 'set_diary_template') {
+            // Set or clear the note every new diary entry of a workspace
+            // starts with (discussion #1668). diary_templates holds one note
+            // per workspace, {"<workspace id>": <note id>} (lib/diary.php):
+            // only this workspace's entry is touched, read and written in one
+            // transaction so two rows saved at once cannot drop each other.
+            $name = trim($_POST['name'] ?? '');
+            if ($name === '') throw new Exception(t('workspaces.errors.name_required', [], 'Workspace name required', $currentLang));
+
+            $workspaceStmt = $con->prepare('SELECT id FROM workspaces WHERE name = ?');
+            $workspaceStmt->execute([$name]);
+            $workspaceId = (int)$workspaceStmt->fetchColumn();
+            if ($workspaceId <= 0) {
+                throw new Exception(t('api.errors.workspace_not_found', [], 'Workspace not found', $currentLang));
+            }
+
+            $rawNoteId = trim((string)($_POST['note_id'] ?? ''));
+            if ($rawNoteId !== '' && !ctype_digit($rawNoteId)) {
+                throw new Exception(t('workspaces.diary_template.invalid', [], 'This note cannot be used as a diary template', $currentLang));
+            }
+            $noteId = (int)$rawNoteId;
+            if ($noteId > 0) {
+                // A template never crosses workspaces (getDiaryTemplateContent())
+                $noteStmt = $con->prepare("SELECT COUNT(*) FROM entries WHERE id = ? AND workspace = ? AND trash = 0 AND COALESCE(NULLIF(type, ''), 'note') IN ('note', 'markdown')");
+                $noteStmt->execute([$noteId, $name]);
+                if ((int)$noteStmt->fetchColumn() === 0) {
+                    throw new Exception(t('workspaces.diary_template.invalid', [], 'This note cannot be used as a diary template', $currentLang));
+                }
+            }
+
+            $con->beginTransaction();
+            try {
+                $readStmt = $con->prepare('SELECT value FROM settings WHERE key = ?');
+                $readStmt->execute(['diary_templates']);
+                $templates = parseDiaryTemplates((string)$readStmt->fetchColumn());
+                if ($noteId > 0) {
+                    $templates[$workspaceId] = $noteId;
+                } else {
+                    unset($templates[$workspaceId]);
+                }
+                $writeStmt = $con->prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
+                $writeStmt->execute(['diary_templates', $templates ? json_encode((object)$templates) : '']);
+                $con->commit();
+            } catch (Throwable $e) {
+                $con->rollBack();
+                throw $e;
+            }
+
+            $message = t('workspaces.diary_template.saved', [], 'Diary template updated', $currentLang);
+            if (!empty($isAjax)) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'message' => $message, 'name' => $name, 'note_id' => $noteId]);
                 exit;
             }
         } elseif (isset($_POST['action']) && $_POST['action'] === 'reorder') {

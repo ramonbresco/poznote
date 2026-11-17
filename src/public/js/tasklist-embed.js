@@ -689,6 +689,7 @@
         input.placeholder = t('tasklist_embed.add_placeholder', null, 'Add a task...');
         input.maxLength = 4000;
         input.setAttribute('autocomplete', 'off');
+        input.setAttribute('autocapitalize', (document.body && document.body.getAttribute('data-autocapitalize') === 'off' ? 'off' : 'sentences'));
         input.setAttribute('enterkeyhint', 'go');
         form.appendChild(input);
 

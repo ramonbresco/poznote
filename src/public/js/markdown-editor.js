@@ -90,6 +90,7 @@ function initializeCodeMirrorMarkdownEditor(editorDiv, markdownContent, readOnly
             readOnly: !!readOnly,
             spellcheck: isMarkdownSpellcheckEnabled(),
             lang: (document.body && document.body.getAttribute('data-spellcheck-lang')) || '',
+            autocapitalize: !document.body || document.body.getAttribute('data-autocapitalize') !== 'off',
             livePreview: isMarkdownLiveEditingEnabled() && !editorDiv.closest('.markdown-split-mode'),
             lineWrapping: isMarkdownEditorWordWrapEnabled()
         });

@@ -166,9 +166,11 @@
       "attachments_at_bottom": "Mostra la secció de fitxers adjunts a la part inferior de les notes en lloc de la part superior.",
       "allow_executable_attachments": "Permet adjuntar scripts i executables (.sh, .ps1, .bat, .exe, .py...) a les notes, per a tots els comptes d'aquesta instància. El Poznote no els executa mai, només els emmagatzema i els serveix. Els tipus de fitxer que un servidor web podria executar, com ara .php, continuen bloquejats.",
       "backlinks_at_bottom": "Mostra la secció d'enllaços entrants a la part inferior de les notes en lloc de la part superior.",
+      "note_link_preview": "En passar el ratolí per un enllaç a una altra nota, aquesta nota es mostra en una finestra petita, només de lectura, sense sortir de la nota on ets. No a les pantalles tàctils.",
       "note_virtual_space": "Deixa espai buit sota l'última línia d'una nota, de manera que el final del text es pugui desplaçar fins al mig de la pantalla en lloc de quedar-se a baix de tot.",
       "default_image_border": "Mostra per defecte les imatges de les notes amb vora i sense farciment.",
       "spellcheck_html_notes": "Activa el corrector ortogràfic del navegador a les notes de text enriquit i Markdown.",
+      "note_autocapitalize": "En un telèfon, el teclat comença cada frase i cada línia nova amb majúscula a les notes i les tasques. El teu teclat també ho pot desactivar per a totes les aplicacions.",
       "slash_menu_trigger": "En un ordinador, trieu si el menú d'ordres s'obre escrivint /, amb Alt + / o gens des del teclat. Un clic amb el botó dret en una nota l'obre independentment d'aquest paràmetre.",
       "slash_menu_trigger_mobile": "En un mòbil, trieu si el menú d'ordres s'obre escrivint /, amb Alt + / des d'un teclat físic o gens des del teclat.",
       "icon_sidebar_order": "Canvieu l'ordre i el color dels botons de la barra lateral d'icones i col·loqueu-hi separadors.",
@@ -212,7 +214,6 @@
       "login_disabled": "Trieu els comptes que s'obren sense contrasenya. La pàgina d'inici de sessió els llista sota el formulari de contrasenya, i qualsevol que arribi a aquesta instància els pot obrir. Quan es tria l'únic compte de la instància, no hi ha pàgina d'inici de sessió. L'API continua demanant credencials.",
       "outbound_hosts": "Els usuaris que no són administradors només poden connectar els webhooks, la sincronització amb Git i els seus propis servidors d'IA, de transcripció o MCP a amfitrions públics d'Internet. Llisteu aquí els amfitrions o les xarxes locals que poden fer servir, com ara un servidor d'Ollama o d'n8n. Els administradors no tenen límits.",
       "embeds": "Les notes poden incrustar contingut d'aquests llocs, com un vídeo de YouTube o una applet de GeoGebra. Desactiveu els que la vostra instància no hagi de carregar mai. Cap altre lloc es pot incrustar, i aquí no s'hi poden afegir llocs.",
-      "diary_template": "Trieu una nota amb el contingut de la qual comença cada entrada nova del diari de l'espai de treball {{workspace}}. La llista mostra les notes d'una carpeta anomenada Templates (o Plantilles) d'aquest espai de treball. Cada espai de treball té la seva plantilla.",
       "markdown_view_cycle": "Trieu les visualitzacions que ofereix el menú de visualització d'una nota Markdown, a més de la visualització clàssica (previsualització, amb el llapis per editar). Les visualitzacions excloses no hi apareixen. Si no en trieu cap, el botó s'amaga. En un telèfon, el menú no ofereix mai el mode dividit.",
       "connected_apps": "Connecteu aplicacions de xat com ara ChatGPT o Claude a les notes mitjançant el servidor MCP i desconnecteu-les en qualsevol moment.",
       "custom_logo": "Substituïu el logotip del Poznote pel vostre, per a tots els usuaris: a la pestanya del navegador, a la pàgina d'inici de sessió, a la barra lateral d'icones i com a icona de l'aplicació instal·lada.",
@@ -269,6 +270,7 @@
       "language_region": "Llengua i regió",
       "storage": "Emmagatzematge",
       "layout": "Disposició",
+      "links": "Enllaços",
       "preferences": "Preferències",
       "backup": "Còpia de seguretat",
       "export": "Exportació",
@@ -534,6 +536,13 @@
     "filter": {
       "placeholder": "Filtra per nom o etiqueta...",
       "no_results": "Cap espai de treball no coincideix amb aquest filtre."
+    },
+    "diary_template": {
+      "action": "Plantilla del diari",
+      "help": "Cada entrada nova del diari d'aquest espai de treball comença amb el contingut de la nota triada. La llista mostra les notes d'una carpeta anomenada Templates (o Plantilles) d'aquest espai.",
+      "saved": "S'ha actualitzat la plantilla del diari",
+      "save_error": "No s'ha pogut actualitzar la plantilla del diari",
+      "invalid": "Aquesta nota no es pot fer servir com a plantilla del diari"
     }
   },
   "display": {
@@ -576,11 +585,13 @@
       "attachments_show_inserted_images": "Imatges inserides als adjunts",
       "attachments_at_bottom": "Fitxers adjunts a baix",
       "backlinks_at_bottom": "Enllaços entrants a baix",
+      "note_link_preview": "Previsualització de la nota en passar per un enllaç",
       "note_virtual_space": "Espai sota la nota",
       "default_image_border_no_padding": "Vora de les imatges per defecte",
       "icon_sidebar_order": "Disposició de la barra lateral d'icones",
       "notes_dashboard": "Tauler de notes",
       "spellcheck_html_notes": "Correcció ortogràfica",
+      "note_autocapitalize": "Majúscules automàtiques",
       "slash_menu_trigger": "Drecera del menú d'ordres (ordinador)",
       "slash_menu_trigger_mobile": "Drecera del menú d'ordres (mòbil)",
       "snapshots": "Revisions",
@@ -6016,5 +6027,13 @@
       "load_failed": "No s’han pogut carregar les vostres sessions.",
       "generic": "Alguna cosa ha anat malament. Torneu-ho a provar."
     }
+  },
+  "note_link_preview": {
+    "loading": "S'està carregant…",
+    "not_found": "Aquesta nota no existeix o s'ha suprimit",
+    "error": "No s'ha pogut carregar la previsualització",
+    "empty": "Aquesta nota és buida",
+    "drawing": "Un dibuix no es pot previsualitzar aquí",
+    "open": "Obre en una pestanya nova"
   }
 }

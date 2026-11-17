@@ -54,6 +54,7 @@ function poznoteGetIndexCssGroups(): array {
             'css/focus-mode.css',
             'css/sidebar.css',
             'css/outline.css',
+            'css/note-link-preview.css',
             'css/toolbar.css',
             'css/menus.css',
             'css/searchbars.css',

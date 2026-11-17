@@ -804,6 +804,14 @@ body:not(.dark-mode) #changePasswordModal .change-password-description {
     }
 }
 
+/* A card that only means something on a phone (the keyboard's
+   auto-capitalisation): hidden from 801px, where .desktop-only shows */
+@media (min-width: 801px) {
+    .mobile-only {
+        display: none !important;
+    }
+}
+
 /* ---------- Filter row: search input + collapse-all ---------- */
 
 /* Top of the left column of the frame (settings_shell.php): above the

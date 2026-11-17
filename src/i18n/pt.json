@@ -515,9 +515,11 @@
       "attachments_at_bottom": "Mostre a seção de anexos na parte inferior das notas em vez do topo.",
       "allow_executable_attachments": "Permite anexar scripts e executáveis (.sh, .ps1, .bat, .exe, .py, ...), para todas as contas desta instância. O Poznote nunca os executa, apenas os armazena e os entrega. Os tipos que um servidor web poderia executar, como .php, continuam bloqueados.",
       "backlinks_at_bottom": "Mostre a seção de backlinks na parte inferior das notas em vez do topo.",
+      "note_link_preview": "Passar o rato sobre uma ligação para outra nota mostra essa nota numa pequena janela, só de leitura, sem sair da nota em que está. Não em ecrãs táteis.",
       "note_virtual_space": "Deixa um espaço vazio abaixo da última linha de uma nota, para poder subir o fim do texto até ao meio do ecrã em vez de o manter mesmo em baixo.",
       "default_image_border": "Exiba por padrão as imagens das notas com borda e sem preenchimento.",
       "spellcheck_html_notes": "Ative o corretor ortográfico do navegador nas notas de texto formatado e Markdown.",
+      "note_autocapitalize": "Num telemóvel, o teclado começa cada frase e cada nova linha com maiúscula nas notas e nas tarefas. O seu teclado também pode desativar isto para todas as aplicações.",
       "slash_menu_trigger": "No computador, escolha se o menu de comandos abre digitando /, com Alt + / ou sem nenhuma tecla. Um clique com o botão direito numa nota abre-o seja qual for esta definição.",
       "slash_menu_trigger_mobile": "No telemóvel, escolha se o menu de comandos abre digitando /, com Alt + / a partir de um teclado físico ou sem nenhuma tecla.",
       "icon_sidebar_order": "Altere a ordem e a cor dos botões da barra de ícones e coloque separadores entre eles.",
@@ -561,7 +563,6 @@
       "login_disabled": "Escolha as contas que abrem sem senha. A página de login as lista abaixo do formulário de senha, e qualquer pessoa que chegue a esta instância pode abri-las. Quando a única conta da instância é escolhida, não há página de login. A API continua pedindo credenciais.",
       "outbound_hosts": "Os utilizadores não administradores só podem ligar os webhooks, o Git Sync e os seus próprios servidores de IA, transcrição ou MCP a hosts públicos da Internet. Indique aqui os hosts ou redes locais que podem usar, como um servidor Ollama ou n8n. Os administradores não têm limites.",
       "embeds": "As notas podem incorporar conteúdo destes sites, como um vídeo do YouTube ou um applet do GeoGebra. Desative os que a sua instância nunca deve carregar. Nenhum outro site pode ser incorporado, e não é possível adicionar sites aqui.",
-      "diary_template": "Escolha uma nota cujo conteúdo serve de ponto de partida para cada nova entrada do diário do espaço de trabalho {{workspace}}. A lista mostra as notas guardadas numa pasta chamada Modelos (ou Templates) desse espaço. Cada espaço de trabalho tem o seu próprio modelo.",
       "markdown_view_cycle": "Escolha as visualizações que o menu de visualizações de uma nota markdown oferece além da visualização clássica (pré-visualização, com o lápis para editar). As visualizações não escolhidas não aparecem. Se nenhuma for escolhida, o botão fica oculto. Num telemóvel o menu nunca oferece o modo dividido.",
       "connected_apps": "Conecte aplicativos de chat como ChatGPT ou Claude às suas notas pelo servidor MCP e desconecte-os quando quiser.",
       "custom_logo": "Substituir o logótipo do Poznote pelo seu, para todos os utilizadores: no separador do navegador, na página de início de sessão, na barra de ícones e como ícone da aplicação instalada.",
@@ -618,6 +619,7 @@
       "language_region": "Idioma e região",
       "storage": "Armazenamento",
       "layout": "Layout",
+      "links": "Ligações",
       "preferences": "Preferências",
       "backup": "Backup",
       "export": "Exportação",
@@ -918,6 +920,13 @@
     "filter": {
       "placeholder": "Filtrar por nome ou etiqueta...",
       "no_results": "Nenhum espaço de trabalho corresponde a este filtro."
+    },
+    "diary_template": {
+      "action": "Modelo do diário",
+      "help": "Cada nova entrada do diário deste espaço de trabalho começa com o conteúdo da nota escolhida. A lista mostra as notas guardadas numa pasta chamada Modelos (ou Templates) deste espaço.",
+      "saved": "Modelo do diário atualizado",
+      "save_error": "Não foi possível atualizar o modelo do diário",
+      "invalid": "Esta nota não pode ser usada como modelo do diário"
     }
   },
   "display": {
@@ -958,11 +967,13 @@
       "attachments_show_inserted_images": "Imagens inseridas nos anexos",
       "attachments_at_bottom": "Anexos no final",
       "backlinks_at_bottom": "Backlinks no final",
+      "note_link_preview": "Pré-visualização da nota ao passar sobre uma ligação",
       "note_virtual_space": "Espaço abaixo da nota",
       "default_image_border_no_padding": "Borda padrão de imagem",
       "icon_sidebar_order": "Layout da barra de ícones",
       "notes_dashboard": "Quadro de notas",
       "spellcheck_html_notes": "Verificação ortográfica",
+      "note_autocapitalize": "Maiúsculas automáticas",
       "note_color_palette": "Cores das notas",
       "slash_menu_trigger": "Atalho do menu de comandos (computador)",
       "slash_menu_trigger_mobile": "Atalho do menu de comandos (telemóvel)",
@@ -6172,5 +6183,13 @@
       "load_failed": "Não foi possível carregar as suas sessões.",
       "generic": "Algo deu errado. Tente novamente."
     }
+  },
+  "note_link_preview": {
+    "loading": "A carregar…",
+    "not_found": "Esta nota não existe ou foi eliminada",
+    "error": "Não foi possível carregar a pré-visualização",
+    "empty": "Esta nota está vazia",
+    "drawing": "Um desenho não pode ser pré-visualizado aqui",
+    "open": "Abrir num novo separador"
   }
 }

@@ -1,6 +1,6 @@
 // Workspace action handlers.
 // 
-// Rename, tags, colour, select and delete, driven from the workspace list of
+// Rename, tags, colour, diary template, select and delete, driven from the workspace list of
 // Settings > Workspaces (workspaces_section.php) and posted to workspaces.php.
 
 // ========== WORKSPACE ACTION HANDLERS ==========
@@ -394,6 +394,130 @@ function handleWorkspaceColorButtonClick(e) {
 
     confirmBtn.onclick = function () { saveWorkspaceColor(workspaceColorState.color, [confirmBtn, clearBtn]); };
     clearBtn.onclick = function () { saveWorkspaceColor('', [confirmBtn, clearBtn]); };
+}
+
+// Workspace diary template modal ("Diary template" action, discussion
+// #1668): "None" plus the notes of the workspace's Templates folders
+// (GET /notes/templates). The endpoint also returns the notes of a workspace
+// named Templates, which the /template command offers everywhere: a diary
+// template never crosses workspaces, so those are left out. A stored note
+// that left the list (deleted, moved out of Templates) shows as missing.
+// Saved with a set_diary_template POST to workspaces.php.
+var workspaceDiaryTemplateState = { name: '', noteId: '' };
+
+function closeWorkspaceDiaryTemplateModal() {
+    var modal = document.getElementById('workspaceDiaryTemplateModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function fillWorkspaceDiaryTemplateOptions(select, workspace, stored, done) {
+    while (select.options.length > 1) select.remove(1);
+    fetch('api/v1/notes/templates?workspace=' + encodeURIComponent(workspace), {
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' }
+    })
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+            var notes = ((data && Array.isArray(data.notes)) ? data.notes : []).filter(function (note) {
+                return note.workspace === workspace;
+            });
+            notes.forEach(function (note) {
+                var option = document.createElement('option');
+                option.value = String(note.id);
+                option.textContent = note.heading || '#' + note.id;
+                select.appendChild(option);
+            });
+            if (stored !== '' && !notes.some(function (note) { return String(note.id) === stored; })) {
+                var missing = document.createElement('option');
+                missing.value = stored;
+                missing.textContent = wsTr('settings.diary_template.missing', {}, 'Note not found');
+                select.appendChild(missing);
+            }
+        })
+        .catch(function () { /* the list stays at "None" */ })
+        .then(function () {
+            select.value = stored;
+            if (select.value !== stored) select.value = '';
+            done();
+        });
+}
+
+function saveWorkspaceDiaryTemplate(noteId, button) {
+    button.disabled = true;
+    var params = new URLSearchParams({
+        action: 'set_diary_template',
+        name: workspaceDiaryTemplateState.name,
+        note_id: noteId || ''
+    });
+
+    fetch('workspaces.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        },
+        body: params.toString()
+    })
+        .then(function (resp) { return resp.json(); })
+        .then(function (json) {
+            button.disabled = false;
+            if (json && json.success) {
+                closeWorkspaceDiaryTemplateModal();
+                showAjaxAlert(wsTr('workspaces.diary_template.saved', {}, 'Diary template updated'), 'success');
+                // The row keeps the choice for the next opening, without a reload
+                var saved = json.note_id ? String(json.note_id) : '';
+                document.querySelectorAll('.workspace-diary-template-action').forEach(function (action) {
+                    if (action.getAttribute('data-ws') === workspaceDiaryTemplateState.name) {
+                        action.setAttribute('data-diary-template', saved || '0');
+                    }
+                });
+            } else {
+                showAjaxAlert(wsTr('workspaces.alerts.error_prefix', { error: (json && json.error) || wsTr('workspaces.alerts.unknown_error', {}, 'Unknown error') }, 'Error: {{error}}'), 'danger');
+            }
+        })
+        .catch(function () {
+            button.disabled = false;
+            showAjaxAlert(wsTr('workspaces.diary_template.save_error', {}, 'Could not update the diary template'), 'danger');
+        });
+}
+
+function handleWorkspaceDiaryTemplateButtonClick(e) {
+    var closeBtn = e.target && e.target.closest ? e.target.closest('[data-action="close-workspace-diary-template-modal"]') : null;
+    if (closeBtn) {
+        e.preventDefault();
+        closeWorkspaceDiaryTemplateModal();
+        return;
+    }
+
+    var button = e.target && e.target.closest ? e.target.closest('.workspace-diary-template-action') : null;
+    if (!button) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    var workspaceName = button.getAttribute('data-ws');
+    var modal = document.getElementById('workspaceDiaryTemplateModal');
+    var select = document.getElementById('workspaceDiaryTemplateSelect');
+    var confirmBtn = document.getElementById('confirmWorkspaceDiaryTemplateBtn');
+    if (!workspaceName || !modal || !select || !confirmBtn) return;
+
+    var stored = String(parseInt(button.getAttribute('data-diary-template'), 10) || '');
+    workspaceDiaryTemplateState = { name: workspaceName, noteId: stored };
+
+    var source = document.getElementById('workspaceDiaryTemplateSource');
+    if (source) source.textContent = workspaceName;
+
+    // The list is filled before Save can be pressed: saving "None" while the
+    // notes are still loading would clear the stored template
+    confirmBtn.disabled = true;
+    select.disabled = true;
+    modal.style.display = 'flex';
+    fillWorkspaceDiaryTemplateOptions(select, workspaceName, stored, function () {
+        select.disabled = false;
+        confirmBtn.disabled = false;
+    });
+
+    confirmBtn.onclick = function () { saveWorkspaceDiaryTemplate(select.value, confirmBtn); };
 }
 
 // The workspace name is the link that opens it (a plain click; modified

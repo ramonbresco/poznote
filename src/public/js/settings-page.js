@@ -132,6 +132,7 @@
             'attachments_single_line',
             'attachment_links_as_cards',
             'backlinks_at_bottom',
+            'note_link_preview',
             'note_virtual_space',
             'default_image_border_no_padding',
             'center_note_content',
@@ -143,7 +144,6 @@
             'tasklist_insert_order',
             'diary_default_note_type',
             'diary_date_format',
-            'diary_templates',
             'toolbar_mode',
             'timezone',
             'workspace_activity_emails',
@@ -152,6 +152,7 @@
             'hidden_ui_elements',
             'settings_pinned_cards',
             'spellcheck_html_notes',
+            'note_autocapitalize',
             'slash_menu_trigger',
             'slash_menu_trigger_mobile',
             'format_toolbar_mode'
@@ -592,40 +593,6 @@
         return SLASH_MENU_TRIGGERS.indexOf(trigger) !== -1 ? trigger : 'slash';
     }
 
-    // Diary entry template: "None" plus the template notes of the page's
-    // workspace (its Templates folders, GET /notes/templates). The endpoint
-    // also returns the notes of a workspace named Templates, offered by the
-    // /template command everywhere: a diary template never crosses
-    // workspaces, so those are left out. A stored note that left the list
-    // (deleted, moved out of Templates) shows as missing.
-    function fillDiaryTemplateOptions(control, value, done) {
-        var stored = value === null || value === undefined ? '' : String(value);
-        var workspace = control.dataset.workspace || '';
-        if (!workspace) { done(); return; }
-        fetch('api/v1/notes/templates?workspace=' + encodeURIComponent(workspace), { credentials: 'same-origin' })
-            .then(function (response) { return response.json(); })
-            .then(function (data) {
-                var notes = ((data && Array.isArray(data.notes)) ? data.notes : []).filter(function (note) {
-                    return note.workspace === workspace;
-                });
-                while (control.options.length > 1) control.remove(1);
-                notes.forEach(function (note) {
-                    var option = document.createElement('option');
-                    option.value = String(note.id);
-                    option.textContent = note.heading || '#' + note.id;
-                    control.appendChild(option);
-                });
-                if (stored !== '' && !notes.some(function (note) { return String(note.id) === stored; })) {
-                    var missing = document.createElement('option');
-                    missing.value = stored;
-                    missing.textContent = tr('settings.diary_template.missing', {}, 'Note not found');
-                    control.appendChild(missing);
-                }
-            })
-            .catch(function () { /* the list stays at "None" */ })
-            .then(done);
-    }
-
     // center_note_content: a percentage of the note column ('60%'), '0' for
     // full width, or legacy values ('1'/'true' = 800px, bare pixel number).
     // The slider only knows percentages: a legacy pixel width shows as the
@@ -892,30 +859,6 @@
                 return value === 'markdown' ? 'markdown' : 'html';
             }),
             save: saveSettingValue('diary_default_note_type')
-        });
-
-        // Read by getDiaryTemplateContent() (lib/diary.php) when a diary
-        // entry is created. diary_templates holds one note per workspace,
-        // {"<workspace id>": <note id>}: the card reads and writes the entry
-        // of the workspace the page is in, and leaves the others alone.
-        var diaryTemplateSelect = document.getElementById('diary-template-select');
-        var diaryTemplateWorkspaceId = diaryTemplateSelect ? String(parseInt(diaryTemplateSelect.dataset.workspaceId, 10) || '') : '';
-        var diaryTemplates = {};
-        initInlineControl('diary-template-select', {
-            load: loadSettingValue('diary_templates', function (value) {
-                try { diaryTemplates = JSON.parse(value || '{}') || {}; } catch (e) { diaryTemplates = {}; }
-                if (typeof diaryTemplates !== 'object' || Array.isArray(diaryTemplates)) diaryTemplates = {};
-                return diaryTemplateWorkspaceId && diaryTemplates[diaryTemplateWorkspaceId] ? String(diaryTemplates[diaryTemplateWorkspaceId]) : '';
-            }),
-            save: function (value, done) {
-                if (!diaryTemplateWorkspaceId) { done(false); return; }
-                var next = Object.assign({}, diaryTemplates);
-                if (value) next[diaryTemplateWorkspaceId] = parseInt(value, 10);
-                else delete next[diaryTemplateWorkspaceId];
-                saveSettingValue('diary_templates', function () { diaryTemplates = next; })(
-                    Object.keys(next).length ? JSON.stringify(next) : '', done);
-            },
-            prepare: fillDiaryTemplateOptions
         });
 
         // Instance-wide (master database), administrators only
@@ -3212,8 +3155,10 @@
         setupToggleCard('attachments-inserted-images-card', 'attachments-inserted-images-status', 'attachments_show_inserted_images', false, false);
         setupToggleCard('backlinks-at-bottom-card', 'backlinks-at-bottom-status', 'backlinks_at_bottom', false, false);
         setupToggleCard('note-virtual-space-card', 'note-virtual-space-status', 'note_virtual_space', false, true);
+        setupToggleCard('note-link-preview-card', 'note-link-preview-status', 'note_link_preview', false, true);
         setupToggleCard('default-image-border-card', 'default-image-border-status', 'default_image_border_no_padding', false, false);
         setupToggleCard('spellcheck-html-notes-card', 'spellcheck-html-notes-status', 'spellcheck_html_notes', false, false);
+        setupToggleCard('note-autocapitalize-card', 'note-autocapitalize-status', 'note_autocapitalize', false, true);
 
         // Settings shown as a control in their row (initInlineControl)
         initInlineControls();

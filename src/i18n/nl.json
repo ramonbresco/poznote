@@ -166,9 +166,11 @@
       "attachments_at_bottom": "Het bijlagengedeelte onderaan notities tonen in plaats van bovenaan.",
       "allow_executable_attachments": "Scripts en uitvoerbare bestanden (.sh, .ps1, .bat, .exe, .py, ...) als bijlage aan notities toestaan, voor elk account op deze instantie. Poznote voert ze nooit uit, het slaat ze alleen op en levert ze. Bestandstypen die een webserver zou kunnen uitvoeren, zoals .php, blijven geblokkeerd.",
       "backlinks_at_bottom": "Het backlinksgedeelte onderaan notities tonen in plaats van bovenaan.",
+      "note_link_preview": "Als je een link naar een andere notitie aanwijst, verschijnt die notitie in een klein venster, alleen-lezen, zonder dat je de notitie verlaat waarin je bent. Niet op touchscreens.",
       "note_virtual_space": "Lege ruimte laten onder de laatste regel van een notitie, zodat het einde van de tekst tot het midden van het scherm kan worden gescrold in plaats van helemaal onderaan te blijven.",
       "default_image_border": "Afbeeldingen in notities standaard met een rand en zonder opvulling tonen.",
       "spellcheck_html_notes": "De spellingcontrole van de browser inschakelen in rich text- en Markdown-notities.",
+      "note_autocapitalize": "Op een telefoon begint het toetsenbord elke zin en elke nieuwe regel met een hoofdletter in notities en taken. Je toetsenbord kan dit ook voor alle apps uitschakelen.",
       "slash_menu_trigger": "Kies op een computer of het opdrachtenmenu opent door / te typen, met Alt + /, of helemaal niet via het toetsenbord. Een rechtermuisklik in een notitie opent het, ongeacht deze instelling.",
       "slash_menu_trigger_mobile": "Kies op mobiel of het opdrachtenmenu opent door / te typen, met Alt + / op een fysiek toetsenbord, of helemaal niet via het toetsenbord.",
       "icon_sidebar_order": "De volgorde en kleur van de knoppen in de pictogrammenbalk wijzigen en scheidingslijnen ertussen plaatsen.",
@@ -212,7 +214,6 @@
       "login_disabled": "Kies de accounts die zonder wachtwoord openen. De inlogpagina toont ze onder het wachtwoordformulier, en iedereen die deze instantie kan bereiken kan ze openen. Als het enige account van de instantie is gekozen, is er helemaal geen inlogpagina. De API blijft om inloggegevens vragen.",
       "outbound_hosts": "Gebruikers die geen beheerder zijn kunnen webhooks, Git Sync en hun eigen AI-, transcriptie- of MCP-servers alleen met openbare internethosts verbinden. Geef hier de lokale hosts of netwerken op die ze mogen gebruiken, zoals een Ollama- of n8n-server. Beheerders zijn niet beperkt.",
       "embeds": "Notities kunnen inhoud van deze sites insluiten, zoals een YouTube-video of een GeoGebra-applet. Schakel de sites uit die je instantie nooit mag laden. Geen andere site kan worden ingesloten, en hier kan geen site worden toegevoegd.",
-      "diary_template": "Kies een notitie waarmee elk nieuw dagboekitem van de werkruimte {{workspace}} begint. De lijst toont de notities in een map met de naam Sjablonen in die werkruimte. Elke werkruimte heeft haar eigen sjabloon.",
       "markdown_view_cycle": "Kies de weergaven die het weergavemenu van een Markdown-notitie naast de klassieke weergave aanbiedt (voorbeeld, met het potlood om te bewerken). Weggelaten weergaven worden niet getoond. Als er geen is gekozen, wordt de knop verborgen. Op een telefoon biedt het menu nooit de gesplitste modus aan.",
       "connected_apps": "Chat-apps zoals ChatGPT of Claude via de MCP-server met je notities verbinden, en ze op elk moment loskoppelen.",
       "custom_logo": "Het Poznote-logo vervangen door je eigen logo, voor elke gebruiker: in het browsertabblad, op de inlogpagina, in de pictogrammenbalk en als pictogram van de geïnstalleerde app.",
@@ -269,6 +270,7 @@
       "language_region": "Taal en regio",
       "storage": "Opslag",
       "layout": "Indeling",
+      "links": "Links",
       "preferences": "Voorkeuren",
       "backup": "Back-up",
       "export": "Exporteren",
@@ -534,6 +536,13 @@
     "filter": {
       "placeholder": "Filteren op naam of tag...",
       "no_results": "Geen werkruimte komt overeen met dit filter."
+    },
+    "diary_template": {
+      "action": "Dagboeksjabloon",
+      "help": "Elk nieuw dagboekitem van deze werkruimte begint met de inhoud van de gekozen notitie. De lijst toont de notities in een map met de naam Sjablonen in deze werkruimte.",
+      "saved": "Dagboeksjabloon bijgewerkt",
+      "save_error": "Kan het dagboeksjabloon niet bijwerken",
+      "invalid": "Deze notitie kan niet als dagboeksjabloon worden gebruikt"
     }
   },
   "display": {
@@ -576,11 +585,13 @@
       "attachments_show_inserted_images": "Ingevoegde afbeeldingen bij bijlagen",
       "attachments_at_bottom": "Bijlagen onderaan",
       "backlinks_at_bottom": "Backlinks onderaan",
+      "note_link_preview": "Voorbeeld van de notitie bij het aanwijzen van een link",
       "note_virtual_space": "Ruimte onder de notitie",
       "default_image_border_no_padding": "Standaardrand van afbeeldingen",
       "icon_sidebar_order": "Indeling van pictogrammenbalk",
       "notes_dashboard": "Notitiebord",
       "spellcheck_html_notes": "Spellingcontrole",
+      "note_autocapitalize": "Automatische hoofdletters",
       "slash_menu_trigger": "Sneltoets opdrachtenmenu (computer)",
       "slash_menu_trigger_mobile": "Sneltoets opdrachtenmenu (mobiel)",
       "snapshots": "Revisies",
@@ -6016,5 +6027,13 @@
       "load_failed": "Je sessies konden niet worden geladen.",
       "generic": "Er ging iets mis. Probeer het opnieuw."
     }
+  },
+  "note_link_preview": {
+    "loading": "Laden…",
+    "not_found": "Deze notitie bestaat niet of is verwijderd",
+    "error": "Het voorbeeld kon niet worden geladen",
+    "empty": "Deze notitie is leeg",
+    "drawing": "Een tekening kan hier niet worden weergegeven",
+    "open": "Openen in een nieuw tabblad"
   }
 }

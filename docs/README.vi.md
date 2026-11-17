@@ -706,7 +706,7 @@ Poznote có nhiều loại ghi chú khác nhau, mỗi loại phù hợp với m�
 *   **Chế độ xem Bảng (Board View):** Các mục được hiển thị dạng thẻ gom theo tháng, mới nhất lên đầu, kèm bộ lọc để tìm nhanh các ngày cũ.
 *   **Chế độ xem Nhật ký (Journal View):** Nút cuộn giấy cạnh cụm nút chuyển chế độ xem chuyển sang một cột đọc liên tục: hiển thị mọi bài viết với toàn bộ nội dung, mới nhất lên đầu, tải dần khi cuộn. Bộ lọc cũng hoạt động ở đây. Nhấp vào bài viết hoặc biểu tượng cây bút để sửa ngay tại chỗ; thay đổi tự lưu khi bạn gõ. Nút tag cạnh cây bút biến phần thẻ của bài viết thành trình chỉnh sửa: thêm hoặc gỡ tag mà không cần mở riêng ghi chú.
 *   **Định dạng:** Bài mới được tạo dạng rich text hoặc Markdown tùy theo thiết lập "Diary entry format" trong **Settings > Diary**.
-*   **Mẫu nhật ký:** Để mỗi bài mới đều khởi đầu với cùng một khung nội dung (tiêu đề, hộp kiểm...), hãy đặt ghi chú mẫu đó trong thư mục tên `Templates` của workspace rồi chọn nó ở mục "Diary entry template" trong **Settings > Diary**. Mỗi workspace có mẫu riêng chọn từ chính các ghi chú của workspace đó: mở Settings từ bên trong workspace muốn thiết lập. Mẫu sẽ tự chuyển đổi nếu khác định dạng với mục nhật ký.
+*   **Mẫu nhật ký:** Để mỗi bài mới đều khởi đầu với cùng một khung nội dung (tiêu đề, hộp kiểm...), hãy đặt ghi chú mẫu đó trong thư mục tên `Templates` của workspace rồi chọn nó bằng mục "Diary template" trong menu của workspace, tại **Settings > Workspaces**. Mỗi workspace có mẫu riêng chọn từ chính các ghi chú của workspace đó. Mẫu sẽ tự chuyển đổi nếu khác định dạng với mục nhật ký.
 </details>
 
 ## Lịch sử chỉnh sửa (Revisions)

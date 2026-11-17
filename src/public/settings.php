@@ -139,6 +139,7 @@ $settingsPageUserKeys = [
     'attachments_single_line',
     'attachment_links_as_cards',
     'backlinks_at_bottom',
+    'note_link_preview',
     'note_virtual_space',
     'default_image_border_no_padding',
     'center_note_content',
@@ -148,7 +149,6 @@ $settingsPageUserKeys = [
     'tasklist_insert_order',
     'diary_default_note_type',
     'diary_date_format',
-    'diary_templates',
     'toolbar_mode',
     'timezone',
     'workspace_activity_emails',
@@ -158,6 +158,7 @@ $settingsPageUserKeys = [
     'icon_sidebar_order',
     'settings_pinned_cards',
     'spellcheck_html_notes',
+    'note_autocapitalize',
     'slash_menu_trigger',
     'slash_menu_trigger_mobile',
     'format_toolbar_mode',
@@ -1332,6 +1333,22 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     </div>
                 </div>
 
+                <!-- Default Image Border (No Padding) -->
+                <div class="home-card" id="default-image-border-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.default_image_border', [], 'Display images in notes with a border and no padding by default.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon"><i class="lucide lucide-image"></i></div>
+                    <div class="home-card-content">
+                        <span class="home-card-title"><?php echo t_h('display.cards.default_image_border_no_padding', [], 'Default image border (no padding)'); ?></span>
+                        <span id="default-image-border-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Links: how links between notes show (backlinks row, preview of a
+                 linked note on hover). -->
+            <div class="settings-group-title"><?php echo t_h('settings.groups.links', [], 'Links'); ?></div>
+            <div class="settings-group">
+
                 <!-- Backlinks at Bottom -->
                 <div class="home-card" id="backlinks-at-bottom-card">
                     <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.backlinks_at_bottom', [], 'Show the backlinks section at the bottom of notes instead of the top.'); ?>"><i class="lucide lucide-help-circle"></i></span>
@@ -1342,13 +1359,13 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     </div>
                 </div>
 
-                <!-- Default Image Border (No Padding) -->
-                <div class="home-card" id="default-image-border-card">
-                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.default_image_border', [], 'Display images in notes with a border and no padding by default.'); ?>"><i class="lucide lucide-help-circle"></i></span>
-                    <div class="home-card-icon"><i class="lucide lucide-image"></i></div>
+                <!-- Preview of a linked note on hover (js/note-link-preview.js) -->
+                <div class="home-card" id="note-link-preview-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.note_link_preview', [], 'Hovering a link to another note shows that note in a small window, read only, without leaving the note you are in. Not on touch screens.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon"><i class="lucide lucide-eye"></i></div>
                     <div class="home-card-content">
-                        <span class="home-card-title"><?php echo t_h('display.cards.default_image_border_no_padding', [], 'Default image border (no padding)'); ?></span>
-                        <span id="default-image-border-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                        <span class="home-card-title"><?php echo t_h('display.cards.note_link_preview', [], 'Note preview on link hover'); ?></span>
+                        <span id="note-link-preview-status" class="setting-status enabled"><?php echo t_h('common.enabled'); ?></span>
                     </div>
                 </div>
             </div>
@@ -1365,6 +1382,20 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     <div class="home-card-content">
                         <span class="home-card-title"><?php echo t_h('display.cards.spellcheck_html_notes', [], 'Spell check'); ?></span>
                         <span id="spellcheck-html-notes-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                    </div>
+                </div>
+
+                <!-- Auto-capitalisation (discussion 1793): a phone keyboard puts a
+                     capital after ". " and at a new line in the notes and the task
+                     fields. On by default (note_autocapitalize, only "0" turns it
+                     off), read by index.php. Shown on a mobile screen only (up to
+                     800px), a computer keyboard has nothing to do with it -->
+                <div class="home-card mobile-only" id="note-autocapitalize-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.note_autocapitalize', [], 'On a phone, the keyboard starts each sentence and each new line with a capital letter in notes and tasks. Your keyboard can also turn this off for every app.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon"><i class="lucide lucide-a-large-small"></i></div>
+                    <div class="home-card-content">
+                        <span class="home-card-title"><?php echo t_h('display.cards.note_autocapitalize', [], 'Auto-capitalisation'); ?></span>
+                        <span id="note-autocapitalize-status" class="setting-status enabled"><?php echo t_h('common.enabled'); ?></span>
                     </div>
                 </div>
 
@@ -1678,30 +1709,6 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     <select id="diary-note-type-select" class="settings-inline-control settings-inline-select" data-control="diary-note-type-select">
                         <option value="html"><?php echo t_h('modals.create.note.title', [], 'Note'); ?></option>
                         <option value="markdown"><?php echo t_h('modals.create.markdown.title', [], 'Markdown Note'); ?></option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Diary Entry Template: one per workspace, this card sets the
-                 current workspace's; options filled from GET /notes/templates
-                 (js/settings-page.js) -->
-            <?php
-            $diaryTemplateWorkspaceId = 0;
-            try {
-                $stmt = $con->prepare('SELECT id FROM workspaces WHERE name = ?');
-                $stmt->execute([$pageWorkspace]);
-                $diaryTemplateWorkspaceId = (int)$stmt->fetchColumn();
-            } catch (Throwable $e) {
-                // The card then only offers "None"
-            }
-            ?>
-            <div class="home-card settings-inline-card" id="diary-template-card">
-                <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.diary_template', ['workspace' => $pageWorkspace], 'Choose a note whose content every new diary entry of the {{workspace}} workspace starts with. The list shows the notes kept in a folder named Templates in that workspace. Each workspace has its own template.'); ?>"><i class="lucide lucide-help-circle"></i></span>
-                <div class="home-card-icon"><i class="lucide lucide-file-text"></i></div>
-                <div class="home-card-content">
-                    <label class="home-card-title" for="diary-template-select"><?php echo t_h('display.cards.diary_template', [], 'Diary entry template'); ?></label>
-                    <select id="diary-template-select" class="settings-inline-control settings-inline-select" data-control="diary-template-select" data-workspace="<?php echo htmlspecialchars($pageWorkspace, ENT_QUOTES, 'UTF-8'); ?>" data-workspace-id="<?php echo $diaryTemplateWorkspaceId; ?>">
-                        <option value=""><?php echo t_h('settings.diary_template.none', [], 'None'); ?></option>
                     </select>
                 </div>
             </div>
@@ -2515,6 +2522,7 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
 
     <?php include __DIR__ . '/../modals.php'; ?>
     <?php poznoteRenderWorkspaceInfoModal(); ?>
+    <?php poznoteRenderWorkspaceDiaryTemplateModal(); ?>
     <script type="application/json" id="page-config-data"><?php
         echo json_encode($settingsPageConfig, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
     ?></script>

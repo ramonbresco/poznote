@@ -2,7 +2,7 @@
 /**
  * The Workspaces section of settings.php: the list of the account's
  * workspaces with their actions (share, rename, tags, color, background,
- * move notes, delete), and the choice of the workspace Poznote opens on.
+ * diary template, move notes, delete), and the choice of the workspace Poznote opens on.
  *
  * It was a page of its own, workspaces.php, reached from a card of the
  * Actions section. That file still answers the actions of the list (its POST
@@ -16,7 +16,8 @@
  * the page starts, poznoteWorkspacesSectionBodyAttributes() on <body> (the
  * scripts read their texts and the workspace names from there),
  * poznoteRenderWorkspacesList() and poznoteRenderDefaultWorkspaceOptions()
- * inside the section, poznoteRenderWorkspaceInfoModal() with the dialogs.
+ * inside the section, poznoteRenderWorkspaceInfoModal() and
+ * poznoteRenderWorkspaceDiaryTemplateModal() with the dialogs.
  * Styles: css/workspaces-list.css.
  */
 
@@ -59,9 +60,14 @@ function poznoteWorkspacesSectionData(PDO $con): array
         error_log('workspaces section: cannot count notes and folders: ' . $e->getMessage());
     }
 
+    // Diary entry template of each workspace, keyed by workspace id
+    // (diary_templates, lib/diary.php): the "Diary template" action of a row
+    // reads and writes its own workspace's entry (discussion #1668)
+    $diaryTemplates = function_exists('parseDiaryTemplates') ? parseDiaryTemplates(getSetting('diary_templates', '')) : [];
+
     $names = [];
     $rows = [];
-    $stmt = $con->query('SELECT name, tags, color FROM workspaces ORDER BY ' . poznoteWorkspaceOrderBy($con));
+    $stmt = $con->query('SELECT id, name, tags, color FROM workspaces ORDER BY ' . poznoteWorkspaceOrderBy($con));
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $name = (string)$row['name'];
         $sharedUserIds = $sharedUserIdsByWorkspace[$name] ?? [];
@@ -81,6 +87,7 @@ function poznoteWorkspacesSectionData(PDO $con): array
             'shared_with' => $sharedWith,
             'notes' => $noteCounts[$name] ?? 0,
             'folders' => $folderCounts[$name] ?? 0,
+            'diary_template' => $diaryTemplates[(int)$row['id']] ?? 0,
         ];
     }
 
@@ -144,6 +151,7 @@ function poznoteRenderWorkspacesList(array $data): void
     $tagsLabel = t_h('workspaces.tags.action', [], 'Tags');
     $colorLabel = t_h('workspaces.color.action', [], 'Color');
     $backgroundLabel = t_h('workspaces.actions.background', [], 'Background');
+    $diaryTemplateLabel = t_h('workspaces.diary_template.action', [], 'Diary template');
     $moveLabel = t_h('workspaces.actions.move_notes', [], 'Move notes');
     $deleteLabel = t_h('common.delete', [], 'Delete');
     $infoLabel = t_h('common.information', [], 'Information');
@@ -251,6 +259,9 @@ function poznoteRenderWorkspacesList(array $data): void
                                     <button type="button" class="ws-icon-btn workspace-background-action" data-ws="<?php echo $ws; ?>" title="<?php echo $backgroundLabel; ?>" aria-label="<?php echo $backgroundLabel; ?>">
                                         <i class="lucide lucide-image"></i><span class="ws-icon-btn-text"><?php echo $backgroundLabel; ?></span>
                                     </button>
+                                    <button type="button" class="ws-icon-btn workspace-diary-template-action" data-ws="<?php echo $ws; ?>" data-diary-template="<?php echo (int)$row['diary_template']; ?>" title="<?php echo $diaryTemplateLabel; ?>" aria-label="<?php echo $diaryTemplateLabel; ?>">
+                                        <i class="lucide lucide-book-open"></i><span class="ws-icon-btn-text"><?php echo $diaryTemplateLabel; ?></span>
+                                    </button>
                                     <button type="button" class="ws-icon-btn btn-move" data-ws="<?php echo $ws; ?>" title="<?php echo $moveLabel; ?>" aria-label="<?php echo $moveLabel; ?>" <?php echo ($row['notes'] === 0 || !$several) ? 'disabled' : ''; ?>>
                                         <i class="lucide lucide-folder-output"></i><span class="ws-icon-btn-text"><?php echo $moveLabel; ?></span>
                                     </button>
@@ -296,6 +307,33 @@ function poznoteRenderDefaultWorkspaceOptions(array $data): void
                             <?php foreach ($data['names'] as $name): ?>
                             <option value="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?></option>
                             <?php endforeach; ?>
+    <?php
+}
+
+/**
+ * "Diary template" entry of a row's menu (discussion #1668): the note every
+ * new diary entry of that workspace starts with, picked among the notes of
+ * its Templates folders. js/workspaces-actions.js fills the list and posts
+ * set_diary_template to workspaces.php.
+ */
+function poznoteRenderWorkspaceDiaryTemplateModal(): void
+{
+    ?>
+    <div id="workspaceDiaryTemplateModal" class="modal initially-hidden">
+        <div class="modal-content">
+            <h3><?php echo t_h('display.cards.diary_template', [], 'Diary entry template'); ?> <span id="workspaceDiaryTemplateSource"></span></h3>
+            <p class="ws-diary-template-help"><?php echo t_h('workspaces.diary_template.help', [], 'Every new diary entry of this workspace starts with the content of the chosen note. The list shows the notes kept in a folder named Templates in this workspace.'); ?></p>
+            <div class="form-group">
+                <select id="workspaceDiaryTemplateSelect" aria-label="<?php echo t_h('display.cards.diary_template', [], 'Diary entry template'); ?>">
+                    <option value=""><?php echo t_h('settings.diary_template.none', [], 'None'); ?></option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" data-action="close-workspace-diary-template-modal"><?php echo t_h('common.cancel'); ?></button>
+                <button type="button" class="btn-primary" id="confirmWorkspaceDiaryTemplateBtn"><?php echo t_h('common.save', [], 'Save'); ?></button>
+            </div>
+        </div>
+    </div>
     <?php
 }
 

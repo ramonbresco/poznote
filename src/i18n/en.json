@@ -166,9 +166,11 @@
       "attachments_at_bottom": "Show the attachments section at the bottom of notes instead of the top.",
       "allow_executable_attachments": "Allow scripts and executables (.sh, .ps1, .bat, .exe, .py, ...) to be attached to notes, for every account on this instance. Poznote never runs them, it only stores and serves them. File types a web server could execute, such as .php, stay blocked.",
       "backlinks_at_bottom": "Show the backlinks section at the bottom of notes instead of the top.",
+      "note_link_preview": "Hovering a link to another note shows that note in a small window, read only, without leaving the note you are in. Not on touch screens.",
       "note_virtual_space": "Leave empty room under the last line of a note, so the end of the text can be scrolled up to the middle of the screen instead of staying at the very bottom.",
       "default_image_border": "Display images in notes with a border and no padding by default.",
       "spellcheck_html_notes": "Enable the browser spell checker in rich text and Markdown notes.",
+      "note_autocapitalize": "On a phone, the keyboard starts each sentence and each new line with a capital letter in notes and tasks. Your keyboard can also turn this off for every app.",
       "slash_menu_trigger": "On a computer, choose whether the command menu opens by typing /, with Alt + /, or not from the keyboard at all. A right-click in a note opens it whatever this is set to.",
       "slash_menu_trigger_mobile": "On mobile, choose whether the command menu opens by typing /, with Alt + / from a hardware keyboard, or not from the keyboard at all.",
       "icon_sidebar_order": "Change the order and the color of the buttons in the icon sidebar and place separators between them.",
@@ -212,7 +214,6 @@
       "login_disabled": "Choose the accounts that open without a password. The login page lists them under the password form, and anyone who reaches this instance can open them. When the only account of the instance is chosen, there is no login page at all. The API keeps asking for credentials.",
       "outbound_hosts": "Non-admin users can only connect webhooks, Git Sync and their own AI, transcription or MCP servers to public internet hosts. List here the local hosts or networks they may use, such as an Ollama or n8n server. Administrators are not limited.",
       "embeds": "Notes can embed content from these sites, such as a YouTube video or a GeoGebra applet. Switch off the ones your instance should never load. No other site can be framed, and no site can be added here.",
-      "diary_template": "Choose a note whose content every new diary entry of the {{workspace}} workspace starts with. The list shows the notes kept in a folder named Templates in that workspace. Each workspace has its own template.",
       "markdown_view_cycle": "Choose the views the view menu of a markdown note offers besides the classic view (preview, with the pencil to edit). The views left out are not listed. With none chosen, the button is hidden. On a phone the menu never offers split mode.",
       "connected_apps": "Connect chat apps such as ChatGPT or Claude to your notes through the MCP server, and disconnect them at any time.",
       "custom_logo": "Replace the Poznote logo with your own, for every user: in the browser tab, on the login page, in the icon rail and as the icon of the installed app.",
@@ -269,6 +270,7 @@
       "language_region": "Language & region",
       "storage": "Storage",
       "layout": "Layout",
+      "links": "Links",
       "preferences": "Preferences",
       "backup": "Backup",
       "export": "Export",
@@ -534,6 +536,13 @@
     "filter": {
       "placeholder": "Filter by name or tag...",
       "no_results": "No workspace matches this filter."
+    },
+    "diary_template": {
+      "action": "Diary template",
+      "help": "Every new diary entry of this workspace starts with the content of the chosen note. The list shows the notes kept in a folder named Templates in this workspace.",
+      "saved": "Diary template updated",
+      "save_error": "Could not update the diary template",
+      "invalid": "This note cannot be used as a diary template"
     }
   },
   "display": {
@@ -576,11 +585,13 @@
       "attachments_show_inserted_images": "Inserted images in attachments",
       "attachments_at_bottom": "Attachments at bottom",
       "backlinks_at_bottom": "Backlinks at bottom",
+      "note_link_preview": "Note preview on link hover",
       "note_virtual_space": "Space below the note",
       "default_image_border_no_padding": "Default image border",
       "icon_sidebar_order": "Icon sidebar layout",
       "notes_dashboard": "Notes board",
       "spellcheck_html_notes": "Spell check",
+      "note_autocapitalize": "Auto-capitalisation",
       "slash_menu_trigger": "Command menu shortcut (computer)",
       "slash_menu_trigger_mobile": "Command menu shortcut (mobile)",
       "snapshots": "Revisions",
@@ -6016,5 +6027,13 @@
       "load_failed": "Could not load your sessions.",
       "generic": "Something went wrong. Try again."
     }
+  },
+  "note_link_preview": {
+    "loading": "Loading…",
+    "not_found": "This note does not exist, or it was deleted",
+    "error": "The preview could not be loaded",
+    "empty": "This note is empty",
+    "drawing": "A drawing cannot be previewed here",
+    "open": "Open in a new tab"
   }
 }
