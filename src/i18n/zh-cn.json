@@ -2330,7 +2330,8 @@
   "slash_menu": {
     "plain_block": "普通块",
     "block_languages": "块语言",
-    "back_to_normal": "返回普通文本",
+    "clear_formatting_at_cursor": "清除光标处的格式",
+    "normal_text": "普通文本",
     "title": "标题",
     "heading_1": "一级标题",
     "heading_2": "二级标题",

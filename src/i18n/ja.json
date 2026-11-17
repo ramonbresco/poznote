@@ -1798,7 +1798,8 @@
   "slash_menu": {
     "plain_block": "プレーンブロック",
     "block_languages": "ブロックの言語",
-    "back_to_normal": "通常のテキストに戻す",
+    "clear_formatting_at_cursor": "カーソル位置の書式をクリア",
+    "normal_text": "通常のテキスト",
     "title": "見出し",
     "heading_1": "見出し1",
     "heading_2": "見出し2",

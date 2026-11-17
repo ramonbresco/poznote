@@ -83,6 +83,8 @@ function triggerNoteSave() {
 function setupNoteEditingEvents() {
     // Input events (typing, paste, etc.)
     document.body.addEventListener('keyup', handleNoteEditEvent);
+    // Before the save handler, so the save carries the plain line
+    document.body.addEventListener('input', handleEmptiedHeadingInput);
     document.body.addEventListener('input', handleNoteEditEvent);
     document.body.addEventListener('paste', handleNoteEditEvent);
     document.body.addEventListener('change', handleNoteEditEvent);

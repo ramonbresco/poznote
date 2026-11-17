@@ -2338,7 +2338,8 @@
   "slash_menu": {
     "plain_block": "Bloc simple",
     "block_languages": "Langages de bloc",
-    "back_to_normal": "Retour au texte normal",
+    "clear_formatting_at_cursor": "Effacer la mise en forme au curseur",
+    "normal_text": "Texte normal",
     "title": "Titre",
     "heading_1": "Titre 1",
     "heading_2": "Titre 2",

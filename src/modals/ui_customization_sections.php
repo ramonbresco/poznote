@@ -289,7 +289,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
 <?php echo poznoteUiCustomizationSectionHeader(t_h('modals.ui_customization.sections.slash_menu', [], 'Slash Menu')); ?>
 <div class="ui-custom-items">
 <?php echo poznoteUiCustomizationListToggleAll(); ?>
-    <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:normal" checked><span><?php echo t_h('slash_menu.back_to_normal', [], 'Back to normal text'); ?></span></label>
+    <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:normal" checked><span><?php echo t_h('slash_menu.clear_formatting_at_cursor', [], 'Clear formatting at cursor'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:title" checked><span><?php echo t_h('slash_menu.title', [], 'Title'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:format" checked><span><?php echo t_h('slash_menu.format_text', [], 'Format text'); ?></span></label>
     <label class="ui-custom-item"><input type="checkbox" data-ui-key="slash:align" checked><span><?php echo t_h('slash_menu.align', [], 'Align'); ?></span></label>

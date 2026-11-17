@@ -662,7 +662,7 @@
             case 'exec-remove-format': {
                 // Markdown, a bare caret in some formatting (the bar above a
                 // phone's keyboard): out of it, what is typed next is plain.
-                // Same as "Back to normal text" in the command menu.
+                // Same as "Clear formatting at cursor" in the command menu.
                 var clearApi = window.PoznoteMarkdownCodeMirror;
                 var clearSelection = window.getSelection();
                 var clearNode = clearSelection && clearSelection.rangeCount ? clearSelection.getRangeAt(0).startContainer : null;

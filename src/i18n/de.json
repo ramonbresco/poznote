@@ -2332,7 +2332,8 @@
   "slash_menu": {
     "plain_block": "Einfacher Block",
     "block_languages": "Block-Sprachen",
-    "back_to_normal": "Zurück zu normalem Text",
+    "clear_formatting_at_cursor": "Formatierung am Cursor entfernen",
+    "normal_text": "Normaler Text",
     "title": "Titel",
     "heading_1": "Überschrift 1",
     "heading_2": "Überschrift 2",

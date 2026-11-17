@@ -1798,7 +1798,8 @@
   "slash_menu": {
     "plain_block": "Bloc sense format",
     "block_languages": "Llenguatges del bloc",
-    "back_to_normal": "Torna al text normal",
+    "clear_formatting_at_cursor": "Esborra el format al cursor",
+    "normal_text": "Text normal",
     "title": "Títol",
     "heading_1": "Títol 1",
     "heading_2": "Títol 2",

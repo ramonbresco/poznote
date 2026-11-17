@@ -359,6 +359,46 @@ function handleHeadingBoundaryDelete(e, selection, noteentry) {
 }
 
 /**
+ * A heading whose whole text has just been deleted becomes a plain line, so
+ * what the writer types next is normal text and not a new title (issue
+ * #1785). Only on a deletion: a heading created empty from the slash menu or
+ * the toolbar is waiting for its text and keeps its level. Goes through
+ * formatBlock (the "Normal text" entry of the heading menus), not raw DOM,
+ * so Ctrl+Z gives the title back.
+ * @param {InputEvent} e - The input event
+ */
+function handleEmptiedHeadingInput(e) {
+    if (!e || typeof e.inputType !== 'string' || e.inputType.indexOf('delete') !== 0) return;
+
+    var noteentry = e.target;
+    if (!noteentry || !noteentry.classList || !noteentry.classList.contains('noteentry')) return;
+    if (!noteentry.isContentEditable || noteentry.getAttribute('data-note-type') === 'markdown') return;
+
+    var selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || !selection.isCollapsed) return;
+
+    var range = selection.getRangeAt(0);
+    var node = range.startContainer.nodeType === 3 ? range.startContainer.parentElement : range.startContainer;
+    if (!node || !node.closest || !noteentry.contains(node)) return;
+    if (node.closest('li, table, pre, code, .markdown-editor')) return;
+
+    var heading = node.closest(HEADING_BLOCK_SELECTOR);
+    if (!heading || heading === noteentry || !noteentry.contains(heading)) return;
+    if (!isBlockVisuallyEmpty(heading)) return;
+
+    if (typeof window.applyHtmlBlockStyle === 'function') {
+        window.applyHtmlBlockStyle('normal');
+    }
+
+    // formatBlock did nothing (a browser that refuses it here): the heading
+    // is still on screen, swap it by hand
+    if (heading.isConnected) {
+        placeCaretAtBlockStart(convertHeadingToPlainBlock(heading));
+    }
+    triggerNoteSave();
+}
+
+/**
  * Handle Enter at the very start of a heading. The browser splits the block
  * natively, which leaves an empty copy of the heading (same tag, same id)
  * above the caret, so the line opened above a title stays a title. Insert
