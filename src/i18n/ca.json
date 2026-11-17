@@ -5220,7 +5220,7 @@
     "description_scope": "Aquest paràmetre s'aplica a tots els usuaris d'aquesta instància.",
     "enable_description": "Copia els usuaris marcats a sota a la carpeta segons la freqüència triada.",
     "directory_label": "Carpeta de còpies de seguretat",
-    "directory_description": "Camí absolut al servidor (dins del contenidor, amb Docker). Deixeu-ho buit per fer servir {{default}}. Per emmagatzemar les còpies de seguretat en un altre lloc, munteu un volum i introduïu-ne el camí aquí.",
+    "directory_description": "Camí absolut al servidor (dins del contenidor, amb Docker). Deixeu-ho buit per fer servir {{default}}. Amb la instal·lació de Docker per defecte, aquesta carpeta és a l'amfitrió a data/backups, al costat del fitxer docker-compose.yml (per exemple ~/poznote/data/backups). Per emmagatzemar les còpies de seguretat en un altre lloc, munteu un volum i introduïu-ne el camí aquí.",
     "retention_description": "Els arxius més antics se suprimeixen de la carpeta després de cada còpia de seguretat. 0 ho conserva tot.",
     "manual_description": "Copia ara els usuaris marcats a sota a la carpeta, d'un en un. Aquesta selecció no es desa i no canvia les còpies automàtiques.",
     "confirm_run": "Vols copiar ara els {{count}} usuari(s) marcat(s) a la carpeta de còpies?",

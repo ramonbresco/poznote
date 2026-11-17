@@ -5548,7 +5548,7 @@
     "description_scope": "El ajuste se aplica a todos los usuarios de esta instancia.",
     "enable_description": "Copia los usuarios marcados abajo en la carpeta según la frecuencia elegida.",
     "directory_label": "Carpeta de copias de seguridad",
-    "directory_description": "Ruta absoluta en el servidor (dentro del contenedor con Docker). Déjala vacía para usar {{default}}. Para guardar las copias en otro lugar, monta un volumen e introduce su ruta aquí.",
+    "directory_description": "Ruta absoluta en el servidor (dentro del contenedor con Docker). Déjala vacía para usar {{default}}. Con la instalación de Docker por defecto, esta carpeta está en el host en data/backups, junto al archivo docker-compose.yml (por ejemplo ~/poznote/data/backups). Para guardar las copias en otro lugar, monta un volumen e introduce su ruta aquí.",
     "retention_description": "Los archivos más antiguos se eliminan de la carpeta después de cada copia. 0 lo conserva todo.",
     "manual_description": "Copia ahora los usuarios marcados abajo en la carpeta, de uno en uno. Esta selección no se guarda y no cambia las copias automáticas.",
     "confirm_run": "¿Copiar ahora los {{count}} usuario(s) marcado(s) en la carpeta de copias?",

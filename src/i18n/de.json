@@ -5547,7 +5547,7 @@
     "description_scope": "Die Einstellung gilt für alle Benutzer dieser Instanz.",
     "enable_description": "Sichert die unten ausgewählten Benutzer im gewählten Intervall in den Ordner.",
     "directory_label": "Sicherungsordner",
-    "directory_description": "Absoluter Pfad auf dem Server (mit Docker: im Container). Leer lassen, um {{default}} zu verwenden. Um die Sicherungen woanders abzulegen, binden Sie ein Volume ein und geben Sie dessen Pfad hier ein.",
+    "directory_description": "Absoluter Pfad auf dem Server (mit Docker: im Container). Leer lassen, um {{default}} zu verwenden. Bei der Standardinstallation mit Docker liegt dieser Ordner auf dem Host in data/backups, neben der Datei docker-compose.yml (zum Beispiel ~/poznote/data/backups). Um die Sicherungen woanders abzulegen, binden Sie ein Volume ein und geben Sie dessen Pfad hier ein.",
     "retention_description": "Ältere Archive werden nach jeder Sicherung aus dem Ordner gelöscht. 0 behält alles.",
     "manual_description": "Sichert die unten ausgewählten Benutzer sofort in den Ordner, einen nach dem anderen. Diese Auswahl wird nicht gespeichert und ändert die automatischen Sicherungen nicht.",
     "confirm_run": "Die {{count}} ausgewählten Benutzer jetzt in den Sicherungsordner sichern?",

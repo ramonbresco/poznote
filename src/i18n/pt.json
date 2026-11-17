@@ -5548,7 +5548,7 @@
     "description_scope": "A configuração se aplica a todos os usuários desta instância.",
     "enable_description": "Copia os utilizadores marcados abaixo para a pasta segundo a frequência escolhida.",
     "directory_label": "Pasta de backup",
-    "directory_description": "Caminho absoluto no servidor (dentro do contêiner com Docker). Deixe vazio para usar {{default}}. Para guardar os backups em outro lugar, monte um volume e informe o caminho aqui.",
+    "directory_description": "Caminho absoluto no servidor (dentro do contêiner com Docker). Deixe vazio para usar {{default}}. Com a instalação padrão do Docker, essa pasta fica no host em data/backups, ao lado do arquivo docker-compose.yml (por exemplo ~/poznote/data/backups). Para guardar os backups em outro lugar, monte um volume e informe o caminho aqui.",
     "retention_description": "Os arquivos mais antigos são excluídos da pasta após cada backup. 0 mantém tudo.",
     "manual_description": "Copia agora os utilizadores marcados abaixo para a pasta, um de cada vez. Esta seleção não é guardada e não altera as cópias automáticas.",
     "confirm_run": "Copiar agora os {{count}} utilizador(es) marcado(s) para a pasta de cópias?",

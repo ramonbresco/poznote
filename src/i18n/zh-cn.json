@@ -5644,7 +5644,7 @@
     "description_scope": "此设置适用于本实例的所有用户。",
     "enable_description": "按所选频率将下方勾选的用户备份到文件夹。",
     "directory_label": "备份文件夹",
-    "directory_description": "服务器上的绝对路径（使用 Docker 时为容器内的路径）。留空则使用 {{default}}。如需将备份存放到其他位置，请挂载一个卷并在此填写其路径。",
+    "directory_description": "服务器上的绝对路径（使用 Docker 时为容器内的路径）。留空则使用 {{default}}。使用默认的 Docker 安装时，该文件夹位于主机上 docker-compose.yml 文件旁边的 data/backups 中（例如 ~/poznote/data/backups）。如需将备份存放到其他位置，请挂载一个卷并在此填写其路径。",
     "retention_description": "每次备份后，较旧的归档会从文件夹中删除。0 表示全部保留。",
     "manual_description": "立即将下方勾选的用户逐个备份到文件夹。此选择不会保存，也不会更改自动备份。",
     "confirm_run": "立即将勾选的 {{count}} 个用户备份到备份文件夹吗？",

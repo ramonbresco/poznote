@@ -5220,7 +5220,7 @@
     "description_scope": "De instelling geldt voor alle gebruikers van deze instantie.",
     "enable_description": "Maak volgens het gekozen schema een back-up van de hieronder aangevinkte gebruikers naar de map.",
     "directory_label": "Back-upmap",
-    "directory_description": "Absoluut pad op de server (binnen de container bij Docker). Laat leeg om {{default}} te gebruiken. Om de back-ups ergens anders op te slaan, koppel je een volume en voer je hier het pad ervan in.",
+    "directory_description": "Absoluut pad op de server (binnen de container bij Docker). Laat leeg om {{default}} te gebruiken. Bij de standaardinstallatie met Docker staat deze map op de host in data/backups, naast het bestand docker-compose.yml (bijvoorbeeld ~/poznote/data/backups). Om de back-ups ergens anders op te slaan, koppel je een volume en voer je hier het pad ervan in.",
     "retention_description": "Oudere archieven worden na elke back-up uit de map verwijderd. 0 bewaart alles.",
     "manual_description": "Maak nu een back-up van de hieronder aangevinkte gebruikers naar de map, één gebruiker tegelijk. Deze selectie wordt niet opgeslagen en verandert niets aan de automatische back-ups.",
     "confirm_run": "Nu een back-up van de {{count}} aangevinkte gebruiker(s) naar de back-upmap maken?",

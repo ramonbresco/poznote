@@ -5220,7 +5220,7 @@
     "description_scope": "이 설정은 이 인스턴스의 모든 사용자에게 적용됩니다.",
     "enable_description": "아래에서 선택한 사용자를 선택한 주기로 폴더에 백업합니다.",
     "directory_label": "백업 폴더",
-    "directory_description": "서버의 절대 경로입니다(Docker를 사용하는 경우 컨테이너 내부 경로). 비워 두면 {{default}}을(를) 사용합니다. 백업을 다른 곳에 저장하려면 볼륨을 마운트하고 그 경로를 여기에 입력하세요.",
+    "directory_description": "서버의 절대 경로입니다(Docker를 사용하는 경우 컨테이너 내부 경로). 비워 두면 {{default}}을(를) 사용합니다. 기본 Docker 설치에서는 이 폴더가 호스트의 docker-compose.yml 파일 옆 data/backups에 있습니다(예: ~/poznote/data/backups). 백업을 다른 곳에 저장하려면 볼륨을 마운트하고 그 경로를 여기에 입력하세요.",
     "retention_description": "백업할 때마다 오래된 아카이브가 폴더에서 삭제됩니다. 0은 모두 보관합니다.",
     "manual_description": "아래에서 선택한 사용자를 지금 한 명씩 폴더에 백업합니다. 이 선택은 저장되지 않으며 자동 백업을 바꾸지 않습니다.",
     "confirm_run": "선택한 사용자 {{count}}명을 지금 백업 폴더에 백업할까요?",

@@ -5652,7 +5652,7 @@
     "description_scope": "Ce réglage s'applique à tous les utilisateurs de cette instance.",
     "enable_description": "Sauvegarde les utilisateurs cochés ci-dessous dans le dossier selon la fréquence choisie.",
     "directory_label": "Dossier de sauvegarde",
-    "directory_description": "Chemin absolu sur le serveur (dans le conteneur avec Docker). Laissez vide pour utiliser {{default}}. Pour stocker les sauvegardes ailleurs, montez un volume et saisissez son chemin ici.",
+    "directory_description": "Chemin absolu sur le serveur (dans le conteneur avec Docker). Laissez vide pour utiliser {{default}}. Avec l'installation Docker par défaut, ce dossier se trouve sur l'hôte dans data/backups, à côté du fichier docker-compose.yml (par exemple ~/poznote/data/backups). Pour stocker les sauvegardes ailleurs, montez un volume et saisissez son chemin ici.",
     "retention_description": "Les archives plus anciennes sont supprimées du dossier après chaque sauvegarde. 0 conserve tout.",
     "manual_description": "Sauvegarde les utilisateurs cochés ci-dessous dans le dossier immédiatement, un utilisateur à la fois. Cette sélection n'est pas enregistrée et ne modifie pas les sauvegardes automatiques.",
     "confirm_run": "Sauvegarder maintenant les {{count}} utilisateur(s) coché(s) dans le dossier de sauvegarde ?",

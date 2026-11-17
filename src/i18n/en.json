@@ -5220,7 +5220,7 @@
     "description_scope": "The setting applies to all users of this instance.",
     "enable_description": "Back up the users checked below into the folder on the chosen schedule.",
     "directory_label": "Backup folder",
-    "directory_description": "Absolute path on the server (inside the container with Docker). Leave empty to use {{default}}. To store the backups somewhere else, mount a volume and enter its path here.",
+    "directory_description": "Absolute path on the server (inside the container with Docker). Leave empty to use {{default}}. With the default Docker installation, this folder is on the host in data/backups, next to the docker-compose.yml file (for example ~/poznote/data/backups). To store the backups somewhere else, mount a volume and enter its path here.",
     "retention_description": "Older archives are deleted from the folder after each backup. 0 keeps everything.",
     "manual_description": "Back up the users checked below into the folder right now, one user at a time. This selection is not saved and does not change the automatic backups.",
     "confirm_run": "Back up the {{count}} checked user(s) into the backup folder now?",
