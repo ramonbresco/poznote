@@ -87,6 +87,15 @@ def mark_svg(colour: str, size: int = 512, margin: float = 0) -> str:
             f'stroke-linecap="round" stroke-linejoin="round"/></svg>\n')
 
 
+# Optical centring in a tile, in grid units to the right. The bounding box of
+# the mark is centred, but its weight is not: the page is a solid block on the
+# left and the pencil only reaches out to the right as a thin diagonal (the ink
+# centre sits 15 units left of the middle), so a box-centred mark looked pushed
+# to the left (#1786). Half of that offset reads as centred; all of it put the
+# pencil against the edge.
+OPTICAL_SHIFT = 8
+
+
 def tile_svg(size: int = 512, scale: float = 0.76, radius: float = 104) -> str:
     """The mark on a white square. scale: size of the mark against the tile;
     radius 0 gives a full square (maskable, iOS)."""
@@ -94,14 +103,18 @@ def tile_svg(size: int = 512, scale: float = 0.76, radius: float = 104) -> str:
     corner = f' rx="{radius:g}"' if radius else ''
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 512 512">'
             f'<rect width="512" height="512"{corner} fill="{WHITE}"/>'
-            f'<path transform="translate({offset:g} {offset:g}) scale({scale:g})" d="{mark_path()}" '
+            f'<path transform="translate({offset + OPTICAL_SHIFT * scale:g} {offset:g}) scale({scale:g})" d="{mark_path()}" '
             f'fill="none" stroke="{BLUE}" stroke-width="{STROKE}" '
             f'stroke-linecap="round" stroke-linejoin="round"/></svg>\n')
 
 
-# Size of the mark in the maskable icon: the largest that keeps every pixel of
-# it inside the safe circle (radius 40% of the icon), with a little room.
-MASKABLE_SCALE = 0.56
+# Size of the mark in the maskable icon. The safe circle (radius 40% of the
+# icon) would allow 0.60, but it is a limit, not a target: launchers that crop
+# to the adaptive icon viewport (72 of 108, Nova) then blew the mark up to 80%
+# of the visible tile, far larger than the icons around it (#1786). At 0.46 it
+# takes about 70% of the tile there, the size it had before maskable icons,
+# and about 55% on launchers that show more of the image (Pixel).
+MASKABLE_SCALE = 0.46
 
 
 def render(svg: str, size: int) -> Image.Image:
