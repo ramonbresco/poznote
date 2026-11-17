@@ -69,12 +69,27 @@ function poznoteCustomLogoUrl(int $size, string $base = ''): string {
 }
 
 /**
+ * Path of one of Poznote's own icons with a version taken from its bytes.
+ * nginx serves images as immutable for a year, so an icon redrawn under the
+ * same URL stayed the old one in every browser that had seen it, an installed
+ * app included, even after reinstalling it (#1786). Read once per request.
+ */
+function poznoteBrandFileUrl(string $relative, string $base = ''): string {
+    static $versions = [];
+    if (!array_key_exists($relative, $versions)) {
+        $hash = @md5_file(__DIR__ . '/../public/' . $relative);
+        $versions[$relative] = $hash === false ? '' : substr($hash, 0, 8);
+    }
+    return $base . $relative . ($versions[$relative] !== '' ? '?v=' . $versions[$relative] : '');
+}
+
+/**
  * The <link> tags of the tab icon and the iOS home screen icon. Pages without
  * them (public notes, the API docs) get the custom logo too: nginx answers the
  * browser's own /favicon.ico request with it.
  *
- * $assetVersion: the ?v= of Poznote's iOS icon, as the page already puts it
- * in its other URLs.
+ * $assetVersion: no longer used, Poznote's icons carry a version of their own
+ * (poznoteBrandFileUrl()); kept for the pages that still pass it.
  */
 function poznoteBrandIconTags(string $base = '', string $assetVersion = ''): string {
     $esc = static function (string $value): string {
@@ -85,10 +100,9 @@ function poznoteBrandIconTags(string $base = '', string $assetVersion = ''): str
             . '<link rel="icon" href="' . $esc(poznoteCustomLogoUrl(192, $base)) . '" sizes="192x192" type="image/png">' . "\n"
             . '<link rel="apple-touch-icon" href="' . $esc(poznoteCustomLogoUrl(512, $base)) . '">' . "\n";
     }
-    $appleTouch = $base . 'pwa/poznote.png' . ($assetVersion !== '' ? '?v=' . $assetVersion : '');
-    return '<link rel="icon" href="' . $esc($base . 'favicon.ico') . '" sizes="512x512" type="image/png">' . "\n"
-        . '<link rel="icon" href="' . $esc($base . 'favicon.svg') . '" type="image/svg+xml">' . "\n"
-        . '<link rel="apple-touch-icon" href="' . $esc($appleTouch) . '">' . "\n";
+    return '<link rel="icon" href="' . $esc(poznoteBrandFileUrl('favicon.ico', $base)) . '" sizes="512x512" type="image/png">' . "\n"
+        . '<link rel="icon" href="' . $esc(poznoteBrandFileUrl('favicon.svg', $base)) . '" type="image/svg+xml">' . "\n"
+        . '<link rel="apple-touch-icon" href="' . $esc(poznoteBrandFileUrl('pwa/poznote.png', $base)) . '">' . "\n";
 }
 
 function poznoteRenderBrandIcons(string $base = '', string $assetVersion = ''): void {
@@ -155,7 +169,7 @@ function poznoteLogoMark(string $extraClasses = '', ?string $label = null, strin
  * reminder worker that asks runs for days.
  */
 function poznoteNotificationIconPath(): string {
-    return poznoteCustomLogoVersion(true) !== '' ? poznoteCustomLogoUrl(192) : 'pwa/poznote-192.png';
+    return poznoteCustomLogoVersion(true) !== '' ? poznoteCustomLogoUrl(192) : poznoteBrandFileUrl('pwa/poznote-192.png');
 }
 
 /**
