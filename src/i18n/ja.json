@@ -166,6 +166,7 @@
       "attachments_at_bottom": "添付ファイルのセクションを、ノートの上部ではなく下部に表示します。",
       "allow_executable_attachments": "スクリプトや実行ファイル（.sh、.ps1、.bat、.exe、.pyなど）をノートに添付できるようにします。このインスタンスのすべてのアカウントが対象です。Poznoteはこれらを実行せず、保存して配信するだけです。.phpなど、Webサーバーが実行できる種類のファイルは引き続きブロックされます。",
       "backlinks_at_bottom": "バックリンクのセクションを、ノートの上部ではなく下部に表示します。",
+      "note_link_preview": "別のノートへのリンクにカーソルを合わせると、そのノートが小さなウィンドウに読み取り専用で表示され、今のノートを離れずに読めます。タッチスクリーンでは使えません。",
       "note_virtual_space": "ノートの最後の行の下に空白を設け、テキストの末尾を画面の最下部ではなく中央までスクロールできるようにします。",
       "default_image_border": "ノート内の画像を、既定で枠線付き・余白なしで表示します。",
       "spellcheck_html_notes": "リッチテキストとMarkdownのノートで、ブラウザーのスペルチェックを有効にします。",
@@ -268,6 +269,7 @@
       "language_region": "言語と地域",
       "storage": "ストレージ",
       "layout": "レイアウト",
+      "links": "リンク",
       "preferences": "環境設定",
       "backup": "バックアップ",
       "export": "エクスポート",
@@ -582,6 +584,7 @@
       "attachments_show_inserted_images": "添付ファイルに挿入画像を表示",
       "attachments_at_bottom": "添付ファイルを下部に表示",
       "backlinks_at_bottom": "バックリンクを下部に表示",
+      "note_link_preview": "リンクにカーソルを合わせてノートをプレビュー",
       "note_virtual_space": "ノートの下の余白",
       "default_image_border_no_padding": "画像の既定の枠線（余白なし）",
       "icon_sidebar_order": "アイコンサイドバーのレイアウト",
@@ -6022,5 +6025,13 @@
       "load_failed": "セッションを読み込めませんでした。",
       "generic": "問題が発生しました。もう一度お試しください。"
     }
+  },
+  "note_link_preview": {
+    "loading": "読み込み中…",
+    "not_found": "このノートは存在しないか、削除されました",
+    "error": "プレビューを読み込めませんでした",
+    "empty": "このノートは空です",
+    "drawing": "描画はここではプレビューできません",
+    "open": "新しいタブで開く"
   }
 }

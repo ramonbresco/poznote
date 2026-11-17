@@ -166,6 +166,7 @@
       "attachments_at_bottom": "Mostra la secció de fitxers adjunts a la part inferior de les notes en lloc de la part superior.",
       "allow_executable_attachments": "Permet adjuntar scripts i executables (.sh, .ps1, .bat, .exe, .py...) a les notes, per a tots els comptes d'aquesta instància. El Poznote no els executa mai, només els emmagatzema i els serveix. Els tipus de fitxer que un servidor web podria executar, com ara .php, continuen bloquejats.",
       "backlinks_at_bottom": "Mostra la secció d'enllaços entrants a la part inferior de les notes en lloc de la part superior.",
+      "note_link_preview": "En passar el ratolí per un enllaç a una altra nota, aquesta nota es mostra en una finestra petita, només de lectura, sense sortir de la nota on ets. No a les pantalles tàctils.",
       "note_virtual_space": "Deixa espai buit sota l'última línia d'una nota, de manera que el final del text es pugui desplaçar fins al mig de la pantalla en lloc de quedar-se a baix de tot.",
       "default_image_border": "Mostra per defecte les imatges de les notes amb vora i sense farciment.",
       "spellcheck_html_notes": "Activa el corrector ortogràfic del navegador a les notes de text enriquit i Markdown.",
@@ -268,6 +269,7 @@
       "language_region": "Llengua i regió",
       "storage": "Emmagatzematge",
       "layout": "Disposició",
+      "links": "Enllaços",
       "preferences": "Preferències",
       "backup": "Còpia de seguretat",
       "export": "Exportació",
@@ -582,6 +584,7 @@
       "attachments_show_inserted_images": "Imatges inserides als adjunts",
       "attachments_at_bottom": "Fitxers adjunts a baix",
       "backlinks_at_bottom": "Enllaços entrants a baix",
+      "note_link_preview": "Previsualització de la nota en passar per un enllaç",
       "note_virtual_space": "Espai sota la nota",
       "default_image_border_no_padding": "Vora de les imatges per defecte",
       "icon_sidebar_order": "Disposició de la barra lateral d'icones",
@@ -6022,5 +6025,13 @@
       "load_failed": "No s’han pogut carregar les vostres sessions.",
       "generic": "Alguna cosa ha anat malament. Torneu-ho a provar."
     }
+  },
+  "note_link_preview": {
+    "loading": "S'està carregant…",
+    "not_found": "Aquesta nota no existeix o s'ha suprimit",
+    "error": "No s'ha pogut carregar la previsualització",
+    "empty": "Aquesta nota és buida",
+    "drawing": "Un dibuix no es pot previsualitzar aquí",
+    "open": "Obre en una pestanya nova"
   }
 }

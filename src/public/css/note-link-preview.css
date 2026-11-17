@@ -1,0 +1,317 @@
+/* Preview of a linked note on hover, js/note-link-preview.js.
+ *
+ * A floating window on <body>, outside .noteentry, so none of the note's own
+ * rules (forced font sizes, editing styles) reach its content: the few rules
+ * below give that content a reading look of its own. Resizable by its corner,
+ * the body scrolls. */
+
+.note-link-preview {
+    position: fixed;
+    z-index: 10040;
+    display: none;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 280px;
+    min-height: 160px;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+    overflow: hidden;
+    resize: both;
+    background: var(--pz-bg);
+    color: var(--pz-text);
+    border: 1px solid var(--pz-border);
+    border-radius: var(--pz-radius-lg);
+    box-shadow: 0 12px 32px rgba(var(--pz-shadow-rgb), 0.18);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.note-link-preview.is-open {
+    display: flex;
+}
+
+/* The title bar moves the window (js/note-link-preview.js) */
+.note-link-preview-header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px 6px 16px;
+    border-bottom: 1px solid var(--pz-border-light);
+    cursor: move;
+    user-select: none;
+    touch-action: none;
+}
+
+.note-link-preview.is-dragging {
+    user-select: none;
+}
+
+.note-link-preview.is-dragging .note-link-preview-title {
+    pointer-events: none;
+}
+
+/* As wide as its text: the rest of the bar only moves the window */
+.note-link-preview-title {
+    display: block;
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--pz-text-strong);
+    font-size: 15px;
+    font-weight: var(--pz-weight-semibold);
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.note-link-preview-title:hover {
+    color: var(--pz-accent-text);
+}
+
+.note-link-preview-header:not(.is-dragging) .note-link-preview-title {
+    cursor: pointer;
+}
+
+.note-link-preview-title[hidden] {
+    display: block;
+    visibility: hidden;
+}
+
+.note-link-preview-close {
+    flex: 0 0 auto;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--pz-radius-sm);
+    background: transparent;
+    color: var(--pz-text-muted);
+    cursor: pointer;
+}
+
+.note-link-preview-close:hover,
+.note-link-preview-close:focus-visible {
+    background: var(--pz-surface-hover);
+    color: var(--pz-text);
+}
+
+.note-link-preview-close .lucide {
+    font-size: 16px;
+}
+
+.note-link-preview-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding: 12px 16px 16px;
+    overflow-wrap: break-word;
+}
+
+.note-link-preview-message {
+    color: var(--pz-text-muted);
+    font-size: 13px;
+}
+
+.note-link-preview-message.is-error {
+    color: var(--pz-danger-text);
+}
+
+/* Content */
+
+.note-link-preview-content > :first-child {
+    margin-top: 0;
+}
+
+.note-link-preview-content > :last-child {
+    margin-bottom: 0;
+}
+
+.note-link-preview-content h1,
+.note-link-preview-content h2,
+.note-link-preview-content h3,
+.note-link-preview-content h4,
+.note-link-preview-content h5,
+.note-link-preview-content h6 {
+    margin: 1em 0 0.4em;
+    color: var(--pz-text-strong);
+    line-height: 1.3;
+}
+
+.note-link-preview-content h1 { font-size: 1.5em; }
+.note-link-preview-content h2 { font-size: 1.3em; }
+.note-link-preview-content h3 { font-size: 1.15em; }
+.note-link-preview-content h4,
+.note-link-preview-content h5,
+.note-link-preview-content h6 { font-size: 1em; }
+
+/* The heading a section link points at */
+.note-link-preview-content .note-link-preview-section {
+    background: var(--pz-accent-soft);
+    border-radius: var(--pz-radius-sm);
+}
+
+.note-link-preview-content.is-markdown p {
+    margin: 0 0 0.8em;
+}
+
+/* A rich text note gives its paragraphs no margin, blank lines are its own */
+.note-link-preview-content.is-note p {
+    margin: 0;
+}
+
+.note-link-preview-content ul,
+.note-link-preview-content ol {
+    margin: 0.5em 0;
+    padding-left: 1.6em;
+}
+
+.note-link-preview-content li {
+    margin: 0.2em 0;
+}
+
+.note-link-preview-content a {
+    color: var(--pz-accent-text);
+    text-decoration: none;
+}
+
+.note-link-preview-content a:hover {
+    text-decoration: underline;
+}
+
+.note-link-preview-content .note-link-preview-missing {
+    color: var(--pz-text-muted);
+    text-decoration: line-through;
+}
+
+.note-link-preview-content blockquote {
+    margin: 0.8em 0;
+    padding-left: 12px;
+    border-left: 3px solid var(--pz-border);
+    color: var(--pz-text-muted);
+}
+
+.note-link-preview-content code {
+    padding: 1px 4px;
+    background: var(--pz-surface);
+    border-radius: var(--pz-radius-sm);
+    font-size: 0.9em;
+}
+
+.note-link-preview-content pre {
+    margin: 0.8em 0;
+    padding: 10px 12px;
+    overflow-x: auto;
+    background: var(--pz-surface);
+    border-radius: var(--pz-radius-sm);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.note-link-preview-content pre code {
+    padding: 0;
+    background: none;
+    font-size: inherit;
+}
+
+.note-link-preview-content table {
+    border-collapse: collapse;
+    margin: 0.8em 0;
+    max-width: 100%;
+    display: block;
+    overflow-x: auto;
+}
+
+.note-link-preview-content th,
+.note-link-preview-content td {
+    padding: 4px 8px;
+    border: 1px solid var(--pz-border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.note-link-preview-content th {
+    background: var(--pz-surface);
+}
+
+.note-link-preview-content img,
+.note-link-preview-content video,
+.note-link-preview-content iframe {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--pz-radius-sm);
+}
+
+.note-link-preview-content hr {
+    border: 0;
+    border-top: 1px solid var(--pz-border);
+    margin: 1em 0;
+}
+
+.note-link-preview-content details > summary {
+    cursor: pointer;
+}
+
+/* Rich text checklists (ul.checklist): their inline styles stay, the box is
+   disabled by js/note-link-preview.js */
+.note-link-preview-content ul.checklist {
+    padding-left: 0;
+    list-style: none;
+}
+
+/* Task list notes */
+
+.note-link-preview-content .note-link-preview-tasks {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.note-link-preview-task {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 3px 0;
+}
+
+.note-link-preview-task.is-subtask {
+    padding-left: 24px;
+}
+
+.note-link-preview-task input {
+    flex: 0 0 auto;
+    margin: 0;
+    transform: translateY(2px);
+}
+
+.note-link-preview-task-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: pre-wrap;
+}
+
+.note-link-preview-task[class*="priority-"] .note-link-preview-task-text {
+    color: var(--pz-task-priority);
+}
+
+.note-link-preview-task.is-done .note-link-preview-task-text {
+    color: var(--pz-text-muted);
+    text-decoration: line-through;
+}
+
+.note-link-preview-task-due {
+    flex: 0 0 auto;
+    color: var(--pz-text-subtle);
+    font-size: 12px;
+}
+
+/* Never on a touch screen: the script does not open it there either */
+@media (hover: none) {
+    .note-link-preview.is-open {
+        display: none;
+    }
+}

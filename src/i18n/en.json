@@ -166,6 +166,7 @@
       "attachments_at_bottom": "Show the attachments section at the bottom of notes instead of the top.",
       "allow_executable_attachments": "Allow scripts and executables (.sh, .ps1, .bat, .exe, .py, ...) to be attached to notes, for every account on this instance. Poznote never runs them, it only stores and serves them. File types a web server could execute, such as .php, stay blocked.",
       "backlinks_at_bottom": "Show the backlinks section at the bottom of notes instead of the top.",
+      "note_link_preview": "Hovering a link to another note shows that note in a small window, read only, without leaving the note you are in. Not on touch screens.",
       "note_virtual_space": "Leave empty room under the last line of a note, so the end of the text can be scrolled up to the middle of the screen instead of staying at the very bottom.",
       "default_image_border": "Display images in notes with a border and no padding by default.",
       "spellcheck_html_notes": "Enable the browser spell checker in rich text and Markdown notes.",
@@ -268,6 +269,7 @@
       "language_region": "Language & region",
       "storage": "Storage",
       "layout": "Layout",
+      "links": "Links",
       "preferences": "Preferences",
       "backup": "Backup",
       "export": "Export",
@@ -582,6 +584,7 @@
       "attachments_show_inserted_images": "Inserted images in attachments",
       "attachments_at_bottom": "Attachments at bottom",
       "backlinks_at_bottom": "Backlinks at bottom",
+      "note_link_preview": "Note preview on link hover",
       "note_virtual_space": "Space below the note",
       "default_image_border_no_padding": "Default image border",
       "icon_sidebar_order": "Icon sidebar layout",
@@ -6022,5 +6025,13 @@
       "load_failed": "Could not load your sessions.",
       "generic": "Something went wrong. Try again."
     }
+  },
+  "note_link_preview": {
+    "loading": "Loading…",
+    "not_found": "This note does not exist, or it was deleted",
+    "error": "The preview could not be loaded",
+    "empty": "This note is empty",
+    "drawing": "A drawing cannot be previewed here",
+    "open": "Open in a new tab"
   }
 }

@@ -166,6 +166,7 @@
       "attachments_at_bottom": "상단 대신 노트 하단에 첨부 파일 섹션을 표시합니다.",
       "allow_executable_attachments": "이 인스턴스의 모든 계정에 대해 스크립트 및 실행 파일(.sh, .ps1, .bat, .exe, .py, ...)이 노트에 연결되도록 허용합니다. Poznote는 절대 실행하지 않으며 저장하고 제공만 합니다. .php 등 웹 서버가 실행할 수 있는 파일 형식은 차단된 상태로 유지됩니다.",
       "backlinks_at_bottom": "노트 상단 대신 하단에 백링크 섹션을 표시합니다.",
+      "note_link_preview": "다른 노트로 가는 링크에 마우스를 올리면 그 노트가 작은 창에 읽기 전용으로 표시되어, 지금 보고 있는 노트를 떠나지 않고 읽을 수 있습니다. 터치스크린에서는 사용할 수 없습니다.",
       "note_virtual_space": "노트의 마지막 줄 아래에 여백을 추가해, 마지막 줄을 화면 맨 아래가 아닌 중앙까지 스크롤할 수 있게 합니다.",
       "default_image_border": "기본적으로 테두리가 있고 패딩이 없는 노트의 이미지를 표시합니다.",
       "spellcheck_html_notes": "서식 있는 텍스트 노트와 Markdown 노트에서 브라우저 맞춤법 검사기를 활성화합니다.",
@@ -268,6 +269,7 @@
       "language_region": "언어 및 지역",
       "storage": "저장 공간",
       "layout": "레이아웃",
+      "links": "링크",
       "preferences": "환경설정",
       "backup": "백업",
       "export": "내보내기",
@@ -582,6 +584,7 @@
       "attachments_show_inserted_images": "첨부 파일에 삽입된 이미지 표시",
       "attachments_at_bottom": "첨부 파일을 하단에 표시",
       "backlinks_at_bottom": "백링크를 하단에 표시",
+      "note_link_preview": "링크에 마우스를 올려 노트 미리보기",
       "note_virtual_space": "노트 아래 여백",
       "default_image_border_no_padding": "기본 이미지 테두리",
       "icon_sidebar_order": "아이콘 사이드바 레이아웃",
@@ -6022,5 +6025,13 @@
       "load_failed": "세션을 불러올 수 없습니다.",
       "generic": "문제가 발생했습니다. 다시 시도하세요."
     }
+  },
+  "note_link_preview": {
+    "loading": "불러오는 중…",
+    "not_found": "이 노트가 존재하지 않거나 삭제되었습니다",
+    "error": "미리보기를 불러올 수 없습니다",
+    "empty": "이 노트는 비어 있습니다",
+    "drawing": "그림은 여기에서 미리 볼 수 없습니다",
+    "open": "새 탭에서 열기"
   }
 }

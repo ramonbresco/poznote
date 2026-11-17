@@ -139,6 +139,7 @@ $settingsPageUserKeys = [
     'attachments_single_line',
     'attachment_links_as_cards',
     'backlinks_at_bottom',
+    'note_link_preview',
     'note_virtual_space',
     'default_image_border_no_padding',
     'center_note_content',
@@ -1331,6 +1332,22 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     </div>
                 </div>
 
+                <!-- Default Image Border (No Padding) -->
+                <div class="home-card" id="default-image-border-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.default_image_border', [], 'Display images in notes with a border and no padding by default.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon"><i class="lucide lucide-image"></i></div>
+                    <div class="home-card-content">
+                        <span class="home-card-title"><?php echo t_h('display.cards.default_image_border_no_padding', [], 'Default image border (no padding)'); ?></span>
+                        <span id="default-image-border-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Links: how links between notes show (backlinks row, preview of a
+                 linked note on hover). -->
+            <div class="settings-group-title"><?php echo t_h('settings.groups.links', [], 'Links'); ?></div>
+            <div class="settings-group">
+
                 <!-- Backlinks at Bottom -->
                 <div class="home-card" id="backlinks-at-bottom-card">
                     <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.backlinks_at_bottom', [], 'Show the backlinks section at the bottom of notes instead of the top.'); ?>"><i class="lucide lucide-help-circle"></i></span>
@@ -1341,13 +1358,13 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     </div>
                 </div>
 
-                <!-- Default Image Border (No Padding) -->
-                <div class="home-card" id="default-image-border-card">
-                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.default_image_border', [], 'Display images in notes with a border and no padding by default.'); ?>"><i class="lucide lucide-help-circle"></i></span>
-                    <div class="home-card-icon"><i class="lucide lucide-image"></i></div>
+                <!-- Preview of a linked note on hover (js/note-link-preview.js) -->
+                <div class="home-card" id="note-link-preview-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.note_link_preview', [], 'Hovering a link to another note shows that note in a small window, read only, without leaving the note you are in. Not on touch screens.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon"><i class="lucide lucide-eye"></i></div>
                     <div class="home-card-content">
-                        <span class="home-card-title"><?php echo t_h('display.cards.default_image_border_no_padding', [], 'Default image border (no padding)'); ?></span>
-                        <span id="default-image-border-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                        <span class="home-card-title"><?php echo t_h('display.cards.note_link_preview', [], 'Note preview on link hover'); ?></span>
+                        <span id="note-link-preview-status" class="setting-status enabled"><?php echo t_h('common.enabled'); ?></span>
                     </div>
                 </div>
             </div>

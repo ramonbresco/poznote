@@ -305,6 +305,7 @@ $settings = [
     'attachment_links_as_cards' => '0',
     'backlinks_at_bottom' => '0',
     'note_virtual_space' => '1',
+    'note_link_preview' => '1',
     'default_image_border_no_padding' => '0',
     'spellcheck_html_notes' => '0',
     'highlight_current_folder_tree' => '0',
@@ -320,7 +321,7 @@ $settings = [
 ];
 
 try {
-    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'sidebar_tree_indent', 'attachment_preview_size', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'code_block_collapsed_lines', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_show_inserted_images', 'attachments_at_bottom', 'attachments_single_line', 'attachment_links_as_cards', 'backlinks_at_bottom', 'note_virtual_space', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color', 'tab_follows_note')");
+    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'sidebar_tree_indent', 'attachment_preview_size', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'code_block_collapsed_lines', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_show_inserted_images', 'attachments_at_bottom', 'attachments_single_line', 'attachment_links_as_cards', 'backlinks_at_bottom', 'note_virtual_space', 'note_link_preview', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color', 'tab_follows_note')");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $settings[$row['key']] = $row['value'];
         if ($row['key'] === 'markdown_new_note_view_mode') {
@@ -579,6 +580,10 @@ if (!poznoteSettingEnabled($settings['markdown_editor_word_wrap'], true)) {
 // js/attachments-row-scroll.js)
 if (poznoteSettingEnabled($settings['attachments_single_line'], false)) {
     $extra_body_classes .= ' attachments-single-line';
+}
+// Preview of a linked note on hover, on unless switched off (js/note-link-preview.js)
+if (!poznoteSettingEnabled($settings['note_link_preview'], true)) {
+    $extra_body_classes .= ' note-link-preview-off';
 }
 // Empty room under the last line of a note (discussion 1564), css/notes/noteentry.css
 if (poznoteSettingEnabled($settings['note_virtual_space'], true)) {

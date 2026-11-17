@@ -132,6 +132,7 @@
             'attachments_single_line',
             'attachment_links_as_cards',
             'backlinks_at_bottom',
+            'note_link_preview',
             'note_virtual_space',
             'default_image_border_no_padding',
             'center_note_content',
@@ -3153,6 +3154,7 @@
         setupToggleCard('attachments-inserted-images-card', 'attachments-inserted-images-status', 'attachments_show_inserted_images', false, false);
         setupToggleCard('backlinks-at-bottom-card', 'backlinks-at-bottom-status', 'backlinks_at_bottom', false, false);
         setupToggleCard('note-virtual-space-card', 'note-virtual-space-status', 'note_virtual_space', false, true);
+        setupToggleCard('note-link-preview-card', 'note-link-preview-status', 'note_link_preview', false, true);
         setupToggleCard('default-image-border-card', 'default-image-border-status', 'default_image_border_no_padding', false, false);
         setupToggleCard('spellcheck-html-notes-card', 'spellcheck-html-notes-status', 'spellcheck_html_notes', false, false);
 

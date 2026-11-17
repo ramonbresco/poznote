@@ -515,6 +515,7 @@
       "attachments_at_bottom": "Mostre a seção de anexos na parte inferior das notas em vez do topo.",
       "allow_executable_attachments": "Permite anexar scripts e executáveis (.sh, .ps1, .bat, .exe, .py, ...), para todas as contas desta instância. O Poznote nunca os executa, apenas os armazena e os entrega. Os tipos que um servidor web poderia executar, como .php, continuam bloqueados.",
       "backlinks_at_bottom": "Mostre a seção de backlinks na parte inferior das notas em vez do topo.",
+      "note_link_preview": "Passar o rato sobre uma ligação para outra nota mostra essa nota numa pequena janela, só de leitura, sem sair da nota em que está. Não em ecrãs táteis.",
       "note_virtual_space": "Deixa um espaço vazio abaixo da última linha de uma nota, para poder subir o fim do texto até ao meio do ecrã em vez de o manter mesmo em baixo.",
       "default_image_border": "Exiba por padrão as imagens das notas com borda e sem preenchimento.",
       "spellcheck_html_notes": "Ative o corretor ortográfico do navegador nas notas de texto formatado e Markdown.",
@@ -617,6 +618,7 @@
       "language_region": "Idioma e região",
       "storage": "Armazenamento",
       "layout": "Layout",
+      "links": "Ligações",
       "preferences": "Preferências",
       "backup": "Backup",
       "export": "Exportação",
@@ -964,6 +966,7 @@
       "attachments_show_inserted_images": "Imagens inseridas nos anexos",
       "attachments_at_bottom": "Anexos no final",
       "backlinks_at_bottom": "Backlinks no final",
+      "note_link_preview": "Pré-visualização da nota ao passar sobre uma ligação",
       "note_virtual_space": "Espaço abaixo da nota",
       "default_image_border_no_padding": "Borda padrão de imagem",
       "icon_sidebar_order": "Layout da barra de ícones",
@@ -6178,5 +6181,13 @@
       "load_failed": "Não foi possível carregar as suas sessões.",
       "generic": "Algo deu errado. Tente novamente."
     }
+  },
+  "note_link_preview": {
+    "loading": "A carregar…",
+    "not_found": "Esta nota não existe ou foi eliminada",
+    "error": "Não foi possível carregar a pré-visualização",
+    "empty": "Esta nota está vazia",
+    "drawing": "Um desenho não pode ser pré-visualizado aqui",
+    "open": "Abrir num novo separador"
   }
 }
