@@ -47,15 +47,20 @@ function brandingTestStoreValid(): void
 test('without a custom logo every page keeps Poznote\'s own icons and mark', function () {
     brandingTestReset();
     assertFalse(poznoteHasCustomLogo());
+    // Each shipped icon carries a version drawn from its own bytes, so a
+    // redrawn icon gets a new URL past nginx's year-long immutable cache.
+    $v = static function (string $relative): string {
+        return substr((string) md5_file(__DIR__ . '/../src/public/' . $relative), 0, 8);
+    };
     assertSame(
-        '<link rel="icon" href="../favicon.ico" sizes="512x512" type="image/png">' . "\n"
-        . '<link rel="icon" href="../favicon.svg" type="image/svg+xml">' . "\n"
-        . '<link rel="apple-touch-icon" href="../pwa/poznote.png?v=6.1">' . "\n",
+        '<link rel="icon" href="../favicon.ico?v=' . $v('favicon.ico') . '" sizes="512x512" type="image/png">' . "\n"
+        . '<link rel="icon" href="../favicon.svg?v=' . $v('favicon.svg') . '" type="image/svg+xml">' . "\n"
+        . '<link rel="apple-touch-icon" href="../pwa/poznote.png?v=' . $v('pwa/poznote.png') . '">' . "\n",
         poznoteBrandIconTags('../', '6.1')
     );
     assertSame('<span class="poznote-logo" aria-hidden="true"></span>', poznoteLogoMark());
     assertSame('pwa/manifest.webmanifest?v=1', poznoteManifestHref('pwa/manifest.webmanifest?v=1'));
-    assertSame('pwa/poznote-192.png', poznoteNotificationIconPath());
+    assertSame('pwa/poznote-192.png?v=' . $v('pwa/poznote-192.png'), poznoteNotificationIconPath());
     $manifest = ['name' => 'Poznote', 'icons' => [['src' => './poznote-192.png']]];
     assertSame($manifest, poznoteManifestWithCustomLogo($manifest));
 });
