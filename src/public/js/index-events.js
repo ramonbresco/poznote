@@ -928,6 +928,16 @@
                     window.openLinkedNoteFolderSelectorModal(noteId, target.dataset.noteTitle || '');
                 }
                 break;
+            case 'delete-note-shortcuts':
+                if (isSharedWorkspaceReadOnly()) {
+                    break;
+                }
+                if (noteId && typeof window.deleteNoteShortcuts === 'function') {
+                    // The toolbar button also carries the ids the server found,
+                    // which reach a shortcut left in another workspace
+                    window.deleteNoteShortcuts(noteId, (target.dataset.shortcutIds || '').split(',').filter(Boolean));
+                }
+                break;
             case 'archive-note':
                 if (isSharedWorkspaceReadOnly()) {
                     break;

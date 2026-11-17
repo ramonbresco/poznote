@@ -738,10 +738,19 @@ function renderNoteActionsMenu($currentWorkspace = '') {
     $menu .= "</div>";
 
     // Create a shortcut to this note: same flow as the + menu's Shortcut card,
-    // minus the note-picking step since the note is already known
-    $menu .= "<div class='note-actions-menu-item note-real-only' data-action='create-note-shortcut'>";
+    // minus the note-picking step since the note is already known. A note
+    // that already has shortcuts gets "Delete shortcut" instead (the two are
+    // swapped by populateNoteActionsMenu, which counts the shortcut rows of
+    // the tree); with several, the label names how many go.
+    $menu .= "<div class='note-actions-menu-item note-real-only shortcut-state-none' data-action='create-note-shortcut'>";
     $menu .= "<i class='lucide lucide-link'></i>";
     $menu .= "<span>" . t_h('editor.toolbar.create_linked_note', [], 'Create shortcut') . "</span>";
+    $menu .= "</div>";
+    $menu .= "<div class='note-actions-menu-item note-real-only shortcut-state-has' data-action='delete-note-shortcuts'"
+        . " data-label-one='" . t_h('notes_list.note_actions.delete_shortcut', [], 'Delete shortcut') . "'"
+        . " data-label-many='" . t_h('notes_list.note_actions.delete_shortcuts', [], 'Delete the {{count}} shortcuts') . "'>";
+    $menu .= "<i class='lucide lucide-unlink'></i>";
+    $menu .= "<span class='shortcut-delete-label'>" . t_h('notes_list.note_actions.delete_shortcut', [], 'Delete shortcut') . "</span>";
     $menu .= "</div>";
 
     // Move note (same dialog as the note toolbar's move button)

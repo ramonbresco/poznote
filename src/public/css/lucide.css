@@ -5221,3 +5221,14 @@
   background-image: none;
 }
 
+
+.lucide-unlink {
+  -webkit-mask-image: url("data:image/svg+xml,%3C%21--%20%40license%20lucide-static%20v0.575.0%20-%20ISC%20--%3E%20%3Csvg%20class%3D%27lucide%20lucide-unlink%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27currentColor%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20%3E%20%3Cpath%20d%3D%27m18.84%2012.25%201.72-1.71h-.02a5.004%205.004%200%200%200-.12-7.07%205.006%205.006%200%200%200-6.95%200l-1.72%201.71%27%20%2F%3E%20%3Cpath%20d%3D%27m5.17%2011.75-1.71%201.71a5.004%205.004%200%200%200%20.12%207.07%205.006%205.006%200%200%200%206.95%200l1.71-1.71%27%20%2F%3E%20%3Cline%20x1%3D%278%27%20x2%3D%278%27%20y1%3D%272%27%20y2%3D%275%27%20%2F%3E%20%3Cline%20x1%3D%272%27%20x2%3D%275%27%20y1%3D%278%27%20y2%3D%278%27%20%2F%3E%20%3Cline%20x1%3D%2716%27%20x2%3D%2716%27%20y1%3D%2719%27%20y2%3D%2722%27%20%2F%3E%20%3Cline%20x1%3D%2719%27%20x2%3D%2722%27%20y1%3D%2716%27%20y2%3D%2716%27%20%2F%3E%20%3C%2Fsvg%3E");
+  mask-image: url("data:image/svg+xml,%3C%21--%20%40license%20lucide-static%20v0.575.0%20-%20ISC%20--%3E%20%3Csvg%20class%3D%27lucide%20lucide-unlink%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27currentColor%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20%3E%20%3Cpath%20d%3D%27m18.84%2012.25%201.72-1.71h-.02a5.004%205.004%200%200%200-.12-7.07%205.006%205.006%200%200%200-6.95%200l-1.72%201.71%27%20%2F%3E%20%3Cpath%20d%3D%27m5.17%2011.75-1.71%201.71a5.004%205.004%200%200%200%20.12%207.07%205.006%205.006%200%200%200%206.95%200l1.71-1.71%27%20%2F%3E%20%3Cline%20x1%3D%278%27%20x2%3D%278%27%20y1%3D%272%27%20y2%3D%275%27%20%2F%3E%20%3Cline%20x1%3D%272%27%20x2%3D%275%27%20y1%3D%278%27%20y2%3D%278%27%20%2F%3E%20%3Cline%20x1%3D%2716%27%20x2%3D%2716%27%20y1%3D%2719%27%20y2%3D%2722%27%20%2F%3E%20%3Cline%20x1%3D%2719%27%20x2%3D%2722%27%20y1%3D%2716%27%20y2%3D%2716%27%20%2F%3E%20%3C%2Fsvg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  background-color: currentColor;
+  background-image: none;
+}

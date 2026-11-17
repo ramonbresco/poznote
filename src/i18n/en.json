@@ -1675,7 +1675,9 @@
       "keep_offline": "Keep offline",
       "stop_offline": "Stop keeping offline",
       "available_offline": "Available offline in this browser",
-      "not_available_offline": "Not available offline in this browser"
+      "not_available_offline": "Not available offline in this browser",
+      "delete_shortcut": "Delete shortcut",
+      "delete_shortcuts": "Delete the {{count}} shortcuts"
     },
     "favorites_menu": {
       "title": "Favorites actions",

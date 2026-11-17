@@ -2208,7 +2208,9 @@
       "keep_offline": "离线保留",
       "stop_offline": "停止离线保留",
       "available_offline": "此浏览器中可离线使用",
-      "not_available_offline": "此浏览器中不可离线使用"
+      "not_available_offline": "此浏览器中不可离线使用",
+      "delete_shortcut": "删除快捷方式",
+      "delete_shortcuts": "删除 {{count}} 个快捷方式"
     },
     "favorites_menu": {
       "title": "收藏操作",

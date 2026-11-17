@@ -2210,7 +2210,9 @@
       "keep_offline": "Guardar sin conexión",
       "stop_offline": "Dejar de guardar sin conexión",
       "available_offline": "Disponible sin conexión en este navegador",
-      "not_available_offline": "No disponible sin conexión en este navegador"
+      "not_available_offline": "No disponible sin conexión en este navegador",
+      "delete_shortcut": "Eliminar el atajo",
+      "delete_shortcuts": "Eliminar los {{count}} atajos"
     },
     "favorites_menu": {
       "title": "Acciones de favoritos",

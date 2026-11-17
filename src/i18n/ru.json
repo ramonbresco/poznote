@@ -1672,7 +1672,9 @@
       "keep_offline": "Хранить офлайн",
       "stop_offline": "Больше не хранить офлайн",
       "available_offline": "Доступна офлайн в этом браузере",
-      "not_available_offline": "Недоступна офлайн в этом браузере"
+      "not_available_offline": "Недоступна офлайн в этом браузере",
+      "delete_shortcut": "Удалить ярлык",
+      "delete_shortcuts": "Удалить ярлыки ({{count}})"
     },
     "favorites_menu": {
       "title": "Действия с избранным",

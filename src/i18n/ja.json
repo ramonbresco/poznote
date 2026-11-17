@@ -1675,7 +1675,9 @@
       "keep_offline": "オフライン用に保存",
       "stop_offline": "オフライン保存を解除",
       "available_offline": "このブラウザーではオフラインでも利用できます",
-      "not_available_offline": "このブラウザーではオフラインで利用できません"
+      "not_available_offline": "このブラウザーではオフラインで利用できません",
+      "delete_shortcut": "ショートカットを削除",
+      "delete_shortcuts": "{{count}} 件のショートカットを削除"
     },
     "favorites_menu": {
       "title": "お気に入りの操作",

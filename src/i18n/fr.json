@@ -2216,7 +2216,9 @@
       "keep_offline": "Garder hors ligne",
       "stop_offline": "Ne plus garder hors ligne",
       "available_offline": "Disponible hors ligne dans ce navigateur",
-      "not_available_offline": "Pas disponible hors ligne dans ce navigateur"
+      "not_available_offline": "Pas disponible hors ligne dans ce navigateur",
+      "delete_shortcut": "Supprimer le raccourci",
+      "delete_shortcuts": "Supprimer les {{count}} raccourcis"
     },
     "favorites_menu": {
       "title": "Actions des favoris",

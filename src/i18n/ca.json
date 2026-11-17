@@ -1675,7 +1675,9 @@
       "keep_offline": "Conserva fora de línia",
       "stop_offline": "Deixa de conservar fora de línia",
       "available_offline": "Disponible fora de línia en aquest navegador",
-      "not_available_offline": "No disponible fora de línia en aquest navegador"
+      "not_available_offline": "No disponible fora de línia en aquest navegador",
+      "delete_shortcut": "Suprimeix la drecera",
+      "delete_shortcuts": "Suprimeix les {{count}} dreceres"
     },
     "favorites_menu": {
       "title": "Accions dels preferits",

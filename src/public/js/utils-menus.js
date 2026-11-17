@@ -766,6 +766,26 @@ function populateNoteActionsMenu(menu, toggle) {
         item.style.display = isLinkedNote ? 'none' : '';
     });
 
+    // Shortcut item: "Create shortcut" for a note without one, "Delete
+    // shortcut" for a note the tree already holds a shortcut to (the whole
+    // tree is rendered, collapsed folders included, so its rows are the list)
+    var shortcutIds = (!isLinkedNote && window.PoznoteTreeHistory)
+        ? window.PoznoteTreeHistory.linkedNoteIds(noteId) : [];
+    if (!isLinkedNote) {
+        menu.querySelectorAll('.shortcut-state-none').forEach(function (item) {
+            item.style.display = shortcutIds.length ? 'none' : '';
+        });
+        menu.querySelectorAll('.shortcut-state-has').forEach(function (item) {
+            item.style.display = shortcutIds.length ? '' : 'none';
+            var label = item.querySelector('.shortcut-delete-label');
+            if (label) {
+                label.textContent = shortcutIds.length > 1
+                    ? (item.getAttribute('data-label-many') || '').replace('{{count}}', String(shortcutIds.length))
+                    : (item.getAttribute('data-label-one') || label.textContent);
+            }
+        });
+    }
+
     // Share item: show the variant matching the note's shared state. A note
     // shared only through a (parent) folder shows "Is shared" too, carrying
     // the attributes openPublicShareModal() reads to explain the folder share.

@@ -1675,7 +1675,9 @@
       "keep_offline": "Offline bewaren",
       "stop_offline": "Niet meer offline bewaren",
       "available_offline": "Offline beschikbaar in deze browser",
-      "not_available_offline": "Niet offline beschikbaar in deze browser"
+      "not_available_offline": "Niet offline beschikbaar in deze browser",
+      "delete_shortcut": "Snelkoppeling verwijderen",
+      "delete_shortcuts": "De {{count}} snelkoppelingen verwijderen"
     },
     "favorites_menu": {
       "title": "Acties voor favorieten",

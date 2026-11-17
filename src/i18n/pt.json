@@ -2210,7 +2210,9 @@
       "keep_offline": "Manter offline",
       "stop_offline": "Deixar de manter offline",
       "available_offline": "Disponível offline neste navegador",
-      "not_available_offline": "Não disponível offline neste navegador"
+      "not_available_offline": "Não disponível offline neste navegador",
+      "delete_shortcut": "Excluir o atalho",
+      "delete_shortcuts": "Excluir os {{count}} atalhos"
     },
     "favorites_menu": {
       "title": "Ações dos favoritos",

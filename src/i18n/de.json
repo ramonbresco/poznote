@@ -2210,7 +2210,9 @@
       "keep_offline": "Offline behalten",
       "stop_offline": "Nicht mehr offline behalten",
       "available_offline": "In diesem Browser offline verfügbar",
-      "not_available_offline": "In diesem Browser nicht offline verfügbar"
+      "not_available_offline": "In diesem Browser nicht offline verfügbar",
+      "delete_shortcut": "Verknüpfung löschen",
+      "delete_shortcuts": "Die {{count}} Verknüpfungen löschen"
     },
     "favorites_menu": {
       "title": "Favoriten-Aktionen",

@@ -579,6 +579,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:toggle-speed-dial" checked><span><?php echo t_h('speed_dial.add', [], 'Add to speed dial'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:duplicate-note" checked><span><?php echo t_h('common.duplicate', [], 'Duplicate'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:create-note-shortcut" checked><span><?php echo t_h('editor.toolbar.create_linked_note', [], 'Create shortcut'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:delete-note-shortcuts" checked><span><?php echo t_h('notes_list.note_actions.delete_shortcut', [], 'Delete shortcut'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:show-move-folder-dialog" checked><span><?php echo t_h('notes_list.note_actions.move_note', [], 'Move note'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:copy-note" checked><span><?php echo t_h('notes_list.note_actions.copy_note', [], 'Copy'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="note:cut-note" checked><span><?php echo t_h('notes_list.note_actions.cut_note', [], 'Cut'); ?></span></label>
