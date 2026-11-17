@@ -758,6 +758,12 @@ if (
         (defined('CUSTOM_CSS_PATH') && CUSTOM_CSS_PATH !== '')
         || poznoteThemeListIsConfigured()
         || poznoteCustomFonts() !== []
+        // A workspace page may get the workspace colour as its accent
+        // (discussion 1788). Whether it does is known only once the page has
+        // run (setting, workspace, colour), so the buffer has to be there.
+        // Without this line the colour only showed on instances that also
+        // had one of the three above, an uploaded font for one.
+        || poznoteWorkspaceAccentPageAllowed((string)($_SERVER['SCRIPT_NAME'] ?? ''))
     )
 ) {
     define('POZNOTE_CUSTOM_CSS_BUFFER_STARTED', true);
