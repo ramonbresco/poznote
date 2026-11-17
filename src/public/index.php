@@ -443,6 +443,20 @@ if ($center_note_content_enabled && $width_value !== '1' && $width_value !== 'tr
                 if (aiChatWidth >= 300 && aiChatWidth <= 700) {
                     document.documentElement.style.setProperty('--ai-chat-width', aiChatWidth + 'px');
                 }
+
+                // Widths the notes column and the outline were dragged to:
+                // set before the first paint, so a page opened with non
+                // default widths does not paint at the default ones and then
+                // jump. Same keys and bounds as js/resize-column.js and
+                // js/outline-panel.js, which take them over afterwards.
+                var leftColWidth = parseInt(localStorage.getItem('leftColWidth'), 10);
+                if (leftColWidth >= 200 && leftColWidth <= 800) {
+                    document.documentElement.style.setProperty('--left-col-width', leftColWidth + 'px');
+                }
+                var outlineWidth = parseInt(localStorage.getItem('outlineWidth'), 10);
+                if (outlineWidth >= 200 && outlineWidth <= 500) {
+                    document.documentElement.style.setProperty('--outline-width', outlineWidth + 'px');
+                }
             } catch (_error) {
                 // Ignore localStorage access errors during early paint.
                 console.debug('index: failed:', _error);
@@ -695,6 +709,18 @@ $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents(
 ?>
 
 <body<?php echo $body_classes ? ' class="' . htmlspecialchars($body_classes, ENT_QUOTES) . '"' : ''; ?><?php echo $body_inline_style ? ' style="' . htmlspecialchars($body_inline_style, ENT_QUOTES) . '"' : ''; ?> data-workspace="<?php echo htmlspecialchars($workspace_filter, ENT_QUOTES); ?>" data-code-collapsed-lines="<?php echo (int)$code_block_collapsed_lines; ?>" data-markdown-default-mode="<?php echo htmlspecialchars($markdown_default_view_mode, ENT_QUOTES); ?>" data-markdown-new-note-mode="<?php echo htmlspecialchars($markdown_new_note_view_mode, ENT_QUOTES); ?>" data-markdown-live-editing="<?php echo $markdown_live_editing ? '1' : '0'; ?>" data-markdown-live-syntax="<?php echo $markdown_live_show_syntax ? '1' : '0'; ?>" data-markdown-view-cycle="<?php echo htmlspecialchars($markdown_view_cycle, ENT_QUOTES); ?>" data-spellcheck="<?php echo $spellcheck_notes ? '1' : '0'; ?>" data-spellcheck-lang="<?php echo htmlspecialchars(getUserLanguage(), ENT_QUOTES); ?>" data-autocapitalize="<?php echo $note_autocapitalize ? 'sentences' : 'off'; ?>"<?php echo $whats_new_preview ? ' data-whats-new="preview" data-whats-new-since="' . htmlspecialchars($whats_new_preview_since, ENT_QUOTES) . '"' : ($whats_new_pending ? ' data-whats-new="1"' : ''); ?>>
+    <script>
+    // Notes column hidden by its chevron: the class goes on <body> before the
+    // column paints, otherwise it paints open and then slides shut (its width
+    // has a transition). js/resize-column.js owns the state afterwards.
+    try {
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            document.body.classList.add('sidebar-collapsed');
+        }
+    } catch (_error) {
+        console.debug('index: sidebar collapsed state failed:', _error);
+    }
+    </script>
     <script>
     (function () {
         try {
