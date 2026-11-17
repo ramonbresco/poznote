@@ -158,6 +158,7 @@ $settingsPageUserKeys = [
     'icon_sidebar_order',
     'settings_pinned_cards',
     'spellcheck_html_notes',
+    'note_autocapitalize',
     'slash_menu_trigger',
     'slash_menu_trigger_mobile',
     'format_toolbar_mode',
@@ -1381,6 +1382,20 @@ $localRestoreCardVisible = !empty(LocalBackupService::restorePageBackups());
                     <div class="home-card-content">
                         <span class="home-card-title"><?php echo t_h('display.cards.spellcheck_html_notes', [], 'Spell check'); ?></span>
                         <span id="spellcheck-html-notes-status" class="setting-status disabled"><?php echo t_h('common.disabled'); ?></span>
+                    </div>
+                </div>
+
+                <!-- Auto-capitalisation (discussion 1793): a phone keyboard puts a
+                     capital after ". " and at a new line in the notes and the task
+                     fields. On by default (note_autocapitalize, only "0" turns it
+                     off), read by index.php. Shown on a mobile screen only (up to
+                     800px), a computer keyboard has nothing to do with it -->
+                <div class="home-card mobile-only" id="note-autocapitalize-card">
+                    <span class="setting-help" data-tooltip="<?php echo t_h('settings.card_help.note_autocapitalize', [], 'On a phone, the keyboard starts each sentence and each new line with a capital letter in notes and tasks. Your keyboard can also turn this off for every app.'); ?>"><i class="lucide lucide-help-circle"></i></span>
+                    <div class="home-card-icon"><i class="lucide lucide-a-large-small"></i></div>
+                    <div class="home-card-content">
+                        <span class="home-card-title"><?php echo t_h('display.cards.note_autocapitalize', [], 'Auto-capitalisation'); ?></span>
+                        <span id="note-autocapitalize-status" class="setting-status enabled"><?php echo t_h('common.enabled'); ?></span>
                     </div>
                 </div>
 

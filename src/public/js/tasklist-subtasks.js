@@ -180,7 +180,7 @@ function editSubtask(taskId, subtaskId, noteId) {
     input.className = 'task-subitem-input';
     input.value = subtask.text;
     input.maxLength = 4000;
-    input.setAttribute('autocapitalize', 'sentences');
+    input.setAttribute('autocapitalize', (document.body && document.body.getAttribute('data-autocapitalize') === 'off' ? 'off' : 'sentences'));
 
     let done = false;
     const finish = function (save) {
@@ -251,7 +251,7 @@ function openSubtaskInput(taskId, noteId, event) {
     input.placeholder = placeholder;
     input.maxLength = 4000;
     input.setAttribute('autocomplete', 'off');
-    input.setAttribute('autocapitalize', 'sentences');
+    input.setAttribute('autocapitalize', (document.body && document.body.getAttribute('data-autocapitalize') === 'off' ? 'off' : 'sentences'));
     input.setAttribute('enterkeyhint', 'go');
     form.appendChild(input);
 

@@ -2092,8 +2092,11 @@ function createEditor(host, options = {}) {
       // CodeMirror sets autocapitalize="off" too, which tells a phone keyboard
       // never to start a sentence or a line with a capital (discussion 1793).
       // A note is prose: "sentences" is what a plain text field gets, and the
-      // HTML notes carry the same value
-      EditorView.contentAttributes.of({ autocapitalize: 'sentences' }),
+      // HTML notes carry the same value. The account's Auto-capitalisation
+      // setting turned off (autocapitalize: false) leaves CodeMirror's "off"
+      ...(options.autocapitalize !== false
+        ? [EditorView.contentAttributes.of({ autocapitalize: 'sentences' })]
+        : []),
       ...(isWindows
         ? [EditorView.contentAttributes.of({ autocorrect: 'on' })]
         : []),

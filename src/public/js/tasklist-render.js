@@ -138,6 +138,12 @@ function taskAddRowPlaceholder() {
     return window.t ? window.t('tasklist.add_row_placeholder', null, 'Add a task') : 'Add a task';
 }
 
+// The account's Auto-capitalisation setting (discussion 1793), rendered by
+// index.php as <body data-autocapitalize>; on where the page does not say
+function taskTextAutocapitalize() {
+    return (document.body && document.body.getAttribute('data-autocapitalize') === 'off' ? 'off' : 'sentences');
+}
+
 function renderTaskAddRow(noteId) {
     const placeholder = escapeAttribute(taskAddRowPlaceholder());
     return `<div class="task-input-container task-add-row" id="task-add-row-${noteId}">
@@ -145,7 +151,7 @@ function renderTaskAddRow(noteId) {
                 <form class="task-input-form" id="task-input-form-${noteId}" action="javascript:void(0);">
                     <textarea class="task-input" id="task-input-${noteId}" rows="1"
                         placeholder="${placeholder}" aria-label="${placeholder}" maxlength="4000"
-                        autocomplete="off" autocapitalize="sentences" enterkeyhint="go"></textarea>
+                        autocomplete="off" autocapitalize="${taskTextAutocapitalize()}" enterkeyhint="go"></textarea>
                 </form>
             </div>`;
 }

@@ -2348,7 +2348,7 @@ function startTableCellEdit(view, block, cell, select, point) {
   const originalHtml = cell.innerHTML
   // The cell is an editing host of its own, so it does not inherit the
   // editor's autocapitalize: a phone keyboard reads the focused host only
-  cell.setAttribute('autocapitalize', 'sentences')
+  cell.setAttribute('autocapitalize', view.contentDOM.getAttribute('autocapitalize') || 'off')
   // Drawn, when what it shows gives its source back; the source otherwise
   const drawnSource = richCellSource(cell)
   const rich = drawnSource !== null && drawnSource.trim() === raw

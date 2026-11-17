@@ -182,6 +182,9 @@ function openTaskEditModal(taskId, noteId, currentText, lastFocusedElement, opti
     setTaskEditError('');
     textarea.value = currentText;
     textarea.maxLength = 4000;
+    // Auto-capitalisation setting (discussion 1793), set before the focus:
+    // a phone keyboard reads it when the field gets the focus
+    textarea.setAttribute('autocapitalize', (document.body && document.body.getAttribute('data-autocapitalize') === 'off' ? 'off' : 'sentences'));
     modal.style.display = 'flex';
 
     requestAnimationFrame(function() {

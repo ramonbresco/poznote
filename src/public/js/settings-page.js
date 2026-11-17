@@ -152,6 +152,7 @@
             'hidden_ui_elements',
             'settings_pinned_cards',
             'spellcheck_html_notes',
+            'note_autocapitalize',
             'slash_menu_trigger',
             'slash_menu_trigger_mobile',
             'format_toolbar_mode'
@@ -3157,6 +3158,7 @@
         setupToggleCard('note-link-preview-card', 'note-link-preview-status', 'note_link_preview', false, true);
         setupToggleCard('default-image-border-card', 'default-image-border-status', 'default_image_border_no_padding', false, false);
         setupToggleCard('spellcheck-html-notes-card', 'spellcheck-html-notes-status', 'spellcheck_html_notes', false, false);
+        setupToggleCard('note-autocapitalize-card', 'note-autocapitalize-status', 'note_autocapitalize', false, true);
 
         // Settings shown as a control in their row (initInlineControl)
         initInlineControls();

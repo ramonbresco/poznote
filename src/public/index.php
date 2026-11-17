@@ -308,6 +308,7 @@ $settings = [
     'note_link_preview' => '1',
     'default_image_border_no_padding' => '0',
     'spellcheck_html_notes' => '0',
+    'note_autocapitalize' => '1',
     'highlight_current_folder_tree' => '0',
     'folder_tree_dim_level' => '',
     'markdown_default_view_mode' => 'preview',
@@ -321,7 +322,7 @@ $settings = [
 ];
 
 try {
-    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'sidebar_tree_indent', 'attachment_preview_size', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'code_block_collapsed_lines', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_show_inserted_images', 'attachments_at_bottom', 'attachments_single_line', 'attachment_links_as_cards', 'backlinks_at_bottom', 'note_virtual_space', 'note_link_preview', 'default_image_border_no_padding', 'spellcheck_html_notes', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color', 'tab_follows_note')");
+    $stmt = $con->query("SELECT key, value FROM settings WHERE key IN ('note_font_size', 'sidebar_font_size', 'sidebar_tree_indent', 'attachment_preview_size', 'center_note_content', 'show_note_created', 'show_note_icons', 'hide_folder_actions', 'note_list_sort', 'notes_without_folders_after_folders', 'folder_icon_opens_kanban', 'folder_count_parentheses', 'code_block_word_wrap', 'code_block_line_numbers', 'code_block_collapsed_lines', 'markdown_split_card_view', 'markdown_split_preview_left', 'markdown_heading_underline', 'markdown_editor_word_wrap', 'markdown_live_editing', 'markdown_colored', 'markdown_colored_custom', 'attachment_previews_in_note', 'attachments_show_inserted_images', 'attachments_at_bottom', 'attachments_single_line', 'attachment_links_as_cards', 'backlinks_at_bottom', 'note_virtual_space', 'note_link_preview', 'default_image_border_no_padding', 'spellcheck_html_notes', 'note_autocapitalize', 'highlight_current_folder_tree', 'folder_tree_dim_level', 'markdown_default_view_mode', 'markdown_new_note_view_mode', 'markdown_live_show_syntax', 'markdown_view_cycle', 'sidebar_offline_marks', 'favorites_sort', 'favorites_icon_color', 'tab_follows_note')");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $settings[$row['key']] = $row['value'];
         if ($row['key'] === 'markdown_new_note_view_mode') {
@@ -617,6 +618,12 @@ $markdown_live_editing = poznoteSettingEnabled($settings['markdown_live_editing'
 // note_display.php, the Markdown editor reads <body data-spellcheck>
 // (js/markdown-editor.js)
 $spellcheck_notes = poznoteSettingEnabled($settings['spellcheck_html_notes'], false);
+// Auto-capitalisation (discussion 1793): asks a phone keyboard for a capital
+// after ". " and at a new line, in the note body and the task fields. On by
+// default, only a stored "0" turns it off. The HTML notes get it from
+// note_display.php, the Markdown editor and the task fields read
+// <body data-autocapitalize>
+$note_autocapitalize = poznoteSettingEnabled($settings['note_autocapitalize'], true);
 // Which of the two live views the account is in: "Live preview" (the syntax
 // comes back under the caret) or "Rich text" (it never does, and typed text
 // is never read as Markdown). Chosen from the note's view button, kept here:
@@ -687,7 +694,7 @@ $whats_new_preview = is_file($whats_new_preview_file);
 $whats_new_preview_since = $whats_new_preview ? trim((string)@file_get_contents($whats_new_preview_file)) : '';
 ?>
 
-<body<?php echo $body_classes ? ' class="' . htmlspecialchars($body_classes, ENT_QUOTES) . '"' : ''; ?><?php echo $body_inline_style ? ' style="' . htmlspecialchars($body_inline_style, ENT_QUOTES) . '"' : ''; ?> data-workspace="<?php echo htmlspecialchars($workspace_filter, ENT_QUOTES); ?>" data-code-collapsed-lines="<?php echo (int)$code_block_collapsed_lines; ?>" data-markdown-default-mode="<?php echo htmlspecialchars($markdown_default_view_mode, ENT_QUOTES); ?>" data-markdown-new-note-mode="<?php echo htmlspecialchars($markdown_new_note_view_mode, ENT_QUOTES); ?>" data-markdown-live-editing="<?php echo $markdown_live_editing ? '1' : '0'; ?>" data-markdown-live-syntax="<?php echo $markdown_live_show_syntax ? '1' : '0'; ?>" data-markdown-view-cycle="<?php echo htmlspecialchars($markdown_view_cycle, ENT_QUOTES); ?>" data-spellcheck="<?php echo $spellcheck_notes ? '1' : '0'; ?>" data-spellcheck-lang="<?php echo htmlspecialchars(getUserLanguage(), ENT_QUOTES); ?>"<?php echo $whats_new_preview ? ' data-whats-new="preview" data-whats-new-since="' . htmlspecialchars($whats_new_preview_since, ENT_QUOTES) . '"' : ($whats_new_pending ? ' data-whats-new="1"' : ''); ?>>
+<body<?php echo $body_classes ? ' class="' . htmlspecialchars($body_classes, ENT_QUOTES) . '"' : ''; ?><?php echo $body_inline_style ? ' style="' . htmlspecialchars($body_inline_style, ENT_QUOTES) . '"' : ''; ?> data-workspace="<?php echo htmlspecialchars($workspace_filter, ENT_QUOTES); ?>" data-code-collapsed-lines="<?php echo (int)$code_block_collapsed_lines; ?>" data-markdown-default-mode="<?php echo htmlspecialchars($markdown_default_view_mode, ENT_QUOTES); ?>" data-markdown-new-note-mode="<?php echo htmlspecialchars($markdown_new_note_view_mode, ENT_QUOTES); ?>" data-markdown-live-editing="<?php echo $markdown_live_editing ? '1' : '0'; ?>" data-markdown-live-syntax="<?php echo $markdown_live_show_syntax ? '1' : '0'; ?>" data-markdown-view-cycle="<?php echo htmlspecialchars($markdown_view_cycle, ENT_QUOTES); ?>" data-spellcheck="<?php echo $spellcheck_notes ? '1' : '0'; ?>" data-spellcheck-lang="<?php echo htmlspecialchars(getUserLanguage(), ENT_QUOTES); ?>" data-autocapitalize="<?php echo $note_autocapitalize ? 'sentences' : 'off'; ?>"<?php echo $whats_new_preview ? ' data-whats-new="preview" data-whats-new-since="' . htmlspecialchars($whats_new_preview_since, ENT_QUOTES) . '"' : ($whats_new_pending ? ' data-whats-new="1"' : ''); ?>>
     <script>
     (function () {
         try {
