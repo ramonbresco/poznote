@@ -201,6 +201,9 @@
         THEME_VARIANT_CLASSES.forEach(function (cls) {
             root.classList.toggle(cls, cls === variant);
         });
+        // Same mark as theme-init.js: a custom theme keeps its own accent
+        // even in a workspace whose colour is the accent (discussion #1788).
+        root.classList.toggle('theme-custom', String(selectedTheme).indexOf('custom:') === 0);
 
         // Point the custom stylesheet link at this theme's file, or back at the
         // one an admin applied instance-wide. Defined in theme-init.js, which

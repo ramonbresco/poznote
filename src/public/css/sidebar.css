@@ -147,7 +147,7 @@
 .sidebar-plus [class*="lucide-"],
 .sidebar-plus .lucide-plus-circle {
     font-size: 1.1em !important;
-    color: var(--pz-text-muted) !important;
+    color: var(--pz-accent-text) !important;
 }
 
 /* .sidebar-plus:hover { background: rgba(var(--pz-shadow-rgb), 0.04); color: var(--pz-accent-hover); } /* Display background button plus on hover */

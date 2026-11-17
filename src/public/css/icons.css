@@ -85,10 +85,11 @@
     filter: none !important;
 }
 
-.sidebar-plus {
-    /* transform: scale(1.18); */
-    filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(1500%) hue-rotate(195deg) brightness(98%) contrast(102%);
-}
+/* The sidebar + is blue through its colour (css/sidebar.css), no longer
+   through a filter that turned any colour into a fixed #046cda: that blue
+   followed neither the theme's accent nor a workspace colour used as the
+   accent (discussion #1788). The dark theme's grey filter stays
+   (css/dark-mode/icons.css). */
 
 /* Make markdown toggle icons blue. The pair below is the legacy one, never
    rendered any more; the toggle in use is .markdown-view-mode-btn. */

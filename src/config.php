@@ -6,6 +6,7 @@ require_once __DIR__ . '/theme_catalog.php';
 require_once __DIR__ . '/font_catalog.php';
 require_once __DIR__ . '/lib/color-palette.php';
 require_once __DIR__ . '/lib/search-toggle.php';
+require_once __DIR__ . '/lib/workspace-accent.php';
 
 // ============================================================
 // HELPER: Read environment variable safely
@@ -671,7 +672,7 @@ function poznoteInjectCustomCssIntoHtml($buffer, $phase = PHP_OUTPUT_HANDLER_STA
 
     return poznoteInjectIntoHtmlHead(
         (string)$buffer,
-        poznoteRenderThemeListScript() . poznoteRenderCustomFontsScript(),
+        poznoteRenderThemeListScript() . poznoteRenderCustomFontsScript() . poznoteRenderWorkspaceAccentStyle(),
         poznoteRenderCustomCssLinkTag()
     );
 }

@@ -597,6 +597,12 @@ class SettingsController {
             return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
         }
 
+        // Workspace colour as the accent colour (lib/workspace-accent.php):
+        // stored as '1' or '0' whatever boolean an API caller sends
+        if ($key === 'workspace_color_accent') {
+            return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
+        }
+
         // Days of recently modified notes kept offline in the browser, 0 = off
         if ($key === 'offline_notes_days') {
             $intVal = (int) $value;

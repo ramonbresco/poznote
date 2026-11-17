@@ -79,6 +79,7 @@ if (!function_exists('poznoteUiCustomizationSectionHeader')) {
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:sessions-card" checked><span><?php echo t_h('settings.cards.sessions', [], 'Connected devices'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:delete-account-card" checked><span><?php echo t_h('settings.cards.delete_account', [], 'Delete Account'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:default-workspace-card" checked><span><?php echo t_h('workspaces.default.title', [], 'Default Workspace'); ?></span></label>
+        <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:workspace-accent-card" checked><span><?php echo t_h('display.cards.workspace_color_accent', [], 'Workspace color as accent'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:git-sync-card" checked><span><?php echo t_h('settings.cards.git_sync', [], 'Git Sync'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:backup-export-card" checked><span><?php echo t_h('backup_export.sections.complete_backup.title', [], 'Backup to a Poznote ZIP file'); ?></span></label>
         <label class="ui-custom-item"><input type="checkbox" data-ui-key="card:structured-export-card" checked><span><?php echo t_h('backup_export.sections.structured_export.title', [], 'Structured Export'); ?></span></label>
