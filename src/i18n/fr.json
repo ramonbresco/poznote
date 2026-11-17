@@ -560,7 +560,6 @@
       "login_disabled": "Choisissez les comptes qui s'ouvrent sans mot de passe. La page de connexion les liste sous le formulaire de mot de passe, et quiconque atteint cette instance peut les ouvrir. Quand le seul compte de l'instance est choisi, il n'y a plus de page de connexion du tout. L'API continue de demander des identifiants.",
       "outbound_hosts": "Les utilisateurs non administrateurs ne peuvent connecter les webhooks, Git Sync et leurs propres serveurs IA, de transcription ou MCP qu'à des hôtes publics d'Internet. Listez ici les hôtes ou réseaux locaux qu'ils peuvent utiliser, par exemple un serveur Ollama ou n8n. Les administrateurs ne sont pas limités.",
       "embeds": "Les notes peuvent intégrer du contenu de ces sites, comme une vidéo YouTube ou une applet GeoGebra. Désactivez ceux que votre instance ne doit jamais charger. Aucun autre site ne peut être intégré, et aucun site ne peut être ajouté ici.",
-      "diary_template": "Choisissez une note dont le contenu sert de point de départ à chaque nouvelle entrée de journal de l'espace de travail {{workspace}}. La liste montre les notes rangées dans un dossier nommé Modèles (ou Templates) de cet espace. Chaque espace de travail a son propre modèle.",
       "markdown_view_cycle": "Choisissez les vues que le menu des vues d'une note markdown propose en plus de la vue classique (aperçu, avec le crayon pour modifier). Les vues décochées n'y figurent pas. Si aucune n'est cochée, le bouton est masqué. Sur un téléphone, le menu ne propose jamais le mode partagé.",
       "connected_apps": "Connectez des applications de chat comme ChatGPT ou Claude à vos notes via le serveur MCP, et déconnectez-les à tout moment.",
       "custom_logo": "Remplacer le logo Poznote par le vôtre, pour tous les utilisateurs : dans l'onglet du navigateur, sur la page de connexion, dans la barre d'icônes et comme icône de l'application installée.",
@@ -918,6 +917,13 @@
     "filter": {
       "placeholder": "Filtrer par nom ou tag...",
       "no_results": "Aucun espace de travail ne correspond à ce filtre."
+    },
+    "diary_template": {
+      "action": "Modèle de journal",
+      "help": "Chaque nouvelle entrée de journal de cet espace de travail commence par le contenu de la note choisie. La liste montre les notes rangées dans un dossier nommé Modèles (ou Templates) de cet espace.",
+      "saved": "Modèle de journal mis à jour",
+      "save_error": "Impossible de mettre à jour le modèle de journal",
+      "invalid": "Cette note ne peut pas servir de modèle de journal"
     }
   },
   "display": {

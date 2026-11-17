@@ -212,7 +212,6 @@
       "login_disabled": "Kies de accounts die zonder wachtwoord openen. De inlogpagina toont ze onder het wachtwoordformulier, en iedereen die deze instantie kan bereiken kan ze openen. Als het enige account van de instantie is gekozen, is er helemaal geen inlogpagina. De API blijft om inloggegevens vragen.",
       "outbound_hosts": "Gebruikers die geen beheerder zijn kunnen webhooks, Git Sync en hun eigen AI-, transcriptie- of MCP-servers alleen met openbare internethosts verbinden. Geef hier de lokale hosts of netwerken op die ze mogen gebruiken, zoals een Ollama- of n8n-server. Beheerders zijn niet beperkt.",
       "embeds": "Notities kunnen inhoud van deze sites insluiten, zoals een YouTube-video of een GeoGebra-applet. Schakel de sites uit die je instantie nooit mag laden. Geen andere site kan worden ingesloten, en hier kan geen site worden toegevoegd.",
-      "diary_template": "Kies een notitie waarmee elk nieuw dagboekitem van de werkruimte {{workspace}} begint. De lijst toont de notities in een map met de naam Sjablonen in die werkruimte. Elke werkruimte heeft haar eigen sjabloon.",
       "markdown_view_cycle": "Kies de weergaven die het weergavemenu van een Markdown-notitie naast de klassieke weergave aanbiedt (voorbeeld, met het potlood om te bewerken). Weggelaten weergaven worden niet getoond. Als er geen is gekozen, wordt de knop verborgen. Op een telefoon biedt het menu nooit de gesplitste modus aan.",
       "connected_apps": "Chat-apps zoals ChatGPT of Claude via de MCP-server met je notities verbinden, en ze op elk moment loskoppelen.",
       "custom_logo": "Het Poznote-logo vervangen door je eigen logo, voor elke gebruiker: in het browsertabblad, op de inlogpagina, in de pictogrammenbalk en als pictogram van de geïnstalleerde app.",
@@ -534,6 +533,13 @@
     "filter": {
       "placeholder": "Filteren op naam of tag...",
       "no_results": "Geen werkruimte komt overeen met dit filter."
+    },
+    "diary_template": {
+      "action": "Dagboeksjabloon",
+      "help": "Elk nieuw dagboekitem van deze werkruimte begint met de inhoud van de gekozen notitie. De lijst toont de notities in een map met de naam Sjablonen in deze werkruimte.",
+      "saved": "Dagboeksjabloon bijgewerkt",
+      "save_error": "Kan het dagboeksjabloon niet bijwerken",
+      "invalid": "Deze notitie kan niet als dagboeksjabloon worden gebruikt"
     }
   },
   "display": {

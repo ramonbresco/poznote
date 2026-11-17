@@ -497,6 +497,22 @@ a.workspace-name-link:focus-visible {
     border: 1px solid rgba(var(--pz-shadow-rgb), 0.12);
 }
 
+/* "Diary template" dialog (discussion #1668): the list takes the width of
+   the dialog, note titles can be long */
+#workspaceDiaryTemplateSelect {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Its explanation is the dialog's only text: at the 12px of the tags and
+   color dialogs' footnote it read as small print */
+.ws-diary-template-help {
+    margin: 8px 0 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--pz-text-muted);
+}
+
 .ws-color-grid {
     display: flex;
     flex-wrap: wrap;

@@ -561,7 +561,6 @@
       "login_disabled": "Wählen Sie die Konten, die sich ohne Passwort öffnen. Die Anmeldeseite listet sie unter dem Passwortformular auf, und jeder, der diese Instanz erreicht, kann sie öffnen. Ist das einzige Konto der Instanz gewählt, gibt es gar keine Anmeldeseite. Die API verlangt weiterhin Zugangsdaten.",
       "outbound_hosts": "Benutzer ohne Administratorrechte können Webhooks, Git Sync und ihre eigenen KI-, Transkriptions- oder MCP-Server nur mit öffentlichen Internet-Hosts verbinden. Listen Sie hier die lokalen Hosts oder Netzwerke auf, die sie verwenden dürfen, etwa einen Ollama- oder n8n-Server. Administratoren sind nicht eingeschränkt.",
       "embeds": "Notizen können Inhalte dieser Seiten einbetten, etwa ein YouTube-Video oder ein GeoGebra-Applet. Schalten Sie die Seiten ab, die diese Instanz niemals laden soll. Andere Seiten können nicht eingebettet werden, und hier lassen sich keine hinzufügen.",
-      "diary_template": "Wählen Sie eine Notiz, mit deren Inhalt jeder neue Tagebucheintrag des Arbeitsbereichs {{workspace}} beginnt. Die Liste zeigt die Notizen in einem Ordner namens Vorlagen (oder Templates) dieses Arbeitsbereichs. Jeder Arbeitsbereich hat seine eigene Vorlage.",
       "markdown_view_cycle": "Wählen Sie die Ansichten, die das Ansichtsmenü einer Markdown-Notiz neben der klassischen Ansicht (Vorschau, mit dem Stift zum Bearbeiten) anbietet. Nicht gewählte Ansichten werden nicht aufgeführt. Ist keine gewählt, wird die Schaltfläche ausgeblendet. Auf einem Telefon bietet das Menü nie die geteilte Ansicht an.",
       "connected_apps": "Verbinden Sie Chat-Apps wie ChatGPT oder Claude über den MCP-Server mit Ihren Notizen und trennen Sie sie jederzeit.",
       "custom_logo": "Das Poznote-Logo für alle Benutzer durch ein eigenes ersetzen: im Browser-Tab, auf der Anmeldeseite, in der Symbolleiste und als Symbol der installierten App.",
@@ -918,6 +917,13 @@
     "filter": {
       "placeholder": "Nach Name oder Tag filtern...",
       "no_results": "Kein Arbeitsbereich entspricht diesem Filter."
+    },
+    "diary_template": {
+      "action": "Tagebuchvorlage",
+      "help": "Jeder neue Tagebucheintrag dieses Arbeitsbereichs beginnt mit dem Inhalt der gewählten Notiz. Die Liste zeigt die Notizen in einem Ordner namens Vorlagen (oder Templates) dieses Arbeitsbereichs.",
+      "saved": "Tagebuchvorlage aktualisiert",
+      "save_error": "Die Tagebuchvorlage konnte nicht aktualisiert werden",
+      "invalid": "Diese Notiz kann nicht als Tagebuchvorlage verwendet werden"
     }
   },
   "display": {

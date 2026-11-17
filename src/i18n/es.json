@@ -561,7 +561,6 @@
       "login_disabled": "Elija las cuentas que se abren sin contraseña. La página de inicio de sesión las muestra bajo el formulario de contraseña, y cualquiera que llegue a esta instancia puede abrirlas. Cuando se elige la única cuenta de la instancia, no hay página de inicio de sesión. La API sigue pidiendo credenciales.",
       "outbound_hosts": "Los usuarios no administradores solo pueden conectar los webhooks, Git Sync y sus propios servidores de IA, transcripción o MCP a hosts públicos de Internet. Indica aquí los hosts o redes locales que pueden usar, como un servidor Ollama o n8n. Los administradores no tienen límites.",
       "embeds": "Las notas pueden incrustar contenido de estos sitios, como un vídeo de YouTube o un applet de GeoGebra. Desactive los que su instancia no deba cargar nunca. Ningún otro sitio puede incrustarse, y aquí no se pueden añadir sitios.",
-      "diary_template": "Elija una nota cuyo contenido sirva de punto de partida para cada nueva entrada del diario del espacio de trabajo {{workspace}}. La lista muestra las notas guardadas en una carpeta llamada Plantillas (o Templates) de ese espacio. Cada espacio de trabajo tiene su propia plantilla.",
       "markdown_view_cycle": "Elija las vistas que ofrece el menú de vistas de una nota markdown además de la vista clásica (vista previa, con el lápiz para editar). Las vistas no elegidas no aparecen. Si no se elige ninguna, el botón se oculta. En un teléfono el menú nunca ofrece el modo dividido.",
       "connected_apps": "Conecta aplicaciones de chat como ChatGPT o Claude a tus notas a través del servidor MCP y desconéctalas cuando quieras.",
       "custom_logo": "Sustituir el logo de Poznote por el suyo, para todos los usuarios: en la pestaña del navegador, en la página de inicio de sesión, en la barra de iconos y como icono de la aplicación instalada.",
@@ -918,6 +917,13 @@
     "filter": {
       "placeholder": "Filtrar por nombre o etiqueta...",
       "no_results": "Ningún espacio de trabajo coincide con este filtro."
+    },
+    "diary_template": {
+      "action": "Plantilla del diario",
+      "help": "Cada nueva entrada del diario de este espacio de trabajo empieza con el contenido de la nota elegida. La lista muestra las notas guardadas en una carpeta llamada Plantillas (o Templates) de este espacio.",
+      "saved": "Plantilla del diario actualizada",
+      "save_error": "No se pudo actualizar la plantilla del diario",
+      "invalid": "Esta nota no se puede usar como plantilla del diario"
     }
   },
   "display": {

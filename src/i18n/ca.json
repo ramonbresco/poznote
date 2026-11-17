@@ -212,7 +212,6 @@
       "login_disabled": "Trieu els comptes que s'obren sense contrasenya. La pàgina d'inici de sessió els llista sota el formulari de contrasenya, i qualsevol que arribi a aquesta instància els pot obrir. Quan es tria l'únic compte de la instància, no hi ha pàgina d'inici de sessió. L'API continua demanant credencials.",
       "outbound_hosts": "Els usuaris que no són administradors només poden connectar els webhooks, la sincronització amb Git i els seus propis servidors d'IA, de transcripció o MCP a amfitrions públics d'Internet. Llisteu aquí els amfitrions o les xarxes locals que poden fer servir, com ara un servidor d'Ollama o d'n8n. Els administradors no tenen límits.",
       "embeds": "Les notes poden incrustar contingut d'aquests llocs, com un vídeo de YouTube o una applet de GeoGebra. Desactiveu els que la vostra instància no hagi de carregar mai. Cap altre lloc es pot incrustar, i aquí no s'hi poden afegir llocs.",
-      "diary_template": "Trieu una nota amb el contingut de la qual comença cada entrada nova del diari de l'espai de treball {{workspace}}. La llista mostra les notes d'una carpeta anomenada Templates (o Plantilles) d'aquest espai de treball. Cada espai de treball té la seva plantilla.",
       "markdown_view_cycle": "Trieu les visualitzacions que ofereix el menú de visualització d'una nota Markdown, a més de la visualització clàssica (previsualització, amb el llapis per editar). Les visualitzacions excloses no hi apareixen. Si no en trieu cap, el botó s'amaga. En un telèfon, el menú no ofereix mai el mode dividit.",
       "connected_apps": "Connecteu aplicacions de xat com ara ChatGPT o Claude a les notes mitjançant el servidor MCP i desconnecteu-les en qualsevol moment.",
       "custom_logo": "Substituïu el logotip del Poznote pel vostre, per a tots els usuaris: a la pestanya del navegador, a la pàgina d'inici de sessió, a la barra lateral d'icones i com a icona de l'aplicació instal·lada.",
@@ -534,6 +533,13 @@
     "filter": {
       "placeholder": "Filtra per nom o etiqueta...",
       "no_results": "Cap espai de treball no coincideix amb aquest filtre."
+    },
+    "diary_template": {
+      "action": "Plantilla del diari",
+      "help": "Cada entrada nova del diari d'aquest espai de treball comença amb el contingut de la nota triada. La llista mostra les notes d'una carpeta anomenada Templates (o Plantilles) d'aquest espai.",
+      "saved": "S'ha actualitzat la plantilla del diari",
+      "save_error": "No s'ha pogut actualitzar la plantilla del diari",
+      "invalid": "Aquesta nota no es pot fer servir com a plantilla del diari"
     }
   },
   "display": {

@@ -561,7 +561,6 @@
       "login_disabled": "Escolha as contas que abrem sem senha. A página de login as lista abaixo do formulário de senha, e qualquer pessoa que chegue a esta instância pode abri-las. Quando a única conta da instância é escolhida, não há página de login. A API continua pedindo credenciais.",
       "outbound_hosts": "Os utilizadores não administradores só podem ligar os webhooks, o Git Sync e os seus próprios servidores de IA, transcrição ou MCP a hosts públicos da Internet. Indique aqui os hosts ou redes locais que podem usar, como um servidor Ollama ou n8n. Os administradores não têm limites.",
       "embeds": "As notas podem incorporar conteúdo destes sites, como um vídeo do YouTube ou um applet do GeoGebra. Desative os que a sua instância nunca deve carregar. Nenhum outro site pode ser incorporado, e não é possível adicionar sites aqui.",
-      "diary_template": "Escolha uma nota cujo conteúdo serve de ponto de partida para cada nova entrada do diário do espaço de trabalho {{workspace}}. A lista mostra as notas guardadas numa pasta chamada Modelos (ou Templates) desse espaço. Cada espaço de trabalho tem o seu próprio modelo.",
       "markdown_view_cycle": "Escolha as visualizações que o menu de visualizações de uma nota markdown oferece além da visualização clássica (pré-visualização, com o lápis para editar). As visualizações não escolhidas não aparecem. Se nenhuma for escolhida, o botão fica oculto. Num telemóvel o menu nunca oferece o modo dividido.",
       "connected_apps": "Conecte aplicativos de chat como ChatGPT ou Claude às suas notas pelo servidor MCP e desconecte-os quando quiser.",
       "custom_logo": "Substituir o logótipo do Poznote pelo seu, para todos os utilizadores: no separador do navegador, na página de início de sessão, na barra de ícones e como ícone da aplicação instalada.",
@@ -918,6 +917,13 @@
     "filter": {
       "placeholder": "Filtrar por nome ou etiqueta...",
       "no_results": "Nenhum espaço de trabalho corresponde a este filtro."
+    },
+    "diary_template": {
+      "action": "Modelo do diário",
+      "help": "Cada nova entrada do diário deste espaço de trabalho começa com o conteúdo da nota escolhida. A lista mostra as notas guardadas numa pasta chamada Modelos (ou Templates) deste espaço.",
+      "saved": "Modelo do diário atualizado",
+      "save_error": "Não foi possível atualizar o modelo do diário",
+      "invalid": "Esta nota não pode ser usada como modelo do diário"
     }
   },
   "display": {

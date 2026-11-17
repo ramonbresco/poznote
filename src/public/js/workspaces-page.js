@@ -233,6 +233,7 @@ function initializeWorkspacesPage() {
     document.addEventListener('click', handleRenameButtonClick);
     document.addEventListener('click', handleWorkspaceTagsButtonClick);
     document.addEventListener('click', handleWorkspaceColorButtonClick);
+    document.addEventListener('click', handleWorkspaceDiaryTemplateButtonClick);
     document.addEventListener('keydown', handleWorkspaceOrderKeydown);
     document.addEventListener('click', handleSelectButtonClick);
     document.addEventListener('click', handleDeleteButtonClick);

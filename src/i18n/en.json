@@ -212,7 +212,6 @@
       "login_disabled": "Choose the accounts that open without a password. The login page lists them under the password form, and anyone who reaches this instance can open them. When the only account of the instance is chosen, there is no login page at all. The API keeps asking for credentials.",
       "outbound_hosts": "Non-admin users can only connect webhooks, Git Sync and their own AI, transcription or MCP servers to public internet hosts. List here the local hosts or networks they may use, such as an Ollama or n8n server. Administrators are not limited.",
       "embeds": "Notes can embed content from these sites, such as a YouTube video or a GeoGebra applet. Switch off the ones your instance should never load. No other site can be framed, and no site can be added here.",
-      "diary_template": "Choose a note whose content every new diary entry of the {{workspace}} workspace starts with. The list shows the notes kept in a folder named Templates in that workspace. Each workspace has its own template.",
       "markdown_view_cycle": "Choose the views the view menu of a markdown note offers besides the classic view (preview, with the pencil to edit). The views left out are not listed. With none chosen, the button is hidden. On a phone the menu never offers split mode.",
       "connected_apps": "Connect chat apps such as ChatGPT or Claude to your notes through the MCP server, and disconnect them at any time.",
       "custom_logo": "Replace the Poznote logo with your own, for every user: in the browser tab, on the login page, in the icon rail and as the icon of the installed app.",
@@ -534,6 +533,13 @@
     "filter": {
       "placeholder": "Filter by name or tag...",
       "no_results": "No workspace matches this filter."
+    },
+    "diary_template": {
+      "action": "Diary template",
+      "help": "Every new diary entry of this workspace starts with the content of the chosen note. The list shows the notes kept in a folder named Templates in this workspace.",
+      "saved": "Diary template updated",
+      "save_error": "Could not update the diary template",
+      "invalid": "This note cannot be used as a diary template"
     }
   },
   "display": {
