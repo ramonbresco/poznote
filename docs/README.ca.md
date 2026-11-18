@@ -21,7 +21,7 @@
 </p>
 
 <h2 align="center">
-Presa de notes potents, sense complicacions.
+Presa de notes potent, sense complicacions.
 </h2>
 
 <h3 align="center">
